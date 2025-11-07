@@ -8,7 +8,7 @@ const Login = () => {
     
   return (
     <div className='fullScreen min-w-[640px]'>
-
+    
     <form action="" className='form gap-5'>
         <div className='formDiv'>
             <input

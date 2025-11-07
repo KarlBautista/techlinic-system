@@ -24,8 +24,8 @@ const useAuth = create((set) => ({
     signIn: async (emailInput, passwordInput) => {
         try{
             const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-                emailInput,
-                passwordInput
+                email: emailInput,
+                password: passwordInput
             });
             if(signInError){
                 console.error(`Sign-in error ${signInError.message}`);
@@ -83,6 +83,33 @@ const useAuth = create((set) => ({
             return () => subscription.unsubscribe();
         } catch(err){
             console.error(err);
+        }
+    },
+    getUser: async () => {
+        try{
+            const { data, error } = await supabase.auth.getUser();
+            console.log("getUser() result:", data, error);
+            if(data?.user){
+                set({ authenticatedUser: data.user });
+            } else {
+                set({ authenticatedUser: null });
+            }
+        } catch(err){
+            console.error(`Error getting user ${err.message}`)
+        }
+    },
+    signOut: async () => {
+        try{
+            const { error } = await supabase.auth.signOut();
+            if(error){
+                console.error(error.message);
+                return { success: false, error: error.message }
+            }
+            set({ authenticatedUser: null });
+            return { success: true };
+        } catch (err){
+            console.error(`Something went signing out: ${err.message}`);
+            return { success: false, error: err.message };
         }
     }
 }));

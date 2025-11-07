@@ -1,17 +1,27 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import "../App.css"
 import { useState } from "react";
 import useAuth from '../store/useAuthStore';
 import TUP from "../assets/image/TUP.png"
 import Google from "../assets/image/google.png"
 import School from "../assets/image/school.jpg"
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState(""); 
     const { signInWithGoogle, authenticatedUser } = useAuth();
+    const navigate = useNavigate();
+    useEffect(() => {
+      if(authenticatedUser){
+        navigate("/dashboard")
+      }
+    }, [authenticatedUser, navigate])
+
     console.log(authenticatedUser);
-    const handleSignInWithGoogle = async (e) => {
+
+
+    const handleSignInWithGoogle = async () => {
       try{
         const response = await signInWithGoogle();
         if(response.error){
@@ -21,7 +31,6 @@ const Login = () => {
       } catch (err){
         console.error(err.message);
       }
-      
     }
     const handleSignin = () => {
 
@@ -80,23 +89,6 @@ const Login = () => {
         </form>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         <div className='h-[30%] w-full flex items-start justify-center'>
 
                     <div className='h-[70px] w-[40%] flex items-center justify-evenly'
@@ -111,8 +103,8 @@ const Login = () => {
 
       </div>
 
-    <div className='hidden lg:block lg:w-[40%] h-full lg:bg-black'> 
-
+    <div className='hidden lg:block lg:w-[55%] h-full'> 
+        <img src={School} alt="" className='h-full w-full'/>
     </div>
 
     </div>
