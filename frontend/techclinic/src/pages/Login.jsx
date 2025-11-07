@@ -5,11 +5,11 @@ import useAuth from '../store/useAuthStore';
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState(""); 
-    const { signIn } = useAuth();
-
-    const handleSignin = async (e) => {
+    const { signInWithGoogle, authenticatedUser } = useAuth();
+    console.log(authenticatedUser);
+    const handleSignInWithGoogle = async (e) => {
       try{
-        const response = await signIn(email, password);
+        const response = await signInWithGoogle();
         if(response.error){
           console.error(`Error Signing up: ${response.error}`);
           alert("Error signing up: ", response.error);
@@ -19,6 +19,9 @@ const Login = () => {
       }
       
     }
+    const handleSignin = () => {
+
+    }
   return (
     <div className='fullScreen'>
 
@@ -26,7 +29,6 @@ const Login = () => {
         <div className='formDiv'>
             <input
               type="text"
-              id="email"
               name="email"
               placeholder=" "
               value={email}
@@ -38,7 +40,6 @@ const Login = () => {
         <div className='formDiv'>
             <input
               type="text"
-              id="email"
               name="password"
               value={password}
               placeholder=" "
@@ -56,15 +57,16 @@ const Login = () => {
           <div className='w-[35%] border-1 border-gray-300'></div>
         </div>
 
-        <div className='bg-red-100 h-[70px] w-[40%] flex items-center justify-evenly'>
+
+    </form>
+    
+        <div className='bg-red-100 h-[70px] w-[40%] flex items-center justify-evenly'
+        onClick={() => handleSignInWithGoogle()}>
             <button className='h-[60px] w-[60px] bg-blue-100 rounded-full'>
                 <img src="" alt="Google" />
             </button>
 
         </div>
-
-    </form>
-
     <div className='h-full w-[40%] bg-[#62b6cb]'> 
 
     </div>
