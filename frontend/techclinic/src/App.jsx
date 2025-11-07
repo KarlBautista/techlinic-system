@@ -6,7 +6,7 @@ import './App.css'
 function App() {
  return(
   <div className='text-gray-300'>
-      hello world
+      Hello World galing kay karl
   </div>
  )
 }
