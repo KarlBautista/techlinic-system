@@ -38,4 +38,6 @@ const useAuth = create((set) => ({
             return { success: false, error: err.message };
         }
     }
-}))
+}));
+
+export default useAuth;

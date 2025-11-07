@@ -1,19 +1,30 @@
 import React from 'react'
 import "../App.css"
-import { useState, useRef} from "react";
+import { useState } from "react";
 
-const Login = () => {
-    
+const Register = () => {
+  const [registerData, setRegisterData] = useState({
+    firstName: "",
+    lastName: "",
+    address: "",
+
+  });
+  const handleSignUp = async () => {
+
+  }
+  
   return (
     <div className='fullScreen min-w-[640px]'>
 
-    <form action="" className='form gap-5'>
+    <form onSubmit={handleSignUp} className='form gap-5'>
         <div className='formDiv'>
             <input
               type="text"
               id="email"
               name="email"
               placeholder=" "
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <label htmlFor="email">Email</label>
         </div>
@@ -23,12 +34,15 @@ const Login = () => {
               type="text"
               id="email"
               name="password"
+              value={password}
               placeholder=" "
+              onChange={(e) => setPassword(e.target.value)}
             />
             <label htmlFor="password">Password</label>
         </div>
 
-        <button className='tracking-[5px] bg-[#B22222] w-[40%] py-[10px] text-white rounded-lg sm:bg-black md:bg-blue-100'>LOGIN</button>
+        <button className='tracking-[5px] bg-[#B22222] w-[40%] py-[10px] text-white rounded-lg sm:bg-black md:bg-blue-100'
+        >LOGIN</button>
 
         <div className='h-[30px] w-[40%]  flex items-center justify-center'>
           <div className='w-[35%] border-1 border-gray-300'></div>
@@ -63,4 +77,4 @@ const Login = () => {
   )
 }
 
-export default Login
+export default Register
