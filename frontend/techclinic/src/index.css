@@ -2,6 +2,18 @@
 
 /* LOGIN */
 
+.logoDiv {
+    @apply w-[50%] h-[15%] flex 
+}
+
+.logo {
+    @apply w-[30%] h-full flex items-center justify-center
+}
+
+.rightLogo{
+    @apply w-[70%] flex flex-col
+}
+
 .fullScreen {
     @apply h-full w-full flex gap-2;
 }
