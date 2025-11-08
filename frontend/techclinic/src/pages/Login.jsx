@@ -37,23 +37,17 @@ const Login = () => {
     }
   return (
     <div className='fullScreen min-w-[640px]'>
-
-
       <div className='flex flex-col h-full gap-10 sm:w-full min-w-[640px] lg:w-[60%]'>
-        <form onSubmit={handleSignin} className='form gap-4'>
-
-
+  <form onSubmit={handleSignin} className='form flex flex-col items-center space-y-4 sm:space-y-6 lg:space-y-8 py-4'>
           <div className='logoDiv'> 
             <div className="logo justify-center items-center flex">
-              <img src={TUP} alt="TUP" className='h-[80%]'/>
+              <img src={TUP} alt="TUP" className='h-10 md:h-12 lg:h-16 xl:h-20 object-contain'/>
             </div>
             <div className="rightLogo">
               <p className='text-[#FF3A3A] text-[2.5rem] tracking-[10px] font-bold lg:text-[1.6rem] xl:text-[2.5rem]'>Techclinic</p>
               <p className='text-[#A12217] lg:text-[.8rem]'>Health Record and Analytics System</p>
             </div>
           </div>
-
-
             <div className='formDiv'>
                 <input
                   type="text"
@@ -67,7 +61,7 @@ const Login = () => {
 
             <div className='formDiv'>
                 <input
-                  type="text"
+                  type="password"
                   name="password"
                   value={password}
                   placeholder=" "
@@ -75,38 +69,27 @@ const Login = () => {
                 />
                 <label htmlFor="password">Password</label>
             </div>
-
-
-
-            <button className='tracking-[5px] bg-[#B22222] w-[60%] py-[10px] text-white rounded-lg lg:w-[50%]' type="submit"
-            >LOGIN</button>
-
-            <div className='h-[30px] w-[60%]  flex items-center justify-center lg:w-[50%]'>
-              <div className='w-[35%] border-1 border-gray-300'></div>
-              <p className='w-[30%] flex items-center justify-center'>or login with</p>
-              <div className='w-[35%] border-1 border-gray-300'></div>
+            <button className='tracking-[5px] bg-[#B22222] w-[60%] md:w-[60%] lg:w-[50%] py-3 text-white rounded-lg text-center
+            hover:bg-[hsl(0,68%,48%)] transition duration-300' type="submit">LOGIN</button>
+            <div className='w-[60%] md:w-[60%] lg:w-[50%] flex items-center'>
+              <div className='flex-1 h-px bg-gray-300' />
+              <p className='px-3 text-sm text-gray-500 text-center'>or login with</p>
+              <div className='flex-1 h-px bg-gray-300' />
             </div>
         </form>
-
-
         <div className='h-[30%] w-full flex items-start justify-center'>
 
-                    <div className='h-[70px] w-[40%] flex items-center justify-evenly'
+            <div className='h-[70px] w-[40%] flex items-center justify-evenly'
         onClick={() => handleSignInWithGoogle()}>
-            <button className='h-[60px] w-[60px] rounded-full bg-gray-100'>
+            <button className='h-[60px] w-[60px] rounded-full bg-gray-200 hover:bg-[hsl(0,68%,48%)] transition duration-300'>
                 <img src={Google} alt="Google" />
             </button>
-
+        </div>  
         </div>
-          
-        </div>
-
       </div>
-
     <div className='hidden lg:block lg:w-[55%] h-full'> 
         <img src={School} alt="" className='h-full w-full'/>
     </div>
-
     </div>
   )
 }

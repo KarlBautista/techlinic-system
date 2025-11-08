@@ -27,7 +27,7 @@
 }
 
 .rightLogo{
-    @apply w-[80%] flex flex-col justify-center items-start 
+    @apply w-[80%] flex flex-col justify-center items-start
 }
 
 .fullScreen {
@@ -44,7 +44,7 @@
 
 
 .formDiv input {
-    @apply w-full bg-transparent border-b-2 pt-6 pb-2 outline-none duration-200;
+    @apply w-full border-b-2 pt-6 pb-2 outline-none duration-200 text-gray-400;
 }
 
 

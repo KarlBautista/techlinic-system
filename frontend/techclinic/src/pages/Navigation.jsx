@@ -5,7 +5,6 @@ import Logout from "../assets/image/logout.png"
 import useAuth from '../store/useAuthStore'
 import Swal from 'sweetalert2'
 const Navigation = () => {
-
     const { authenticatedUser, signOut } = useAuth();
     const location = useLocation();
     const currentPath = location.pathname;
@@ -29,7 +28,6 @@ const Navigation = () => {
                     imageHeight: "150px",
                     imageWidth: "150px",
                     text: "Thank you for choosing Techclinic.",
-                    timer: 1500.
                 });
                 navigate("/");
         } catch (err){
