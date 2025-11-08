@@ -2,18 +2,16 @@ import React from "react";
 import { createBrowserRouter } from "react-router-dom";
 import Dashboard from "../pages/Dashboard";
 import Login from "../pages/Login";
-import Navigation from "../pages/Navigation";
-
-const DashboardWithNav = () => (
-  <div className="flex h-full w-full gap-2">
-    <Navigation />
-    <Dashboard />
-  </div>
-);
+import NewPatient from "../pages/NewPatient";
+import MedicineInventory from "../pages/MedicineInventory";
+import PatientRecord from "../pages/PatientRecord";
 
 const router = createBrowserRouter([
   { path: "/", element: <Login /> },
-  { path: "/dashboard", element: <DashboardWithNav /> },
+  { path: "/dashboard", element: <Dashboard /> },
+  { path: "/new-patient", element: <NewPatient /> },
+  { path: "/patient-record", element: <PatientRecord />},
+  { path: "/medicine-inventory", element: <MedicineInventory />}
 ]);
 
 export default router;
