@@ -61,7 +61,14 @@
 }
 
 
- /* Dashboard */
-.shownNav {
-    @apply w-[30%]
+/* For Navigation */
+
+.nav {
+    /* 1024 */
+    @apply lg:w-[20%] h-full border-r-1 border-r-[#A79D9D] flex flex-col xl:w-[15%]; 
+
+}
+
+.nav button {
+    @apply xl:text-[1.2rem] xl:text-[.8rem]
 }
