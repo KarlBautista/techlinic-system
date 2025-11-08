@@ -35,7 +35,7 @@ const Navigation = () => {
         }
     }
     return (
-        <div className='nav md:w-[25%]'>
+        <div className='nav'>
                 <div className='h-[10%] w-full border-b border-gray-300 flex items-center justify-center'>
         <div className='w-[90%] h-[80%] flex gap-2'>
              <div className='w-[30%] h-full flex items-center justify-center'>
