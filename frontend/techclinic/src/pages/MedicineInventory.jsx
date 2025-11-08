@@ -1,5 +1,5 @@
 import React from 'react'
-import Navigation from './Navigation'
+import Navigation from '../components/Navigation'
 const MedicineInventory = () => {
   return (
      <div className='flex h-full w-full gap-2'>

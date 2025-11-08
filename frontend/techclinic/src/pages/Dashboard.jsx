@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import Swal from "sweetalert2";
 import { useNavigate } from 'react-router-dom';
-import Navigation from './Navigation';
+import Navigation from '../components/Navigation';
 const Dashboard = () => {
 
   return (
