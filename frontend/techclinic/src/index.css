@@ -65,7 +65,11 @@
 
 .nav {
     /* 1024 */
-    @apply w-full h-full border-r-1 border-gray-300 shadow-2xl flex flex-col ; 
+    @apply w-full h-full border-r-1 border-gray-300 shadow-2xl flex flex-col 
+
+    /* sm */
+
+    /* sm:w-[200px] */
 
 }
 

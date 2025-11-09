@@ -81,7 +81,7 @@ const Login = () => {
 
             <div className='h-[70px] w-[40%] flex items-center justify-evenly'
         onClick={() => handleSignInWithGoogle()}>
-            <button className='h-[60px] w-[60px] rounded-full bg-gray-200 hover:bg-[hsl(0,68%,48%)] transition duration-300'>
+            <button className='h-[40px] w-[40px] rounded-full bg-gray-200  transition duration-300'>
                 <img src={Google} alt="Google" />
             </button>
         </div>  
