@@ -1,35 +1,87 @@
 import React from 'react'
 import Navigation from '../components/Navigation'
 import {useState} from 'react'
-
-
-
+import useData from '../store/useDataStore'
 const NewPatient = () => {
-  return (
+  const { insertRecord, getRecords } = useData();
+  const [patientInput, setPatientInput] = useState({
+    firstName: "",
+    lastName: "",
+    studentId: "",
+    contactNumber: "",
+    yearLevel: "",
+    department: "",
+    sex: "",
+    email: "",
+    diagnosis: "",
+    medication: "",
+    quantity: "",
+    treatment: "",
+    notes: "",
+  });
 
+  const handleSetPatientInput = (e) => {
+    const { name, value } = e.target;
+    setPatientInput((prev) => ({ ...prev, [name]: value }));
+  }
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    try{
+      const response = await insertRecord(patientInput);
+      if(!response.success){
+        alert("Failed inserting record ", response.error);
+        return;
+      } else {
+        alert("record inserted successfully"); 
+        console.log("record inserted successfully: ", response.data);
+        setPatientInput({
+          firstName: "",
+          lastName: "",
+          studentId: "",
+          contactNumber: "",
+          yearLevel: "",
+          department: "",
+          sex: "",
+          email: "",
+          diagnosis: "",
+          medication: "",
+          quantity: "",
+          treatment: "",
+          notes: "",
+        });
+        getRecords();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+
+  return (
 <div className='flex h-full w-full gap-2'>
-        <div className='sm:w-[30%] w-[17%] h-full md:w-[25%] lg:w-[20%]'>
+        <div className='sm:w-[30%] w-[17%] h-full md:w-[25%] lg:w-[17%]'>
           <Navigation />
         </div>
 
 
     {/* record */}
-        <div className='w-[80%]  h-full flex justify-center p-1 '>
-            <div className='w-[90%] overflow-y-scroll h-full flex flex-col items-center gap-3 scrollbar'>
-                <div className='w-full'>
-                    <p className='text-[1.5rem] font-bold'>Add Patient Record</p>
-                    <p className='text-[.8rem]'>Patient Clinical Documentation</p>
+        <div className='w-[83%]  h-full flex justify-center p-5'>
+            <div className='w-full overflow-y-scroll h-full flex flex-col items-center gap-5 scrollbar'>
+                <div className='w-full flex flex-col gap-2'>
+                    <p className='text-[1.5rem] font-semibold text-gray-900'>Add Patient Record</p>
+                    <p className='text-[1rem] text-gray-500'>Patient Clinical Documentation</p>
                 </div>
 
                 <div className='w-[90%] flex flex-col items-center'>
                   {/* Student Info */}
                   <div className='w-full'>
-                    <p className='text-[.9rem]'>Student Information</p>
+                    <p className='text-[1rem] text-gray-800'>Student Information</p>
                   </div>
-                  <div className='border-1 border-gray-200 w-full'></div>
+                  <div className='border border-gray-200 w-full'></div>
 
                   {/* Student input */}
-                  <form action="" className=' w-full  flex flex-wrap gap-2 justify-evenly mt-2'>
+                  <form onSubmit={handleFormSubmit} className=' w-full  flex flex-wrap gap-2 justify-evenly mt-2'>
                     
 
                     <div className='formInfo'>
@@ -38,6 +90,8 @@ const NewPatient = () => {
                           name="firstName"
                           placeholder=" "
                           id='firstName'
+                          value={patientInput.firstName}
+                          onChange={handleSetPatientInput}
                         />
                         <label htmlFor="firstName" className='text-[.8rem]'>First name</label>
                     </div>
@@ -48,6 +102,8 @@ const NewPatient = () => {
                           name="lastName"
                           placeholder=" "
                           id='lastName'
+                          value={patientInput.lastName}
+                          onChange={handleSetPatientInput}
                         />
                         <label htmlFor="lastName" className='text-[.8rem]'>Last name</label>
                     </div>
@@ -55,9 +111,11 @@ const NewPatient = () => {
                     <div className='formInfo'>
                         <input
                           type="text"
-                          name="studentID"
+                          name="studentId"
                           placeholder=" "
                           id='studentID'
+                          value={patientInput.studentId}
+                          onChange={handleSetPatientInput}
                         />
                         <label htmlFor="studentID" className='text-[.8rem]'>Student ID</label>
                     </div>
@@ -66,15 +124,17 @@ const NewPatient = () => {
                          <input
                           type="tel"
                           inputMode="numeric"
-                          name="contactNum"
+                          name="contactNumber"
                           placeholder=" "
                           id='contactNum'
+                          value={patientInput.contactNumber}
+                          onChange={handleSetPatientInput}
                         />
                         <label htmlFor="contactNum" className='text-[.8rem]'>Contact Number</label>
                     </div>
 
                     <div className='formInfo'>
-                      <select id="year" name="year" defaultValue="" className='w-full p-2 rounded-[10px] border outline-none'>
+                      <select id="year" name="yearLevel" value={patientInput.yearLevel} onChange={handleSetPatientInput} className='w-full p-2 rounded-[10px] border outline-none'>
                         <option value="" disabled>Select Year</option>
                         <option value="1">1st year</option>
                         <option value="2">2nd year</option>
@@ -84,20 +144,20 @@ const NewPatient = () => {
                     </div>
 
                     <div className='formInfo'>
-                      <select id="department" name="department" defaultValue="" className='w-full p-2 rounded-[10px] border outline-none'>
+                      <select id="department" name="department" value={patientInput.department} onChange={handleSetPatientInput} className='w-full p-2 rounded-[10px] border outline-none'>
                         <option value="" disabled>Select Department</option>
-                        <option value="1">College of Science</option>
-                        <option value="2">College of Engineering</option>
-                        <option value="3">College of Industrial Technology</option>
-                        <option value="4">College of Architecture and Fine Arts</option>
+                        <option value="College of Science">College of Science</option>
+                        <option value="College of Engineering">College of Engineering</option>
+                        <option value="College of Industrial Technology">College of Industrial Technology</option>
+                        <option value="College of Architecture and Fine Arts">College of Architecture and Fine Arts</option>
                       </select>
                     </div>
                     
                     <div className='formInfo'>
-                      <select id="sex" name="sex" defaultValue="" className='w-full p-2 rounded-[10px] border outline-none'>
+                      <select id="sex" name="sex" value={patientInput.sex} onChange={handleSetPatientInput} className='w-full p-2 rounded-[10px] border outline-none'>
                         <option value="" disabled>Sex</option>
-                        <option value="1">Male</option>
-                        <option value="2">Female</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
                       </select>
                     </div>
                     
@@ -107,40 +167,42 @@ const NewPatient = () => {
                           name="email"
                           placeholder=" "
                           id='email'
+                          value={patientInput.email}
+                          onChange={handleSetPatientInput}
                         />
                         <label htmlFor="email" className='text-[.8rem]'>Email</label>
                     </div>
 
 
                   <div className='w-full mt-10'>
-                    <p className='text-[.9rem]'>Medical Information</p>
+                    <p className='text-[1rem]'>Medical Information</p>
                   </div>
-                  <div className='border-1 border-gray-200 w-full'></div>
+                  <div className='border border-gray-200 w-full'></div>
                     
                   <div className='w-full h-[400px] flex'>
                       <div className='w-[50%] h-full flex items-center flex-col '>
                           <div className='formDiagnosis'>
-                            <select id="year" name="year" defaultValue="" className='w-full p-2 rounded-[10px] border outline-none'>
+                            <select id="diagnosis" name="diagnosis" value={patientInput.diagnosis} onChange={handleSetPatientInput} className='w-full p-2 rounded-[10px] border outline-none'>
                               <option value="" disabled>Diagnosis</option>
-                              <option value="1">HEENT</option>
-                              <option value="2">Chest and Lungs / Pulmunary</option>
-                              <option value="3">Heart</option>
-                              <option value="4">Endocrine</option>
-                              <option value="5">Gastrointestinal</option>
-                              <option value="6">Genito-Urinary</option>
-                              <option value="7">Muscoloskeletal</option>
-                              <option value="8">Surgical</option>
-                              <option value="9">Neurology / Psych</option>
-                              <option value="10">Derma</option>
-                              <option value="11">Infectious Disease</option>
+                              <option value="HEENT">HEENT</option>
+                              <option value="Pulmonary">Chest and Lungs / Pulmonary</option>
+                              <option value="Heart">Heart</option>
+                              <option value="Endocrine">Endocrine</option>
+                              <option value="Gastrointestinal">Gastrointestinal</option>
+                              <option value="Genito-Urinary">Genito-Urinary</option>
+                              <option value="Musculoskeletal">Musculoskeletal</option>
+                              <option value="Surgical">Surgical</option>
+                              <option value="Neurology">Neurology / Psych</option>
+                              <option value="Derma">Derma</option>
+                              <option value="Infectious Disease">Infectious Disease</option>
                             </select>
                           </div>
 
                           <div className='formDiagnosis'>
-                              <select id="medication" name="medication" defaultValue="" className='w-full p-2 rounded-[10px] border outline-none'>
+                              <select id="medication" name="medication" value={patientInput.medication} onChange={handleSetPatientInput} className='w-full p-2 rounded-[10px] border outline-none'>
                                 <option value="" disabled>Medication</option>
-                                <option value="1">BioFlu</option>
-                                <option value="2">Alaxan</option>
+                                <option value="BioFlu">BioFlu</option>
+                                <option value="Alaxan">Alaxan</option>
                               </select>
                           </div>
 
@@ -150,15 +212,23 @@ const NewPatient = () => {
                                 name="quantity"
                                 placeholder=" "
                                 id='quantity'
+                                value={patientInput.quantity}
+                                onChange={handleSetPatientInput}
                               />
                               <label htmlFor="quantity" className='text-[.8rem]'>Quantity</label>
                           </div>
-
+                          {/*ito button*/}
+                          <div className='w-full h-[50%]  flex justify-center items-center'>
+                            <button className='text-white px-5 py-3 rounded-lg bg-[#ef4444]'>Insert Record</button>
+                          </div>
                       </div>
                       
                      <div className='w-[50%] h-full flex flex-col gap-2 py-2'>
                           <div className='h-[48%] w-[95%]'>
                             <textarea
+                              name='treatment'
+                              value={patientInput.treatment}
+                              onChange={handleSetPatientInput}
                               className='h-full w-full p-2 resize-none outline-none rounded-md border'
                               placeholder='Treatment'
                             />
@@ -166,14 +236,17 @@ const NewPatient = () => {
 
                            <div className='h-[50%] w-[95%]'>
                             <textarea
+                              name='notes'
+                              value={patientInput.notes}
+                              onChange={handleSetPatientInput}
                               className='h-full w-full p-2  resize-none outline-none rounded-md border'
                               placeholder='Additional notes'
                             />
                           </div>
                       </div>
+                     
                   </div>
-
-
+               
                   </form>
 
                 </div>

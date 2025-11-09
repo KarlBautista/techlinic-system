@@ -6,10 +6,13 @@ import Login from './pages/Login'
 import { RouterProvider } from 'react-router-dom'
 import router from "./router/router"
 import useAuth from './store/useAuthStore'
+import useData from './store/useDataStore'
 function App() {
     const { authListener, getUser } = useAuth();
+    const { getRecords } = useData();
     useEffect(() => {
         getUser();
+        getRecords();
         const unsubscribe = authListener();
         return () => {
             if(unsubscribe && typeof unsubscribe === "function"){
