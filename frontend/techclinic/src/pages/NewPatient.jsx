@@ -15,7 +15,7 @@ const NewPatient = () => {
 
     {/* record */}
         <div className='w-[80%]  h-full flex justify-center p-1 '>
-            <div className='w-[90%] overflow-y-scroll h-full flex flex-col items-center gap-3'>
+            <div className='w-[90%] overflow-y-scroll h-full flex flex-col items-center gap-3 scrollbar'>
                 <div className='w-full'>
                     <p className='text-[1.5rem] font-bold'>Add Patient Record</p>
                     <p className='text-[.8rem]'>Patient Clinical Documentation</p>
@@ -117,8 +117,8 @@ const NewPatient = () => {
                   </div>
                   <div className='border-1 border-gray-200 w-full'></div>
                     
-                  <div className='w-full bg-red-100 h-[500px] flex'>
-                      <div className='w-[50%] h-full flex items-center flex-col'>
+                  <div className='w-full h-[400px] flex'>
+                      <div className='w-[50%] h-full flex items-center flex-col '>
                           <div className='formDiagnosis'>
                             <select id="year" name="year" defaultValue="" className='w-full p-2 rounded-[10px] border outline-none'>
                               <option value="" disabled>Diagnosis</option>
@@ -156,8 +156,20 @@ const NewPatient = () => {
 
                       </div>
                       
-                      <div  className='w-[50%] h-full'>
+                     <div className='w-[50%] h-full flex flex-col gap-2 py-2'>
+                          <div className='h-[48%] w-[95%]'>
+                            <textarea
+                              className='h-full w-full p-2 resize-none outline-none rounded-md border'
+                              placeholder='Treatment'
+                            />
+                          </div>
 
+                           <div className='h-[50%] w-[95%]'>
+                            <textarea
+                              className='h-full w-full p-2  resize-none outline-none rounded-md border'
+                              placeholder='Additional notes'
+                            />
+                          </div>
                       </div>
                   </div>
 

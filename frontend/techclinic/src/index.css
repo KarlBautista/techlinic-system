@@ -125,3 +125,7 @@
     transform: translateY(-1.8rem) scale(0.85) translateX(-.8rem);
     color: gray;
 }
+
+.scrollbar::-webkit-scrollbar {
+    width: 0;
+}
