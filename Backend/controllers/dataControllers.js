@@ -79,5 +79,21 @@ const getRecords = async (req, res) => {
         return res.status(500).json({ success: false, error: err.message });
     }
 }
+const getRecord = async (req, res) => {
+    const { patientId } = req.params;
+    try {
+        const { data: patientRecordData, error: patientRecordError } = await supabase.from("patients").select("*, diagnoses (*)")
+        .eq("id", patientId);
+        
+        if(patientRecordError) {
+            console.error(`Error getting record: ${patientRecordError.message}`);
+            res.status(500).json({ success: false, error: patientRecordError.message });
+        }
+        res.status(200).json({ success: true, data: patientRecordData });
+    } catch (err) {
+        console.error(`Something went wrong getting record :${err.message}`);
+        res.status(500).json({ success: false, error: err.message });
+     }
+}
 
-module.exports = { insertRecord, getRecords }
+module.exports = { insertRecord, getRecords, getRecord }

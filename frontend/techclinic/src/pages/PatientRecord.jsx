@@ -3,10 +3,12 @@ import Search from '../assets/image/searcg.svg'
 import Printer from '../assets/image/printer.svg'
 import Navigation from '../components/Navigation'
 import useData from '../store/useDataStore'
+import { useNavigate } from 'react-router-dom'
 const PatientRecord = () => {
   const { patientRecords } = useData();
   const [search, setSearch] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("All Department");
+  const navigate = useNavigate();
 
   const filteredRecords = patientRecords?.data?.filter((patient) => {
     const fullname = `${patient.first_name} ${patient.last_name}`.toLowerCase();
@@ -17,7 +19,16 @@ const PatientRecord = () => {
     return matchesSearch && matchesDepartment;
   });
 
-  console.log(filteredRecords)
+  console.log("mga nasearch", filteredRecords);
+
+  const handleIndividualRecord = (patientId) => {
+    try {
+      navigate(`/individual-record/${patientId}`);
+    } catch (err) {
+      console.error(`Someting went wrong navigating to indidual record: ${patientId}`);
+      return;
+    }
+  }
   
   return (
     <div className='flex h-full w-full gap-2'>
@@ -73,7 +84,7 @@ const PatientRecord = () => {
                 <div className='w-[90%] h-full overflow-y-auto '>
                  {filteredRecords?.length > 0 ? (
                     filteredRecords.map((patient) => (
-                      <div key={patient.id} className='studentCss'>
+                      <div key={patient.id} className='studentCss cursor-default hover:bg-red-300' onClick={() => handleIndividualRecord(patient.id)}>
                         <div className='studentInfoContainer'>
                           <p className='studentInfoData'>{patient.student_id}</p>
                         </div>
