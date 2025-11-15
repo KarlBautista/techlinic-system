@@ -9,7 +9,7 @@ const IndividualRecord = () => {
     const fetchData = async () => {
       try {
          const response = await axios.get(`http://localhost:3000/api/get-record/${patientId}`);
-         // axios responses include status and data; backend may wrap payload as { success, data }
+        
          if (response.status !== 200) {
            console.error(`Error getting record: HTTP ${response.status}`);
            return;
@@ -17,7 +17,7 @@ const IndividualRecord = () => {
      
          setPatientRecord(response.data.data);
       } catch (err) {
-        console.error(`Something went wrong getting record: ${err?.message ?? err}`);
+        console.error(`Something went wrong getting record: ${err?.message}`);
         return;
       }
     }
