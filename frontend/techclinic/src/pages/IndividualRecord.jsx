@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios';
+import Navigation from '../components/Navigation';
 const IndividualRecord = () => {
   const { patientId } = useParams();
   const [ patientRecord, setPatientRecord ] = useState([]);
@@ -27,8 +28,14 @@ const IndividualRecord = () => {
   {/*may data na tong naka abang, lagyan nalang ui tapos display*/}
 
   return (
-    <div>
+    <div className='flex h-full w-full gap-2'>
+      <div className='sm:w-[30%] w-[17%] h-full md:w-[25%] lg:w-[17%]'>
+          <Navigation />
+      </div>
       
+      <div className='w-[83%] h-full justify-center p-5'>
+        
+      </div>
     </div>
   )
 }

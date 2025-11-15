@@ -53,7 +53,7 @@ const Navigation = () => {
     <div className='h-[70%] w-full flex flex-col items-center justify-center text-[0.9rem] gap-3'>
             <Link to={'/dashboard'} className={`${currentPath === '/dashboard' ? 'bg-[#FEF2F2] border-r-4 border-r-[#A12217]' : 'bg-transparent'} w-full py-3 flex items-center justify-center  `}>Dashboard</Link>
             <Link to={'/new-patient'} className={`${currentPath === '/new-patient' ? 'bg-[#FEF2F2] border-r-4 border-r-[#A12217]' : 'bg-transparent'} w-full py-3 flex items-center justify-center   `}>New Patient</Link>
-            <Link to={'/patient-record'} className={`${currentPath === '/patient-record' ? 'bg-[#FEF2F2] border-r-4 border-r-[#A12217]' : 'bg-transparent'} w-full py-3 flex items-center justify-center  `}>Patient Record</Link>
+            <Link to={'/patient-record'} className={`${currentPath === '/patient-record' || currentPath.startsWith('/individual-record') ? 'bg-[#FEF2F2] border-r-4 border-r-[#A12217]' : 'bg-transparent'} w-full py-3 flex items-center justify-center  `}>Patient Record</Link>
             <Link to={'/medicine-inventory'} className={`${currentPath === '/medicine-inventory' ? 'bg-[#FEF2F2] border-r-4 border-r-[#A12217]' : 'bg-transparent'} w-full py-3 flex items-center justify-center   `}>Medicine Inventory</Link>
         </div>
            
