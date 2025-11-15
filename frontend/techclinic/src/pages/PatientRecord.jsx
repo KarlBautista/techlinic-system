@@ -1,23 +1,29 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Search from '../assets/image/searcg.svg'
 import Printer from '../assets/image/printer.svg'
 import Navigation from '../components/Navigation'
 import useData from '../store/useDataStore'
 const PatientRecord = () => {
-  {/*automatic na na gaganaa yung getRecord after mag success yung login ng doctor*/}
-  {/*May data na tong patientRecords (array of object na may diagnosis object pa sa loob)*/}
-  {/*npm run dev muna sa backend folder para gumana*/}
   const { patientRecords } = useData();
-  console.log("ito lahat ng patient records", patientRecords);
+  const [search, setSearch] = useState("");
+  const [selectedDepartment, setSelectedDepartment] = useState("All Department");
+
+  const filteredRecords = patientRecords?.data?.filter((patient) => {
+    const fullname = `${patient.first_name} ${patient.last_name}`.toLowerCase();
+    const matchesSearch = fullname.includes(search.toLowerCase()) || patient.student_id.toLowerCase()
+    .includes(search.toLowerCase());
+    
+    const matchesDepartment = selectedDepartment === "All Department" || patient.department === selectedDepartment;
+    return matchesSearch && matchesDepartment;
+  });
+
+  console.log(filteredRecords)
+  
   return (
     <div className='flex h-full w-full gap-2'>
-       
-       {/* for navigation */}
         <div className='sm:w-[30%] w-[17%] h-full md:w-[25%] lg:w-[17%]'> 
           <Navigation />
         </div>
-        
-
         <div className='w-[83%]  h-full flex justify-center p-5'>
             <div className='w-full h-full flex flex-col items-center gap-5 scrollbar'  >
                 <div className='w-full flex flex-col gap-2'>
@@ -27,11 +33,13 @@ const PatientRecord = () => {
                 <div className='w-[90%] flex justify-between '>
                     <div className='flex h-[50px]  p-2 rounded-[10px] border-1 border-[#EACBCB] gap-2 w-[50%]' >
                       <img src={Search} alt="" className='h-full'/>
-                      <input type="text" className='outline-none w-full'  placeholder='Search'/>
+                      <input type="text" className='outline-none w-full'  placeholder='Search'
+                      value={search} onChange={(e) => setSearch(e.target.value)}/>
                     </div>
 
                     <div className='w-[25%] border-1  h-[50px] border-[#EACBCB] p-2 rounded-[10px]'>
-                      <select id="department" name="department"  className='w-full h-full rounded-[10px] outline-none'>
+                      <select id="department" name="department"  className='w-full h-full rounded-[10px] outline-none'
+                      value={selectedDepartment} onChange={(e) => setSelectedDepartment(e.target.value)}>
                         <option value="All Department" >All Department</option>
                         <option value="College of Science">College of Science</option>
                         <option value="College of Engineering">College of Engineering</option>
@@ -62,26 +70,29 @@ const PatientRecord = () => {
                     </div>
                 </div>
 
-                {/* CREATE A DIV PARA SA RECORD // EACH STUDENT MAGKAKAROON NG DIV */}
+                <div className='w-[90%] h-full overflow-y-auto '>
+                 {filteredRecords?.length > 0 ? (
+                    filteredRecords.map((patient) => (
+                      <div key={patient.id} className='studentCss'>
+                        <div className='studentInfoContainer'>
+                          <p className='studentInfoData'>{patient.student_id}</p>
+                        </div>
+                        <div className='studentInfoContainer'>
+                          <p className='studentInfoData'>{`${patient.first_name} ${patient.last_name}`}</p>
+                          </div>
+                        <div className='studentInfoContainer'>
+                          <p className='studentInfoData'>{patient.department}</p>
+                        </div>
+                        <div className='studentInfoContainer'>
+                          <p className='studentInfoData'>{patient.diagnoses[0].diagnosis}</p>
+                       </div>
+                      </div>
+                      ))
+                     ) : (
+                <p className="text-gray-500 text-sm mt-3">No results found.</p>
+            )}
 
-                <div className='w-[90%] h-full overflow-y-auto'>
-                 {/* Each Student create ng div na may class na studentCss */}
-                  <div className=' studentCss'>  
-                    {/* After nun gawa ka ng apat na div sa loob na may css na StudentInfoContainer */}
-                      <div className='studentInfoContainer'>
-                        {/* After nun gawa ka ng p na may css na studentInfoData */}
-                        <p className='studentInfoData'>TUPM-22-2170</p>
-                      </div>
-                      <div className='studentInfoContainer'>
-                        <p className='studentInfoData'>Richmon Jay Francisco</p>
-                      </div>
-                      <div className='studentInfoContainer'>
-                        <p className='studentInfoData'>College of Science</p>
-                      </div>
-                      <div className='studentInfoContainer'>
-                        <p className='studentInfoData'>Big foot</p>
-                      </div>
-                  </div>     
+             
                 </div>
             </div>
         </div>
