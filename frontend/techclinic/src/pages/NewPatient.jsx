@@ -67,7 +67,7 @@ const NewPatient = () => {
 
     {/* record */}
         <div className='w-[83%]  h-full flex justify-center p-5'>
-            <div className='w-full overflow-y-scroll h-full flex flex-col items-center gap-5 scrollbar'>
+            <div className='w-full overflow-y-scroll h-full flex flex-col items-center gap-5 scrollbar bg-red-100'  >
                 <div className='w-full flex flex-col gap-2'>
                     <p className='text-[1.5rem] font-semibold text-gray-900'>Add Patient Record</p>
                     <p className='text-[1rem] text-gray-500'>Patient Clinical Documentation</p>

@@ -129,3 +129,16 @@
 .scrollbar::-webkit-scrollbar {
     width: 0;
 }
+
+
+.studentCss {
+    @apply h-[40px] w-full flex gap-2 mt-2
+}
+
+.studentInfoContainer {
+    @apply h-full w-full flex items-center
+}
+
+.studentInfoData {
+    @apply text-[.8rem] tracking-[2px]
+}
