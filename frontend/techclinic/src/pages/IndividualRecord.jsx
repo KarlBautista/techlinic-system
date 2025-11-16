@@ -79,12 +79,12 @@ const handleBack = () => {
                           </div>
                       </div>
                       <div className='h-full w-[85%] ml-2 flex flex-col justify-center'>
-                        <p className='text-[1.3rem] font-medium '>{`${patientRecord.first_name} ${patientRecord.last_name}`}</p>
+                        <p className='text-[1.3rem] font-bold text-gray-900'>{`${patientRecord.first_name} ${patientRecord.last_name}`}</p>
                         <p className='text-[.8rem]'>{patientRecord.student_id}</p>
                       </div>
                     </div>
                     <div className='w-[20%] flex items-center justify-center'>
-                      <button className='w-[60%] p-2  rounded-[10px] bg-[#ff6260] text-white text-[.8rem]'>Edit patient</button>
+                      <button className='w-[60%] p-2  rounded-[10px] bg-[#ff6260] text-white text-[.8rem]'>Update Patient</button>
                     </div>
                   </div>
 
