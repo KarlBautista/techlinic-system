@@ -84,7 +84,7 @@ const PatientRecord = () => {
                 <div className='w-[90%] h-full overflow-y-auto '>
                  {filteredRecords?.length > 0 ? (
                     filteredRecords.map((patient) => (
-                      <div key={patient.id} className='studentCss cursor-default hover:bg-red-300' onClick={() => handleIndividualRecord(patient.id)}>
+                      <div key={patient.id} className='studentCss cursor-default hover:underline hover:decoration-[#A12217] hover:decoration-2' onClick={() => handleIndividualRecord(patient.id)}>
                         <div className='studentInfoContainer'>
                           <p className='studentInfoData'>{patient.student_id}</p>
                         </div>
