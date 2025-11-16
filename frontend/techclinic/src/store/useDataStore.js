@@ -20,7 +20,8 @@ const useData = create((set) => ({
             return { success: true, data: payload.data };
 
         } catch (err){
-            console.error(`Error Inserting Record: ${err.message}`)
+            const serverMessage = err?.response?.data?.error || err?.message || 'Unknown error';
+            console.error(`Error Inserting Record: ${serverMessage}`)
             return { success: false, error: serverMessage }
         }
     },

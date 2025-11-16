@@ -14,8 +14,10 @@ const insertRecord = async (req, res) => {
         medication,
         quantity,
         treatment,
-        notes
+        notes,
+        attendingPhysician
     } = req.body.formData;
+    console.log("ito attending", attendingPhysician)
 
     try{
         const { data: patientData, error: patientError } = await supabase.from("patients").insert({
@@ -26,7 +28,8 @@ const insertRecord = async (req, res) => {
             year_level: yearLevel,
             department,
             sex,
-            email
+            email,
+            attending_physician: attendingPhysician,
         }).select();
         if(patientError){
             console.error(`Error inserting record: ${patientError.message}`);

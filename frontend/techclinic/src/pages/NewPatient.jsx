@@ -2,8 +2,11 @@ import React from 'react'
 import Navigation from '../components/Navigation'
 import {useState} from 'react'
 import useData from '../store/useDataStore'
+import useAuth from '../store/useAuthStore'
+import Swal from 'sweetalert2'
 const NewPatient = () => {
   const { insertRecord, getRecords } = useData();
+  const { authenticatedUser } = useAuth();
   const [patientInput, setPatientInput] = useState({
     firstName: "",
     lastName: "",
@@ -18,7 +21,12 @@ const NewPatient = () => {
     quantity: "",
     treatment: "",
     notes: "",
+    attendingPhysician: authenticatedUser?.user_metadata?.full_name,
   });
+
+
+
+
 
   const handleSetPatientInput = (e) => {
     const { name, value } = e.target;
@@ -30,11 +38,30 @@ const NewPatient = () => {
     try{
       const response = await insertRecord(patientInput);
       if(!response.success){
-        alert("Failed inserting record ", response.error);
+        const msg = response.error || 'Failed inserting record';
+        const lower = String(msg).toLowerCase();
+        if (lower.includes('unique') || lower.includes('duplicate') || lower.includes('already exists') || lower.includes('student_id') || lower.includes('student id')) {
+          Swal.fire({ 
+            title: "Student Already Exist",
+            text: "A patient with this Student ID already exists. Please check the Student ID.",
+            showConfirmButton: true,
+            icon: "warning"
+            
+          })
+        } else {
+          Swal.fire({
+            title: "Something went wrong",
+            text: msg,
+            icon: "error"
+          })
+        }
         return;
       } else {
-        alert("record inserted successfully"); 
-        console.log("record inserted successfully: ", response.data);
+        Swal.fire({ 
+          title: "Record Inserted Successfully",
+          icon: "success",
+          timer: 2000,
+        })
         setPatientInput({
           firstName: "",
           lastName: "",

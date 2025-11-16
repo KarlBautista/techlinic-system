@@ -50,39 +50,61 @@ const Navigation = () => {
                 </div>
             </div>
              
-    <div className='h-[70%] w-full flex flex-col items-center justify-center text-[0.9rem] gap-3'>
-            <Link to={'/dashboard'} className={`${currentPath === '/dashboard' ? 'bg-[#FEF2F2] border-r-4 border-r-[#A12217]' : 'bg-transparent'} w-full py-3 flex items-center justify-center  `}>Dashboard</Link>
-            <Link to={'/new-patient'} className={`${currentPath === '/new-patient' ? 'bg-[#FEF2F2] border-r-4 border-r-[#A12217]' : 'bg-transparent'} w-full py-3 flex items-center justify-center   `}>New Patient</Link>
-            <Link to={'/patient-record'} className={`${currentPath === '/patient-record' || currentPath.startsWith('/individual-record') ? 'bg-[#FEF2F2] border-r-4 border-r-[#A12217]' : 'bg-transparent'} w-full py-3 flex items-center justify-center  `}>Patient Record</Link>
-            <Link to={'/medicine-inventory'} className={`${currentPath === '/medicine-inventory' ? 'bg-[#FEF2F2] border-r-4 border-r-[#A12217]' : 'bg-transparent'} w-full py-3 flex items-center justify-center   `}>Medicine Inventory</Link>
-        </div>
-           
-           
-            <div className='h-[20%] w-full border-t  border-gray-300 flex justify-center flex flex-col'>
-                
-                {/* FOR PHYSICIAN NAME */}
-                <div className='w-full h-[60%] bg-pink-100 flex gap-2'>
+        <div className='h-[70%] w-full flex flex-col items-center justify-center gap-3'>
+                        <Link
+                            to={'/dashboard'}
+                            className={`${currentPath === '/dashboard' ? 'bg-[#FEF2F2] border-r-4 border-r-[#A12217] text-[#A12217]' : 'bg-transparent text-[#1f2937]'} w-full py-3 flex items-center justify-center transition-colors duration-150 font-semibold tracking-wide uppercase`}
+                        >
+                            Dashboard
+                        </Link>
 
-                    {/* FOR Initials */}
-                    <div className='w-[30%] shrink-0 h-full flex items-center justify-center'>
+                        <Link
+                            to={'/new-patient'}
+                            className={`${currentPath === '/new-patient' ? 'bg-[#FEF2F2] border-r-4 border-r-[#A12217] text-[#A12217]' : 'bg-transparent text-[#1f2937]'} w-full py-3 flex items-center justify-center transition-colors duration-150 font-semibold tracking-wide uppercase`}
+                        >
+                            New Patient
+                        </Link>
+
+                        <Link
+                            to={'/patient-record'}
+                            className={`${(currentPath === '/patient-record' || currentPath.startsWith('/individual-record')) ? 'bg-[#FEF2F2] border-r-4 border-r-[#A12217] text-[#A12217]' : 'bg-transparent text-[#1f2937]'} w-full py-3 flex items-center justify-center transition-colors duration-150 font-semibold tracking-wide uppercase`}
+                        >
+                            Patient Record
+                        </Link>
+
+                        <Link
+                            to={'/medicine-inventory'}
+                            className={`${currentPath === '/medicine-inventory' ? 'bg-[#FEF2F2] border-r-4 border-r-[#A12217] text-[#A12217]' : 'bg-transparent text-[#1f2937]'} w-full py-3 flex items-center justify-center transition-colors duration-150 font-semibold tracking-wide uppercase`}
+                        >
+                            Medicine Inventory
+                        </Link>
+                </div>
+           
+            <div className='h-[20%] w-full border-t border-gray-300 flex flex-col justify-center'>
+                <div className='w-full h-[60%] bg-[#C41E3A] flex gap-2'>
+
+             
+                      <div className='w-[30%] shrink-0 h-full flex items-center justify-center'>
                           <img
                             src={authenticatedUser?.user_metadata?.avatar_url}
-                          className='bg-[#A12217] h-[70px] w-[70px]  sm:w-[50px] sm:h-[50px] rounded-full'/>
+                          className=' h-[70px] w-[70px]  sm:w-[50px] sm:h-[50px] rounded-full'/>
                     </div>
 
-                    <div className='w-[70%] h-full text-black flex flex-col justify-center'>
+                      <div className='w-[70%] h-full flex flex-col justify-center text-white'>
                             <p className=' font-bold sm:text-[.9rem]'>{`Dr. ${authenticatedUser?.user_metadata?.name}`}</p>
                             <p className=' text-[.8rem] sm:text-[.7rem]'>Primary Core Physician</p>
                     </div>
                 </div>
 
 
-                {/* FOR SETTINGS AND LOG OUT */}
-                <div className="h-[40%] w-full bg-violet-100 flex gap-10 justify-end px-10 sm:px-[10px] sm:gap-[30px] lg:px-10">
-                    <button className='h-full flex items-center gap-[5px]'><img src={Mysettings}  className='h-[20px] text-red-100' alt="Settings" />
-                    <p className='text-[.9rem]'>Settings</p>
-                    </button>
-                    <button className='h-full'><img src={Logout} alt="logout" className='h-[20px]' onClick={handleSignOut}/></button>
+                <div className="h-[40%] w-full bg-[hsl(350,73%,40%)] flex gap-10 justify-end px-10 sm:px-2.5 sm:gap-8 lg:px-10 text-white">
+                                        <button className='h-full flex items-center gap-[5px]' title='Settings'>
+                                              <img src={Mysettings} alt="Settings" className='h-5 object-contain' style={{filter: 'brightness(0) invert(1)'}} />
+                                            <p className='text-[.9rem]'>Settings</p>
+                                        </button>
+                                        <button className='h-full' onClick={() => handleSignOut()} aria-label="Sign out" title='Sign out'>
+                                              <img src={Logout} alt="logout" className='h-5 object-contain' style={{filter: 'brightness(0) invert(1)'}} />
+                                        </button>
                 </div>
                 
             </div>

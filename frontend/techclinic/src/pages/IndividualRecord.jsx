@@ -8,10 +8,12 @@ import Phone from '../assets/image/phone.svg'
 import Email from '../assets/image/email.svg'
 import Calendar from '../assets/image/calendar.svg'
 import Building from '../assets/image/department.svg'
+import { useNavigate } from 'react-router-dom';
 const IndividualRecord = () => {
   const { patientId } = useParams();
   const [ patientRecord, setPatientRecord ] = useState([]);
-  {/*meaning lang nito mag fefetch ng data kapag may pumasok na patientId sa page na to*/}
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -31,16 +33,12 @@ const IndividualRecord = () => {
     }
     fetchData();
   }, [patientId]);
-  console.log("ito data ng patient: ", patientRecord)
 
-
-  console.log(patientRecord.sex)
-  {/*may data na tong naka abang, lagyan nalang ui tapos display*/}
 
 
   const createdAt = new Date(patientRecord.created_at);
-
-  const latestVisit = new Date(patientRecord.diagnoses?.[0]?.created_at)
+  const latestVisit = new Date(patientRecord.diagnoses?.[0]?.created_at);
+  
 
 const latestDate = latestVisit.toLocaleDateString("en-US", {
   year: "numeric",
@@ -51,25 +49,27 @@ const latestDate = latestVisit.toLocaleDateString("en-US", {
 
 const formattedDate = createdAt.toLocaleDateString("en-US", {
   year: "numeric",
-  month: "long",
+  month: "long",  
   day: "numeric"
 });
 
+const handleBack = () => {
+  navigate("/patient-record")
+}
+
 
   return (
-    <div className='flex h-full w-full gap-2'>
-      <div className='sm:w-[30%] w-[17%] h-full md:w-[25%] lg:w-[17%]'>
+    <div className='flex h-full w-full gap-2 '>
+      <div className='sm:w-[30%] w-[17%] h-full md:w-[25%] lg:w-[17%] '>
           <Navigation />
       </div>
-      
       <div className='w-[83%]  h-full flex justify-center p-5'>
-          
           <div className='w-full h-full flex flex-col items-center'  >
                   <div className='w-full flex h-[15%] justify-evenly gap-2'>
                     <div className='w-[20%]'>
                         <div className='w-full h-full flex items-center gap-2'>
                           <img src={Back} alt=""  className='h-[15%]'/>
-                          <p className='text-[.8rem]'>back to patient record</p>
+                          <p className='text-[.8rem] cursor-pointer' onClick={() => handleBack()}>back to patient record</p>
                         </div>
                     </div>
                     <div className='w-[30%] flex '>
@@ -92,7 +92,6 @@ const formattedDate = createdAt.toLocaleDateString("en-US", {
                       <div className='h-[60%] w-full flex items-center justify-center gap-10'> 
                           <div className='h-full w-[35%] border-2 border-[#eddcdc] flex flex-col rounded-[15px]'>
                               <div className='h-[40%] flex flex-col gap-4 '>
-                                
                                 <div className='w-full h-[30%] flex gap-2 p-2 items-center'>
                                   <img src={User} className='h-[20px]' alt="" />
                                   <p className='font-medium text-[#A12217] text-[.8rem]'>Demographics</p>
@@ -107,11 +106,9 @@ const formattedDate = createdAt.toLocaleDateString("en-US", {
                                     <p className='text-[#a9a9a9] text-[.9rem]'>Gender</p>
                                     <p className='font-medium text-[.9rem]'>Male</p>
                                   </div>
-
                                   <div className='w-full border-1 border-[#a9a9a9]'></div>
                                 </div>
                               </div>
-
                               <div className='h-[60%] p-3 flex flex-col gap-7 '>
                                   <div className='flex gap-2'>
                                     <img src={Phone} className='h-[20px]' alt="" />
@@ -169,7 +166,7 @@ const formattedDate = createdAt.toLocaleDateString("en-US", {
                                         Attending Physician
                                       </p>
                                       <p className='text-[.9rem] font-medium'>
-                                        {`Last visit: ${patientRecord.diagnoses?.[0]?.medication}`}
+                                        {`Last visit: ${patientRecord.attending_physician}`}
                                       </p>
                                     </div>
 
