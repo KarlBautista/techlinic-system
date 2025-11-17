@@ -5,7 +5,6 @@ import Navigation from '../components/Navigation'
 import useData from '../store/useDataStore'
 import { useNavigate } from 'react-router-dom'
 const PatientRecord = () => {
-  
   const { patientRecords } = useData();
   const [search, setSearch] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("All Department");

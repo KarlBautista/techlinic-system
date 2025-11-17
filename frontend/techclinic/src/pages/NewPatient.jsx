@@ -60,6 +60,12 @@ const NewPatient = () => {
           department: existing.department,
           sex: existing.sex
         }));
+        Swal.fire({ 
+          title: `Student: ${patientInput.studentId} Information Found.`,
+          text: "The inputs have the existing data of the student now",
+          icon: "success",
+          timer: 1500,
+        })
       } catch (err) {
         console.error('Error fetching existing student info', err);
         setStudentInformation(null);
