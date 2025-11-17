@@ -65,6 +65,7 @@ const NewPatient = () => {
           text: "The inputs have the existing data of the student now",
           icon: "success",
           timer: 1500,
+          showConfirmButton: false,
         })
       } catch (err) {
         console.error('Error fetching existing student info', err);
