@@ -18,9 +18,6 @@ const Login = () => {
       }
     }, [authenticatedUser, navigate])
 
-    console.log(authenticatedUser);
-
-
     const handleSignInWithGoogle = async () => {
       try{
         const response = await signInWithGoogle();

@@ -9,6 +9,7 @@ const PatientRecord = () => {
   const [search, setSearch] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("All Department");
   const navigate = useNavigate();
+  console.log("ito mga patientRecords", patientRecords);
 
   const filteredRecords = patientRecords?.data?.filter((patient) => {
     const fullname = `${patient.first_name} ${patient.last_name}`.toLowerCase();

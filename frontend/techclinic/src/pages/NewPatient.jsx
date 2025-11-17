@@ -4,9 +4,11 @@ import {useState} from 'react'
 import useData from '../store/useDataStore'
 import useAuth from '../store/useAuthStore'
 import Swal from 'sweetalert2'
+import { useEffect } from 'react'
 const NewPatient = () => {
-  const { insertRecord, getRecords } = useData();
+  const { insertRecord, getRecords, getRecordsFromExistingPatient } = useData();
   const { authenticatedUser } = useAuth();
+  const [studentInformation, setStudentInformation] = useState(null);
   const [patientInput, setPatientInput] = useState({
     firstName: "",
     lastName: "",
@@ -24,6 +26,55 @@ const NewPatient = () => {
     attendingPhysician: authenticatedUser?.user_metadata?.full_name,
   });
 
+  // PAG NAGING 10 NA LENGTH NG STUDENT ID MAG FEFETCH
+  useEffect(() => {
+    const fetchIfExists = async () => {
+      const id = String(patientInput.studentId || "").trim();
+      if (id.length !== 11) {
+
+        setStudentInformation(null);
+        return;
+      }
+
+      try {
+        const response = await getRecordsFromExistingPatient(id);
+        if (!response || !response.success) {
+          setStudentInformation(null);
+          return;
+        }
+
+        const payload = response.data;
+        const existing = Array.isArray(payload) ? payload[0] : payload;
+        if (!existing) {
+          setStudentInformation(null);
+          return;
+        }
+        setStudentInformation(existing);
+        setPatientInput((prev) => ({
+          ...prev,
+          firstName: existing.first_name,
+          lastName: existing.last_name,
+          email: existing.email,
+          contactNumber: existing.contact_number,
+          yearLevel: existing.year_level,
+          department: existing.department,
+          sex: existing.sex
+        }));
+        Swal.fire({ 
+          title: `Student: ${patientInput.studentId} Information Found.`,
+          text: "The inputs have the existing data of the student now",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        })
+      } catch (err) {
+        console.error('Error fetching existing student info', err);
+        setStudentInformation(null);
+      }
+    };
+
+    fetchIfExists();
+  }, [patientInput.studentId, getRecordsFromExistingPatient]);
 
 
 
