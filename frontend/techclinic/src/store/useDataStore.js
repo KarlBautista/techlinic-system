@@ -40,8 +40,22 @@ const useData = create((set) => ({
             console.error(`Error getting records: ${err.message}`);
             return { success: false, error: err.message };
         }
+    },
+    getRecordsFromExistingPatient: async (studentId) => {
+       
+        try {
+            const response = await axios.get(`http://localhost:3000/api/get-records-from-existing-patients/${studentId}`);
+            if(response.error) {
+                console.error(`Error getting records: ${response.error}`);
+                return { success: false, error: response.error };
+            }
+        return response.data;
+
+        } catch (err) {
+            console.error(`error getting records: ${err.message}`);
+            return { success: false, error: err.message };
+        }
     }
-    
 }));
 
 export default useData;
