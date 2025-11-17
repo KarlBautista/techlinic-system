@@ -147,3 +147,19 @@
 .studentInfoData {
     @apply text-[.8rem] tracking-[2px]
 }
+
+.medicineContainer {
+    @apply h-[70px] w-full  gap-2 items-center justify-between bg-[#FFE5E5] flex rounded-[10px] p-2;
+}
+
+.info {
+    @apply w-[18%] h-full flex flex-col items-center justify-center bg-red-100
+}
+
+.infoName {
+    @apply  w-full flex items-center justify-center text-[.8rem] text-[#9f8f8f];
+}
+
+.medicineInfo{
+    @apply w-full flex items-center justify-center text-[1rem] font-medium
+}
