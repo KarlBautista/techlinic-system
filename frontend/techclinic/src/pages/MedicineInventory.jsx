@@ -2,8 +2,18 @@ import React from 'react'
 import Search from '../assets/image/searcg.svg'
 import Navigation from '../components/Navigation'
 import Medicine from '../assets/image/medicine.svg'
+import { useNavigate } from 'react-router-dom'
 const MedicineInventory = () => {
+  const navigate = useNavigate();
+  
+  const handleAddMedicine = () => {
+    navigate("/add-medicine");
+  }
+
+
+
   return (
+    
      <div className='flex h-full w-full gap-2'>
      <div className='w-[17%] h-full'>
         <Navigation />
@@ -22,7 +32,8 @@ const MedicineInventory = () => {
                 <input type="text" className='outline-none w-full'  placeholder='Search'/>
               </div>
 
-              <div id='addMedicine' className='flex h-[50px]  p-2 rounded-[10px] bg-[#A12217] gap-2 w-[20%] items-cenrter justify-center'>
+              <div id='addMedicine' className='flex h-[50px]  p-2 rounded-[10px] bg-[#A12217] gap-2 w-[20%] items-cenrter justify-center cursor-pointer'
+              onClick={() => handleAddMedicine()}>
                   <img src={Medicine} alt="" />
                   <button className='text-white text-[.9rem]'>Add Medicine</button>
               </div>

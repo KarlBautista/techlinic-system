@@ -74,7 +74,7 @@ const Navigation = () => {
 
                         <Link
                             to={'/medicine-inventory'}
-                            className={`${currentPath === '/medicine-inventory' ? 'bg-[#FEF2F2] border-r-4 border-r-[#A12217] text-[#A12217]' : 'bg-transparent text-[#1f2937]'} w-full py-3 flex items-center justify-center transition-colors duration-150 font-semibold tracking-wide uppercase`}
+                            className={`${currentPath === '/medicine-inventory' || currentPath === "/add-medicine" ? 'bg-[#FEF2F2] border-r-4 border-r-[#A12217] text-[#A12217]' : 'bg-transparent text-[#1f2937]'} w-full py-3 flex items-center justify-center transition-colors duration-150 font-semibold tracking-wide uppercase`}
                         >
                             Medicine Inventory
                         </Link>

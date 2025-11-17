@@ -182,8 +182,6 @@ const handleBack = () => {
                               </div>
                           </div>
                       </div>
-
-
                     <div className='h-[40%] flex items-center justify-center '>
                           <div className='w-[80%] h-full overflow-y-auto'>
                               <div className='h-[50px] font-medium p-3 flex items-center justify-between w-full border-1 rounded-[10px] mt-3'>
