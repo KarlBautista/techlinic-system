@@ -23,12 +23,25 @@ const NewPatient = () => {
     dateOfBirth: "",
     address: "",
     diagnosis: "",
-    medication: "",
+    medication: {},
     quantity: "",
     treatment: "",
     notes: "",
     attendingPhysician: authenticatedUser?.user_metadata?.full_name,
   });
+
+  // Normalize various date formats to YYYY-MM-DD for <input type="date">
+  const formatDateForInput = (val) => {
+    if (!val) return '';
+    try {
+      const d = new Date(val);
+      if (isNaN(d)) return '';
+      // toISOString gives YYYY-MM-DDTHH:MM:SS.sssZ -> slice to get YYYY-MM-DD
+      return d.toISOString().slice(0, 10);
+    } catch (e) {
+      return '';
+    }
+  }
 
   // PAG NAGING 10 NA LENGTH NG STUDENT ID MAG FEFETCH
   useEffect(() => {
@@ -63,7 +76,7 @@ const NewPatient = () => {
           yearLevel: existing.year_level,
           department: existing.department,
           sex: existing.sex,
-          dateOfBirth: existing.date_of_birth ?? existing.dob ?? '',
+          dateOfBirth: existing.date_of_birth ? formatDateForInput(existing.date_of_birth) : (existing.dob ? formatDateForInput(existing.dob) : ''),
           address: existing.address ?? ''
         }));
         Swal.fire({ 
@@ -87,6 +100,12 @@ const NewPatient = () => {
 
   const handleSetPatientInput = (e) => {
     const { name, value } = e.target;
+
+    if(name === "medication"){
+      const medjObj = medicines.find((m) => m.id === Number(value));
+      setPatientInput((prev) => ({...prev, medication: medjObj}));
+        return; // ← IMPORTANT
+    }
     setPatientInput((prev) => ({ ...prev, [name]: value }));
   }
 
@@ -312,11 +331,10 @@ const NewPatient = () => {
                           </div>
 
                           <div className='formDiagnosis'>
-                              <select id="medication" name="medication" value={patientInput.medication} onChange={handleSetPatientInput} className='w-full p-2 rounded-[10px] border outline-none'>
+                              <select id="medication" name="medication" value={patientInput.medication?.id || ""} onChange={handleSetPatientInput} className='w-full p-2 rounded-[10px] border outline-none'>
                               <option value="" disabled>Medication</option>
                                 {medicines?.map((medicine) => {
-                                return <option value={medicine.medicine_name}>{`${medicine.medicine_name}, ${medicine.generic_name} - ${medicine.stock_level} in stock`}</option>
-                            
+                                return <option key={medicine.id} value={medicine.id}>{`${medicine.medicine_name}, ${medicine.generic_name} - ${medicine.stock_level} in stock`}</option>
                                 })}
                                    
                                 

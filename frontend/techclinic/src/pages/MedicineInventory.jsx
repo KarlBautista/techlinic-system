@@ -68,7 +68,7 @@ const MedicineInventory = () => {
               <tbody>
            {medicines && medicines.length > 0 ? 
              ( medicines.map((medicine) => {
-              return <tr className='odd:bg-white even:bg-gray-50 hover:bg-gray-100'>
+              return <tr key={medicine.id} className='odd:bg-white even:bg-gray-50 hover:bg-gray-100'>
                 <td className='px-4 py-2 border-b'>{medicine.medicine_name}</td>
                 <td className='px-4 py-2 border-b'>{medicine.generic_name}</td>
                 <td className='px-4 py-2 border-b'>{medicine.brand}</td>

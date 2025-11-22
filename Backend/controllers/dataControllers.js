@@ -19,7 +19,10 @@ const insertRecord = async (req, res) => {
         notes,
         attendingPhysician
     } = req.body.formData;
-    console.log("ito attending", attendingPhysician)
+    console.log("Medication received:", medication);
+console.log("Stock level:", medication.stock_level);
+console.log("Quantity:", quantity);
+
 
     try{
         const { data: recordData, error: recordError } = await supabase.from("records").insert({
@@ -68,7 +71,7 @@ const insertRecord = async (req, res) => {
             record_id: recordId,
             student_id :studentId,
             diagnosis,
-            medication,
+            medication: medication.medicine_name,
             quantity,
             treatment,
             notes
@@ -77,6 +80,16 @@ const insertRecord = async (req, res) => {
         if(diagnosisError){
             console.error(`Error inserting diagnosis :${diagnosisError.message}`);
             return res.status(500).json({ success: false, error: diagnosisError.message });
+        }
+
+        if(diagnosis !== "") {
+            const { error: decreaseMedicationStockQuantityError } = await supabase.from("medicines").update({
+                "stock_level": Number(medication.stock_level) - Number(quantity)
+            }).eq("id", medication.id);
+
+            if(decreaseMedicationStockQuantityError) {
+                console.error(`Error updating stock level: ${decreaseMedicationStockQuantityError.message}`);
+            }
         }
 
         return res.status(200).json({ success: true, data: { patient: recordData, diagnosis: diagnosisData } });
@@ -92,12 +105,12 @@ const getRecords = async (req, res) => {
         const { data: patientsRecordData, error:patientsRecordError } = await supabase.from("records").select("*, diagnoses (*)");
         if(patientsRecordError){
             console.error(`Error getting records: ${patientsInformationError.message}`);
-            res.status(500).json({ success: false, error: patientsInformationError.message });
+            return res.status(500).json({ success: false, error: patientsInformationError.message });
         }
 
         if(patientsRecordData){
             console.log("successfully got the patient records");
-            res.status(200).json({ success: true, data: patientsRecordData });
+             res.status(200).json({ success: true, data: patientsRecordData });
         }
 
     } catch (err) {
