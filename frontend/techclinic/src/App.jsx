@@ -9,10 +9,11 @@ import useAuth from './store/useAuthStore'
 import useData from './store/useDataStore'
 function App() {
     const { authListener, getUser } = useAuth();
-    const { getRecords } = useData();
+    const { getRecords, getPatients } = useData();
     useEffect(() => {
         getUser();
         getRecords();
+        getPatients();
         const unsubscribe = authListener();
         return () => {
             if(unsubscribe && typeof unsubscribe === "function"){

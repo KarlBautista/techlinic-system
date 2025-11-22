@@ -20,6 +20,18 @@ const PatientRecord = () => {
     return matchesSearch && matchesDepartment;
   });
 
+  function formatDate(dateString) {
+  if (!dateString) return "";
+
+  const date = new Date(dateString);
+
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
   console.log("mga nasearch", filteredRecords);
 
   const handleIndividualRecord = (studentId) => {
@@ -42,70 +54,86 @@ const PatientRecord = () => {
                     <p className='text-[1.5rem] font-semibold text-gray-900'>Patient Record</p>
                     <p className='text-[1rem] text-gray-500'>Manage patient information and medical records</p>
                 </div>
-                <div className='w-[90%] flex justify-between '>
-                    <div className='flex h-[50px]  p-2 rounded-[10px] border-1 border-[#EACBCB] gap-2 w-[50%]' >
-                      <img src={Search} alt="" className='h-full'/>
-                      <input type="text" className='outline-none w-full'  placeholder='Search'
-                      value={search} onChange={(e) => setSearch(e.target.value)}/>
-                    </div>
-
-                    <div className='w-[25%] border-1  h-[50px] border-[#EACBCB] p-2 rounded-[10px]'>
-                      <select id="department" name="department"  className='w-full h-full rounded-[10px] outline-none'
-                      value={selectedDepartment} onChange={(e) => setSelectedDepartment(e.target.value)}>
-                        <option value="All Department" >All Department</option>
-                        <option value="College of Science">College of Science</option>
-                        <option value="College of Engineering">College of Engineering</option>
-                        <option value="College of Industrial Technology">College of Industrial Technology</option>
-                        <option value="College of Architecture and Fine Arts">College of Architecture and Fine Arts</option>
-                      </select>
-                    </div>
-
-                    <div className='w-[5%] h-[50px]'> 
-                      <button className='w-full h-full flex justify-center items-center'>
-                         <img src={Printer} alt="" className='h-[50%]' />
-                      </button>
-                    </div>
-                </div>
-
-                <div className=' h-[40px] w-[90%] flex gap-2 mt-[20px]'>
-                    <div className='h-full w-full flex items-center font-medium'>
-                      <p className='text-[.9remrem] tracking-[2px]'>Student ID</p>
-                    </div>
-                    <div className='h-full w-full flex items-center font-medium'>
-                      <p className='text-[.9remrem] tracking-[2px]'>Name</p>
-                    </div>
-                    <div className='h-full w-full flex items-center font-medium'>
-                      <p className='text-[.9remrem] tracking-[2px]'>Department</p>
-                    </div>
-                    <div className='h-full w-full flex items-center font-medium'>
-                      <p className='text-[.9remrem] tracking-[2px]'>Diagnosis</p>
-                    </div>
-                </div>
-
-                <div className='w-[90%] h-full overflow-y-auto '>
-                 {filteredRecords?.length > 0 ? (
-                    filteredRecords.map((patient) => (
-                      <div key={patient.id} className='studentCss cursor-default hover:underline hover:decoration-[#A12217] hover:decoration-2' onClick={() => handleIndividualRecord(patient.student_id)}>
-                        <div className='studentInfoContainer'>
-                          <p className='studentInfoData'>{patient.student_id}</p>
-                        </div>
-                        <div className='studentInfoContainer'>
-                          <p className='studentInfoData'>{`${patient.first_name} ${patient.last_name}`}</p>
-                          </div>
-                        <div className='studentInfoContainer'>
-                          <p className='studentInfoData'>{patient.department}</p>
-                        </div>
-                        <div className='studentInfoContainer'>
-                          <p className='studentInfoData'>{patient.diagnoses[0].diagnosis}</p>
-                       </div>
-                      </div>
-                      ))
-                     ) : (
-                <p className="text-gray-500 text-sm mt-3">No results found.</p>
-            )}
-
+                <div className='w-[90%] flex flex-col md:flex-row md:items-center justify-between gap-3'>
              
+                  <div className='flex-1 md:max-w-[50%] w-full'>
+                    <div className='relative'>
+                      <img src={Search} alt="search" className='absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 opacity-70' />
+                      <input
+                        type="text"
+                        className='outline-none w-full pl-12 pr-4 h-12 rounded-lg border border-[#EACBCB] focus:ring-2 focus:ring-[#b01c34] transition'
+                        placeholder='Search by name or student ID'
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className='w-full md:w-1/4'>
+                    <select
+                      id="department"
+                      name="department"
+                      className='w-full h-12 rounded-lg border border-[#EACBCB] px-4 outline-none focus:ring-2 focus:ring-[#b01c34]'
+                      value={selectedDepartment}
+                      onChange={(e) => setSelectedDepartment(e.target.value)}
+                    >
+                      <option value="All Department">All Department</option>
+                      <option value="College of Science">College of Science</option>
+                      <option value="College of Engineering">College of Engineering</option>
+                      <option value="College of Industrial Technology">College of Industrial Technology</option>
+                      <option value="College of Architecture and Fine Arts">College of Architecture and Fine Arts</option>
+                    </select>
+                  </div>
+
+                  {/* Actions */}
+                  <div className='w-full md:w-auto flex items-center gap-2'>
+                    <button
+                      className='h-12 px-4 rounded-lg bg-[#b01c34] text-white flex items-center gap-2 hover:bg-[#9a1528] transition'
+                      title='Print'
+                    >
+                      <img src={Printer} alt="print" className='w-5 h-5' />
+                      <span className='hidden md:inline'>Print</span>
+                    </button>
+                    <button
+                      className='h-12 px-3 rounded-lg border border-[#EACBCB] bg-white text-gray-700 hover:bg-gray-50 transition'
+                      onClick={() => { setSearch(''); setSelectedDepartment('All Department'); }}
+                      title='Clear filters'
+                    >
+                      Clear
+                    </button>
+                  </div>
                 </div>
+
+                <div className='w-full overflow-x-auto py-4'>
+                  <div className='w-[95%] mx-auto bg-white rounded-xl shadow-lg overflow-hidden'>
+                      <table className='min-w-[1000px] w-full table-auto bg-transparent rounded-xl' >
+                      <thead className='bg-[#A12217]'>
+                        <tr>
+                          <th className='px-6 py-4 text-left text-lg font-semibold text-white'>Student ID</th>
+                          <th className='px-6 py-4 text-left text-lg font-semibold text-white'>Name</th>
+                          <th className='px-6 py-4 text-left text-lg font-semibold text-white'>Diagnosis</th>
+                          <th className='px-6 py-4 text-left text-lg font-semibold text-white'>Department</th>
+                          <th className='px-6 py-4 text-left text-lg font-semibold text-white'>Created at</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredRecords?.map((patient) => (
+                          <tr key={patient.id} className='bg-white even:bg-gray-50 hover:bg-[#FFF1F1] transition-colors cursor-pointer' onClick={() => handleIndividualRecord(patient.student_id)}>
+                            <td className='px-6 py-4 text-base text-gray-800'>{patient.student_id}</td>
+                            <td className='px-6 py-4 text-base text-gray-800'>{`${patient.first_name} ${patient.last_name}`}</td>
+                            <td className='px-6 py-4 text-base text-gray-800'>{patient.diagnoses?.[0]?.diagnosis ?? '—'}</td>
+                            <td className='px-6 py-4 text-base text-gray-800'>{patient.department}</td>
+                            <td className='px-6 py-4 text-base text-gray-800'>{formatDate(patient.created_at)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+            
+
+              
             </div>
         </div>
     </div>

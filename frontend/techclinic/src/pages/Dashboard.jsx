@@ -6,7 +6,8 @@ import useAuth from '../store/useAuthStore';
 import useData from '../store/useDataStore';
 const Dashboard = () => {
   const { authenticatedUser } = useAuth();
-  const { patientRecords } = useData();
+  const { patientRecords, patientsData} = useData();
+  const records = patientRecords?.data ?? [];
   const date = new Date();
 function formatDate(dateString) {
   if (!dateString) return "";
@@ -21,7 +22,7 @@ function formatDate(dateString) {
 }
 
 
- console.log(patientRecords)
+ console.log('mga patientssss', patientsData)
   return (
     <div className='flex h-full w-full gap-2'>
       <div className='w-[17%] h-full'>
@@ -36,19 +37,19 @@ function formatDate(dateString) {
       <div className='w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
         <div className='p-4 bg-white rounded-lg shadow-md flex flex-col'>
           <span className='text-sm text-gray-500'>Total Patients</span>
-          <span className='text-3xl font-bold text-[#b01c34] mt-2'>0</span>
+          <span className='text-3xl font-bold text-[#b01c34] mt-2'>{patientsData.length}</span>
           <span className='text-xs text-gray-400 mt-1'>Number of registered patients</span>
         </div>
 
         <div className='p-4 bg-white rounded-lg shadow-md flex flex-col'>
           <span className='text-sm text-gray-500'>Total Visits</span>
-          <span className='text-3xl font-bold text-[#b01c34] mt-2'>0</span>
+          <span className='text-3xl font-bold text-[#b01c34] mt-2'>{records.length}</span>
           <span className='text-xs text-gray-400 mt-1'>Total clinic visits recorded</span>
         </div>
 
         <div className='p-4 bg-white rounded-lg shadow-md flex flex-col'>
           <span className='text-sm text-gray-500'>Total Diagnoses</span>
-          <span className='text-3xl font-bold text-[#b01c34] mt-2'>0</span>
+          <span className='text-3xl font-bold text-[#b01c34] mt-2'>{records.length}</span>
           <span className='text-xs text-gray-400 mt-1'>Total diagnoses entries</span>
         </div>
 
@@ -76,15 +77,21 @@ function formatDate(dateString) {
         </tr>
       </thead>
       <tbody>
-        {patientRecords.data.map((patient) => (
-          <tr key={patient.id} className='hover:bg-gray-50 cursor-pointer transition-colors'>
-            <td className='px-4 py-3 text-sm text-gray-800 border-b'>{patient.student_id}</td>
-            <td className='px-4 py-3 text-sm text-gray-800 border-b'>{`${patient.first_name} ${patient.last_name}`}</td>
-             <td className='px-4 py-3 text-sm text-gray-800 border-b'>{patient.diagnoses[0].diagnosis}</td>
-            <td className='px-4 py-3 text-sm text-gray-800 border-b'>{patient.department}</td>
-            <td className='px-4 py-3 text-sm text-gray-800 border-b'>{formatDate(patient.created_at)}</td>
+        {records.length === 0 ? (
+          <tr>
+            <td colSpan={5} className='px-4 py-6 text-center text-sm text-gray-500'>No recent records found.</td>
           </tr>
-        ))}
+        ) : (
+          records.map((patient) => (
+            <tr key={patient.id} className='hover:bg-gray-50 cursor-pointer transition-colors'>
+              <td className='px-4 py-3 text-sm text-gray-800 border-b'>{patient.student_id ?? '-'}</td>
+              <td className='px-4 py-3 text-sm text-gray-800 border-b'>{`${patient.first_name ?? ''} ${patient.last_name ?? ''}`.trim() || '-'}</td>
+              <td className='px-4 py-3 text-sm text-gray-800 border-b'>{patient.diagnoses?.[0]?.diagnosis ?? '-'}</td>
+              <td className='px-4 py-3 text-sm text-gray-800 border-b'>{patient.department ?? '-'}</td>
+              <td className='px-4 py-3 text-sm text-gray-800 border-b'>{formatDate(patient.created_at)}</td>
+            </tr>
+          ))
+        )}
       </tbody>
     </table>
 </div>
