@@ -5,7 +5,7 @@ const { insertRecord, getRecords, getRecord, getRecordsFromExisitingPatients } =
 
 router.post("/insert-record", insertRecord);
 router.get("/get-records", getRecords);
-router.get("/get-record/:patientId", getRecord);
+router.get("/get-record/:studentId", getRecord);
 router.get("/get-records-from-existing-patients/:studentId", getRecordsFromExisitingPatients)
 
 module.exports = router;

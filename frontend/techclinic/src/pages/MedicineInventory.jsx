@@ -3,6 +3,7 @@ import Search from '../assets/image/searcg.svg'
 import Navigation from '../components/Navigation'
 import Medicine from '../assets/image/medicine.svg'
 import { useNavigate } from 'react-router-dom'
+
 const MedicineInventory = () => {
   const navigate = useNavigate();
   
@@ -38,7 +39,7 @@ const MedicineInventory = () => {
                   <button className='text-white text-[.9rem]'>Add Medicine</button>
               </div>
           </div>
-
+        
           <div className='w-[80%] h-[550px]'>
                 <div className='medicineContainer'>
                     <div className='info'>

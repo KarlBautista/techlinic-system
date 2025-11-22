@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+
+
+@custom-variant dark (&:is(.dark *));
+
 /* LOGIN */
 
 .school {
@@ -8,11 +12,6 @@
    background-position: center;
     background-repeat: no-repeat;
 }
-
-
-
-
-
 
 /* .logoDiv {
     @apply w-[50%] h-[20%] flex justify-center
@@ -25,7 +24,6 @@
 .rightLogo{
     @apply w-[70%] flex flex-col justify-center
 } */
-
 
 .logoDiv{
     @apply flex h-[20%] lg:w-[50%]  gap-2 xl:w-[50%];
@@ -47,24 +45,20 @@
     @apply w-[60%] flex flex-col relative lg:w-[50%];
 }
 
-
 .formDiv input {
     @apply w-full border-b-2 pt-6 pb-2 outline-none duration-200 text-gray-400;
 }
-
 
 .formDiv label {
     @apply absolute left-2 top-1/2 transform -translate-y-0 transition-all duration-200  pointer-events-none bg-transparent px-1;
     transform-origin: left top;
 }
 
-
 .formDiv input:focus + label,
 .formDiv input:not(:placeholder-shown) + label {
     transform: translateY(-1.6rem) scale(0.85) translateX(-1rem);
     color: gray;
 }
-
 
 /* For Navigation */
 
@@ -82,25 +76,20 @@
     @apply xl:text-[1.2rem] xl:text-[.8rem]
 }
 
-
 /* FOR STUDENT INFORMATION */
-
 
 .formInfo {
     @apply w-[45%] flex flex-col relative  flex-wrap mt-7
 }
 
-
 .formInfo input {
     @apply border-1 p-2 rounded-[10px] outline-none
 }
-
 
 .formInfo label {
     @apply absolute left-2 top-1/4 transform -translate-y-0 transition-all duration-200  pointer-events-none bg-transparent px-1;
     transform-origin: left top;
 }
-
 
 .formInfo input:focus + label,
 .formInfo input:not(:placeholder-shown) + label {
@@ -108,22 +97,18 @@
     color: gray;
 }
 
-
 .formDiagnosis {
     @apply w-[90%] flex flex-col relative  flex-wrap mt-7
 }
-
 
 .formDiagnosis input {
     @apply border-1 p-2 rounded-[10px] outline-none
 }
 
-
 .formDiagnosis label {
     @apply absolute left-2 top-1/4 transform -translate-y-0 transition-all duration-200  pointer-events-none bg-transparent px-1;
     transform-origin: left top;
 }
-
 
 .formDiagnosis input:focus + label,
 .formDiagnosis input:not(:placeholder-shown) + label {
@@ -134,7 +119,6 @@
 .scrollbar::-webkit-scrollbar {
     width: 0;
 }
-
 
 .studentCss {
     @apply h-[40px] w-full flex gap-2 mt-2

@@ -22,11 +22,11 @@ const PatientRecord = () => {
 
   console.log("mga nasearch", filteredRecords);
 
-  const handleIndividualRecord = (patientId) => {
+  const handleIndividualRecord = (studentId) => {
     try {
-      navigate(`/individual-record/${patientId}`);
+      navigate(`/individual-record/${studentId}`);
     } catch (err) {
-      console.error(`Someting went wrong navigating to indidual record: ${patientId}`);
+      console.error(`Someting went wrong navigating to indidual record: ${studentId}`);
       return;
     }
   }
@@ -85,7 +85,7 @@ const PatientRecord = () => {
                 <div className='w-[90%] h-full overflow-y-auto '>
                  {filteredRecords?.length > 0 ? (
                     filteredRecords.map((patient) => (
-                      <div key={patient.id} className='studentCss cursor-default hover:underline hover:decoration-[#A12217] hover:decoration-2' onClick={() => handleIndividualRecord(patient.id)}>
+                      <div key={patient.id} className='studentCss cursor-default hover:underline hover:decoration-[#A12217] hover:decoration-2' onClick={() => handleIndividualRecord(patient.student_id)}>
                         <div className='studentInfoContainer'>
                           <p className='studentInfoData'>{patient.student_id}</p>
                         </div>

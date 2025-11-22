@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useTransition } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios';
 import User from '../assets/image/user.svg'
@@ -10,48 +10,43 @@ import Calendar from '../assets/image/calendar.svg'
 import Building from '../assets/image/department.svg'
 import { useNavigate } from 'react-router-dom';
 const IndividualRecord = () => {
-  const { patientId } = useParams();
+  const { studentId } = useParams();
   const [ patientRecord, setPatientRecord ] = useState([]);
+  const [diagnoses, setDiagnoses] = useState([]);
+  const [expandedIndex, setExpandedIndex] = useState(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
+  console.log(studentId)
+  useEffect(() => { 
     const fetchData = async () => {
       try {
-         const response = await axios.get(`http://localhost:3000/api/get-record/${patientId}`);
+         const response = await axios.get(`http://localhost:3000/api/get-record/${studentId}`);
         
          if (response.status !== 200) {
            console.error(`Error getting record: HTTP ${response.status}`);
            return;
          }
 
-
+          console.log(`ito mga response`, response.data.data);
+         setDiagnoses(response.data.data.map((d) => d.diagnoses));
          setPatientRecord(response.data.data[0]);
+     
       } catch (err) {
         console.error(`Something went wrong getting record: ${err?.message}`);
         return;
       }
     }
     fetchData();
-  }, [patientId]);
-
-
-
-  const createdAt = new Date(patientRecord.created_at);
-  const latestVisit = new Date(patientRecord.diagnoses?.[0]?.created_at);
+  }, [studentId]);
   
+  console.log("ito mga diagnoses", diagnoses)
 
-const latestDate = latestVisit.toLocaleDateString("en-US", {
-  year: "numeric",
-  month: "long",
-  day: "numeric"
-});
-  
+  const latestVisit = patientRecord?.diagnoses?.[0]?.created_at ? new Date(patientRecord.diagnoses[0].created_at) : null;
 
-const formattedDate = createdAt.toLocaleDateString("en-US", {
-  year: "numeric",
-  month: "long",  
-  day: "numeric"
-});
+  const latestDate = latestVisit
+    ? latestVisit.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
+    : null;
+
+
 
 const handleBack = () => {
   navigate("/patient-record")
@@ -63,135 +58,135 @@ const handleBack = () => {
       <div className='sm:w-[30%] w-[17%] h-full md:w-[25%] lg:w-[17%] '>
           <Navigation />
       </div>
-      <div className='w-[83%]  h-full flex justify-center p-5'>
-          <div className='w-full h-full flex flex-col items-center'  >
-                  <div className='w-full flex h-[15%] justify-evenly gap-2'>
-                    <div className='w-[20%]'>
-                        <div className='w-full h-full flex items-center gap-2'>
-                          <img src={Back} alt=""  className='h-[15%]'/>
-                          <p className='text-[.8rem] cursor-pointer' onClick={() => handleBack()}>back to patient record</p>
-                        </div>
-                    </div>
-                    <div className='w-[30%] flex '>
-                      <div className='h-full w-[25%] flex justify-center items-center'>
-                          <div className='h-[70px] w-[70px] rounded-full border-1  border-[red] flex items-center justify-center bg-red-100'>
-                              <p className='text-[2rem] font-bold'>KB</p>
-                          </div>
-                      </div>
-                      <div className='h-full w-[85%] ml-2 flex flex-col justify-center'>
-                        <p className='text-[1.3rem] font-bold text-gray-900'>{`${patientRecord.first_name} ${patientRecord.last_name}`}</p>
-                        <p className='text-[.8rem]'>{patientRecord.student_id}</p>
-                      </div>
-                    </div>
-                    <div className='w-[20%] flex items-center justify-center'>
-                      <button className='w-[60%] p-2  rounded-[10px] bg-[#ff6260] text-white text-[.8rem]'>Update Patient</button>
-                    </div>
-                  </div>
-
-                  <div className='w-full h-[85%] flex flex-col '>
-                      <div className='h-[60%] w-full flex items-center justify-center gap-10'> 
-                          <div className='h-full w-[35%] border-2 border-[#eddcdc] flex flex-col rounded-[15px]'>
-                              <div className='h-[40%] flex flex-col gap-4 '>
-                                <div className='w-full h-[30%] flex gap-2 p-2 items-center'>
-                                  <img src={User} className='h-[20px]' alt="" />
-                                  <p className='font-medium text-[#A12217] text-[.8rem]'>Demographics</p>
-                                </div>
-
-                                <div className='h-[70%] w-full'>
-                                  <div className='flex justify-between p-2'>
-                                    <p className='text-[#a9a9a9] text-[.9rem]'>Age</p>
-                                    <p className='font-medium text-[.9rem]'>21 years old</p>
-                                  </div>
-                                  <div className='flex justify-between p-2'>
-                                    <p className='text-[#a9a9a9] text-[.9rem]'>Gender</p>
-                                    <p className='font-medium text-[.9rem]'>Male</p>
-                                  </div>
-                                  <div className='w-full border-1 border-[#a9a9a9]'></div>
-                                </div>
-                              </div>
-                              <div className='h-[60%] p-3 flex flex-col gap-7 '>
-                                  <div className='flex gap-2'>
-                                    <img src={Phone} className='h-[20px]' alt="" />
-                                    <p className='text-[.9rem]'>
-                                      {patientRecord.contact_number}
-                                    </p>
-                                  </div>
-                                  <div className='flex gap-2'>
-                                    <img src={Email} className='h-[20px]' alt="" />
-                                    <p className='text-[.9rem]'>
-                                      {patientRecord.email}
-                                    </p>
-                                  </div>
-                                  <div className='flex gap-2'>
-                                    <img src={Building} className='h-[20px]' alt="" />
-                                    <p className='text-[.9rem]'>
-                                      {patientRecord.department}
-                                    </p>
-                                  </div>
-                                  <div className='flex gap-2'>
-                                    <img src={Calendar} className='h-[20px]' alt="" />
-                                    <p className='text-[.9rem]'>
-                                      {`Last visit: ${formattedDate}`}
-                                    </p>
-                                  </div>
-                              </div>
-                          </div>
-                          <div className='h-full w-[35%]  border-2 border-[#eddcdc] rounded-[15px]'>
-                               <div className='h-[40%] flex flex-col gap-4'>
-                                <div className='w-full h-[30%] flex gap-2 p-2 items-center '>
-                                  <img src={User} className='h-[20px]' alt="" />
-                                  <p className='font-medium text-[#A12217] text-[.8rem]'>Demographics</p>
-                                </div>
-                                <div className='w-full h-[70%] flex flex-col gap-2 p-2'>
-                                    <div className='flex flex-col'>
-                                      <p className='text-[.9rem] text-[#a9a9a9]'>
-                                        Diagnosis
-                                      </p>
-                                      <p className='text-[.9rem] font-medium'>
-                                        {`Last visit: ${patientRecord.diagnoses?.[0]?.diagnosis}`}
-                                      </p>
-                                    </div>
-
-                                    <div className='flex flex-col'>
-                                      <p className='text-[.9rem] text-[#a9a9a9]'>
-                                        Medication
-                                      </p>
-                                      <p className='text-[.9rem] font-medium'>
-                                        {`Last visit: ${patientRecord.diagnoses?.[0]?.medication}`}
-                                      </p>
-                                    </div>
-
-                                    <div className='flex flex-col'>
-                                      <p className='text-[.9rem] text-[#a9a9a9]'>
-                                        Attending Physician
-                                      </p>
-                                      <p className='text-[.9rem] font-medium'>
-                                        {`Last visit: ${patientRecord.attending_physician}`}
-                                      </p>
-                                    </div>
-
-                                    <div className='flex flex-col'>
-                                      <p className='text-[.9rem] text-[#a9a9a9]'>
-                                        Date of Visit
-                                      </p>
-                                      <p className='text-[.9rem] font-medium'>
-                                        {`Last visit: ${latestDate}`}
-                                      </p>
-                                    </div>
-                                </div>
-                              </div>
-                          </div>
-                      </div>
-                    <div className='h-[40%] flex items-center justify-center '>
-                          <div className='w-[80%] h-full overflow-y-auto'>
-                              <div className='h-[50px] font-medium p-3 flex items-center justify-between w-full border-1 rounded-[10px] mt-3'>
-                                    <p>{latestDate}</p>
-                                    <p>{patientRecord.diagnoses?.[0]?.diagnosis}</p>
-                              </div>
-                          </div>
-                    </div>
-                  </div>
+      <div className='w-[83%]  h-auto flex p-5  flex-col gap-5'>
+          <div>
+              <h1 className='text-2xl font-bold ' >Patient Information</h1>
           </div>
+          <section className='w-full h-[50%] border-gray-100 rounded-lg bg-white shadow-lg p-5 flex flex-col justify-center gap-5'>
+                  <div className='text-center'>
+                      <h2 className='text-2xl font-semibold'>{`${patientRecord?.first_name ?? ''} ${patientRecord?.last_name ?? ''}`}</h2>
+                      <p className='text-gray-600'>{`Record ID : ${studentId ?? '—'}`}</p>
+                  </div>
+                {/* Kaliwang component */}
+              <div className='w-full'>
+                <div className='flex flex-col md:flex-row gap-6 mt-4 px-5'>
+                
+                  <div className='md:w-1/4 flex items-center justify-center'>
+                    <img src={User} alt="avatar" className='w-28 h-28 rounded-full object-cover border' />
+                  </div>
+
+                {/* Kanan */}
+                  <div className='md:w-3/4'>
+                    <div className='flex items-start justify-between'>
+                      <div>
+                        <h3 className='text-lg font-medium text-gray-800'>{patientRecord?.student_id ?? patientRecord?.id ?? '—'}</h3>
+                        <p className='text-sm text-gray-500 mt-1'>{patientRecord?.department ?? '—'}</p>
+                      </div>
+                      <div className='text-sm text-right text-gray-500'>
+                        <div className='mt-1'>Last visit: <span className='text-gray-700 font-medium'>{latestDate ?? '—'}</span></div>
+                      </div>
+                    </div>
+
+                    <dl className='mt-6 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-sm'>
+                      <div>
+                        <dt className='text-gray-400'>First name</dt>
+                        <dd className='text-gray-800 font-medium'>{patientRecord?.first_name ?? '—'}</dd>
+                      </div>
+
+                      <div>
+                        <dt className='text-gray-400'>Last name</dt>
+                        <dd className='text-gray-800 font-medium'>{patientRecord?.last_name ?? '—'}</dd>
+                      </div>
+
+                      <div>
+                        <dt className='text-gray-400'>Year level</dt>
+                        <dd className='text-gray-800 font-medium'>{patientRecord?.year_level ?? patientRecord?.year ?? '—'}</dd>
+                      </div>
+
+                      <div>
+                        <dt className='text-gray-400'>Sex</dt>
+                        <dd className='text-gray-800 font-medium'>{patientRecord?.sex ??  '—'}</dd>
+                      </div>
+
+                      <div>
+                        <dt className='text-gray-400'>Contact No.</dt>
+                        <dd className='text-gray-800 font-medium'>{patientRecord?.contact_number ??  '—'}</dd>
+                      </div>
+
+                      <div>
+                        <dt className='text-gray-400'>Email</dt>
+                        <dd className='text-gray-800 font-medium'>{patientRecord?.email ?? '—'}</dd>
+                      </div>
+
+                      <div className='sm:col-span-2'>
+                        <dt className='text-gray-400'>Address</dt>
+                        <dd className='text-gray-800 font-medium'>{patientRecord?.address ?? '—'}</dd>
+                      </div>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+             
+          </section>
+
+          <div>
+            <h1 className='text-2xl font-bold'>Diagnosis</h1>
+          </div>
+
+          <section className='w-full border-gray-100 shadow-lg rounded-lg p-2'>
+          
+            {(!diagnoses || diagnoses.length === 0) ? (
+              <div className='p-4 text-gray-500'>No diagnoses recorded.</div>
+            ) : (
+              <div className='flex flex-col gap-3'>
+                {diagnoses.map((d, idx) => {
+                  const diagDate = d[0]?.created_at ? new Date(d[0].created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : '—';
+                  return (
+                    <div key={d[0].id ?? idx} className=' rounded-md overflow-hidden'>
+                      <button
+                        type='button'
+                        className='w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100'
+                        onClick={() => setExpandedIndex(expandedIndex === idx ? null : idx)}
+                        aria-expanded={expandedIndex === idx}
+                      >
+                        <div className='text-left'>
+                          <p className='font-medium text-gray-800'>{d[0]?.diagnosis || 'Diagnosis'}</p>
+                          <p className='text-sm text-gray-500'>{diagDate}</p>
+                        </div>
+                        <div className='text-gray-600 text-lg'>{expandedIndex === idx ? '−' : '+'}</div>
+                      </button>
+
+                      {expandedIndex === idx && (
+                        <div className='p-4 bg-white'>
+                          <dl className='grid grid-cols-1 md:grid-cols-2 gap-4 text-sm'>
+                            <div>
+                              <dt className='text-gray-400'>Treatment</dt>
+                              <dd className='text-gray-800 font-medium'>{d[0]?.treatment ?? '—'}</dd>
+                            </div>
+
+                            <div>
+                              <dt className='text-gray-400'>Medication</dt>
+                              <dd className='text-gray-800 font-medium'>{d[0]?.medication ?? '—'}</dd>
+                            </div>
+
+                            <div>
+                              <dt className='text-gray-400'>Quantity</dt>
+                              <dd className='text-gray-800 font-medium'>{d[0]?.quantity ?? '—'}</dd>
+                            </div>
+
+                            <div className='md:col-span-2'>
+                              <dt className='text-gray-400'>Additional Notes</dt>
+                              <dd className='text-gray-800 font-medium'>{d[0]?.notes ?? d?.additional_notes ?? '—'}</dd>
+                            </div>
+                          </dl>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </section>
       </div>
     </div>
   )

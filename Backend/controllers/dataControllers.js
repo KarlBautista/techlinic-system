@@ -59,7 +59,8 @@ const insertRecord = async (req, res) => {
         
         
         const { data: diagnosisData, error: diagnosisError } = await supabase.from("diagnoses").insert({
-            patient_id: recordId,
+            record_id: recordId,
+            student_id :studentId,
             diagnosis,
             medication,
             quantity,
@@ -99,10 +100,11 @@ const getRecords = async (req, res) => {
     }
 }
 const getRecord = async (req, res) => {
-    const { patientId } = req.params;
+    const { studentId } = req.params;
+    console.log(req.params);
     try {
         const { data: patientRecordData, error: patientRecordError } = await supabase.from("records").select("*, diagnoses (*)")
-        .eq("id", patientId);
+        .eq("student_id", studentId);
         
         if(patientRecordError) {
             console.error(`Error getting record: ${patientRecordError.message}`);
