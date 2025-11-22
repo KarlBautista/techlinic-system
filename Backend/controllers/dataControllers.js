@@ -141,4 +141,20 @@ const getRecordsFromExisitingPatients = async (req, res) => {
     }
 }
 
-module.exports = { insertRecord, getRecords, getRecord, getRecordsFromExisitingPatients }
+const getPatients = async (req, res) => {
+    console.log("gumaganaaa akooo")
+    try {
+        const { data: patientsData, error: patientsError } = await supabase.from("patients").select("*");
+        if(patientsError) {
+            console.error(`Error getting patients: ${patientsError.message}`);
+            return res.status(500).json({ success: false, error: patientsError.message });
+        }
+        console.log("nakuha ko naaaa", patientsData)
+        res.status(200).json({ success: true, data: patientsData })
+    } catch (err) {
+        console.error(`Something went wrong getting patients: ${err.message}`);
+        return res.status(500).json({ success: false, error: err.message });
+    }
+}
+
+module.exports = { insertRecord, getRecords, getRecord, getRecordsFromExisitingPatients, getPatients }
