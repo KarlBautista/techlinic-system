@@ -3,14 +3,25 @@ import Search from '../assets/image/searcg.svg'
 import Navigation from '../components/Navigation'
 import Medicine from '../assets/image/medicine.svg'
 import { useNavigate } from 'react-router-dom'
-
+import useMedicine from '../store/useMedicineStore'
 const MedicineInventory = () => {
+  const { medicines } = useMedicine();
   const navigate = useNavigate();
-  
+  console.log("mga medicines", medicines);
   const handleAddMedicine = () => {
     navigate("/add-medicine");
   }
+  function formatDate(dateString) {
+    if (!dateString) return "";
 
+    const date = new Date(dateString);
+
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+}
 
 
   return (
@@ -39,34 +50,44 @@ const MedicineInventory = () => {
                   <button className='text-white text-[.9rem]'>Add Medicine</button>
               </div>
           </div>
-        
-          <div className='w-[80%] h-[550px]'>
-                <div className='medicineContainer'>
-                    <div className='info'>
-                      <div className='infoName'>Medicine Name</div>
-                      <div className='medicineInfo'>Biogesic</div>
-                    </div>
-                    <div className='info'>
-                      <div className='infoName'>Dosage</div>
-                      <div className=' medicineInfo'>500 mg</div>
-                    </div>
-                    <div className='info'>
-                      <div className='infoName'>Unit</div>
-                      <div className=' medicineInfo'>Tablet</div>
-                    </div>
-                    <div className='info'>
-                      <div className='infoName'>Stock</div>
-                      <div className=' medicineInfo'>21</div>
-                    </div>
-                    <div className='info'>
-                      <div className='infoName'>Status</div>
-                      <div className=' medicineInfo'>
-                        <div className='h-[20px] w-[20px] rounded-full bg-yellow-500'>
-                        </div>
-                      </div>
-                    </div>
-                </div>
+             <div className='w-[90%] overflow-x-auto mt-4'>
+            <table className='min-w-full border border-gray-200  rounded-lg overflow-hidden text-left'>
+              <thead className='bg-[#C41E3A]'>
+                <tr>
+                  <th className='px-4 py-2 border-b text-white'>Medicine Name</th>
+                  <th className='px-4 py-2 border-b text-white'>Generic Name</th>
+                  <th className='px-4 py-2 border-b text-white'>Brand / Manufacturer</th>
+                  <th className='px-4 py-2 border-b text-white'>Type / Form</th>
+                  <th className='px-4 py-2 border-b text-white'>Dosage</th>
+                  <th className='px-4 py-2 border-b text-white'>Unit of Measure</th>
+                  <th className='px-4 py-2 border-b text-white'>Stock Level</th>
+                  <th className='px-4 py-2 border-b text-white'>Batch Number</th>
+                  <th className='px-4 py-2 border-b text-white'>Expiry Date</th>
+                </tr>
+              </thead>
+              <tbody>
+           {medicines && medicines.length > 0 ? 
+             ( medicines.map((medicine) => {
+              return <tr className='odd:bg-white even:bg-gray-50 hover:bg-gray-100'>
+                <td className='px-4 py-2 border-b'>{medicine.medicine_name}</td>
+                <td className='px-4 py-2 border-b'>{medicine.generic_name}</td>
+                <td className='px-4 py-2 border-b'>{medicine.brand}</td>
+                <td className='px-4 py-2 border-b'>{medicine.type}</td>
+                <td className='px-4 py-2 border-b'>{medicine.dosage}</td>
+                <td className='px-4 py-2 border-b'>{medicine.unit_of_measure}</td>
+                <td className='px-4 py-2 border-b'>{medicine.stock_level}</td>
+                <td className='px-4 py-2 border-b'>{medicine.batch_number}</td>
+                <td className='px-4 py-2 border-b'>{formatDate(medicine.expiry_date)}</td>
+            </tr>
+             })
+           
+             ) : null
+            }
+             
+              </tbody>
+            </table>
           </div>
+          
 
         </div>
       </div>
