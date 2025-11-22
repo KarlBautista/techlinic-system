@@ -8,8 +8,11 @@ const Notifications = () => {
             <Navigation />
         </div >
         <div className='p-5 w-[83%] h-full flex flex-col gap-5'>
-          DD
+            <div className='w-full flex flex-col gap-2'>
+            <h2 className='text-2xl font-semibold text-gray-900'>Notifications</h2>
+    
         </div>
+        </div>  
       </div>
   )
 }
