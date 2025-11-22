@@ -166,8 +166,20 @@ const NewPatient = () => {
 
                   {/* Student input */}
                   <form onSubmit={handleFormSubmit} className=' w-full  flex flex-wrap gap-2 justify-evenly mt-2'>
-                    
-
+                        
+                        <div className='formInfo'>
+                       
+                        <input
+                          type="text"
+                          name="studentId"
+                          placeholder=" "
+                          id='studentID'
+                          value={patientInput.studentId}
+                          onChange={handleSetPatientInput}
+                        />
+                   
+                        <label htmlFor="studentID" className='text-[.8rem]'>Student ID</label>
+                    </div>
                     <div className='formInfo'>
                         <input
                           type="text"
@@ -177,6 +189,7 @@ const NewPatient = () => {
                           value={patientInput.firstName}
                           onChange={handleSetPatientInput}
                         />
+                      
                         <label htmlFor="firstName" className='text-[.8rem]'>First name</label>
                     </div>
 
@@ -192,17 +205,7 @@ const NewPatient = () => {
                         <label htmlFor="lastName" className='text-[.8rem]'>Last name</label>
                     </div>
 
-                    <div className='formInfo'>
-                        <input
-                          type="text"
-                          name="studentId"
-                          placeholder=" "
-                          id='studentID'
-                          value={patientInput.studentId}
-                          onChange={handleSetPatientInput}
-                        />
-                        <label htmlFor="studentID" className='text-[.8rem]'>Student ID</label>
-                    </div>
+                
                     
                     <div className='formInfo'>
                          <input
