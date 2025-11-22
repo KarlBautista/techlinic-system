@@ -9,7 +9,9 @@ app.use(cors());
 dotenv.config();
 
 const dataRoutes = require("./routes/dataRoutes");
+const medicineRoutes = require("./routes/medicineRoutes");
 app.use("/api", dataRoutes);
+app.use("/api", medicineRoutes);
 
 
 
