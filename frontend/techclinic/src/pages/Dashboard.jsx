@@ -5,9 +5,11 @@ import Navigation from '../components/Navigation';
 import useAuth from '../store/useAuthStore';
 import useData from '../store/useDataStore';
 import AnimateNumber from "../components/AnimateNumber"
+import useMedicine from '../store/useMedicineStore';
 const Dashboard = () => {
   const { authenticatedUser } = useAuth();
   const { patientRecords, patientsData} = useData();
+  const { medicines } = useMedicine();
   const records = patientRecords?.data ?? [];
   const navigate = useNavigate();
 function formatDate(dateString) {
@@ -64,7 +66,7 @@ function formatDate(dateString) {
 
         <div className='p-4 bg-white rounded-lg shadow-md flex flex-col'>
           <span className='text-sm text-gray-500'>Medicine Inventory</span>
-          <span className='text-3xl font-bold text-[#b01c34] mt-2'>0</span>
+          <span className='text-3xl font-bold text-[#b01c34] mt-2'><AnimateNumber value={medicines?.length}/></span>
           <span className='text-xs text-gray-400 mt-1'>Total medicines in stock</span>
         </div>
       </div>

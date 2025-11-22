@@ -5,9 +5,11 @@ import useData from '../store/useDataStore'
 import useAuth from '../store/useAuthStore'
 import Swal from 'sweetalert2'
 import { useEffect } from 'react'
+import useMedicine from "../store/useMedicineStore";
 const NewPatient = () => {
   const { insertRecord, getRecords, getRecordsFromExistingPatient } = useData();
   const { authenticatedUser } = useAuth();
+  const { medicines } = useMedicine();
   const [studentInformation, setStudentInformation] = useState(null);
   const [patientInput, setPatientInput] = useState({
     firstName: "",
@@ -149,7 +151,7 @@ const NewPatient = () => {
         </div>
 
 
-    {/* record */}
+  
         <div className='w-[83%]  h-full flex justify-center p-5'>
             <div className='w-full overflow-y-scroll h-full flex flex-col items-center gap-5 scrollbar'  >
                 <div className='w-full flex flex-col gap-2'>
@@ -158,13 +160,13 @@ const NewPatient = () => {
                 </div>
 
                 <div className='w-[90%] flex flex-col items-center'>
-                  {/* Student Info */}
+                
                   <div className='w-full'>
                     <p className='text-[1rem] text-gray-800'>Student Information</p>
                   </div>
                   <div className='border border-gray-200 w-full'></div>
 
-                  {/* Student input */}
+               
                   <form onSubmit={handleFormSubmit} className=' w-full  flex flex-wrap gap-2 justify-evenly mt-2'>
                         
                         <div className='formInfo'>
@@ -311,9 +313,13 @@ const NewPatient = () => {
 
                           <div className='formDiagnosis'>
                               <select id="medication" name="medication" value={patientInput.medication} onChange={handleSetPatientInput} className='w-full p-2 rounded-[10px] border outline-none'>
-                                <option value="" disabled>Medication</option>
-                                <option value="BioFlu">BioFlu</option>
-                                <option value="Alaxan">Alaxan</option>
+                              <option value="" disabled>Medication</option>
+                                {medicines?.map((medicine) => {
+                                return <option value={medicine.medicine_name}>{`${medicine.medicine_name}, ${medicine.generic_name} - ${medicine.stock_level} in stock`}</option>
+                            
+                                })}
+                                   
+                                
                               </select>
                           </div>
 
