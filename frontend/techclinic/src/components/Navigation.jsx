@@ -59,6 +59,13 @@ const Navigation = () => {
                         </Link>
 
                         <Link
+                            to={'/analytics'}
+                            className={`${currentPath === '/analytics' ? 'bg-[#FEF2F2] border-r-4 border-r-[#A12217] text-[#A12217]' : 'bg-transparent text-[#1f2937]'} w-full py-3 flex items-center justify-center transition-colors duration-150 font-semibold tracking-wide uppercase`}
+                        >
+                            Analytics
+                        </Link>
+
+                        <Link
                             to={'/new-patient'}
                             className={`${currentPath === '/new-patient' ? 'bg-[#FEF2F2] border-r-4 border-r-[#A12217] text-[#A12217]' : 'bg-transparent text-[#1f2937]'} w-full py-3 flex items-center justify-center transition-colors duration-150 font-semibold tracking-wide uppercase`}
                         >
@@ -77,6 +84,14 @@ const Navigation = () => {
                             className={`${currentPath === '/medicine-inventory' || currentPath === "/add-medicine" ? 'bg-[#FEF2F2] border-r-4 border-r-[#A12217] text-[#A12217]' : 'bg-transparent text-[#1f2937]'} w-full py-3 flex items-center justify-center transition-colors duration-150 font-semibold tracking-wide uppercase`}
                         >
                             Medicine Inventory
+                        </Link>
+
+                        
+                        <Link
+                            to={'/notifications'}
+                            className={`${currentPath === '/notifications' || currentPath === "/notifications" ? 'bg-[#FEF2F2] border-r-4 border-r-[#A12217] text-[#A12217]' : 'bg-transparent text-[#1f2937]'} w-full py-3 flex items-center justify-center transition-colors duration-150 font-semibold tracking-wide uppercase`}
+                        >
+                            Notifications
                         </Link>
                 </div>
            
