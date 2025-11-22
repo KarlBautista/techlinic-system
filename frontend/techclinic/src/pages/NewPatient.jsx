@@ -18,6 +18,8 @@ const NewPatient = () => {
     department: "",
     sex: "",
     email: "",
+    dateOfBirth: "",
+    address: "",
     diagnosis: "",
     medication: "",
     quantity: "",
@@ -58,7 +60,9 @@ const NewPatient = () => {
           contactNumber: existing.contact_number,
           yearLevel: existing.year_level,
           department: existing.department,
-          sex: existing.sex
+          sex: existing.sex,
+          dateOfBirth: existing.date_of_birth ?? existing.dob ?? '',
+          address: existing.address ?? ''
         }));
         Swal.fire({ 
           title: `Student: ${patientInput.studentId} Information Found.`,
@@ -122,6 +126,8 @@ const NewPatient = () => {
           department: "",
           sex: "",
           email: "",
+          dateOfBirth: "",
+          address: "",
           diagnosis: "",
           medication: "",
           quantity: "",
@@ -250,6 +256,30 @@ const NewPatient = () => {
                         />
                         <label htmlFor="email" className='text-[.8rem]'>Email</label>
                     </div>
+
+                    <div className='formInfo'>
+                      <input type="text"
+                      name='address'
+                      placeholder=''
+                      id='address'
+                      value={patientInput.address}
+                      onChange={handleSetPatientInput} />
+                      <label htmlFor="address" className='text-[.8rem]'>Address</label>
+                    </div>
+
+                      <div className='formInfo'>
+                      <input type="date"
+                      name='dateOfBirth'
+                      placeholder=''
+                      id='dateOfBirth'
+                      value={patientInput.dateOfBirth}
+                      onChange={handleSetPatientInput} />
+                      <label htmlFor="address" className='text-[.8rem]'>Date of Birth</label>
+                    </div>
+
+                  
+
+                 
 
 
                   <div className='w-full mt-10'>

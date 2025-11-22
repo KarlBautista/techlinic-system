@@ -97,7 +97,7 @@ const Navigation = () => {
                 </div>
 
 
-                <div className="h-[40%] w-full bg-[hsl(350,73%,40%)] flex gap-10 justify-end px-10 sm:px-2.5 sm:gap-8 lg:px-10 text-white">
+                <div className="h-[40%] w-full bg-[#b01c34ff] flex gap-10 justify-end px-10 sm:px-2.5 sm:gap-8 lg:px-10 text-white">
                                         <button className='h-full flex items-center gap-[5px]' title='Settings'>
                                               <img src={Mysettings} alt="Settings" className='h-5 object-contain' style={{filter: 'brightness(0) invert(1)'}} />
                                             <p className='text-[.9rem]'>Settings</p>

@@ -12,6 +12,8 @@ const insertRecord = async (req, res) => {
         email,
         diagnosis,
         medication,
+        address,
+        dateOfBirth,
         quantity,
         treatment,
         notes,
@@ -29,6 +31,8 @@ const insertRecord = async (req, res) => {
             department,
             sex,
             email,
+            address,
+            date_of_birth: dateOfBirth,
             attending_physician: attendingPhysician,
         }).select();
         if(recordError){
@@ -50,7 +54,9 @@ const insertRecord = async (req, res) => {
             year_level: yearLevel,
             department,
             sex,
-            email
+            email,
+            address,
+            date_of_birth: dateOfBirth
         });
         
         if(patientError){

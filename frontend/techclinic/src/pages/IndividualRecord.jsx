@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useTransition } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios';
-import User from '../assets/image/user.svg'
 import Back from '../assets/image/back.svg'
 import Navigation from '../components/Navigation';
 import Phone from '../assets/image/phone.svg'
@@ -9,6 +8,7 @@ import Email from '../assets/image/email.svg'
 import Calendar from '../assets/image/calendar.svg'
 import Building from '../assets/image/department.svg'
 import { useNavigate } from 'react-router-dom';
+import Patient from "../assets/image/patient.png"
 const IndividualRecord = () => {
   const { studentId } = useParams();
   const [ patientRecord, setPatientRecord ] = useState([]);
@@ -60,19 +60,36 @@ const handleBack = () => {
       </div>
       <div className='w-[83%]  h-auto flex p-5  flex-col gap-5'>
           <div>
-              <h1 className='text-2xl font-bold ' >Patient Information</h1>
+              <h1 className='text-2xl font-bold'>Patient Information</h1>
           </div>
           <section className='w-full h-[50%] border-gray-100 rounded-lg bg-white shadow-lg p-5 flex flex-col justify-center gap-5'>
                   <div className='text-center'>
                       <h2 className='text-2xl font-semibold'>{`${patientRecord?.first_name ?? ''} ${patientRecord?.last_name ?? ''}`}</h2>
-                      <p className='text-gray-600'>{`Record ID : ${studentId ?? '—'}`}</p>
+                      <p className='text-gray-600'>{`ID : ${studentId ?? '—'}`}</p>
                   </div>
                 {/* Kaliwang component */}
               <div className='w-full'>
                 <div className='flex flex-col md:flex-row gap-6 mt-4 px-5'>
-                
                   <div className='md:w-1/4 flex items-center justify-center'>
-                    <img src={User} alt="avatar" className='w-28 h-28 rounded-full object-cover border' />
+                    <div
+                      className=' overflow-hidden'
+                      style={{
+                        width: '112px',
+                        height: '112px',
+                        backgroundColor: '#b01c34',
+                        WebkitMaskImage: `url(${Patient})`,
+                        WebkitMaskRepeat: 'no-repeat',
+                        WebkitMaskPosition: 'center',
+                        WebkitMaskSize: 'contain',
+                        maskImage: `url(${Patient})`,
+                        maskRepeat: 'no-repeat',
+                        maskPosition: 'center',
+                        maskSize: 'contain',
+                      }}
+                      aria-hidden='true'
+                    />
+               
+                    <img src={Patient} alt={`${patientRecord?.first_name ?? ''} avatar`} className='sr-only' />
                   </div>
 
                 {/* Kanan */}
@@ -80,7 +97,10 @@ const handleBack = () => {
                     <div className='flex items-start justify-between'>
                       <div>
                         <h3 className='text-lg font-medium text-gray-800'>{patientRecord?.student_id ?? patientRecord?.id ?? '—'}</h3>
-                        <p className='text-sm text-gray-500 mt-1'>{patientRecord?.department ?? '—'}</p>
+                        <p className='text-sm text-gray-500 mt-1 flex items-center gap-2'>
+                          <img src={Building} alt='' className='w-4 h-4 opacity-75' />
+                          <span>{patientRecord?.department ?? '—'}</span>
+                        </p>
                       </div>
                       <div className='text-sm text-right text-gray-500'>
                         <div className='mt-1'>Last visit: <span className='text-gray-700 font-medium'>{latestDate ?? '—'}</span></div>
@@ -110,12 +130,22 @@ const handleBack = () => {
 
                       <div>
                         <dt className='text-gray-400'>Contact No.</dt>
-                        <dd className='text-gray-800 font-medium'>{patientRecord?.contact_number ??  '—'}</dd>
+                        <dd className='text-gray-800 font-medium'>
+                          <div className='flex items-center gap-2'>
+                            <img src={Phone} alt='' className='w-4 h-4 opacity-75' />
+                            <span>{patientRecord?.contact_number ??  '—'}</span>
+                          </div>
+                        </dd>
                       </div>
 
                       <div>
                         <dt className='text-gray-400'>Email</dt>
-                        <dd className='text-gray-800 font-medium'>{patientRecord?.email ?? '—'}</dd>
+                        <dd className='text-gray-800 font-medium'>
+                          <div className='flex items-center gap-2'>
+                            <img src={Email} alt='' className='w-4 h-4 opacity-75' />
+                            <span>{patientRecord?.email ?? '—'}</span>
+                          </div>
+                        </dd>
                       </div>
 
                       <div className='sm:col-span-2'>
@@ -130,7 +160,7 @@ const handleBack = () => {
           </section>
 
           <div>
-            <h1 className='text-2xl font-bold'>Diagnosis</h1>
+            <h1 className='text-2xl font-bold'>Diagnoses</h1>
           </div>
 
           <section className='w-full border-gray-100 shadow-lg rounded-lg p-2'>
