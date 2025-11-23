@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Navigation from '../components/Navigation';
 import Swal from 'sweetalert2';
 import useMedicine from '../store/useMedicineStore';
+
 const AddMedicine = () => {
   const { insertMedicine } = useMedicine();
   const [medicine, setMedicine] = useState({

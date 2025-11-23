@@ -52,4 +52,41 @@ const getMedicines = async (req, res) => {
     }
 }
 
-module.exports = {insertMedicine, getMedicines }
+const updateMedicine = async (req, res) => {
+    const { id,
+            medicine_name,
+            generic_name,
+            brand,
+            type,
+            dosage,
+            unit_of_measure,
+            stock_level,
+            batch_number,
+            expiry_date
+     } = req.body.medicine;
+
+     try {
+        const { error: updateMedicineError } = await supabase.from("medicines").update({
+            medicine_name,
+            generic_name,
+            brand,
+            type,
+            dosage,
+            unit_of_measure,
+            stock_level,
+            batch_number,
+            expiry_date,
+        }).eq("id", id);
+
+        if(updateMedicineError) {
+            console.error(`Error updating medicine: ${updateMedicineError.message}`);
+            return res.status(500).json({ success: false, error: updateMedicineError.message });
+        }
+        res.status(200).json({ success: true, message: "update medicine success"});
+    } catch (err) {
+        console.error(`Something went wrong updating medicine: ${err.message}`);
+        return res.status(500).json({ success: false, error: err.message });
+    }
+}
+
+module.exports = {insertMedicine, getMedicines, updateMedicine}

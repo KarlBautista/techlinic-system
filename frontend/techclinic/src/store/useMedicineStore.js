@@ -34,6 +34,21 @@ const useMedicine = create((set) => ({
             console.error(`Something went wrong getting medicines: ${err.message}`);
             return;
         }
+    },
+    updateMedicine: async (medicine) => {
+        try {
+            const response = await axios.put("http://localhost:3000/api/update-medicine", {
+                medicine
+            });
+            if(response.status === 200) {
+                return { success: true };
+            } else {
+                return { success: false, error: response.data.error }
+            }
+        } catch (err) {
+            console.error(`Something went wrong updating medicine: ${err.message}`);
+            return { success: false, error: err.message };
+        }
     }
 }))
 

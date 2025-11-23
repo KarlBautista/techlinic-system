@@ -170,4 +170,6 @@ const getPatients = async (req, res) => {
     }
 }
 
+
+
 module.exports = { insertRecord, getRecords, getRecord, getRecordsFromExisitingPatients, getPatients }

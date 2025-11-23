@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-
+import Swal from 'sweetalert2';
 const MedicineForm = ({ medicine, onUpdate, onDelete, onClose }) => {
   const [form, setForm] = useState({})
 
@@ -12,9 +12,20 @@ const MedicineForm = ({ medicine, onUpdate, onDelete, onClose }) => {
     setForm(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleUpdate = e => {
+  const handleUpdate = async (e) => {
     e.preventDefault()
     if (onUpdate) onUpdate(form)
+    const response = await Swal.fire({ 
+        title: "Medicine update successfully",
+        text: "the updated medicine version will be display in the table",
+        icon: "success",
+        showConfirmButton: true,
+    });
+    onClose();
+    if(response.isConfirmed){
+        onClose();
+        window.location.reload();
+    }
   }
 
   const handleDelete = () => {
@@ -48,7 +59,7 @@ const MedicineForm = ({ medicine, onUpdate, onDelete, onClose }) => {
         aria-modal="true"
       >
         <div className="md:col-span-2 flex items-start justify-between">
-          <h3 className="text-lg font-semibold text-slate-800">Medicine details</h3>
+          <h3 className="text-lg font-semibold text-[#C41E3A]">Medicine details</h3>
           <div className="flex gap-2">
             <button
               type="button"

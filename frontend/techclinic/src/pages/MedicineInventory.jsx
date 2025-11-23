@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import useMedicine from '../store/useMedicineStore'
 import MedicineForm from '../components/MedicineForm'
 const MedicineInventory = () => {
-  const { medicines } = useMedicine();
+  const { medicines, updateMedicine } = useMedicine();
   const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
   const [medicineFormData, setMedicineFormData] = useState({});
@@ -39,7 +39,7 @@ const MedicineInventory = () => {
         <Navigation />
       </div>
       <div className='w-[83%]  h-full flex justify-center p-5 '>
-         {showForm && <MedicineForm medicine={medicineFormData} onClose={() => setShowForm(false)}/>}
+         {showForm && <MedicineForm medicine={medicineFormData} onClose={() => setShowForm(false)} onUpdate={(updatedForm) => updateMedicine(updatedForm)}/>}
       
         <div className='w-full h-full flex flex-col items-center gap-5 '  >
           
