@@ -1,12 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Search from '../assets/image/searcg.svg'
 import Navigation from '../components/Navigation'
 import Medicine from '../assets/image/medicine.svg'
 import { useNavigate } from 'react-router-dom'
 import useMedicine from '../store/useMedicineStore'
+import MedicineForm from '../components/MedicineForm'
 const MedicineInventory = () => {
   const { medicines } = useMedicine();
   const navigate = useNavigate();
+  const [showForm, setShowForm] = useState(false);
+  const [medicineFormData, setMedicineFormData] = useState({});
   console.log("mga medicines", medicines);
   const handleAddMedicine = () => {
     navigate("/add-medicine");
@@ -23,6 +26,11 @@ const MedicineInventory = () => {
     });
 }
 
+  const handleUpdateMedicine = (medicine) => {
+    setShowForm(!showForm);
+    setMedicineFormData(medicine)
+  }
+
 
   return (
     
@@ -31,6 +39,8 @@ const MedicineInventory = () => {
         <Navigation />
       </div>
       <div className='w-[83%]  h-full flex justify-center p-5 '>
+         {showForm && <MedicineForm medicine={medicineFormData} onClose={() => setShowForm(false)}/>}
+      
         <div className='w-full h-full flex flex-col items-center gap-5 '  >
           
           <div className='w-full flex flex-col gap-2'>
@@ -68,7 +78,7 @@ const MedicineInventory = () => {
               <tbody>
            {medicines && medicines.length > 0 ? 
              ( medicines.map((medicine) => {
-              return <tr key={medicine.id} className='odd:bg-white even:bg-gray-50 hover:bg-gray-100'>
+              return <tr key={medicine.id} className='odd:bg-white even:bg-gray-50 hover:bg-gray-100' onClick={() => handleUpdateMedicine(medicine)}>
                 <td className='px-4 py-2 border-b'>{medicine.medicine_name}</td>
                 <td className='px-4 py-2 border-b'>{medicine.generic_name}</td>
                 <td className='px-4 py-2 border-b'>{medicine.brand}</td>
@@ -78,7 +88,9 @@ const MedicineInventory = () => {
                 <td className='px-4 py-2 border-b'>{medicine.stock_level}</td>
                 <td className='px-4 py-2 border-b'>{medicine.batch_number}</td>
                 <td className='px-4 py-2 border-b'>{formatDate(medicine.expiry_date)}</td>
+             
             </tr>
+         
              })
            
              ) : null
