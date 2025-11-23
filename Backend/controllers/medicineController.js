@@ -89,4 +89,20 @@ const updateMedicine = async (req, res) => {
     }
 }
 
-module.exports = {insertMedicine, getMedicines, updateMedicine}
+const deleteMedicine = async (req, res) => {
+    const { medicineId } = req.params;
+    try {
+        const { error: deleteMedicineError } = await supabase.from("medicines").delete().eq("id", medicineId);
+        
+        if(deleteMedicineError){
+            console.error(`Error deleting medicine: ${deleteMedicineError.message}`);
+            return res.status(500).json({ success: false, error: deleteMedicineError.message });
+        }
+        res.status(200).json({ success: true, message: "delete medicine success" });
+    } catch (err) {
+        console.error(`Somethinng went wrong deleting medicine :${err.message}`);
+        return res.status(500).json({ success: false, error: err.message });
+    }
+}
+
+module.exports = {insertMedicine, getMedicines, updateMedicine, deleteMedicine}

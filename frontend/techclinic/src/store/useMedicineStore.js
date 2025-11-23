@@ -49,6 +49,20 @@ const useMedicine = create((set) => ({
             console.error(`Something went wrong updating medicine: ${err.message}`);
             return { success: false, error: err.message };
         }
+    },
+    deleteMedicine: async (medicineId) => {
+        try {
+            const response = await axios.delete(`http://localhost:3000/api/delete-medicine/${medicineId}`);
+            if(response.status === 200) {
+                return { success: true };
+            } else {
+                console.error(`Error Deleting Medicine: ${response.data.error}`);
+                return { success: false, error: response.data.error };
+            }
+        } catch (err) {
+            console.error(`Something went wrong deleting medicine: ${err.message}`);
+            return { success: false, error: response.data.error };
+        }
     }
 }))
 

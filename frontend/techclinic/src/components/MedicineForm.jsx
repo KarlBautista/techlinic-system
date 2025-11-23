@@ -28,13 +28,33 @@ const MedicineForm = ({ medicine, onUpdate, onDelete, onClose }) => {
     }
   }
 
-  const handleDelete = () => {
-    const ok = window.confirm(`Delete medicine "${form.name || form.id}"?`)
-    if (!ok) return
-    if (onDelete) onDelete(form.id ?? form)
+  const handleDelete = async () => {
+    const response = await Swal.fire({ 
+        title: `Are you sure you want to delete this medicine (${form.id} - ${form.medicine_name})?`,
+        text: "deleting this will be permanently removed from table.",
+        showConfirmButton: true,
+        showCancelButton: true,
+        icon: "info",
+    });
+    if(response.isConfirmed) {
+        if (onDelete) onDelete(form.id);
+        const deleteRes = await Swal.fire({
+            title: "Medicine deleted successfully",
+            text: "The table will be updated",
+            icon: "success",
+            showConfirmButton: true,
+
+        });
+
+        if(deleteRes.isConfirmed) {
+            onClose();
+            window.location.reload();
+        }
+       
+    } 
   }
   
-  console.log(form);
+  
     function formatDateForInput(dateString) {
         if (!dateString) return "";
         const date = new Date(dateString);
