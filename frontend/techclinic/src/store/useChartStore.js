@@ -1,11 +1,19 @@
 import { create } from "zustand";
-//Basta dito muna dadaan lahat ng data bago gumawa ng chart para real-time pagbago.
-//papasa ng zustand file na to yung data sa mga component na mangangailangan ng data.
+import axios from "axios";
 const useChart = create((set) => ({
-    patientStats: [],
-    medicineStats: [],
-    setPatientsStats: (data) => set({ patientStats: data }),
-    medicineStats: (data) => set({ medicineStats: data }),
+    weeklyPatientCount: null,
+    getWeeklyPatientCount: async () => {
+        try {
+            const response = await axios.get("http://localhost:3000/api/get-weekly-patients");
+            if(response.status === 200) {
+                set({ weeklyPatientCount: response.data.data });
+            } else {
+                console.error(`Error getting weekly patient count: ${response.data.error}`)
+            }
+        } catch (err) {
+            console.error(`Something went wrong getting weekly patient count: ${err.message}`);
+        }
+    } 
 }))
 
 export default useChart;
