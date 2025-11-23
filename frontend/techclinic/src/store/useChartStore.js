@@ -6,7 +6,7 @@ const useChart = create((set) => ({
         try {
             const response = await axios.get("http://localhost:3000/api/get-weekly-patients");
             if(response.status === 200) {
-                set({ weeklyPatientCount: response.data.data });
+                set({ weeklyPatientCount: response.data });
             } else {
                 console.error(`Error getting weekly patient count: ${response.data.error}`)
             }

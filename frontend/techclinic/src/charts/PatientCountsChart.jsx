@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Chart from "react-apexcharts"
 import useData from '../store/useDataStore';
 import useChart from '../store/useChartStore';
+
 const PatientCountsChart = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const { getWeeklyPatientCount, weeklyPatientCount } = useChart();
@@ -9,7 +10,7 @@ const PatientCountsChart = () => {
   const [patientOptions, setPatientOptions] = useState({
     chart: {
       id: "patients-chart",
-      toolbar: { show: false }
+      toolbar: { show: true }
     },
     xaxis: {
       categories: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
@@ -25,6 +26,7 @@ const PatientCountsChart = () => {
       borderColor: "#e5e7eb"
     },
     title: {
+      text: "",
       align: "left",
       style: {
         fontSize: "16px",
@@ -33,28 +35,44 @@ const PatientCountsChart = () => {
     }
   });
 
+    const chartCategories = {
+      week: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      month: ["Week 1", "Week 2", "Week 3", "Week 4"],
+      quarter: ["Q1", "Q2", "Q3", "Q4"],
+      year: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+  };
+
+
+    function formatDate(dateString) {
+    if (!dateString) return "";
+
+    const date = new Date(dateString);
+
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+}
+
   useEffect(() => {
     getWeeklyPatientCount();
   }, []);
 
   useEffect(() => {
-    if (!weeklyPatientCount) return;
-    setPatientData(Object.values(weeklyPatientCount));
-  
+    if (!weeklyPatientCount?.data) return;
+    setPatientData(Object.values(weeklyPatientCount?.data));
+    setPatientOptions((prev) => ({ 
+      ...prev, title: {...prev, text: `${formatDate(weeklyPatientCount?.start_of_week)} - ${formatDate(weeklyPatientCount?.end_of_week)}`}
+    }))
   }, [weeklyPatientCount])
 
-  const chartCategories = {
-    week: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-    month: ["Week 1", "Week 2", "Week 3", "Week 4"],
-    quarter: ["Q1", "Q2", "Q3", "Q4"],
-    year: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-  };
 
   const handleCategoryChange = (value) => {
     setSelectedCategory(value);
     setPatientOptions({...patientOptions, xaxis: {...patientOptions.xaxis, categories: chartCategories[value]}});
     if(value === "week") {
-      setPatientData(Object.values(weeklyPatientCount));
+      setPatientData(Object.values(weeklyPatientCount?.data));
     }
   
   };
