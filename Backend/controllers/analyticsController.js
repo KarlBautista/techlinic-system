@@ -2,7 +2,7 @@ const supabase = require("../config/supabaseClient");
 const moment = require("moment");
 
 const getWeeklyPatients = async (req, res) => {
-    const timezoneOffset = 8; // for GMT+8
+    const timezoneOffset = 8; 
     const startOfWeek = moment().utcOffset(timezoneOffset).startOf("isoWeek").utc().format("YYYY-MM-DD 00:00:00");
     const endOfWeek = moment().utcOffset(timezoneOffset).endOf("isoWeek").utc().format("YYYY-MM-DD 23:59:59");
 
@@ -35,6 +35,78 @@ const getWeeklyPatients = async (req, res) => {
    
 }   
 
+ const getMonthyPatients = async (req, res) => {
+    const timezoneOffset = 8; 
+
+    try {
+      
+        const monthStart = moment().utcOffset(timezoneOffset).startOf("month");
+        const monthEnd = moment().utcOffset(timezoneOffset).endOf("month");
+
+        const startOfMonthStr = monthStart.format("YYYY-MM-DD 00:00:00");
+        const endOfMonthStr = monthEnd.format("YYYY-MM-DD 23:59:59");
+
+        const { data: monthlyPatientsData, error } = await supabase
+            .from("records")
+            .select("*")
+            .gte("created_at", startOfMonthStr)
+            .lte("created_at", endOfMonthStr);
+
+        if (error) {
+            return res.status(500).json({ success: false, error: error.message });
+        }
+
+        const lastDay = monthEnd.date();
+
+        const weekRanges = [
+            {
+                start: monthStart.clone().date(1).format("YYYY-MM-DD 00:00:00"),
+                end: monthStart.clone().date(7).format("YYYY-MM-DD 23:59:59"),
+            },
+            {
+                start: monthStart.clone().date(8).format("YYYY-MM-DD 00:00:00"),
+                end: monthStart.clone().date(14).format("YYYY-MM-DD 23:59:59"),
+            },
+            {
+                start: monthStart.clone().date(15).format("YYYY-MM-DD 00:00:00"),
+                end: monthStart.clone().date(21).format("YYYY-MM-DD 23:59:59"),
+            },
+            {
+                start: monthStart.clone().date(22).format("YYYY-MM-DD 00:00:00"),
+                end: monthStart.clone().date(lastDay).format("YYYY-MM-DD 23:59:59"),
+            },
+        ];
+
+      
+        const result = {
+            week1: { timeframe: weekRanges[0], data: {}, count: 0 },
+            week2: { timeframe: weekRanges[1], data: {}, count: 0 },
+            week3: { timeframe: weekRanges[2], data: {}, count: 0 },
+            week4: { timeframe: weekRanges[3], data: {}, count: 0 },
+        };
+
+        monthlyPatientsData.forEach((patient) => {
+            const localDate = moment(patient.created_at).utcOffset(timezoneOffset);
+
+            const day = localDate.date();
+
+            if (day >= 1 && day <= 7) result.week1.count++;
+            else if (day >= 8 && day <= 14) result.week2.count++;
+            else if (day >= 15 && day <= 21) result.week3.count++;
+            else result.week4.count++;
+        });
+
+        return res.status(200).json({
+            success: true,
+            data: result,
+        });
+
+    } catch (err) {
+        return res.status(500).json({ success: false, error: err.message });
+    }
+};
 
 
-module.exports = { getWeeklyPatients }
+
+
+module.exports = { getWeeklyPatients, getMonthyPatients }
