@@ -34,6 +34,14 @@ const PatientCountsChart = () => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
   }
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+];
+
+const monthWord = monthNames[new Date().getMonth()];
+
+
 
 
   useEffect(() => {
@@ -67,7 +75,7 @@ const PatientCountsChart = () => {
       // update title
       setPatientOptions(prev => ({
         ...prev,
-        title: { ...prev.title, text: "This Month" }
+        title: { ...prev.title, text: `${monthWord} ${new Date().getFullYear()}`}
       }));
     }
   }, [weeklyPatientCount, monthlyPatientCount, selectedCategory]);
