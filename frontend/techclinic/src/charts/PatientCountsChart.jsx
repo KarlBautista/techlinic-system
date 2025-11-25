@@ -1,83 +1,100 @@
-import React, { useEffect, useState } from 'react'
-import Chart from "react-apexcharts"
-import useData from '../store/useDataStore';
+import React, { useEffect, useState } from 'react';
+import Chart from "react-apexcharts";
 import useChart from '../store/useChartStore';
 
 const PatientCountsChart = () => {
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const { getWeeklyPatientCount, weeklyPatientCount } = useChart();
+  const [selectedCategory, setSelectedCategory] = useState("week");
+
+  const { 
+    getWeeklyPatientCount, 
+    getMonthlyPatientsCount, 
+    weeklyPatientCount, 
+    monthlyPatientCount 
+  } = useChart();
+
   const [patientData, setPatientData] = useState([]);
+
   const [patientOptions, setPatientOptions] = useState({
-    chart: {
-      id: "patients-chart",
-      toolbar: { show: true }
-    },
-    xaxis: {
-      categories: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-    },
+    chart: { id: "patients-chart", toolbar: { show: true } },
+    xaxis: { categories: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] },
     colors: ["#ef4444"],
-    stroke: {
-      curve: "smooth"
-    },
-    dataLabels: {
-      enabled: false
-    },
-    grid: {
-      borderColor: "#e5e7eb"
-    },
-    title: {
-      text: "",
-      align: "left",
-      style: {
-        fontSize: "16px",
-        fontWeight: "bold"
-      }
-    }
+    stroke: { curve: "smooth" },
+    dataLabels: { enabled: false },
+    grid: { borderColor: "#e5e7eb" },
+    title: { text: "", align: "left", style: { fontSize: "16px", fontWeight: "bold" } }
   });
 
-    const chartCategories = {
-      week: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-      month: ["Week 1", "Week 2", "Week 3", "Week 4"],
-      quarter: ["Q1", "Q2", "Q3", "Q4"],
-      year: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+  const chartCategories = {
+    week: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    month: ["Week 1", "Week 2", "Week 3", "Week 4"]
   };
 
-
-    function formatDate(dateString) {
+  function formatDate(dateString) {
     if (!dateString) return "";
-
     const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  }
 
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-}
 
   useEffect(() => {
     getWeeklyPatientCount();
   }, []);
 
+
   useEffect(() => {
-    if (!weeklyPatientCount?.data) return;
-    setPatientData(Object.values(weeklyPatientCount?.data));
-    setPatientOptions((prev) => ({ 
-      ...prev, title: {...prev, text: `${formatDate(weeklyPatientCount?.start_of_week)} - ${formatDate(weeklyPatientCount?.end_of_week)}`}
-    }))
-  }, [weeklyPatientCount])
+    if (selectedCategory === "week" && weeklyPatientCount) {
+      setPatientData(Object.values(weeklyPatientCount.data));
 
-
-  const handleCategoryChange = (value) => {
-    setSelectedCategory(value);
-    setPatientOptions({...patientOptions, xaxis: {...patientOptions.xaxis, categories: chartCategories[value]}});
-    if(value === "week") {
-      setPatientData(Object.values(weeklyPatientCount?.data));
+      
+      setPatientOptions(prev => ({
+        ...prev,
+        title: {
+          ...prev.title,
+          text: `${formatDate(weeklyPatientCount.start_of_week)} - ${formatDate(weeklyPatientCount.end_of_week)}`
+        }
+      }));
     }
-  
-  };
 
- 
+    if (selectedCategory === "month" && monthlyPatientCount) {
+      // update data
+      setPatientData([
+        monthlyPatientCount.week1.count,
+        monthlyPatientCount.week2.count,
+        monthlyPatientCount.week3.count,
+        monthlyPatientCount.week4.count
+      ]);
+
+      // update title
+      setPatientOptions(prev => ({
+        ...prev,
+        title: { ...prev.title, text: "This Month" }
+      }));
+    }
+  }, [weeklyPatientCount, monthlyPatientCount, selectedCategory]);
+
+
+
+  const handleCategoryChange = async (value) => {
+  setSelectedCategory(value);
+
+
+  setPatientOptions({
+    ...patientOptions,
+    xaxis: {
+      categories: chartCategories[value]
+    }
+  });
+
+  if (value === "week") {
+    getWeeklyPatientCount();
+  }
+
+  if (value === "month") {
+    getMonthlyPatientsCount();
+  }
+};
+  console.log(patientData)
+
 
   return (
     <div className='w-full shadow-md rounded-lg border border-gray-200 p-5'>
@@ -87,33 +104,23 @@ const PatientCountsChart = () => {
         <div className='group inline-block'>
           <select
             id='patients'
-            name='patients'
             value={selectedCategory}
             onChange={(e) => handleCategoryChange(e.target.value)}
-            aria-label='Patients timeframe'
-            className='appearance-none bg-white border border-gray-300 text-gray-700 text-sm rounded-md pl-3 pr-3 py-1.5 focus:outline-none transition-colors duration-150 ease-in-out'
+            className='appearance-none bg-white border border-gray-300 text-gray-700 text-sm rounded-md pl-3 pr-3 py-1.5'
           >
             <option value='week'>This week</option>
             <option value='month'>This month</option>
-            <option value='quarter'>This quarter</option>
-            <option value='year'>This year</option>
           </select>
         </div>
       </div>
 
       <div className='w-full h-96 md:h-80'>
-        <Chart
-          key={selectedCategory}
-          options={patientOptions}
-          series={[
-            {
-              name: "Patients",
-              data: patientData
-            }
-          ]}
-          type="area"
-          height="100%"
-        />
+       <Chart
+  options={{ ...patientOptions }}  
+  series={[{ name: "Patients", data: [...patientData] }]}  
+  type="area"
+  height="100%"
+/>
       </div>
     </div>
   );
