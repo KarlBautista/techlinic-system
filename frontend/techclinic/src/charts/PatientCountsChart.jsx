@@ -9,9 +9,11 @@ const PatientCountsChart = () => {
     getWeeklyPatientCount, 
     getMonthlyPatientsCount, 
     getQuarterlyPatientsCount,
+    getYearlyPatientCount,
     weeklyPatientCount, 
     monthlyPatientCount,
-    quarterlyPatientCount
+    quarterlyPatientCount,
+    yearlyPatientCount
   } = useChart();
 
   const [patientData, setPatientData] = useState([]);
@@ -59,6 +61,7 @@ const PatientCountsChart = () => {
     }
   }, [weeklyPatientCount, selectedCategory]);
 
+
   useEffect(() => {
     if (selectedCategory === "month" && monthlyPatientCount) {
       const categories = ["Week 1", "Week 2", "Week 3", "Week 4"];
@@ -83,24 +86,29 @@ const PatientCountsChart = () => {
     }
   }, [monthlyPatientCount, selectedCategory]);
 
-
   useEffect(() => {
     if (selectedCategory === "quarter" && quarterlyPatientCount?.data) {
       const dataObj = quarterlyPatientCount.data;
+      
+    
       const quarter = quarterlyPatientCount.quarter;
       const quarterMonths = [];
+      
+  
       const startMonthIndex = (quarter - 1) * 3;
       for (let i = 0; i < 3; i++) {
         quarterMonths.push(monthNames[startMonthIndex + i]);
       }
 
-  
+ 
       const monthCounts = {};
       quarterMonths.forEach(month => {
         monthCounts[month] = 0;
       });
 
+   
       Object.keys(dataObj).forEach(dateStr => {
+   
         const d = new Date(dateStr + 'T00:00:00');
         const monthName = monthNames[d.getMonth()];
         if (monthCounts[monthName] !== undefined) {
@@ -123,13 +131,31 @@ const PatientCountsChart = () => {
     }
   }, [quarterlyPatientCount, selectedCategory]);
 
+
+  useEffect(() => {
+    if (selectedCategory === "year" && yearlyPatientCount?.data) {
+      const categories = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const data = categories.map(month => yearlyPatientCount.data[month] || 0);
+
+      setPatientData(data);
+      setPatientOptions(prev => ({
+        ...prev,
+        xaxis: { categories },
+        title: {
+          ...prev.title,
+          text: `Year ${yearlyPatientCount.year}`
+        }
+      }));
+    }
+  }, [yearlyPatientCount, selectedCategory]);
+
   const handleCategoryChange = async (value) => {
     setSelectedCategory(value);
-
 
     if (value === "week") await getWeeklyPatientCount();
     if (value === "month") await getMonthlyPatientsCount();
     if (value === "quarter") await getQuarterlyPatientsCount();
+    if (value === "year") await getYearlyPatientCount();
   };
 
   return (
@@ -147,6 +173,7 @@ const PatientCountsChart = () => {
             <option value='week'>This week</option>
             <option value='month'>This month</option>
             <option value="quarter">This Quarter</option>
+            <option value="year">This Year</option>
           </select>
         </div>
       </div>
