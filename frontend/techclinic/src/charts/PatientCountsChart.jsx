@@ -183,7 +183,7 @@ const PatientCountsChart = () => {
           <Chart
             key={`${selectedCategory}-${patientData.length}`}
             options={patientOptions}
-            series={[{ name: "Patients", data: patientData }]}
+            series={[{ name: "Patient Records", data: patientData }]}
             type="area"
             height="100%"
           />

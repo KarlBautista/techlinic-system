@@ -6,8 +6,8 @@ const PatientsPerDepartmentChart = () => {
     chart: {
       type: "donut",
       size: "100%",
-      id: "student-per-department",
-      toolbar: { show: false },
+      id: "patient-per-department",
+      toolbar: { show: true },
     },
     labels: [
       'College of Engineering',
@@ -18,7 +18,7 @@ const PatientsPerDepartmentChart = () => {
       'College of Liberal Arts'
     ],
     title: {
-      text: 'Number of Students per Department',
+      text: 'Number of Patient Records per Department',
       align: 'center'
     },
      legend: {
@@ -32,7 +32,7 @@ const PatientsPerDepartmentChart = () => {
   return (
      <div className='w-full shadow-md rounded-lg border border-gray-200 p-5'>
                 <div className='w-full flex items-center justify-between mb-3'>
-                  <h3 className='text-2xl font-semibold '>Students Per Department</h3>
+                  <h3 className='text-2xl font-semibold '>Patient Records Per Department</h3>
                   <div className='group inline-block'>
                     <select
                       id='departments'
