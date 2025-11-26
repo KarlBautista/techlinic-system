@@ -3,6 +3,7 @@ import axios from "axios";
 const useChart = create((set) => ({
     weeklyPatientCount: null,
     monthlyPatientCount: null,
+    quarterlyPatientCount: null,
     getWeeklyPatientCount: async () => {
         try {
             const response = await axios.get("http://localhost:3000/api/get-weekly-patients");
@@ -27,6 +28,20 @@ const useChart = create((set) => ({
         } catch (err) {
             console.error(`Something went wrong getting the monthly patients: ${err.message}`);
             return;
+        }
+    },
+    getQuarterlyPatientsCount: async () => {
+        try {
+            const response = await axios.get("http://localhost:3000/api/get-quarterly-patients");
+            if(response.status === 200) {
+                set({ quarterlyPatientCount: response.data });
+            } else {
+                console.error(`Error getting quarterly patients: ${response.data.error }`);
+                return;
+            }
+        } catch (err) {
+                console.error(`Something went wrong getting quarterly patients: ${err.message}`);
+                return;
         }
     }
 }))

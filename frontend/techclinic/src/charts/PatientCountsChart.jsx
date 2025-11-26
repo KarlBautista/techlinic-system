@@ -8,15 +8,16 @@ const PatientCountsChart = () => {
   const { 
     getWeeklyPatientCount, 
     getMonthlyPatientsCount, 
+    getQuarterlyPatientsCount,
     weeklyPatientCount, 
-    monthlyPatientCount 
+    monthlyPatientCount,
+    quarterlyPatientCount
   } = useChart();
 
   const [patientData, setPatientData] = useState([]);
-
   const [patientOptions, setPatientOptions] = useState({
     chart: { id: "patients-chart", toolbar: { show: true } },
-    xaxis: { categories: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] },
+    xaxis: { categories: [] },
     colors: ["#ef4444"],
     stroke: { curve: "smooth" },
     dataLabels: { enabled: false },
@@ -24,24 +25,16 @@ const PatientCountsChart = () => {
     title: { text: "", align: "left", style: { fontSize: "16px", fontWeight: "bold" } }
   });
 
-  const chartCategories = {
-    week: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-    month: ["Week 1", "Week 2", "Week 3", "Week 4"]
-  };
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
 
   function formatDate(dateString) {
     if (!dateString) return "";
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
   }
-  const monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-];
-
-const monthWord = monthNames[new Date().getMonth()];
-
-
 
 
   useEffect(() => {
@@ -50,59 +43,94 @@ const monthWord = monthNames[new Date().getMonth()];
 
 
   useEffect(() => {
-    if (selectedCategory === "week" && weeklyPatientCount) {
-      setPatientData(Object.values(weeklyPatientCount.data));
+    if (selectedCategory === "week" && weeklyPatientCount?.data) {
+      const categories = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+      const data = categories.map(day => weeklyPatientCount.data[day] || 0);
 
-      
+      setPatientData(data);
       setPatientOptions(prev => ({
         ...prev,
+        xaxis: { categories },
         title: {
           ...prev.title,
           text: `${formatDate(weeklyPatientCount.start_of_week)} - ${formatDate(weeklyPatientCount.end_of_week)}`
         }
       }));
     }
+  }, [weeklyPatientCount, selectedCategory]);
 
+  useEffect(() => {
     if (selectedCategory === "month" && monthlyPatientCount) {
-      // update data
-      setPatientData([
-        monthlyPatientCount.week1.count,
-        monthlyPatientCount.week2.count,
-        monthlyPatientCount.week3.count,
-        monthlyPatientCount.week4.count
-      ]);
+      const categories = ["Week 1", "Week 2", "Week 3", "Week 4"];
+      const data = [
+        monthlyPatientCount.week1?.count || 0,
+        monthlyPatientCount.week2?.count || 0,
+        monthlyPatientCount.week3?.count || 0,
+        monthlyPatientCount.week4?.count || 0
+      ];
 
-      // update title
+      const monthWord = monthNames[new Date().getMonth()];
+      
+      setPatientData(data);
       setPatientOptions(prev => ({
         ...prev,
-        title: { ...prev.title, text: `${monthWord} ${new Date().getFullYear()}`}
+        xaxis: { categories },
+        title: { 
+          ...prev.title, 
+          text: `${monthWord} ${new Date().getFullYear()}` 
+        }
       }));
     }
-  }, [weeklyPatientCount, monthlyPatientCount, selectedCategory]);
+  }, [monthlyPatientCount, selectedCategory]);
 
 
+  useEffect(() => {
+    if (selectedCategory === "quarter" && quarterlyPatientCount?.data) {
+      const dataObj = quarterlyPatientCount.data;
+      const quarter = quarterlyPatientCount.quarter;
+      const quarterMonths = [];
+      const startMonthIndex = (quarter - 1) * 3;
+      for (let i = 0; i < 3; i++) {
+        quarterMonths.push(monthNames[startMonthIndex + i]);
+      }
+
+  
+      const monthCounts = {};
+      quarterMonths.forEach(month => {
+        monthCounts[month] = 0;
+      });
+
+      Object.keys(dataObj).forEach(dateStr => {
+        const d = new Date(dateStr + 'T00:00:00');
+        const monthName = monthNames[d.getMonth()];
+        if (monthCounts[monthName] !== undefined) {
+          monthCounts[monthName] += dataObj[dateStr];
+        }
+      });
+
+      const categories = Object.keys(monthCounts);
+      const data = Object.values(monthCounts);
+
+      setPatientData(data);
+      setPatientOptions(prev => ({
+        ...prev,
+        xaxis: { categories },
+        title: {
+          ...prev.title,
+          text: `Q${quarterlyPatientCount.quarter} (${formatDate(quarterlyPatientCount.start_of_quarter)} - ${formatDate(quarterlyPatientCount.end_of_quarter)})`
+        }
+      }));
+    }
+  }, [quarterlyPatientCount, selectedCategory]);
 
   const handleCategoryChange = async (value) => {
-  setSelectedCategory(value);
+    setSelectedCategory(value);
 
 
-  setPatientOptions({
-    ...patientOptions,
-    xaxis: {
-      categories: chartCategories[value]
-    }
-  });
-
-  if (value === "week") {
-    getWeeklyPatientCount();
-  }
-
-  if (value === "month") {
-    getMonthlyPatientsCount();
-  }
-};
-  console.log(patientData)
-
+    if (value === "week") await getWeeklyPatientCount();
+    if (value === "month") await getMonthlyPatientsCount();
+    if (value === "quarter") await getQuarterlyPatientsCount();
+  };
 
   return (
     <div className='w-full shadow-md rounded-lg border border-gray-200 p-5'>
@@ -118,17 +146,21 @@ const monthWord = monthNames[new Date().getMonth()];
           >
             <option value='week'>This week</option>
             <option value='month'>This month</option>
+            <option value="quarter">This Quarter</option>
           </select>
         </div>
       </div>
 
       <div className='w-full h-96 md:h-80'>
-       <Chart
-  options={{ ...patientOptions }}  
-  series={[{ name: "Patients", data: [...patientData] }]}  
-  type="area"
-  height="100%"
-/>
+        {patientData.length > 0 && (
+          <Chart
+            key={`${selectedCategory}-${patientData.length}`}
+            options={patientOptions}
+            series={[{ name: "Patients", data: patientData }]}
+            type="area"
+            height="100%"
+          />
+        )}
       </div>
     </div>
   );

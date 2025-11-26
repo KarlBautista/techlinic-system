@@ -105,8 +105,93 @@ const getWeeklyPatients = async (req, res) => {
         return res.status(500).json({ success: false, error: err.message });
     }
 };
+ 
+  const getQuarterlyPatient = async (req, res) => {
+    try {
+        const timezoneOffset = 8;
+        const currentQuarter = moment().quarter();
+        const startOfQuarter = moment().utcOffset(timezoneOffset).startOf("quarter").utc().format("YYYY-MM-DD 00:00:00");
+        const endOfQuarter = moment().utcOffset(timezoneOffset).endOf("quarter").utc().format("YYYY-MM-DD 23:59:59");
+
+        const { data: quarterPatientData, error: quarterPatientError } = await supabase.from("records").select("*")
+        .gte("created_at", startOfQuarter).lte("created_at", endOfQuarter);
+        
+        if(quarterPatientError) {
+            console.error(`Error getting quarter patient: ${quarterPatientError.message}`);
+            return res.status(500).json({ success: false, error: quarterPatientError.message });
+        }
+          const dateCounts = {};
+
+        quarterPatientData.forEach((patient) => {
+         const localDate = moment(patient.created_at).utcOffset(timezoneOffset).format("YYYY-MM-DD");
+
+      if (!dateCounts[localDate]) dateCounts[localDate] = 0;
+         dateCounts[localDate]++;
+    });
+
+    return res.status(200).json({
+      success: true,
+      quarter: currentQuarter,
+      start_of_quarter: startOfQuarter,
+      end_of_quarter: endOfQuarter,
+      data: dateCounts
+    });
+    } catch (err) {
+        console.error(`Something went wrong getting quarterly patients: ${err.message}`);
+        return res.status(500).json({ success: false, error: err.message });
+    }
+    
+}
+
+    const getYearlyPatientCount = async (req, res) => {
+    try {
+        const timezoneOffset = 8;
+       
+        const startOfYear = moment().utcOffset(timezoneOffset).startOf("year").utc().format("YYYY-MM-DD 00:00:00");
+        const endOfYear = moment().utcOffset(timezoneOffset).endOf("year").utc().format("YYYY-MM-DD 23:59:59");
+        
+        const { data: yearlyPatientCountData, error: yearlyPatietntCountError } = await supabase.from("records").select("*")
+        .gte("created_at", startOfYear).lte("created_at", endOfYear);
+
+        if(yearlyPatietntCountError) {
+            console.error(`Error getting yearly patient count: ${yearlyPatietntCountError.message}`);
+            return res.status(500).json({ success: false, error: yearlyPatietntCountError.message });
+        }
+
+        const result = {
+            Jan: 0,
+            Feb: 0,
+            Mar: 0,
+            Apr: 0,
+            May: 0,
+            Jun: 0,
+            Jul: 0,
+            Aug: 0,
+            Sep: 0,
+            Oct: 0,
+            Nov: 0,
+            Dec: 0
+        };
+
+        yearlyPatientCountData.forEach((patient) => {
+            const monthAbbr = moment(patient.created_at).utcOffset(timezoneOffset).format("MMM");
+            result[monthAbbr]++;
+        });
+
+        const currentYear = moment().utcOffset(timezoneOffset).year();
+
+        res.status(200).json({ 
+            success: true, 
+            year: currentYear, 
+            data: result 
+        });
+    } catch (err) {
+        console.error(`Something went wrong getting yearly patient count: ${err.message}`);
+        return res.status(500).json({ success: false, error: err.message });
+    }
+}
 
 
 
 
-module.exports = { getWeeklyPatients, getMonthyPatients }
+module.exports = { getWeeklyPatients, getMonthyPatients, getQuarterlyPatient, getYearlyPatientCount }
