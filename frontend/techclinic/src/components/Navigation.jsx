@@ -40,11 +40,11 @@ const Navigation = () => {
     }
 
     return (
-        <div className='nav'>
-            <div className='h-[10%] w-full border-b border-gray-300 flex items-center justify-center'>
-                <div className='w-[90%] h-[80%] flex gap-2'>
+        <div className='nav flex-row   '>
+            <div className='sm:h-[10%] sm:w-full w-[50%] h-[60px] border-b hidden border-gray-300 sm:flex items-center justify-center'>
+                <div className='w-[90%] h-[80%] hidden sm:flex gap-2'>
                     <div className='w-[30%] h-full flex items-center justify-center'>
-                        <img src={TUP} alt='TUP' className='h-full  object-contain' />
+                        <img src={TUP} alt='TUP' className='h-full   object-contain' />
                     </div>
                     <div className='h-full w-[70%] flex flex-col justify-center'>
                         <p className='xl:text-[1.2rem] text-[#A12217] font-bold md:text-[1rem]'>TechClinic</p>
@@ -53,7 +53,7 @@ const Navigation = () => {
                 </div>
             </div>
 
-            <div className='h-[70%] w-full flex flex-col items-center justify-center gap-3'>
+            <div className='h-[70%] w-full sm:flex  hidden flex-col items-center justify-center gap-3'>
                 <Link
                     to={'/dashboard'}
                     className={`${currentPath === '/dashboard' ? 'bg-[#FEF2F2] border-r-4 border-r-[#A12217] text-[#A12217]' : 'bg-transparent text-[#1f2937]'} w-full py-3 flex items-center  justify-start px-4 transition-colors duration-150 font-semibold tracking-wide uppercase`}
@@ -136,7 +136,7 @@ const Navigation = () => {
                 </Link>
             </div>
 
-            <div className='h-[20%] w-full border-t border-gray-300 flex flex-col justify-center'>
+            <div className='h-[20%] w-full  border-t border-gray-300 hidden sm:flex flex-col justify-center'>
                 <div className='w-full h-[60%] bg-[#C41E3A] flex gap-2'>
                     <div className='w-[30%] shrink-0 h-full flex items-center justify-center'>
                         <img src={authenticatedUser?.user_metadata?.avatar_url} className=' h-[70px] w-[70px]  sm:w-[50px] sm:h-[50px] rounded-full' />
@@ -157,6 +157,9 @@ const Navigation = () => {
                         <img src={Logout} alt='logout' className='h-5 object-contain' style={{ filter: 'brightness(0) invert(1)' }} />
                     </button>
                 </div>
+            </div>
+            <div className='w-[50%] h-[full] sm:hidden flex justify-end items-center '>
+                    <p className='text-3xl'>🍔</p>
             </div>
         </div>
     )

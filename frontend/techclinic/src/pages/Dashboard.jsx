@@ -35,11 +35,11 @@ function formatDate(dateString) {
 
  console.log('mga patientssss', patientsData)
   return (
-    <div className='flex h-full w-full gap-2'>
-      <div className='w-[17%] h-full'>
+    <div className='flex flex-col sm:flex-row h-full w-full gap-2'>
+      <div className='sm:w-[17%]  h-full'>
            <Navigation />
       </div>
-      <div className='p-5 w-[83%] h-full flex flex-col gap-5'>
+      <div className='p-5 sm:w-[83%] w-full sm:h-full flex flex-col gap-5'>
          <div className='w-full flex flex-col gap-2'>
           <h2 className='text-2xl font-semibold text-gray-900'>Good Day, Dr. {authenticatedUser?.user_metadata?.name}</h2>
           <h3 className='text-gray-500'>{formatDate(new Date())}</h3>
