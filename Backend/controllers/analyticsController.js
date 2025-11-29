@@ -197,31 +197,62 @@ const getWeeklyPatientsPerDepartment = async (req, res) => {
         const startOfWeek = moment().utcOffset(timezoneOffset).startOf("isoWeek").utc().format("YYYY-MM-DD 00:00:00");
         const endOfWeek = moment().utcOffset(timezoneOffset).endOf("isoWeek").utc().format("YYYY-MM-DD 23:59:59");
 
-        const { data: weeklyPatientsPerDepartmentData, eror: weeklyPatientsPerDepartmentError } = await supabase.from("records").select("*")
-        .gte("created_at", startOfWeek).lte("created_at", endOfWeek);
+        const { data: weeklyPatientsPerDepartmentData, error: weeklyPatientsPerDepartmentError } = await supabase
+            .from("records")
+            .select("*")
+            .gte("created_at", startOfWeek)
+            .lte("created_at", endOfWeek);
 
         if (weeklyPatientsPerDepartmentError) {
             console.error(`Error getting weekly patients per department: ${weeklyPatientsPerDepartmentError.message}`);
             return res.status(500).json({ success: false, error: weeklyPatientsPerDepartmentError.message });
         }
-        let result = {
-            Mon: { data: []},
-              Mon: { data: []},
-                Mon: { data: []},
-                  Mon: { data: []},
-                    Mon: { data: []},
-                      Mon: { data: []},
-        }
 
-        res.status(200).json({ success: true, data: weeklyPatientsPerDepartmentData });
+    
+        const departments = [
+            "College of Architecture and Fine Arts",
+            "College of Science",
+            "College of Liberal Arts",
+            "College of Industrial Education",
+            "College of Engineering",
+            "College of Industrial Technology"
+
+
+        ];
+
+        let result = {
+            Mon: { data: {} },
+            Tue: { data: {} },
+            Wed: { data: {} },
+            Thu: { data: {} },
+            Fri: { data: {} },
+            Sat: { data: {} },
+            Sun: { data: {} }
+        };
+
+     
+        Object.keys(result).forEach(day => {
+            departments.forEach(dept => {
+                result[day].data[dept] = 0;
+            });
+        });
+
+       
+        weeklyPatientsPerDepartmentData?.forEach((patient) => {
+            const day = moment(patient.created_at).utcOffset(timezoneOffset).format("ddd");
+            const department = patient.department; 
+            
+            if (result[day] && result[day].data[department] !== undefined) {
+                result[day].data[department]++;
+            }
+        });
+
+        res.status(200).json({ success: true, data: result });
     } catch (err) {
-        console.error(`Something went wrong getting weekly patients per department`);
+        console.error(`Something went wrong getting weekly patients per department: ${err.message}`);
         return res.status(500).json({ success: false, error: err.message });
     }
-      
-        
-    }
-
+};
 
 
 
