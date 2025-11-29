@@ -54,7 +54,6 @@ const PatientRecord = () => {
                     <p className='text-[1.5rem] font-semibold text-gray-900'>Patient Record</p>
                     <p className='text-[1rem] text-gray-500'>Manage patient information and medical records</p>
                 </div>
-<<<<<<< HEAD
                 <div className='w-[90%] flex justify-between '>
                     <div className='flex h-[50px]  p-2 rounded-[10px] border border-[#EACBCB] gap-2 w-[50%]' >
                       <img src={Search} alt="" className='h-full'/>
@@ -117,9 +116,6 @@ const PatientRecord = () => {
                 <p className="text-gray-500 text-sm mt-3">No results found.</p>
             )}
 
-=======
-                <div className='w-[90%] flex flex-col md:flex-row md:items-center justify-between gap-3'>
->>>>>>> 2b61144f51f00d6f532d3ea85a1ba37c92bddada
              
                   <div className='flex-1 md:max-w-[50%] w-full'>
                     <div className='relative'>

@@ -7,6 +7,7 @@ import RecordImage from '../assets/componentImage/record.svg'
 import TUP from '../assets/image/TUP.png'
 import Settings from '../assets/image/settings.svg'
 import Logout from '../assets/image/logout.svg'
+import Notification from '../assets/componentImage/notification.svg'
 
 
 import useAuth from '../store/useAuthStore'
@@ -70,6 +71,9 @@ const newNavigation = () => {
                 <img src={MedicineImage} alt="" />
             </div>
             <div className='navigationContainer'>
+                <img src={Notification} alt="" />    
+            </div>
+            <div className='navigationContainer'>
                 <img src={ProfileImage} alt="" />    
             </div>
 
@@ -106,6 +110,7 @@ const newNavigation = () => {
                 className={`${currentPath === '/medicine-inventory' ? 'inPage' : 'notPage'} mainNavigation`}>
                     <p>MEDICINE INVENTORY</p>
                 </Link>
+
             </div>
 
             <div className='newNavigationContainer h-[20%] w-full flex-col p-1 bg-[hsl(350,73%,40%)] text-white' >
