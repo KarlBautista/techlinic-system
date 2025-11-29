@@ -2,6 +2,7 @@ import { create } from "zustand";
 import  axios  from "axios";
 const useData = create((set) => ({
     patientRecords: null,
+    patientsData: null,
     insertRecord: async (formData) => {
         try {
             const response = await axios.post("http://localhost:3000/api/insert-record", {
@@ -39,6 +40,20 @@ const useData = create((set) => ({
         } catch (err) {
             console.error(`Error getting records: ${err.message}`);
             return { success: false, error: err.message };
+        }
+    },
+
+    getPatients: async () => {
+        try {
+            const response = await axios.get("http://localhost:3000/api/get-patients");
+            if(!response.data.success) {
+                console.error(`Error getting records: ${response.error}`);
+                return
+            }
+            set({ patientsData: response.data.data })
+        } catch (err) {
+            console.error(err.messasge);
+            return;
         }
     },
     getRecordsFromExistingPatient: async (studentId) => {

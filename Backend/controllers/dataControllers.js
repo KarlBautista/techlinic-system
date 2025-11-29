@@ -12,12 +12,17 @@ const insertRecord = async (req, res) => {
         email,
         diagnosis,
         medication,
+        address,
+        dateOfBirth,
         quantity,
         treatment,
         notes,
         attendingPhysician
     } = req.body.formData;
-    console.log("ito attending", attendingPhysician)
+    console.log("Medication received:", medication);
+console.log("Stock level:", medication.stock_level);
+console.log("Quantity:", quantity);
+
 
     try{
         const { data: recordData, error: recordError } = await supabase.from("records").insert({
@@ -29,6 +34,8 @@ const insertRecord = async (req, res) => {
             department,
             sex,
             email,
+            address,
+            date_of_birth: dateOfBirth,
             attending_physician: attendingPhysician,
         }).select();
         if(recordError){
@@ -50,7 +57,9 @@ const insertRecord = async (req, res) => {
             year_level: yearLevel,
             department,
             sex,
-            email
+            email,
+            address,
+            date_of_birth: dateOfBirth
         });
         
         if(patientError){
@@ -59,9 +68,10 @@ const insertRecord = async (req, res) => {
         
         
         const { data: diagnosisData, error: diagnosisError } = await supabase.from("diagnoses").insert({
-            patient_id: recordId,
+            record_id: recordId,
+            student_id :studentId,
             diagnosis,
-            medication,
+            medication: medication.medicine_name,
             quantity,
             treatment,
             notes
@@ -70,6 +80,16 @@ const insertRecord = async (req, res) => {
         if(diagnosisError){
             console.error(`Error inserting diagnosis :${diagnosisError.message}`);
             return res.status(500).json({ success: false, error: diagnosisError.message });
+        }
+
+        if(diagnosis !== "") {
+            const { error: decreaseMedicationStockQuantityError } = await supabase.from("medicines").update({
+                "stock_level": Number(medication.stock_level) - Number(quantity)
+            }).eq("id", medication.id);
+
+            if(decreaseMedicationStockQuantityError) {
+                console.error(`Error updating stock level: ${decreaseMedicationStockQuantityError.message}`);
+            }
         }
 
         return res.status(200).json({ success: true, data: { patient: recordData, diagnosis: diagnosisData } });
@@ -85,12 +105,12 @@ const getRecords = async (req, res) => {
         const { data: patientsRecordData, error:patientsRecordError } = await supabase.from("records").select("*, diagnoses (*)");
         if(patientsRecordError){
             console.error(`Error getting records: ${patientsInformationError.message}`);
-            res.status(500).json({ success: false, error: patientsInformationError.message });
+            return res.status(500).json({ success: false, error: patientsInformationError.message });
         }
 
         if(patientsRecordData){
             console.log("successfully got the patient records");
-            res.status(200).json({ success: true, data: patientsRecordData });
+             res.status(200).json({ success: true, data: patientsRecordData });
         }
 
     } catch (err) {
@@ -99,10 +119,11 @@ const getRecords = async (req, res) => {
     }
 }
 const getRecord = async (req, res) => {
-    const { patientId } = req.params;
+    const { studentId } = req.params;
+    console.log(req.params);
     try {
         const { data: patientRecordData, error: patientRecordError } = await supabase.from("records").select("*, diagnoses (*)")
-        .eq("id", patientId);
+        .eq("student_id", studentId);
         
         if(patientRecordError) {
             console.error(`Error getting record: ${patientRecordError.message}`);
@@ -133,4 +154,22 @@ const getRecordsFromExisitingPatients = async (req, res) => {
     }
 }
 
-module.exports = { insertRecord, getRecords, getRecord, getRecordsFromExisitingPatients }
+const getPatients = async (req, res) => {
+    console.log("gumaganaaa akooo")
+    try {
+        const { data: patientsData, error: patientsError } = await supabase.from("patients").select("*");
+        if(patientsError) {
+            console.error(`Error getting patients: ${patientsError.message}`);
+            return res.status(500).json({ success: false, error: patientsError.message });
+        }
+        console.log("nakuha ko naaaa", patientsData)
+        res.status(200).json({ success: true, data: patientsData })
+    } catch (err) {
+        console.error(`Something went wrong getting patients: ${err.message}`);
+        return res.status(500).json({ success: false, error: err.message });
+    }
+}
+
+
+
+module.exports = { insertRecord, getRecords, getRecord, getRecordsFromExisitingPatients, getPatients }

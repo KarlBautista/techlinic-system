@@ -7,12 +7,16 @@ import { RouterProvider } from 'react-router-dom'
 import router from "./router/router"
 import useAuth from './store/useAuthStore'
 import useData from './store/useDataStore'
+import useMedicine from './store/useMedicineStore'
 function App() {
     const { authListener, getUser } = useAuth();
-    const { getRecords } = useData();
+    const { getRecords, getPatients } = useData();
+    const { getMedicines } = useMedicine();
     useEffect(() => {
         getUser();
         getRecords();
+        getPatients();
+        getMedicines();
         const unsubscribe = authListener();
         return () => {
             if(unsubscribe && typeof unsubscribe === "function"){

@@ -5,9 +5,11 @@ import useData from '../store/useDataStore'
 import useAuth from '../store/useAuthStore'
 import Swal from 'sweetalert2'
 import { useEffect } from 'react'
+import useMedicine from "../store/useMedicineStore";
 const NewPatient = () => {
   const { insertRecord, getRecords, getRecordsFromExistingPatient } = useData();
   const { authenticatedUser } = useAuth();
+  const { medicines } = useMedicine();
   const [studentInformation, setStudentInformation] = useState(null);
   const [patientInput, setPatientInput] = useState({
     firstName: "",
@@ -18,13 +20,28 @@ const NewPatient = () => {
     department: "",
     sex: "",
     email: "",
+    dateOfBirth: "",
+    address: "",
     diagnosis: "",
-    medication: "",
+    medication: {},
     quantity: "",
     treatment: "",
     notes: "",
     attendingPhysician: authenticatedUser?.user_metadata?.full_name,
   });
+
+  // Normalize various date formats to YYYY-MM-DD for <input type="date">
+  const formatDateForInput = (val) => {
+    if (!val) return '';
+    try {
+      const d = new Date(val);
+      if (isNaN(d)) return '';
+      // toISOString gives YYYY-MM-DDTHH:MM:SS.sssZ -> slice to get YYYY-MM-DD
+      return d.toISOString().slice(0, 10);
+    } catch (e) {
+      return '';
+    }
+  }
 
   // PAG NAGING 10 NA LENGTH NG STUDENT ID MAG FEFETCH
   useEffect(() => {
@@ -58,7 +75,9 @@ const NewPatient = () => {
           contactNumber: existing.contact_number,
           yearLevel: existing.year_level,
           department: existing.department,
-          sex: existing.sex
+          sex: existing.sex,
+          dateOfBirth: existing.date_of_birth ? formatDateForInput(existing.date_of_birth) : (existing.dob ? formatDateForInput(existing.dob) : ''),
+          address: existing.address ?? ''
         }));
         Swal.fire({ 
           title: `Student: ${patientInput.studentId} Information Found.`,
@@ -81,6 +100,12 @@ const NewPatient = () => {
 
   const handleSetPatientInput = (e) => {
     const { name, value } = e.target;
+
+    if(name === "medication"){
+      const medjObj = medicines.find((m) => m.id === Number(value));
+      setPatientInput((prev) => ({...prev, medication: medjObj}));
+        return; // ← IMPORTANT
+    }
     setPatientInput((prev) => ({ ...prev, [name]: value }));
   }
 
@@ -122,6 +147,8 @@ const NewPatient = () => {
           department: "",
           sex: "",
           email: "",
+          dateOfBirth: "",
+          address: "",
           diagnosis: "",
           medication: "",
           quantity: "",
@@ -143,7 +170,7 @@ const NewPatient = () => {
         </div>
 
 
-    {/* record */}
+  
         <div className='w-[83%]  h-full flex justify-center p-5'>
             <div className='w-full overflow-y-scroll h-full flex flex-col items-center gap-5 scrollbar'  >
                 <div className='w-full flex flex-col gap-2'>
@@ -152,16 +179,28 @@ const NewPatient = () => {
                 </div>
 
                 <div className='w-[90%] flex flex-col items-center'>
-                  {/* Student Info */}
+                
                   <div className='w-full'>
                     <p className='text-[1rem] text-gray-800'>Student Information</p>
                   </div>
                   <div className='border border-gray-200 w-full'></div>
 
-                  {/* Student input */}
+               
                   <form onSubmit={handleFormSubmit} className=' w-full  flex flex-wrap gap-2 justify-evenly mt-2'>
-                    
-
+                        
+                        <div className='formInfo'>
+                       
+                        <input
+                          type="text"
+                          name="studentId"
+                          placeholder=" "
+                          id='studentID'
+                          value={patientInput.studentId}
+                          onChange={handleSetPatientInput}
+                        />
+                   
+                        <label htmlFor="studentID" className='text-[.8rem]'>Student ID</label>
+                    </div>
                     <div className='formInfo'>
                         <input
                           type="text"
@@ -171,6 +210,7 @@ const NewPatient = () => {
                           value={patientInput.firstName}
                           onChange={handleSetPatientInput}
                         />
+                      
                         <label htmlFor="firstName" className='text-[.8rem]'>First name</label>
                     </div>
 
@@ -186,17 +226,7 @@ const NewPatient = () => {
                         <label htmlFor="lastName" className='text-[.8rem]'>Last name</label>
                     </div>
 
-                    <div className='formInfo'>
-                        <input
-                          type="text"
-                          name="studentId"
-                          placeholder=" "
-                          id='studentID'
-                          value={patientInput.studentId}
-                          onChange={handleSetPatientInput}
-                        />
-                        <label htmlFor="studentID" className='text-[.8rem]'>Student ID</label>
-                    </div>
+                
                     
                     <div className='formInfo'>
                          <input
@@ -251,6 +281,30 @@ const NewPatient = () => {
                         <label htmlFor="email" className='text-[.8rem]'>Email</label>
                     </div>
 
+                    <div className='formInfo'>
+                      <input type="text"
+                      name='address'
+                      placeholder=''
+                      id='address'
+                      value={patientInput.address}
+                      onChange={handleSetPatientInput} />
+                      <label htmlFor="address" className='text-[.8rem]'>Address</label>
+                    </div>
+
+                      <div className='formInfo'>
+                      <input type="date"
+                      name='dateOfBirth'
+                      placeholder=''
+                      id='dateOfBirth'
+                      value={patientInput.dateOfBirth}
+                      onChange={handleSetPatientInput} />
+                      <label htmlFor="address" className='text-[.8rem]'>Date of Birth</label>
+                    </div>
+
+                  
+
+                 
+
 
                   <div className='w-full mt-10'>
                     <p className='text-[1rem]'>Medical Information</p>
@@ -277,10 +331,13 @@ const NewPatient = () => {
                           </div>
 
                           <div className='formDiagnosis'>
-                              <select id="medication" name="medication" value={patientInput.medication} onChange={handleSetPatientInput} className='w-full p-2 rounded-[10px] border outline-none'>
-                                <option value="" disabled>Medication</option>
-                                <option value="BioFlu">BioFlu</option>
-                                <option value="Alaxan">Alaxan</option>
+                              <select id="medication" name="medication" value={patientInput.medication?.id || ""} onChange={handleSetPatientInput} className='w-full p-2 rounded-[10px] border outline-none'>
+                              <option value="" disabled>Medication</option>
+                                {medicines?.map((medicine) => {
+                                return <option key={medicine.id} value={medicine.id}>{`${medicine.medicine_name}, ${medicine.generic_name} - ${medicine.stock_level} in stock`}</option>
+                                })}
+                                   
+                                
                               </select>
                           </div>
 

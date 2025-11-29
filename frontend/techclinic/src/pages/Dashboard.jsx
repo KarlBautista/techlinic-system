@@ -3,308 +3,167 @@ import Swal from "sweetalert2";
 import { useNavigate } from 'react-router-dom';
 import Navigation from '../components/Navigation';
 import useAuth from '../store/useAuthStore';
-import Chart from "react-apexcharts"
+import useData from '../store/useDataStore';
+import AnimateNumber from "../components/AnimateNumber"
+import useMedicine from '../store/useMedicineStore';
 const Dashboard = () => {
   const { authenticatedUser } = useAuth();
-  const date = new Date();
-  const formattedDate = date.toLocaleDateString("en-US", {
-    weekday: "long",
+  const { patientRecords, patientsData} = useData();
+  const { medicines } = useMedicine();
+  const records = patientRecords?.data ?? [];
+  const navigate = useNavigate();
+function formatDate(dateString) {
+  if (!dateString) return "";
+
+  const date = new Date(dateString);
+
+  return date.toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
-    day: "numeric"
+    day: "numeric",
   });
+}
 
-  //Placeholder lang muna para sa charts natin to para may ui na
-  const medicineChartOptions = {
-    chart: {
-      id: "medicine-chart",
-      toolbar: { show: false }
-    },
-    xaxis: {
-      categories: ["Paracetamol", "Amoxicillin", "Ibuprofen", "Metformin", "Loperamide"],
-    },
-      colors: ["#ef4444"],
-    labels: { style: { colors: '#6b7280' } },
-    title: {
-        text: "Stock level (%)",
-        style: { fontWeight: 'bold', color: '#6b7280' }
-      },
-     grid: {
-          borderColor: '#e5e7eb'
-    },
-    title: {
-        text: "Top Medicines By Stock Level",
-        align: "left",
-        style: { fontSize: "16px", fontWeight: "bold" }
-    },
-    dataLabels: {
-      enabled: false
-    },
+  const handleAddRecord = () => {
+    navigate("/new-patient");
   }
 
-  const patientChartOptions = {
-    chart: {
-      id: "patients-chart",
-      toolbar: { show: false }
-    },
-    xaxis: {
-      categories: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-    },
-    colors: ["#ef4444"],
-    stroke: {
-      curve: "smooth"
-    },
-    dataLabels: {
-      enabled: false
-    },
-    grid: {
-      borderColor: "#e5e7eb"
-    },
-    title: {
-      text: "Weekly Patient Count",
-      align: "left",
-      style: {
-        fontSize: "16px",
-        fontWeight: "bold"
-      }
-    }
-  };
-
-  const patientsPerDepartmentOptions = {
-    chart: {
-      type: "donut",
-      size: "100%",
-      id: "student-per-department",
-      toolbar: { show: false },
-    },
-    labels: [
-      'College of Engineering',
-      'College of Industrial Technology',
-      'College of Industrial Education',
-      'College of Architecture & Fine Arts',
-      'College of Science',
-      'College of Liberal Arts'
-    ],
-    title: {
-      text: 'Number of Students per Department',
-      align: 'center'
-    },
-     legend: {
-      position: 'bottom'
-    },
-  };
-  
-  const topDiagnoses = ["Flu", "Hypertension", "Diabetes", "COVID-19", "Asthma"];
-  const patientsCount = [120, 95, 80, 60, 45]; // bar values
-  const cumulativePercent = [30, 55, 75, 90, 100]; // line values (optional)
-
-  const topDiagnosisOptions = {
-    chart: {
-      id: "top-diagnosis",
-      toolbar: { show: false },
-    },
-    colors: ["#ef4444"],
-    stroke: {
-      curve: "smooth"
-    },
-    title: {
-      text: "Top Diagnoses",
-      align: "center",
-      style: { fontSize: "16px", fontWeight: "bold" }
-    },
-    xaxis: {
-      categories: topDiagnoses,
-    },
-    yaxis: [
-      {
-        title: { text: "Number of Patients" },
-      },
-      {
-        opposite: true,
-        title: { text: "Cumulative %" },
-        max: 100
-      }
-    ],
-    dataLabels: {
-      enabled: true,
-      enabledOnSeries: [0], // show labels only on bars
-    },
-    tooltip: {
-      shared: true,
-      intersect: false,
-    },
-  };
+  const handleAddMedicine = () => {
+    navigate("/add-medicine")
+  }
 
 
-  const patientsData = [
-    {
-      name: "Patients",
-      data: [10, 20, 15, 30, 25, 35, 40]
-    }
-  ];
-
-  const medicineData = [{
-    name: "Medicine",
-    data: [75, 45, 30, 60, 25]
-  }];
-
-  const topDiagnosisSeries = [
-    {
-      name: "Patients",
-      type: "column",  // bar chart
-      data: patientsCount
-    },
-    {
-      name: "Cumulative %",
-      type: "line",    // line chart
-      data: cumulativePercent
-    }
-];
-
-
- const patientsPerDepartmentData = [100, 56, 150, 60, 20, 30];
+ console.log('mga patientssss', patientsData)
   return (
-    <div className='flex h-full w-full gap-2'>
-      <div className='w-[17%] h-full'>
+    <div className='flex flex-col sm:flex-row h-full w-full gap-2'>
+      <div className='sm:w-[17%]  h-full'>
            <Navigation />
       </div>
-      <div className='p-5 w-[83%] h-full flex flex-col gap-5'>
+      <div className='p-5 sm:w-[83%] w-full sm:h-full flex flex-col gap-5'>
          <div className='w-full flex flex-col gap-2'>
           <h2 className='text-2xl font-semibold text-gray-900'>Good Day, Dr. {authenticatedUser?.user_metadata?.name}</h2>
-          <h3 className='text-gray-500'>{formattedDate}</h3>
+          <h3 className='text-gray-500'>{formatDate(new Date())}</h3>
+      </div>
+   
+      <div className='w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
+        <div className='p-4 bg-white rounded-lg shadow-md flex flex-col'>
+          <span className='text-sm text-gray-500'>Total Patients</span>
+          <span className='text-3xl font-bold text-[#b01c34] mt-2'>{<AnimateNumber value={patientsData?.length}/>}</span>
+          <span className='text-xs text-gray-400 mt-1'>Number of registered patients</span>
+        </div>
+
+        <div className='p-4 bg-white rounded-lg shadow-md flex flex-col'>
+          <span className='text-sm text-gray-500'>Total Visits</span>
+          <span className='text-3xl font-bold text-[#b01c34] mt-2'>{<AnimateNumber value={records?.length}/>}</span>
+          <span className='text-xs text-gray-400 mt-1'>Total clinic visits recorded</span>
+        </div>
+
+        <div className='p-4 bg-white rounded-lg shadow-md flex flex-col'>
+          <span className='text-sm text-gray-500'>Total Diagnoses</span>
+          <span className='text-3xl font-bold text-[#b01c34] mt-2'>{<AnimateNumber value={records?.length}/>}</span>
+          <span className='text-xs text-gray-400 mt-1'>Total diagnoses entries</span>
+        </div>
+
+        <div className='p-4 bg-white rounded-lg shadow-md flex flex-col'>
+          <span className='text-sm text-gray-500'>Medicine Inventory</span>
+          <span className='text-3xl font-bold text-[#b01c34] mt-2'><AnimateNumber value={medicines?.length}/></span>
+          <span className='text-xs text-gray-400 mt-1'>Total medicines in stock</span>
+        </div>
       </div>
 
-      {/*ito para na sa tatlong box sa dashboard*/}
-      <div className='w-full h-full flex flex-col gap-5'>
-      <div className='w-full h-[40%] flex justify-between gap-5'>
-        <div className='w-[33.33%] h-full shadow-md rounded-lg border border-gray-200 p-5'>
-          <div className='w-full h-[20%] flex justify-between'>
-              <h3 className='text-2xl font-semibold '>Patients</h3>
-              <div className='group inline-block'>
-                <select
-                  id='patients'
-                  name='patients'
-                  aria-label='Patients timeframe'
-                  className='appearance-none bg-white border border-gray-300 text-gray-700 text-sm rounded-md pl-3 pr-3 py-1.5 focus:outline-none transition-colors 
-                    duration-150 ease-in-out group-hover:border-red-500 group-hover:ring-2 group-hover:ring-red-200'>
-                    <option value='week'>This week</option>
-                    <option value='month'>This month</option>
-                    <option value='quarter'>This quarter</option>
-                    <option value='year'>This year</option>
-                </select>
-              </div>
-          </div>
-          {/*dito patients graph*/}
-          <div className='w-full h-[80%]'>
-              <div className='w-full h-[80%]'>
-              <Chart
-                options={patientChartOptions}
-                series={patientsData}
-                type="area"
-                height="100%"
-              />
-          </div>
-          </div>
-        </div>
+      {/* mga mock quick access */}
+      <div className='w-full mt-4'>
+        <h2 className='text-xl font-semibold mb-3'>Quick Access</h2>
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
+          <button className='p-4 bg-white rounded-lg shadow-md flex items-start gap-3 hover:shadow-lg transition'
+          onClick={() => handleAddRecord()}>
+            <span className='w-12 h-12 rounded-full bg-gradient-to-br from-[#f7d6d8] to-[#f3bfc2] flex items-center justify-center text-white'>
+              <svg xmlns="http://www.w3.org/2000/svg" className='w-6 h-6 text-[#b01c34]' fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+            </span>
+            <div className='text-left'>
+              <div className='text-sm font-medium text-gray-900'>Add Record</div>
+              <div className='text-xs text-gray-500'>Create a new patient record</div>
+            </div>
+          </button>
 
-        {/* pangalawang box*/}
-       <div className='w-[33.33%] h-full shadow-md rounded-lg border border-gray-200 p-5'>
-          <div className='w-full h-[20%] flex justify-between'>
-              <h3 className='text-2xl font-semibold '>Medicines</h3>
-              <div className='group inline-block'>
-                <select
-                  id='patients'
-                  name='patients'
-                  aria-label='Patients timeframe'
-                  className='appearance-none bg-white border border-gray-300 text-gray-700 text-sm rounded-md pl-3 pr-3 py-1.5 focus:outline-none transition-colors 
-                    duration-150 ease-in-out group-hover:border-red-500 group-hover:ring-2 group-hover:ring-red-200'>
-                    <option value='week'>This week</option>
-                    <option value='month'>This month</option>
-                    <option value='quarter'>This quarter</option>
-                    <option value='year'>This year</option>
-                </select>
-              </div>
-          </div>
-          {/*dito medicine graph*/}
-          <div className='w-full h-[80%]'>
-              <div className='w-full h-[80%]'>
-              <Chart
-                options={medicineChartOptions}
-                series={medicineData}
-                type="bar"
-                height="100%"
-              />
-          </div>
-          </div>
-        </div>
+          <button className='p-4 bg-white rounded-lg shadow-md flex items-start gap-3 hover:shadow-lg transition'
+          onClick={() => handleAddMedicine()}>
+            <span className='w-12 h-12 rounded-full bg-gradient-to-br from-[#f7d6d8] to-[#f3bfc2] flex items-center justify-center text-white'>
+              <svg xmlns="http://www.w3.org/2000/svg" className='w-6 h-6 text-[#b01c34]' fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7h18M3 12h18M3 17h18" />
+              </svg>
+            </span>
+            <div className='text-left'>
+              <div className='text-sm font-medium text-gray-900'>Add Medicine</div>
+              <div className='text-xs text-gray-500'>Register new medicine item</div>
+            </div>
+          </button>
 
-        {/* pangatlong box*/}
-        <div className='w-[33.33%] h-full shadow-md rounded-lg border border-gray-200 p-5'>
-          <div className='w-full h-[20%] flex justify-between'>
-              <h3 className='text-2xl font-semibold '>Students Per Department</h3>
-              <div className='group inline-block'>
-                <select
-                  id='patients'
-                  name='patients'
-                  aria-label='Patients timeframe'
-                  className='appearance-none bg-white border border-gray-300 text-gray-700 text-sm rounded-md pl-3 pr-3 py-1.5 focus:outline-none transition-colors 
-                    duration-150 ease-in-out group-hover:border-red-500 group-hover:ring-2 group-hover:ring-red-200'>
-                    <option value='week'>This week</option>
-                    <option value='month'>This month</option>
-                    <option value='quarter'>This quarter</option>
-                    <option value='year'>This year</option>
-                </select>
-              </div>
-          </div>
-          {/*dito patientPerDepartment graph*/}
-          <div className='w-full h-[80%]'>
-              <div className='w-full h-[80%]'>
-              <Chart
-                options={patientsPerDepartmentOptions}
-                series={patientsPerDepartmentData}
-                type='donut'
-                height="100%"
-                width="100%"
-              />
-          </div>
-          </div>
-        </div>
-        {/*dito naman yung malaking graph*/}
-       </div>
-        <div className='w-full h-[58%] shadow-md rounded-lg border border-gray-200 p-5'>
-          <div className='w-full h-[20%] flex justify-between'>
-            <h3 className='text-2xl font-semibold '>Top Diagnosis</h3>
-              <div className='group inline-block'>
-                <select
-                  id='patients'
-                  name='patients'
-                  aria-label='Patients timeframe'
-                  className='appearance-none bg-white border border-gray-300 text-gray-700 text-sm rounded-md pl-3 pr-3 py-1.5 focus:outline-none transition-colors 
-                    duration-150 ease-in-out group-hover:border-red-500 group-hover:ring-2 group-hover:ring-red-200'>
-                    <option value='week'>This week</option>
-                    <option value='month'>This month</option>
-                    <option value='quarter'>This quarter</option>
-                    <option value='year'>This year</option>
-                </select>
-              </div>
-          </div>
-          <div className='w-full h-[80%]'>
-              <div className='w-full h-[80%]'>
-             <Chart
-                options={topDiagnosisOptions}
-                series={topDiagnosisSeries}
-                type="line"
-                height="350px"
-              />
-          </div>
-          </div>
-        </div>
+          <button className='p-4 bg-white rounded-lg shadow-md flex items-start gap-3 hover:shadow-lg transition'>
+            <span className='w-12 h-12 rounded-full bg-gradient-to-br from-[#f7d6d8] to-[#f3bfc2] flex items-center justify-center text-white'>
+              <svg xmlns="http://www.w3.org/2000/svg" className='w-6 h-6 text-[#b01c34]' fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+            </span>
+            <div className='text-left'>
+              <div className='text-sm font-medium text-gray-900'>Import</div>
+              <div className='text-xs text-gray-500'>Upload records or inventory</div>
+            </div>
+          </button>
 
-        {/* dito na susunod na mga ialalagay sa baba, naka flex col na to */}
-
+          <button className='p-4 bg-white rounded-lg shadow-md flex items-start gap-3 hover:shadow-lg transition'>
+            <span className='w-12 h-12 rounded-full bg-gradient-to-br from-[#f7d6d8] to-[#f3bfc2] flex items-center justify-center text-white'>
+              <svg xmlns="http://www.w3.org/2000/svg" className='w-6 h-6 text-[#b01c34]' fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-6a2 2 0 012-2h2a2 2 0 012 2v6M7 9h10" />
+              </svg>
+            </span>
+            <div className='text-left'>
+              <div className='text-sm font-medium text-gray-900'>Reports</div>
+              <div className='text-xs text-gray-500'>Generate reports & exports</div>
+            </div>
+          </button>
+        </div>
       </div>
-          
+
+      <div>
+        <h1 className='text-2xl font-semibold'>Recent Records</h1>
       </div>
+
+      {/* ito table*/}
+  <div className=' w-full overflow-x-auto'>
+    <table className='min-w-full border-collapse border border-gray-200 rounded-lg overflow-hidden'>
+      <thead className='bg-[#C41E3A]'>
+        <tr>
+          <th className='px-4 py-2 text-left text-sm font-medium text-white border-b'>Student ID</th>
+          <th className='px-4 py-2 text-left text-sm font-medium text-white border-b'>Name</th>
+          <th className='px-4 py-2 text-left text-sm font-medium text-white border-b'>Diagnosis</th>
+          <th className='px-4 py-2 text-left text-sm font-medium text-white border-b'>Department</th>
+          <th className='px-4 py-2 text-left text-sm font-medium text-white border-b'>Created at</th>
+        </tr>
+      </thead>
+      <tbody>
+        {records.length === 0 ? (
+          <tr>
+            <td colSpan={5} className='px-4 py-6 text-center text-sm text-gray-500'>No recent records found.</td>
+          </tr>
+        ) : (
+          records.map((patient) => (
+            <tr key={patient.id} className='hover:bg-gray-50 cursor-pointer transition-colors'>
+              <td className='px-4 py-3 text-sm text-gray-800 border-b'>{patient.student_id ?? '-'}</td>
+              <td className='px-4 py-3 text-sm text-gray-800 border-b'>{`${patient.first_name ?? ''} ${patient.last_name ?? ''}`.trim() || '-'}</td>
+              <td className='px-4 py-3 text-sm text-gray-800 border-b'>{patient.diagnoses?.[0]?.diagnosis ?? '-'}</td>
+              <td className='px-4 py-3 text-sm text-gray-800 border-b'>{patient.department ?? '-'}</td>
+              <td className='px-4 py-3 text-sm text-gray-800 border-b'>{formatDate(patient.created_at)}</td>
+            </tr>
+          ))
+        )}
+      </tbody>
+    </table>
+</div>
+      </div>
+    
     </div>
 
   )
