@@ -43,13 +43,13 @@ const PatientRecord = () => {
                     <p className='text-[1rem] text-gray-500'>Manage patient information and medical records</p>
                 </div>
                 <div className='w-[90%] flex justify-between '>
-                    <div className='flex h-[50px]  p-2 rounded-[10px] border-1 border-[#EACBCB] gap-2 w-[50%]' >
+                    <div className='flex h-[50px]  p-2 rounded-[10px] border border-[#EACBCB] gap-2 w-[50%]' >
                       <img src={Search} alt="" className='h-full'/>
                       <input type="text" className='outline-none w-full'  placeholder='Search'
                       value={search} onChange={(e) => setSearch(e.target.value)}/>
                     </div>
 
-                    <div className='w-[25%] border-1  h-[50px] border-[#EACBCB] p-2 rounded-[10px]'>
+                    <div className='w-[25%] border  h-[50px] border-[#EACBCB] p-2 rounded-[10px]'>
                       <select id="department" name="department"  className='w-full h-full rounded-[10px] outline-none'
                       value={selectedDepartment} onChange={(e) => setSelectedDepartment(e.target.value)}>
                         <option value="All Department" >All Department</option>
@@ -67,7 +67,7 @@ const PatientRecord = () => {
                     </div>
                 </div>
 
-                <div className=' h-[40px] w-[90%] flex gap-2 mt-[20px]'>
+                <div className=' h-10 w-[90%] flex gap-2 mt-5'>
                     <div className='h-full w-full flex items-center font-medium'>
                       <p className='text-[.9remrem] tracking-[2px]'>Student ID</p>
                     </div>

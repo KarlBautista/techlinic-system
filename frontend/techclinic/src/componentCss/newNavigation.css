@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+
+
+.navigationContainer {
+    @apply w-[20%] h-full flex items-center justify-center sm:hidden 
+}
+
+
+.navigationContainer img {
+    @apply h-[60%]
+}
+
+
+.newNavigationContainer{
+    @apply hidden sm:flex 
+}
+
+.mainNavigation{
+    @apply  w-full  py-3 font-semibold text-[.8rem]
+}
+
+.mainNavigation p { 
+    @apply flex justify-center cursor-pointer lg:text-[.9rem] 2xl:text-[1.2rem] xl:text-[1.1rem] 
+}
+
+.inPage {
+    @apply  text-[#A12217] bg-[#FEF2F2] border-r-4 border-r-[#A12217]
+}
+
+.notPage {
+    @apply bg-transparent text-[#1f2937]
+}
+
+.Settings img {
+    @apply h-5 xl:h-6 2xl:h-7 md:h-4
+}
+
+.Settings p {
+    @apply xl:text-[1.1rem]  2xl:text-[1.2rem] md:text-[.9rem]
+}

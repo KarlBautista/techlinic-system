@@ -21,7 +21,7 @@ function App() {
         }
     }, [authListener, getUser]);
  return(
-    <div className='w-full h-[100vh]'>
+    <div className='w-full h-screen'>
         <RouterProvider router={router}/>
     </div>
  )

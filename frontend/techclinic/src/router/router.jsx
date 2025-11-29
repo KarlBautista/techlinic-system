@@ -1,6 +1,6 @@
 import React from "react";
 import { createBrowserRouter } from "react-router-dom";
-import Dashboard from "../pages/Dashboard";
+import Dashboard from "../pages/newDashboard";
 import Login from "../pages/Login";
 import NewPatient from "../pages/NewPatient";
 import MedicineInventory from "../pages/MedicineInventory";

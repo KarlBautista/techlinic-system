@@ -1,7 +1,7 @@
 import React from 'react'
 import { useLocation, Link, useNavigate } from 'react-router-dom'
 import TUP from "../assets/image/TUP.png"
-import Logout from "../assets/image/logout.png"
+import Logout from "../assets/image/logout.svg"
 import useAuth from '../store/useAuthStore'
 import Swal from 'sweetalert2'
 import Mysettings from '../assets/image/settings.svg'
