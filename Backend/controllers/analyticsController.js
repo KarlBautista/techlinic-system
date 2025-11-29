@@ -194,21 +194,23 @@ const getWeeklyPatients = async (req, res) => {
 const getWeeklyPatientsPerDepartment = async (req, res) => {
     try {
         const timezoneOffset = 8;
-        const startOfWeek = moment().utcOffset(timezoneOffset).startOf("isoWeek").utc().format("YYYY-MM-DD 00:00:00");
-        const endOfWeek = moment().utcOffset(timezoneOffset).endOf("isoWeek").utc().format("YYYY-MM-DD 23:59:59");
+        const startOfWeek = moment().utcOffset(timezoneOffset).startOf("isoWeek");
+        const endOfWeek = moment().utcOffset(timezoneOffset).endOf("isoWeek");
+        
+        const startOfWeekUTC = startOfWeek.clone().utc().format("YYYY-MM-DD 00:00:00");
+        const endOfWeekUTC = endOfWeek.clone().utc().format("YYYY-MM-DD 23:59:59");
 
         const { data: weeklyPatientsPerDepartmentData, error: weeklyPatientsPerDepartmentError } = await supabase
             .from("records")
             .select("*")
-            .gte("created_at", startOfWeek)
-            .lte("created_at", endOfWeek);
+            .gte("created_at", startOfWeekUTC)
+            .lte("created_at", endOfWeekUTC);
 
         if (weeklyPatientsPerDepartmentError) {
             console.error(`Error getting weekly patients per department: ${weeklyPatientsPerDepartmentError.message}`);
             return res.status(500).json({ success: false, error: weeklyPatientsPerDepartmentError.message });
         }
 
-    
         const departments = [
             "College of Architecture and Fine Arts",
             "College of Science",
@@ -216,48 +218,236 @@ const getWeeklyPatientsPerDepartment = async (req, res) => {
             "College of Industrial Education",
             "College of Engineering",
             "College of Industrial Technology"
-
-
         ];
 
-        let result = {
-            Mon: { data: {} },
-            Tue: { data: {} },
-            Wed: { data: {} },
-            Thu: { data: {} },
-            Fri: { data: {} },
-            Sat: { data: {} },
-            Sun: { data: {} }
-        };
-
-     
-        Object.keys(result).forEach(day => {
-            departments.forEach(dept => {
-                result[day].data[dept] = 0;
-            });
+        let data = {};
+        departments.forEach(dept => {
+            data[dept] = 0;
         });
 
-       
         weeklyPatientsPerDepartmentData?.forEach((patient) => {
-            const day = moment(patient.created_at).utcOffset(timezoneOffset).format("ddd");
-            const department = patient.department; 
+            const department = patient.department;
             
-            if (result[day] && result[day].data[department] !== undefined) {
-                result[day].data[department]++;
+            if (data[department] !== undefined) {
+                data[department]++;
             }
         });
 
-        res.status(200).json({ success: true, data: result });
+        res.status(200).json({ 
+            success: true, 
+            data: data,
+            period: {
+                type: "week",
+                startDate: startOfWeek.format("MMMM DD, YYYY"),
+                endDate: endOfWeek.format("MMMM DD, YYYY"),
+                startDay: startOfWeek.format("dddd"),
+                endDay: endOfWeek.format("dddd"),
+                range: `${startOfWeek.format("MMM DD")} - ${endOfWeek.format("MMM DD, YYYY")}`
+            }
+        });
     } catch (err) {
         console.error(`Something went wrong getting weekly patients per department: ${err.message}`);
         return res.status(500).json({ success: false, error: err.message });
     }
 };
 
+const getMonthlyPatientsPerDepartment = async (req, res) => {
+    try {
+        const timezoneOffset = 8;
+        const startOfMonth = moment().utcOffset(timezoneOffset).startOf("month");
+        const endOfMonth = moment().utcOffset(timezoneOffset).endOf("month");
+        
+        const startOfMonthUTC = startOfMonth.clone().utc().format("YYYY-MM-DD 00:00:00");
+        const endOfMonthUTC = endOfMonth.clone().utc().format("YYYY-MM-DD 23:59:59");
 
+        const { data: monthlyPatientsPerDepartmentData, error: monthlyPatientsPerDepartmentError } = await supabase
+            .from("records")
+            .select("*")
+            .gte("created_at", startOfMonthUTC)
+            .lte("created_at", endOfMonthUTC);
+
+        if (monthlyPatientsPerDepartmentError) {
+            console.error(`Error getting monthly patients per department: ${monthlyPatientsPerDepartmentError.message}`);
+            return res.status(500).json({ success: false, error: monthlyPatientsPerDepartmentError.message });
+        }
+
+        const departments = [
+            "College of Architecture and Fine Arts",
+            "College of Science",
+            "College of Liberal Arts",
+            "College of Industrial Education",
+            "College of Engineering",
+            "College of Industrial Technology"
+        ];
+
+        let data = {};
+        departments.forEach(dept => {
+            data[dept] = 0;
+        });
+
+        monthlyPatientsPerDepartmentData?.forEach((patient) => {
+            const department = patient.department;
+            
+            if (data[department] !== undefined) {
+                data[department]++;
+            }
+        });
+
+        res.status(200).json({ 
+            success: true, 
+            data: data,
+            period: {
+                type: "month",
+                month: startOfMonth.format("MMMM YYYY"),
+                startDate: startOfMonth.format("MMMM DD, YYYY"),
+                endDate: endOfMonth.format("MMMM DD, YYYY"),
+                range: startOfMonth.format("MMMM YYYY")
+            }
+        });
+    } catch (err) {
+        console.error(`Something went wrong getting monthly patients per department: ${err.message}`);
+        return res.status(500).json({ success: false, error: err.message });
+    }
+};
+
+const getQuarterlyPatientsPerDepartment = async (req, res) => {
+    try {
+        const timezoneOffset = 8;
+        const startOfQuarter = moment().utcOffset(timezoneOffset).startOf("quarter");
+        const endOfQuarter = moment().utcOffset(timezoneOffset).endOf("quarter");
+        
+        const startOfQuarterUTC = startOfQuarter.clone().utc().format("YYYY-MM-DD 00:00:00");
+        const endOfQuarterUTC = endOfQuarter.clone().utc().format("YYYY-MM-DD 23:59:59");
+
+        const { data: quarterlyPatientsPerDepartmentData, error: quarterlyPatientsPerDepartmentError } = await supabase
+            .from("records")
+            .select("*")
+            .gte("created_at", startOfQuarterUTC)
+            .lte("created_at", endOfQuarterUTC);
+
+        if (quarterlyPatientsPerDepartmentError) {
+            console.error(`Error getting quarterly patients per department: ${quarterlyPatientsPerDepartmentError.message}`);
+            return res.status(500).json({ success: false, error: quarterlyPatientsPerDepartmentError.message });
+        }
+
+        const departments = [
+            "College of Architecture and Fine Arts",
+            "College of Science",
+            "College of Liberal Arts",
+            "College of Industrial Education",
+            "College of Engineering",
+            "College of Industrial Technology"
+        ];
+
+        let data = {};
+        departments.forEach(dept => {
+            data[dept] = 0;
+        });
+
+        quarterlyPatientsPerDepartmentData?.forEach((patient) => {
+            const department = patient.department;
+            
+            if (data[department] !== undefined) {
+                data[department]++;
+            }
+        });
+
+    
+        const quarterNumber = startOfQuarter.quarter();
+        const year = startOfQuarter.year();
+        
+ 
+        const months = [];
+        for (let i = 0; i < 3; i++) {
+            months.push(startOfQuarter.clone().add(i, 'months').format("MMMM"));
+        }
+
+        res.status(200).json({ 
+            success: true, 
+            data: data,
+            period: {
+                type: "quarter",
+                quarter: `Q${quarterNumber} ${year}`,
+                quarterNumber: quarterNumber,
+                year: year,
+                months: months,
+                startDate: startOfQuarter.format("MMMM DD, YYYY"),
+                endDate: endOfQuarter.format("MMMM DD, YYYY"),
+                range: `${months.join(", ")} ${year}`
+            }
+        });
+    } catch (err) {
+        console.error(`Something went wrong getting quarterly patients per department: ${err.message}`);
+        return res.status(500).json({ success: false, error: err.message });
+    }
+};
+
+const getYearlyPatientsPerDepartment = async (req, res) => {
+    try {
+        const timezoneOffset = 8;
+        const startOfYear = moment().utcOffset(timezoneOffset).startOf("year");
+        const endOfYear = moment().utcOffset(timezoneOffset).endOf("year");
+        
+        const startOfYearUTC = startOfYear.clone().utc().format("YYYY-MM-DD 00:00:00");
+        const endOfYearUTC = endOfYear.clone().utc().format("YYYY-MM-DD 23:59:59");
+
+        const { data: yearlyPatientsPerDepartmentData, error: yearlyPatientsPerDepartmentError } = await supabase
+            .from("records")
+            .select("*")
+            .gte("created_at", startOfYearUTC)
+            .lte("created_at", endOfYearUTC);
+
+        if (yearlyPatientsPerDepartmentError) {
+            console.error(`Error getting yearly patients per department: ${yearlyPatientsPerDepartmentError.message}`);
+            return res.status(500).json({ success: false, error: yearlyPatientsPerDepartmentError.message });
+        }
+
+        const departments = [
+            "College of Architecture and Fine Arts",
+            "College of Science",
+            "College of Liberal Arts",
+            "College of Industrial Education",
+            "College of Engineering",
+            "College of Industrial Technology"
+        ];
+
+        let data = {};
+        departments.forEach(dept => {
+            data[dept] = 0;
+        });
+
+        yearlyPatientsPerDepartmentData?.forEach((patient) => {
+            const department = patient.department;
+            
+            if (data[department] !== undefined) {
+                data[department]++;
+            }
+        });
+
+        const year = startOfYear.year();
+
+        res.status(200).json({ 
+            success: true, 
+            data: data,
+            period: {
+                type: "year",
+                year: year,
+                startDate: startOfYear.format("MMMM DD, YYYY"),
+                endDate: endOfYear.format("MMMM DD, YYYY"),
+                range: year.toString()
+            }
+        });
+    } catch (err) {
+        console.error(`Something went wrong getting yearly patients per department: ${err.message}`);
+        return res.status(500).json({ success: false, error: err.message });
+    }
+};
 
 module.exports = { getWeeklyPatients, 
                     getMonthyPatients, 
                     getQuarterlyPatient, 
                     getYearlyPatientCount,
-                     getWeeklyPatientsPerDepartment}
+                     getWeeklyPatientsPerDepartment,
+                    getMonthlyPatientsPerDepartment,
+                getQuarterlyPatientsPerDepartment,
+            getYearlyPatientsPerDepartment}

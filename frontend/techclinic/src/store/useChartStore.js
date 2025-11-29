@@ -5,6 +5,11 @@ const useChart = create((set) => ({
     monthlyPatientCount: null,
     quarterlyPatientCount: null,
     yearlyPatientCount: null,
+    weeklyPatientPerDepartment: null,
+    monthlyPatientPerDepartment: null,
+    quarterlyPatientPerDepartment:null,
+    yearlyPatientPerDepartment: null,
+
     getWeeklyPatientCount: async () => {
         try {
             const response = await axios.get("http://localhost:3000/api/get-weekly-patients");
@@ -58,7 +63,68 @@ const useChart = create((set) => ({
             console.error(`Something went wrong getting yearly patients: ${err.message}`);
             return;
         }
-    }
+    },
+
+    getWeeklyPatientPerDepartmentCount: async () => {
+        try {
+            const response = await axios.get("http://localhost:3000/api/get-weekly-patients-per-department");
+            if(response.status === 200) {
+                set({ weeklyPatientPerDepartment: response.data });
+            } else {
+                console.error(`Error getting quarterly patients: ${response.data.error}`);
+                return;
+            }
+        } catch (err) {
+            console.error(`Something went wrong getting weekly patients per department: ${err.message}`);
+            return;
+        }
+    },
+
+     getMonthlyPatientPerDepartmentCount: async () => {
+        try {
+            const response = await axios.get("http://localhost:3000/api/get-monthly-patients-per-department");
+            if(response.status === 200) {
+                set({ monthlyPatientPerDepartment: response.data });
+            } else {
+                console.error(`Error getting monthly patients per department: ${response.data.error}`);
+                return;
+            }
+        } catch (err) {
+            console.error(`Something went wrong getting monthly patients per department: ${err.message}`);
+            return;
+        }
+    },
+
+     getQuarterlyPatientPerDepartmentCount: async () => {
+        try {
+            const response = await axios.get("http://localhost:3000/api/get-quarterly-patients-per-department");
+            if(response.status === 200) {
+                set({ quarterlyPatientPerDepartment: response.data });
+            } else {
+                console.error(`Error getting quarterly patients per department: ${response.data.error}`);
+                return;
+            }
+        } catch (err) {
+            console.error(`Something went wrong getting quarterly patients per department: ${err.message}`);
+            return;
+        }
+    },
+
+     getYearlyPatientPerDepartmentCount: async () => {
+        try {
+            const response = await axios.get("http://localhost:3000/api/get-yearly-patients-per-department");
+            if(response.status === 200) {
+                set({ yearlyPatientPerDepartment: response.data });
+            } else {
+                console.error(`Error getting yearly patients per department: ${response.data.error}`);
+                return;
+            }
+        } catch (err) {
+            console.error(`Something went wrong getting yearly patients per department: ${err.message}`);
+            return;
+        }
+    },
+
 }))
 
 export default useChart;

@@ -41,16 +41,16 @@ const patientsCount = [120, 95, 80, 60, 45]; // bar values
     },
   };
 
-const cumulativePercent = [30, 55, 75, 90, 100]; // line values (optional)
+const cumulativePercent = [30, 55, 75, 90, 100]; 
   const topDiagnosisSeries = [
     {
       name: "Patients",
-      type: "column",  // bar chart
+      type: "column",  
       data: patientsCount
     },
     {
       name: "Cumulative %",
-      type: "line",    // line chart
+      type: "line",   
       data: cumulativePercent
     }
 ];
