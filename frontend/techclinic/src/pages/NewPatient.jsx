@@ -258,6 +258,8 @@ const NewPatient = () => {
                         <option value="College of Engineering">College of Engineering</option>
                         <option value="College of Industrial Technology">College of Industrial Technology</option>
                         <option value="College of Architecture and Fine Arts">College of Architecture and Fine Arts</option>
+                        <option value="College of Industrial Education">College of Industrial Education</option>
+                        <option value="College of Liberal Arts">College of Liberal Arts</option>
                       </select>
                     </div>
                     
