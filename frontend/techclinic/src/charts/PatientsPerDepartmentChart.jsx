@@ -168,7 +168,7 @@ const PatientsPerDepartmentChart = () => {
         </div>
         {periodInfo && (
           <div className='w-full'>
-            <p className='text-sm text-gray-600'>{getPeriodDisplay()}</p>
+            <p className='text-[17px] font-semibold px-5'>{getPeriodDisplay()}</p>
           </div>
         )}
       </div>
