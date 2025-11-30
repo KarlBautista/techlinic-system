@@ -1,5 +1,5 @@
 import React from 'react'
-import Navigation from '../components/Navigation'
+import Navigation from '../components/newNavigation'
 import {useState} from 'react'
 import useData from '../store/useDataStore'
 import useAuth from '../store/useAuthStore'
@@ -164,14 +164,14 @@ const NewPatient = () => {
 
 
   return (
-<div className='flex h-full w-full gap-2'>
-        <div className='sm:w-[30%] w-[17%] h-full md:w-[25%] lg:w-[17%]'>
+<div className='h-screen w-full flex flex-col sm:flex-row'>
+        <div className='h-[8%] w-full order-last sm:order-0 sm:w-[23%] sm:h-full md:w-[19%] lg:w-[17%]'>
           <Navigation />
         </div>
 
 
   
-        <div className='w-[83%]  h-full flex justify-center p-5'>
+        <div className='h-[92%] min-w-[360px] sm:min-w-0  w-full sm:h-full sm:w-[77%] md:w-[81%] lg:w-[83%] overflow-auto p-2 flex flex-col gap-2'>
             <div className='w-full overflow-y-scroll h-full flex flex-col items-center gap-5 scrollbar'  >
                 <div className='w-full flex flex-col gap-2'>
                     <p className='text-[1.5rem] font-semibold text-gray-900'>Add Patient Record</p>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import Search from '../assets/image/searcg.svg'
-import Navigation from '../components/Navigation'
+import Navigation from '../components/newNavigation'
 import Medicine from '../assets/image/medicine.svg'
 import { useNavigate } from 'react-router-dom'
 import useMedicine from '../store/useMedicineStore'
@@ -34,11 +34,11 @@ const MedicineInventory = () => {
 
   return (
     
-     <div className='flex h-full w-full gap-2'>
-     <div className='w-[17%] h-full'>
+     <div className='h-screen w-full flex flex-col sm:flex-row'>
+     <div className='h-[8%] w-full order-last sm:order-0 sm:w-[23%] sm:h-full md:w-[19%] lg:w-[17%]'>
         <Navigation />
       </div>
-      <div className='w-[83%]  h-full flex justify-center p-5 '>
+      <div className='h-[92%] min-w-[360px] sm:min-w-0  w-full sm:h-full sm:w-[77%] md:w-[81%] lg:w-[83%] overflow-auto p-2 flex flex-col gap-2'>
          {showForm && <MedicineForm medicine={medicineFormData} 
                                     onClose={() => setShowForm(false)} 
                                     onUpdate={(updatedForm) => updateMedicine(updatedForm)}
