@@ -14,37 +14,56 @@ const Navigation = () => {
 
     const handleSignOut = async () => {
         try {
+            console.log("🚪 Initiating sign out...");
+            
             const response = await signOut()
-            if (response.error) {
+            
+            if (response?.error) {
+                console.error("❌ Sign out error:", response.error);
                 Swal.fire({
-                    title: "Something went wrong. Can't sign-out.",
+                    title: "Something went wrong",
                     imageUrl: TUP,
                     imageHeight: "150px",
                     imageWidth: "150px",
-                    text: "Please try again",
+                    text: "Can't sign out. Please try again.",
+                    icon: 'error'
                 })
                 return
             }
 
+            console.log("✅ Sign out successful, navigating to login");
+            
+            // Navigate first
+            navigate('/', { replace: true })
+            
+            // Show success message after navigation
             Swal.fire({
-                title: 'Signing Out',
+                title: 'Signed Out',
                 imageUrl: TUP,
                 imageHeight: '150px',
                 imageWidth: '150px',
                 text: 'Thank you for choosing Techclinic.',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
             })
-            navigate('/')
+            
         } catch (err) {
-            console.error(err)
+            console.error("❌ Sign out exception:", err)
+            Swal.fire({
+                title: "Error",
+                text: "Failed to sign out. Please try again.",
+                icon: 'error'
+            })
         }
     }
 
     return (
-        <div className='nav flex-row   '>
+        <div className='nav flex-row'>
             <div className='sm:h-[10%] sm:w-full w-[50%] h-[60px] border-b hidden border-gray-300 sm:flex items-center justify-center'>
                 <div className='w-[90%] h-[80%] hidden sm:flex gap-2'>
                     <div className='w-[30%] h-full flex items-center justify-center'>
-                        <img src={TUP} alt='TUP' className='h-full   object-contain' />
+                        <img src={TUP} alt='TUP' className='h-full object-contain' />
                     </div>
                     <div className='h-full w-[70%] flex flex-col justify-center'>
                         <p className='xl:text-[1.2rem] text-[#A12217] font-bold md:text-[1rem]'>TechClinic</p>
@@ -53,10 +72,10 @@ const Navigation = () => {
                 </div>
             </div>
 
-            <div className='h-[70%] w-full sm:flex  hidden flex-col items-center justify-center gap-3'>
+            <div className='h-[70%] w-full sm:flex hidden flex-col items-center justify-center gap-3'>
                 <Link
                     to={'/dashboard'}
-                    className={`${currentPath === '/dashboard' ? 'bg-[#FEF2F2] border-r-4 border-r-[#A12217] text-[#A12217]' : 'bg-transparent text-[#1f2937]'} w-full py-3 flex items-center  justify-start px-4 transition-colors duration-150 font-semibold tracking-wide uppercase`}
+                    className={`${currentPath === '/dashboard' ? 'bg-[#FEF2F2] border-r-4 border-r-[#A12217] text-[#A12217]' : 'bg-transparent text-[#1f2937]'} w-full py-3 flex items-center justify-start px-4 transition-colors duration-150 font-semibold tracking-wide uppercase`}
                 >
                     <span className='w-10 flex items-center justify-center'>
                         <svg xmlns='http://www.w3.org/2000/svg' className='w-5 h-5 text-[#b01c34]' viewBox='0 0 24 24' fill='none' stroke='currentColor'>
@@ -125,7 +144,7 @@ const Navigation = () => {
 
                 <Link
                     to={'/notifications'}
-                    className={`${currentPath === '/notifications' || currentPath === "/notifications" ? 'bg-[#FEF2F2] border-r-4 border-r-[#A12217] text-[#A12217]' : 'bg-transparent text-[#1f2937]'} w-full py-3 flex items-center justify-start px-4 transition-colors duration-150 font-semibold tracking-wide uppercase`}
+                    className={`${currentPath === '/notifications' ? 'bg-[#FEF2F2] border-r-4 border-r-[#A12217] text-[#A12217]' : 'bg-transparent text-[#1f2937]'} w-full py-3 flex items-center justify-start px-4 transition-colors duration-150 font-semibold tracking-wide uppercase`}
                 >
                     <span className='w-10 flex items-center justify-center'>
                         <svg xmlns='http://www.w3.org/2000/svg' className='w-5 h-5 text-[#b01c34]' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
@@ -136,15 +155,21 @@ const Navigation = () => {
                 </Link>
             </div>
 
-            <div className='h-[20%] w-full  border-t border-gray-300 hidden sm:flex flex-col justify-center'>
+            <div className='h-[20%] w-full border-t border-gray-300 hidden sm:flex flex-col justify-center'>
                 <div className='w-full h-[60%] bg-[#C41E3A] flex gap-2'>
                     <div className='w-[30%] shrink-0 h-full flex items-center justify-center'>
-                        <img src={authenticatedUser?.user_metadata?.avatar_url} className=' h-[70px] w-[70px]  sm:w-[50px] sm:h-[50px] rounded-full' />
+                        <img 
+                            src={authenticatedUser?.user_metadata?.avatar_url || TUP} 
+                            alt="User avatar"
+                            className='h-[70px] w-[70px] sm:w-[50px] sm:h-[50px] rounded-full object-cover' 
+                        />
                     </div>
 
                     <div className='w-[70%] h-full flex flex-col justify-center text-white'>
-                        <p className=' font-bold sm:text-[.9rem]'>{`Dr. ${authenticatedUser?.user_metadata?.name}`}</p>
-                        <p className=' text-[.8rem] sm:text-[.7rem]'>Primary Core Physician</p>
+                        <p className='font-bold sm:text-[.9rem]'>
+                            {authenticatedUser?.user_metadata?.name ? `Dr. ${authenticatedUser.user_metadata.name}` : authenticatedUser?.email || 'User'}
+                        </p>
+                        <p className='text-[.8rem] sm:text-[.7rem]'>Primary Core Physician</p>
                     </div>
                 </div>
 
@@ -153,13 +178,19 @@ const Navigation = () => {
                         <img src={Mysettings} alt='Settings' className='h-5 object-contain' style={{ filter: 'brightness(0) invert(1)' }} />
                         <p className='text-[.9rem]'>Settings</p>
                     </button>
-                    <button className='h-full' onClick={() => handleSignOut()} aria-label='Sign out' title='Sign out'>
+                    <button 
+                        className='h-full flex items-center' 
+                        onClick={handleSignOut} 
+                        aria-label='Sign out' 
+                        title='Sign out'
+                    >
                         <img src={Logout} alt='logout' className='h-5 object-contain' style={{ filter: 'brightness(0) invert(1)' }} />
                     </button>
                 </div>
             </div>
-            <div className='w-[50%] h-[full] sm:hidden flex justify-end items-center '>
-                    <p className='text-3xl'>🍔</p>
+            
+            <div className='w-[50%] h-[full] sm:hidden flex justify-end items-center'>
+                <p className='text-3xl'>🍔</p>
             </div>
         </div>
     )

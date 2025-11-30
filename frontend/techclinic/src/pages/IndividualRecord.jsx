@@ -2,7 +2,7 @@ import React, { useEffect, useState, useTransition } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios';
 import Back from '../assets/image/back.svg'
-import Navigation from '../components/Navigation';
+import Navigation from '../components/newNavigation';
 import Phone from '../assets/image/phone.svg'
 import Email from '../assets/image/email.svg'
 import Calendar from '../assets/image/calendar.svg'

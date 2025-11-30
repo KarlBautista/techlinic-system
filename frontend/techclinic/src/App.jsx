@@ -1,34 +1,55 @@
 import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
-import Login from './pages/Login'
 import { RouterProvider } from 'react-router-dom'
 import router from "./router/router"
 import useAuth from './store/useAuthStore'
 import useData from './store/useDataStore'
 import useMedicine from './store/useMedicineStore'
+
 function App() {
     const { authListener, getUser } = useAuth();
     const { getRecords, getPatients } = useData();
     const { getMedicines } = useMedicine();
+    const [isInitialized, setIsInitialized] = useState(false);
+    
     useEffect(() => {
-        getUser();
-        getRecords();
-        getPatients();
-        getMedicines();
-        const unsubscribe = authListener();
+        let unsubscribe;
+        
+        const initialize = async () => {
+            console.log("🚀 App initializing...");
+            
+            // Set up auth listener FIRST
+            unsubscribe = authListener();
+            
+            // Then check for existing session
+            await getUser();
+            
+            // Load other data
+            await Promise.all([
+                getRecords(),
+                getPatients(),
+                getMedicines()
+            ]);
+            
+            setIsInitialized(true);
+            console.log("✅ App initialized");
+        };
+        
+        initialize();
+        
         return () => {
-            if(unsubscribe && typeof unsubscribe === "function"){
+            if (unsubscribe && typeof unsubscribe === "function") {
+                console.log("🧹 Cleaning up auth listener");
                 unsubscribe();
             }
-        }
-    }, [authListener, getUser]);
- return(
-    <div className='w-full h-screen'>
-        <RouterProvider router={router}/>
-    </div>
- )
+        };
+    }, []); // Run only once on mount
+    
+    return (
+        <div className='w-full h-screen'>
+            <RouterProvider router={router}/>
+        </div>
+    );
 }
 
 export default App

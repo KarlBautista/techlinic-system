@@ -10,9 +10,10 @@ import { useNavigate } from 'react-router-dom';
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState(""); 
-    const { signInWithGoogle, authenticatedUser } = useAuth();
+    const { signInWithGoogle, authenticatedUser, signIn } = useAuth();
     const navigate = useNavigate();
     useEffect(() => {
+      console.log("authenticatedUser changed:", authenticatedUser); // Add this debug log
       if(authenticatedUser){
         navigate("/dashboard")
       }
@@ -29,9 +30,28 @@ const Login = () => {
         console.error(err.message);
       }
     }
-    const handleSignin = () => {
-
+    const handleSignin = async (e) => {
+  e.preventDefault();
+  console.log("1. Form submitted");
+  console.log("2. Attempting sign in with:", email);
+  
+  try {
+    console.log("3. About to call signIn()");
+    const response = await signIn(email, password);
+    console.log("4. Sign in response received:", response);
+    
+    if (response.error) {
+      console.error(`Error signing In:`, response.error);
+      alert(`Error signing in: ${response.error.message || response.error}`);
+    } else {
+      console.log("5. Success! Navigating to dashboard...");
+      navigate("/dashboard");
     }
+  } catch (err) {
+    console.error("6. Catch block error:", err);
+    alert(`Error: ${err.message}`);
+  }
+}
   return (
     <div className='fullScreen min-w-[640px]'>
       <div className='flex flex-col h-full gap-10 sm:w-full min-w-[640px] lg:w-[60%]'>
