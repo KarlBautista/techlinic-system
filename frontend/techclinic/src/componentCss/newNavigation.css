@@ -8,7 +8,7 @@
 
 
 .navigationContainer img {
-    @apply h-[40%]
+    @apply h-[35%]
 }
 
 
@@ -17,11 +17,15 @@
 }
 
 .mainNavigation{
-    @apply  w-full  py-3 font-semibold text-[.8rem]
+    @apply  w-full  py-3 font-semibold text-[.7rem] flex gap-2
+}
+
+.mainNavigation img {
+    @apply h-4 xl:h-5 2xl:h-6 md:h-3 ml-7
 }
 
 .mainNavigation p { 
-    @apply flex justify-center cursor-pointer lg:text-[.9rem] 2xl:text-[1.2rem] xl:text-[1.1rem] 
+    @apply flex  cursor-pointer lg:text-[.8rem] 2xl:text-[1rem] xl:text-[.9rem] 
 }
 
 .inPage {
@@ -33,9 +37,9 @@
 }
 
 .Settings img {
-    @apply h-5 xl:h-6 2xl:h-7 md:h-4
+    @apply h-4 xl:h-5 2xl:h-6 md:h-3
 }
 
 .Settings p {
-    @apply xl:text-[1.1rem]  2xl:text-[1.2rem] md:text-[.9rem]
+    @apply xl:text-[1rem]  2xl:text-[1.1rem] md:text-[.8rem]
 }

@@ -41,9 +41,9 @@ function formatDate(dateString) {
       </div>
       <div className='p-5 sm:w-[83%] w-full sm:h-full flex flex-col gap-5'>
          <div className='w-full flex flex-col gap-2'>
-          <h2 className='text-2xl font-semibold text-gray-900'>Good Day, Dr. {authenticatedUser?.user_metadata?.name}</h2>
-          <h3 className='text-gray-500'>{formatDate(new Date())}</h3>
-      </div>
+            <h2 className='text-2xl font-semibold text-gray-900'>Good Day, Dr. {authenticatedUser?.user_metadata?.name}</h2>
+            <h3 className='text-gray-500'>{formatDate(new Date())}</h3>
+          </div>
    
       <div className='w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
         <div className='p-4 bg-white rounded-lg shadow-md flex flex-col'>
