@@ -15,7 +15,7 @@ const PatientRecord = () => {
     const fullname = `${patient.first_name} ${patient.last_name}`.toLowerCase();
     const matchesSearch = fullname.includes(search.toLowerCase()) || patient.student_id.toLowerCase()
     .includes(search.toLowerCase());
-    
+      
     const matchesDepartment = selectedDepartment === "All Department" || patient.department === selectedDepartment;
     return matchesSearch && matchesDepartment;
   });
@@ -31,8 +31,6 @@ const PatientRecord = () => {
     day: "numeric",
   });
 }
-
-  console.log("mga nasearch", filteredRecords);
 
   const handleIndividualRecord = (studentId) => {
     try {
@@ -63,7 +61,7 @@ const PatientRecord = () => {
 
                     <div className='w-[25%] border  h-[50px] border-[#EACBCB] p-2 rounded-[10px]'>
                       <select id="department" name="department"  className='w-full h-full rounded-[10px] outline-none'
-                      value={selectedDepartment} onChange={(e) => setSelectedDepartment(e.target.value)}>
+                      value={selectedDepartment} onChange={(e) => (e.target.value)}>setSelectedDepartment
                         <option value="All Department" >All Department</option>
                         <option value="College of Science">College of Science</option>
                         <option value="College of Engineering">College of Engineering</option>
