@@ -6,12 +6,18 @@ import useAuth from '../store/useAuthStore'
 import Swal from 'sweetalert2'
 import { useEffect } from 'react'
 import useMedicine from "../store/useMedicineStore";
-const NewPatient = () => {
+import { useParams } from 'react-router-dom'
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
+const AddDiagnosis = () => {
   const { insertRecord, getRecords, getRecordsFromExistingPatient } = useData();
   const { authenticatedUser } = useAuth();
   const { medicines } = useMedicine();
-  const [studentInformation, setStudentInformation] = useState(null);
+  const { recordId } = useParams();
+  const [patientData, setPatientData] = useState([]);
+  const navigate = useNavigate();
   const [patientInput, setPatientInput] = useState({
+    id: "",
     firstName: "",
     lastName: "",
     studentId: "",
@@ -42,57 +48,46 @@ const NewPatient = () => {
     }
   }
 
+ 
+ console.log("ito patient data", patientData)
+
   useEffect(() => {
-    const fetchIfExists = async () => {
-      const id = String(patientInput.studentId || "").trim();
-      if (id.length !== 11) {
+    setPatientInput({
+        id: patientData[0]?.id,
+        firstName: patientData[0]?.first_name,
+        lastName: patientData[0]?.last_name,
+        studentId: patientData[0]?.student_id,
+        contactNumber: patientData[0]?.contact_number,
+        yearLevel: patientData[0]?.year_level,
+        department: patientData[0]?.department,
+        sex: patientData[0]?.sex,
+        email: patientData[0]?.email,
+        dateOfBirth: formatDateForInput(patientData[0]?.date_of_birth),
+        address: patientData[0]?.address,
+        
+    })
+  }, [patientData])
 
-        setStudentInformation(null);
-        return;
-      }
-
-      try {
-        const response = await getRecordsFromExistingPatient(id);
-        if (!response || !response.success) {
-          setStudentInformation(null);
-          return;
+  useEffect(() => {
+        const getRecord = async () => {
+            try {
+                const response = await axios.get(`http://localhost:3000/api/get-record-to-diagnose/${recordId}`);
+                if(response.status === 200) {
+                  
+                    setPatientData(response.data.data);
+                } else {
+                    console.error(`Error getting record: ${response.data.error}`);
+                    return
+                }
+            } catch (err) {
+                console.error(`Something went wrong getting record: ${err.message}`);
+                return
+            }
         }
+        getRecord();
+  }, [])
 
-        const payload = response.data;
-        const existing = Array.isArray(payload) ? payload[0] : payload;
-        if (!existing) {
-          setStudentInformation(null);
-          return;
-        }
-        setStudentInformation(existing);
-        setPatientInput((prev) => ({
-          ...prev,
-          firstName: existing.first_name,
-          lastName: existing.last_name,
-          email: existing.email,
-          contactNumber: existing.contact_number,
-          yearLevel: existing.year_level,
-          department: existing.department,
-          sex: existing.sex,
-          dateOfBirth: existing.date_of_birth ? formatDateForInput(existing.date_of_birth) : (existing.dob ? formatDateForInput(existing.dob) : ''),
-          address: existing.address ?? ''
-        }));
-        Swal.fire({ 
-          title: `Student: ${patientInput.studentId} Information Found.`,
-          text: "The inputs have the existing data of the student now",
-          icon: "success",
-          timer: 1500,
-          showConfirmButton: false,
-        })
-      } catch (err) {
-        console.error('Error fetching existing student info', err);
-        setStudentInformation(null);
-      }
-    };
-
-    fetchIfExists();
-  }, [patientInput.studentId, getRecordsFromExistingPatient]);
-
+ 
 
 
 
@@ -107,55 +102,33 @@ const NewPatient = () => {
     setPatientInput((prev) => ({ ...prev, [name]: value }));
   }
 
+
+
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try{
-      const response = await insertRecord(patientInput);
-      if(!response.success){
-        const msg = response.error || 'Failed inserting record';
-        const lower = String(msg).toLowerCase();
-        if (lower.includes('unique') || lower.includes('duplicate') || lower.includes('already exists') || lower.includes('student_id') || lower.includes('student id')) {
-          Swal.fire({ 
-            title: "Student Already Exist",
-            text: "A patient with this Student ID already exists. Please check the Student ID.",
-            showConfirmButton: true,
-            icon: "warning"
-            
-          })
-        } else {
-          Swal.fire({
-            title: "Something went wrong",
-            text: msg,
-            icon: "error"
-          })
-        }
-        return;
-      } else {
+      const response = await axios.put("http://localhost:3000/api/insert-diagnosis", {
+        patientInput
+      });
+      if (response.status === 200) {
         Swal.fire({ 
-          title: "Record Inserted Successfully",
-          icon: "success",
-          timer: 2000,
-        })
-        setPatientInput({
-          firstName: "",
-          lastName: "",
-          studentId: "",
-          contactNumber: "",
-          yearLevel: "",
-          department: "",
-          sex: "",
-          email: "",
-          dateOfBirth: "",
-          address: "",
-          diagnosis: "",
-          medication: "",
-          quantity: "",
-          treatment: "",
-          notes: "",
+            title: "Diagnosis Successfully Inserted",
+            icon: 'success',
         });
+        navigate(`/individual-record/${patientInput.studentId}`);
+
+      
+        
+      } else {
+        Swal.fire({
+            title: "Something went wrong inserting diagnosis",
+            icon: "error",
+        })
+      }
         getRecords();
       }
-    } catch (err) {
+     catch (err) {
       console.error(err);
     }
   }
@@ -172,7 +145,7 @@ const NewPatient = () => {
         <div className='h-[92%] min-w-[360px] sm:min-w-0  w-full sm:h-full sm:w-[77%] md:w-[81%] lg:w-[83%] overflow-auto p-2 flex flex-col gap-2'>
             <div className='w-full overflow-y-scroll h-full flex flex-col items-center gap-5 scrollbar'  >
                 <div className='w-full flex flex-col gap-2'>
-                    <p className='text-[1.5rem] font-semibold text-gray-900'>Add Patient Record</p>
+                    <p className='text-[1.5rem] font-semibold text-gray-900'>Add Patient Diagnosis</p>
                     <p className='text-[1rem] text-gray-500'>Patient Clinical Documentation</p>
                 </div>
 
@@ -354,11 +327,7 @@ const NewPatient = () => {
                           </div>
                           {/*ito button*/}
                           <div className='w-full h-[50%]  flex justify-center items-center'>
-                          <button className='text-white px-5 py-3 rounded-lg bg-[#ef4444]'>
-                            {patientInput && patientInput.diagnosis && patientInput.diagnosis.length > 0
-                              ? "Insert Record"
-                              : "Send for Diagnosis"}
-                          </button>
+                            <button className='text-white px-5 py-3 rounded-lg bg-[#ef4444]'>Insert Record</button>
                           </div>
                       </div>
                       
@@ -395,4 +364,4 @@ const NewPatient = () => {
   )
 }
 
-export default NewPatient
+export default AddDiagnosis
