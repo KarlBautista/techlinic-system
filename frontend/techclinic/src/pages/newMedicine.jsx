@@ -45,6 +45,9 @@ const newMedicine =()=> {
             <div className='h-[8%] w-full order-last sm:order-0 sm:w-[23%] sm:h-full md:w-[19%] lg:w-[17%]'>
                 <Navigation />
             </div>
+
+        
+
             <div className='h-[92%] min-w-[360px] sm:min-w-0  w-full sm:h-full sm:w-[77%] md:w-[81%] lg:w-[83%] overflow-auto p-5'>
                 <div className='w-full h-full flex flex-col gap-4 items-center'>
                     <div className='h-[10%]  w-full flex flex-col gap-1'>
@@ -121,7 +124,7 @@ const newMedicine =()=> {
 
                                     <div className='hidden sm:flex items-center justify-center text-[.8rem] tracking-[2px] sm:w-[20%] h-full'>
                                         <div
-                                            className={`h-3 w-3~ rounded-full ${
+                                            className={`h-3 w-3 rounded-full ${
                                             medicine.stock_level < 20 ? "bg-red-600" : "bg-green-600"
                                             }`}
                                         ></div>

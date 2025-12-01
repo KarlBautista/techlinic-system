@@ -33,7 +33,6 @@ function formatDate(dateString) {
   }
 
 
- console.log('mga patientssss', patientsData)
   return (
     <div className='flex flex-col sm:flex-row h-full w-full gap-2'>
       <div className='sm:w-[17%]  h-full'>

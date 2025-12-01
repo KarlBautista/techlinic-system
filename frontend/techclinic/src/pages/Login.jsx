@@ -10,15 +10,15 @@ const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const { signInWithGoogle, authenticatedUser, signIn } = useAuth();
+    const { signInWithGoogle, authenticatedUser, signIn, storePassword } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
     
-    // Get the page user was trying to access, or default to dashboard
+   
     const from = location.state?.from?.pathname || "/dashboard";
     
     useEffect(() => {
-        // If already authenticated, redirect to dashboard
+       
         if (authenticatedUser) {
             console.log("✅ User already authenticated, redirecting to:", from);
             navigate(from, { replace: true });
@@ -34,7 +34,7 @@ const Login = () => {
                 console.error(`Error signing in with Google: ${response.error}`);
                 alert(`Error signing in with Google: ${response.error}`);
             }
-            // OAuth redirects automatically, no need to navigate here
+            
         } catch (err) {
             console.error("Google sign-in error:", err.message);
             alert(`Error: ${err.message}`);
@@ -62,6 +62,7 @@ const Login = () => {
                 alert(`Error signing in: ${response.error.message || response.error}`);
             } else {
                 console.log("✅ Sign-in successful! Navigating to:", from);
+                storePassword(password)
                 navigate(from, { replace: true });
             }
         } catch (err) {

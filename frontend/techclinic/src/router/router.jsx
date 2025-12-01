@@ -7,11 +7,10 @@ import MedicineInventory from "../pages/newMedicine";
 import PatientRecord from "../pages/PatientRecord";
 import IndividualRecord from "../pages/IndividualRecord";
 import AddMedicine from "../pages/AddMedicine";
-import Analytics from "../pages/Analytics";
+import Analytics from "../pages/newAnalytics";
 import Notifications from "../pages/Notifications";
 import PersonnelList from "../pages/PersonnelList"
 import Settings from "../pages/Settings";
-import AddDiagnosis from "../pages/AddDiagnosis";
 const router = createBrowserRouter([
   { path: "/", element: <Login /> },
   { path: "/dashboard", element: <Dashboard /> },
@@ -24,7 +23,6 @@ const router = createBrowserRouter([
   { path: "/notifications", element: <Notifications /> },
   { path: "/personnel-list", element: <PersonnelList />},
   { path: "/settings", element: <Settings /> },
-  { path: "/add-diagnosis/:recordId", element: <AddDiagnosis />}
 ]);
 
 export default router;

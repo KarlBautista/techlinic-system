@@ -51,6 +51,7 @@ const MedicineInventory = () => {
           <div className='w-full flex flex-col gap-2'>
               <p className='text-[1.5rem] font-semibold text-gray-900'>Medicine Inventory</p>
               <p className='text-[1rem] text-gray-500'>Manage Medicines</p>
+              
           </div>
 
           <div className='w-[90%] flex justify-between'>
