@@ -21,7 +21,9 @@ const TopDiagnosisChart = () => {
   const [paretoOptions, setParetoOptions] = useState({
     chart: {
       id: "top-diagnosis-pareto",
-      toolbar: { show: true },
+      toolbar: { show: true,
+        
+       },
       stacked: false,
     },
     colors: ["#3b82f6", "#ef4444"],
@@ -36,8 +38,8 @@ const TopDiagnosisChart = () => {
     },
     title: {
       text: "Top Diagnoses (Pareto Chart)",
-      align: "center",
-      style: { fontSize: "18px", fontWeight: "bold" }
+      align: "left",
+      style: { fontSize: "12px", fontWeight: "normal" }
     },
     xaxis: {
       categories: [],
@@ -91,7 +93,7 @@ const TopDiagnosisChart = () => {
   const [trendOptions, setTrendOptions] = useState({
     chart: {
       id: "diagnosis-trend",
-      toolbar: { show: true },
+        toolbar: { show: true },
       type: 'line'
     },
     stroke: {
@@ -100,8 +102,8 @@ const TopDiagnosisChart = () => {
     },
     title: {
       text: "Top Diagnoses Trend",
-      align: "center",
-      style: { fontSize: "18px", fontWeight: "bold" }
+      align: "left",
+      style: { fontSize: "12px", fontWeight: "normal" }
     },
     xaxis: {
       categories: [],
@@ -228,8 +230,64 @@ const TopDiagnosisChart = () => {
   const hasData = chartData && chartData.topDiagnosesCount && chartData.topDiagnosesCount.length > 0;
 
   return (
-    <div className='w-full shadow-md rounded-lg border border-gray-200 p-5'>
-      <div className='w-full flex flex-col gap-2 mb-3'>
+    <div className='w-full h-full'>
+
+           <div className='h-[4%] w-full flex justify-between items-center'>
+              <div className='text-[.9rem] h-full w-[80%] font-semibold items-center'>Top diagnosis</div>
+              <div className='text-[.9rem] w-[20%] '>
+                  <select
+                    id='diagnoses-timeframe'
+                    name='diagnoses-timeframe'
+                    aria-label='Diagnoses timeframe'
+                    value={selectedCategory}
+                    className='h-[95%] w-[98%] text-[.7rem] font-medium' 
+                    onChange={handleCategoryChange}>
+                    <option value='week'>This week</option>
+                    <option value='month'>This month</option>
+                    <option value='quarter'>This quarter</option>
+                    <option value='year'>This year</option>
+                  </select>
+              </div>
+            </div>  
+
+            <div className='h-[4%] w-full  text-[.7rem] font-medium'>
+              {periodInfo && (
+                <div className='w-full'>
+                  <p>{getPeriodDisplay()}</p>
+                </div>
+              )}
+            </div>
+
+            <div > 
+               {!hasData ? (
+                  <div className='w-full h-full flex items-center justify-center'>
+                    <p className='text-gray-500'>No diagnosis data available for this period</p>
+                  </div>
+                ) : (
+                  <div>
+                    <div className='w-full'>
+                      <Chart
+                        options={paretoOptions}
+                        series={paretoSeries}
+                        height={380}
+                        type="line"
+                      />
+                    </div>
+
+                    <div className='w-full'>
+                      <Chart
+                        options={trendOptions}
+                        series={trendSeries}
+                        height={250}
+                        type="line"
+                      />
+                    </div>
+                  </div>
+                )}
+            </div>
+
+
+      {/* <div className='w-full flex flex-col gap-2 mb-3'>
         <div className='w-full flex items-center justify-between'>
           <h3 className='text-2xl font-semibold'>Top Diagnoses Analysis</h3>
           <div className='group inline-block'>
@@ -260,7 +318,7 @@ const TopDiagnosisChart = () => {
         </div>
       ) : (
         <div className='w-full space-y-6'>
-          {/* Pareto Chart - Shows top diagnoses with cumulative percentage */}
+
           <div className='w-full'>
             <Chart
               options={paretoOptions}
@@ -270,7 +328,6 @@ const TopDiagnosisChart = () => {
             />
           </div>
 
-          {/* Trend Chart - Shows how diagnoses trend over time periods */}
           <div className='w-full'>
             <Chart
               options={trendOptions}
@@ -280,7 +337,9 @@ const TopDiagnosisChart = () => {
             />
           </div>
         </div>
-      )}
+      )} */}
+
+      
     </div>
   );
 };

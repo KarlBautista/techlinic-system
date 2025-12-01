@@ -26,11 +26,6 @@ const MedicinesChart = () => {
     },
     colors: ["#ef4444"],
     labels: { style: { colors: '#6b7280' } },
-    title: {
-      text: "Medicines that are running low and need replenishment.",
-      align: "left",
-      style: { fontSize: "16px", fontWeight: "bold" }
-    },
     grid: {
       borderColor: '#e5e7eb'
     },
@@ -45,8 +40,23 @@ const MedicinesChart = () => {
   }];
 
   return (
-    <div className='w-full shadow-md rounded-lg border border-gray-200 p-5'>
-      <div className='w-full flex items-center justify-between mb-3'>
+    <div className='w-full h-full'>
+      <div className='h-[10%] w-full'>
+        <div className='text-[.9rem] font-semibold'>Most use stock</div>
+      </div>  
+      <div className='h-[90%] w-full '>
+       <Chart
+          options={medicineChartOptions}
+          series={medicineData}
+          type="bar"
+          height="100%"
+        />
+      </div>
+    
+    
+    
+    
+     {/* <div className='w-full flex items-center justify-between mb-3'>
         <h3 className='text-2xl font-semibold '>Low Stock Medicines</h3>
         <div className='group inline-block'>
           <select
@@ -65,7 +75,7 @@ const MedicinesChart = () => {
           height="100%"
         />
       </div>
-      <p className='text-gray-500 mt-2'>Total medicines tracked: {medicines.length}</p>
+      <p className='text-gray-500 mt-2'>Total medicines tracked: {medicines.length}</p> */}
     </div>
   )
 }

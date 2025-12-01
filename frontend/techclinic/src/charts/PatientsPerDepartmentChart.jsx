@@ -27,7 +27,11 @@ const PatientsPerDepartmentChart = () => {
     labels: [],
     title: {
       text: 'Number of Patient Records per Department',
-      align: 'center'
+      align: 'left',
+      style: {
+        fontSize: '12px',  
+        fontWeight: 'normal'
+  }
     },
     legend: {
       position: 'bottom'
@@ -147,8 +151,53 @@ const PatientsPerDepartmentChart = () => {
   };
 
   return (
-    <div className='w-full shadow-md rounded-lg border border-gray-200 p-5'>
-      <div className='w-full flex flex-col gap-2 mb-3'>
+    <div className='w-full h-full'>
+          <div className='w-full h-full'>
+            <div className='h-[10%] w-full flex justify-between p-2'>
+              <div className='text-[.9rem] w-[70%] font-semibold'>Patient Records Per Department</div>
+              <div className='text-[.9rem] h-[60%] w-[30%] '>
+                <select
+                  id='departments'
+                  name='departments'
+                  aria-label='Departments timeframe'
+                  value={selectedCategory}
+                  className='h-[95%] w-[98%] text-[.7rem] font-medium' 
+                  onChange={handleCategoryChange}>
+                  <option value='week'>This week</option>
+                  <option value='month'>This month</option>
+                  <option value='quarter'>This quarter</option>
+                  <option value='year'>This year</option>
+                </select>
+              </div>
+           </div>  
+
+            <div className='h-[10%] w-full  text-[.7rem] font-medium'>
+               {periodInfo && (
+                <div className='w-full'>
+                  <p>{getPeriodDisplay()}</p>
+                </div>
+              )}
+            </div>
+
+            <div className='h-[80%] w-full '>
+              {totalPatients === 0 ? (
+            <div className='w-full h-full flex items-center justify-center'>
+              <p className='text-gray-500'>No patient records for this period</p>
+            </div>
+          ) : (
+            <Chart
+              options={patientOptions}
+              series={patientData}
+              type='donut'
+              height="100%"
+              width="100%"
+            />
+          )}
+            </div>
+          </div>
+
+
+      {/* <div className='w-full flex flex-col gap-2 mb-3'>
         <div className='w-full flex items-center justify-between'>
           <h3 className='text-2xl font-semibold'>Patient Records Per Department</h3>
           <div className='group inline-block'>
@@ -186,7 +235,7 @@ const PatientsPerDepartmentChart = () => {
             width="100%"
           />
         )}
-      </div>
+      </div> */}
     </div>
   )
 }
