@@ -105,6 +105,10 @@ const NewNavigation = () => {
         return 'User';
     };
 
+    const handleSettings = () => {
+        navigate("/settings");
+    }
+
 
     const getInitials = () => {
     const name = getDisplayName();
@@ -271,6 +275,7 @@ const NewNavigation = () => {
                     <button 
                         className='flex gap-1 justify-center items-center hover:opacity-80 transition-opacity'
                         title="Settings"
+                        onClick={() => handleSettings()}
                     >
                         <img src={Settings} alt="Settings" className='w-5 h-5' />
                         <p className='text-[.8rem]'>Settings</p>

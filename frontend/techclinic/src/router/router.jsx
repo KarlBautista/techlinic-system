@@ -10,6 +10,7 @@ import AddMedicine from "../pages/AddMedicine";
 import Analytics from "../pages/Analytics";
 import Notifications from "../pages/Notifications";
 import PersonnelList from "../pages/PersonnelList"
+import Settings from "../pages/Settings";
 const router = createBrowserRouter([
   { path: "/", element: <Login /> },
   { path: "/dashboard", element: <Dashboard /> },
@@ -20,7 +21,8 @@ const router = createBrowserRouter([
   { path: "/add-medicine", element: <AddMedicine /> },
   { path: "/analytics", element: <Analytics /> },
   { path: "/notifications", element: <Notifications /> },
-  { path: "/personnel-list", element: <PersonnelList />}
+  { path: "/personnel-list", element: <PersonnelList />},
+  { path: "/settings", element: <Settings /> },
 ]);
 
 export default router;
