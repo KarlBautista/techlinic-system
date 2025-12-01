@@ -21,22 +21,33 @@ const useData = create(
                 }
             },
 
-            insertPersonnel: async (personnel) => {
-                try {
-                    const response = await axios.post("http://localhost:3000/api/insert-personnel", {
-                        personnel
-                    });
-                    if(response.status === 200) {
-                        return { success: true }
-                    } else {
-                        console.error(`Error inserting personnel: ${response.data.error}`);
-                        return;
-                    }
-                } catch (err) {
-                    console.error(`Something went wrong inserting personnel: ${err.message}`);
-                    return;
-                }
-            },
+            insertPersonnel: async (personnelData) => {
+        try {
+            const response = await axios.post(
+                "http://localhost:3000/api/insert-personnel", 
+                { personnel: personnelData }
+            );
+            
+            if(response.status === 201 || response.status === 200) {
+                return { 
+                    success: true,
+                    data: response.data.data 
+                };
+            } else {
+                console.error(`Error adding personnel: ${response.data.error}`);
+                return { 
+                    success: false, 
+                    error: response.data.error || "Unknown error occurred"
+                };
+            }
+        } catch (err) {
+            console.error(`Something went wrong adding personnel: ${err.message}`);
+            return { 
+                success: false, 
+                error: err.response?.data?.error || err.message || "Failed to add personnel"
+            };
+        }
+    },
             insertRecord: async (formData) => {
                 try {
                     const response = await axios.post("http://localhost:3000/api/insert-record", {

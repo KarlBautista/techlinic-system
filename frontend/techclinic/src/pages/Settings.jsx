@@ -38,12 +38,24 @@ const Settings = () => {
     return 'User';
   };
 
-  const getInitials = () => {
-    const name = getDisplayName();
-    const parts = name.replace('Dr. ', '').split(' ');
-    if (parts.length === 1) return parts[0][0].toUpperCase();
-    return (parts[0][0] + parts[1][0]).toUpperCase();
-  };
+const getInitials = () => {
+    const name = getDisplayName().replace("Dr. ", "").trim();
+
+    if (!name) return "U"; 
+
+    const parts = name.split(" ").filter(Boolean);
+
+   
+    if (parts.length === 1) {
+        return parts[0][0].toUpperCase();
+    }
+
+    
+    const firstInitial = parts[0][0];
+    const lastInitial = parts[parts.length - 1][0];
+
+    return (firstInitial + lastInitial).toUpperCase();
+};
 
   const handleEditPassword = () => {
     alert('Redirecting to change password page...');

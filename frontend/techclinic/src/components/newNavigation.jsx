@@ -88,7 +88,7 @@ const NewNavigation = () => {
         }
     }
 
-    // Helper function to get display name
+    
     const getDisplayName = () => {
         if (userProfile?.first_name && userProfile?.last_name) {
             return `Dr. ${userProfile.first_name} ${userProfile.last_name}`;
@@ -109,12 +109,23 @@ const NewNavigation = () => {
         navigate("/settings");
     }
 
+const getInitials = () => {
+    const name = getDisplayName().replace("Dr. ", "").trim();
 
-    const getInitials = () => {
-    const name = getDisplayName();
-    const parts = name.replace('Dr. ', '').split(' ');
-    if (parts.length === 1) return parts[0][0].toUpperCase();
-    return (parts[0][0] + parts[1][0]).toUpperCase();
+    if (!name) return "U"; // default
+
+    const parts = name.split(" ").filter(Boolean);
+
+    // If only one name exists
+    if (parts.length === 1) {
+        return parts[0][0].toUpperCase();
+    }
+
+    // Always use first and last parts (first name + last name)
+    const firstInitial = parts[0][0];
+    const lastInitial = parts[parts.length - 1][0];
+
+    return (firstInitial + lastInitial).toUpperCase();
 };
 
     return (

@@ -19,14 +19,14 @@ async function createUserWithProfile() {
     const email = "doctor@gmail.com";
     const password = "doctor123";
 
-    // === PROFILE DATA ===
+   
     const firstName = "Jake";
     const lastName = "Santos";
     const address = "Manila, Philippines";
     const dateOfBirth = "1997-03-25";
-    const role = "DOCTOR";  // or "DOCTOR"
+    const role = "DOCTOR"; 
 
-    // 1️⃣ CREATE USER IN AUTH
+   
     const { data: authData, error: authError } = await supabase.auth.admin.createUser({
       email,
       password,

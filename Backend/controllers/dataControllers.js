@@ -1,5 +1,5 @@
 const supabase = require("../config/supabaseClient");
-
+const supabaseAdmin = require("../config/supabaseAdmin")
 const insertRecord = async (req, res) => {
     const {
         firstName,
@@ -253,7 +253,75 @@ const getAllUsers = async (req, res) => {
     }
 }
 
+const insertPersonnel = async (req, res) => {
+    const { first_name, last_name, email, password, address, date_of_birth, role, sex } = req.body.personnel;
+    console.log("ito mga data", req.body.personnel)
+    try {
+       
+        const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+            email,
+            password,
+            email_confirm: true, 
+        });
+
+        if (authError) {
+            console.error(`Error creating auth user: ${authError.message}`);
+            return res.status(500).json({ 
+                success: false, 
+                error: authError.message 
+            });
+        }
+
+        
+        const { data: userData, error: insertUserError } = await supabase
+            .from("users")
+            .insert({
+                id: authData.user.id, 
+                first_name: first_name,
+                last_name: last_name,
+                email: email,
+                address: address,
+                date_of_birth: date_of_birth,
+                role: role,
+                sex: sex
+            })
+            .select()
+            .single();
+
+        if (insertUserError) {
+            console.error(`Error inserting user data: ${insertUserError.message}`);
+            
+            await supabase.auth.admin.deleteUser(authData.user.id);
+            
+            return res.status(500).json({ 
+                success: false, 
+                error: insertUserError.message 
+            });
+        }
+
+       
+        return res.status(201).json({ 
+            success: true, 
+            message: "Personnel added successfully",
+            data: {
+                user_id: userData.id,
+                email: userData.email,
+                full_name: `${userData.first_name} ${userData.last_name}`,
+                role: userData.role
+            }
+        });
+
+    } catch (err) {
+        console.error(`Something went wrong adding personnel: ${err.message}`);
+        return res.status(500).json({ 
+            success: false, 
+            error: err.message 
+        });
+    }
+};
 
 
 
-module.exports = { insertRecord, getRecords, getRecord, getRecordsFromExisitingPatients, getPatients, getRecordToDiagnose, addDiagnosis, getAllUsers}
+
+
+module.exports = { insertRecord, getRecords, getRecord, getRecordsFromExisitingPatients, getPatients, getRecordToDiagnose, addDiagnosis, getAllUsers, insertPersonnel}
