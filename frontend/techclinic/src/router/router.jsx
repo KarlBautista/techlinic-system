@@ -9,6 +9,7 @@ import IndividualRecord from "../pages/IndividualRecord";
 import AddMedicine from "../pages/AddMedicine";
 import Analytics from "../pages/Analytics";
 import Notifications from "../pages/Notifications";
+import PersonnelList from "../pages/PersonnelList"
 const router = createBrowserRouter([
   { path: "/", element: <Login /> },
   { path: "/dashboard", element: <Dashboard /> },
@@ -19,6 +20,7 @@ const router = createBrowserRouter([
   { path: "/add-medicine", element: <AddMedicine /> },
   { path: "/analytics", element: <Analytics /> },
   { path: "/notifications", element: <Notifications /> },
+  { path: "/personnel-list", element: <PersonnelList />}
 ]);
 
 export default router;

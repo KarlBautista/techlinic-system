@@ -47,15 +47,14 @@ const NewDashboard = () => {
         return userProfile?.role || "Staff";
     };
 
-    console.log("👤 Authenticated User:", authenticatedUser);
-    console.log("📋 User Profile:", userProfile);
+ 
 
     return (
         <div className='h-screen w-full flex flex-col sm:flex-row'>
             <div className='h-[8%] w-full order-last sm:order-0 sm:w-[23%] sm:h-full md:w-[19%] lg:w-[17%]'>
                 <NewNavigation/>
             </div>
-            <div className='h-[92%] min-w-[360px] sm:min-w-0  w-full sm:h-full sm:w-[77%] md:w-[81%] lg:w-[83%] overflow-auto p-2 flex flex-col gap-2'>
+            <div className='h-[92%] min-w-[360px] sm:min-w-0  w-full sm:h-full sm:w-[77%] md:w-[81%] lg:w-[83%] overflow-auto p-5 flex flex-col gap-2'>
                 <div className='h-[10%] p-2 w-full flex gap-1'>
                     <div className='w-[90%] h-full flex flex-col'>
                         <h2 className='text-[1.2rem] font-semibold text-gray-900'>
@@ -102,8 +101,8 @@ const NewDashboard = () => {
                 </div>
 
                 <div className='w-full flex items-center flex-col mt-10 p-2'>
-                    <h1 className='text-[.9rem] w-[90%] font-semibold'> Recent records</h1>
-                    <div className=' w-[90%] overflow-auto '>
+                    <h1 className='text-1xl w-full font-semibold mb-2'>Recent records</h1>
+                    <div className=' w-full overflow-auto '>
                         <table className='min-w-full border-collapse border border-gray-200 rounded-lg overflow-hidden'>
                         <thead className='bg-[#C41E3A]'>
                             <tr>

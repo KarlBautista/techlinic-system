@@ -9,7 +9,6 @@ import Settings from '../assets/image/settings.svg'
 import Logout from '../assets/image/logout.svg'
 import Analytics from '../assets/componentImage/analytics.svg'
 import Notification from '../assets/componentImage/notification.svg'
-
 import useAuth from '../store/useAuthStore'
 import Swal from 'sweetalert2'
 
@@ -23,8 +22,6 @@ const NewNavigation = () => {
 
     const handleSignOut = async () => {
         try {
-            console.log("🚪 Initiating sign out...");
-            
             const response = await signOut();
             
             if (response?.error) {
@@ -56,7 +53,7 @@ const NewNavigation = () => {
             });
             
         } catch (err) {
-            console.error("❌ Sign out exception:", err);
+           
             Swal.fire({
                 title: "Error",
                 text: "Failed to sign out. Please try again.",
@@ -68,26 +65,11 @@ const NewNavigation = () => {
     return (
         <div className="border-t h-full w-full flex justify-evenly gap-1 min-w-[360px] sm:min-w-0 sm:flex-col 
             sm:border-r sm:border-gray-300">
-            
-         
-            <Link to={'/dashboard'} className='navigationContainer'>
-                <img src={DashboardImage} alt="Dashboard" />
-            </Link>
-            <Link to={'/analytics'} className='navigationContainer'>
-                <img src={Analytics} alt="Analytics" />
-            </Link>
-            <Link to={'/new-patient'} className='navigationContainer'>
-                <img src={PatientImage} alt="New Patient" />
-            </Link>
-            <Link to={'/patient-record'} className='navigationContainer'>
-                <img src={RecordImage} alt="Patient Record" />
-            </Link>
-            <Link to={'/medicine-inventory'} className='navigationContainer'>
-                <img src={MedicineImage} alt="Medicine Inventory" />
-            </Link>
-            <div className='navigationContainer'>
-                <img src={ProfileImage} alt="Profile" />    
-            </div>
+        
+   
+      
+     
+           
 
          
             <div className='newNavigationContainer h-[10%] w-full gap-1 p-1 border-b border-gray-300'>
@@ -100,7 +82,7 @@ const NewNavigation = () => {
                 </div>
             </div>
 
-        
+            {userProfile?.role === "NURSE" ? (
             <div className='newNavigationContainer gap-2 flex-col justify-center h-[70%] w-full'>
                 <Link 
                     to={'/dashboard'}
@@ -150,6 +132,58 @@ const NewNavigation = () => {
                     <p>NOTIFICATION</p>
                 </Link>
             </div>
+            ) : (
+                 <div className='newNavigationContainer gap-2 flex-col justify-center h-[70%] w-full'>
+                <Link 
+                    to={'/dashboard'}
+                    className={`${currentPath === '/dashboard' ? 'inPage' : 'notPage'} mainNavigation`}
+                >
+                    <img src={DashboardImage} alt="Dashboard" />
+                    <p>DASHBOARD</p>
+                </Link>
+                
+                <Link 
+                    to={'/analytics'}
+                    className={`${currentPath === '/analytics' ? 'inPage' : 'notPage'} mainNavigation`}
+                >
+                    <img src={Analytics} alt="Analytics" />
+                    <p>ANALYTICS</p>
+                </Link>
+                
+                <Link 
+                    to={'/personnel-list'}
+                    className={`${currentPath === '/personnel-list' ? 'inPage' : 'notPage'} mainNavigation`}
+                >
+                    <img src={PatientImage} alt="Personnel List" />
+                    <p>PERSONNEL LIST</p>
+                </Link>
+                
+                <Link 
+                    to={'/patient-record'}
+                    className={`${(currentPath === '/patient-record' || currentPath.startsWith('/individual-record')) ? 'inPage' : 'notPage'} mainNavigation`}
+                >
+                    <img src={RecordImage} alt="Patient Record" />
+                    <p>PATIENT RECORD</p>
+                </Link>
+                
+                <Link 
+                    to={'/medicine-inventory'}
+                    className={`${(currentPath === '/medicine-inventory' || currentPath === '/add-medicine') ? 'inPage' : 'notPage'} mainNavigation`}
+                >
+                    <img src={MedicineImage} alt="Medicine Inventory" />
+                    <p>MEDICINE INVENTORY</p>
+                </Link>
+
+                <Link 
+                    to={'/notifications'}
+                    className={`${currentPath === '/notifications' ? 'inPage' : 'notPage'} mainNavigation`}
+                >
+                    <img src={Notification} alt="Notifications" />
+                    <p>NOTIFICATION</p>
+                </Link>
+            </div>
+            ) }
+           
 
   
             <div className='newNavigationContainer h-[20%] w-full flex-col p-1 bg-[hsl(350,73%,40%)] text-white'>

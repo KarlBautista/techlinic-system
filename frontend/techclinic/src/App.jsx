@@ -17,14 +17,13 @@ function App() {
         
         const initialize = async () => {
             console.log("🚀 App initializing...");
-            
-            // Set up auth listener FIRST
+     
             unsubscribe = authListener();
             
-            // Then check for existing session
+        
             await getUser();
             
-            // Load other data
+      
             await Promise.all([
                 getRecords(),
                 getPatients(),
@@ -32,18 +31,17 @@ function App() {
             ]);
             
             setIsInitialized(true);
-            console.log("✅ App initialized");
+    
         };
         
         initialize();
         
         return () => {
             if (unsubscribe && typeof unsubscribe === "function") {
-                console.log("🧹 Cleaning up auth listener");
                 unsubscribe();
             }
         };
-    }, []); // Run only once on mount
+    }, []); 
     
     return (
         <div className='w-full h-screen'>
