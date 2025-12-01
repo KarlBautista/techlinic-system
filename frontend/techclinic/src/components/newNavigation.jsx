@@ -128,7 +128,7 @@ const NewNavigation = () => {
                         className={`${currentPath === '/dashboard' ? 'inPage' : 'notPage'} mainNavigation`}
                     >
                         <img src={DashboardImage} alt="Dashboard" />
-                        <p>DASHBOARD</p>
+                        <p>DASHBOARDORD</p>
                     </Link>
                     
                     <Link 
