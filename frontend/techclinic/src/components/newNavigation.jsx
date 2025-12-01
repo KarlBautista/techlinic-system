@@ -122,7 +122,7 @@ const NewNavigation = () => {
                     <img src={TUP} className='h-[80%] object-contain' alt="TUP Logo" />
                 </div>
                 <div className='h-full flex flex-col w-[70%] justify-center'>
-                    <p className='text-[#A12217] font-bold sm:text-[1rem] xl:text-[1.6rem] 2xl:text-[1.8rem] md:text-[1.1rem]'>TechClinic</p>
+                    <p className='text-[#A12217] font-bold sm:text-[1rem] xl:text-[1.6rem] lg:text-[1.5rem] 2xl:text-[1.8rem] md:text-[1.1rem]'>TechClinic</p>
                     <p className='text-[#A12217] text-[.5rem] md:text-[.5rem] xl:text-[.7rem] 2xl:text-[.9rem]'>Electronic Medical Record</p>
                 </div>
             </div>
