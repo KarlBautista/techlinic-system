@@ -28,6 +28,8 @@ const NewDashboard = () => {
         });
     }
     console.log(userProfile)
+
+    console.log("ito mga patient records ha", patientRecords)
    
     const getDisplayName = () => {
         if (userProfile?.first_name && userProfile?.last_name) {
@@ -47,7 +49,8 @@ const NewDashboard = () => {
         return userProfile?.role || "Staff";
     };
 
- 
+    console.log("ito user profile", userProfile);
+    console.log("ito authenticated user", authenticatedUser);
 
     return (
         <div className='h-screen w-full flex flex-col sm:flex-row'>
@@ -111,6 +114,7 @@ const NewDashboard = () => {
                             <th className='px-4 py-2 text-left text-sm font-medium text-white border-b'>Diagnosis</th>
                             <th className='px-4 py-2 text-left text-sm font-medium text-white border-b'>Department</th>
                             <th className='px-4 py-2 text-left text-sm font-medium text-white border-b'>Created at</th>
+                             <th className='px-4 py-2 text-left text-sm font-medium text-white border-b'>Status</th>
                             </tr>
                         </thead>
                         <tbody>

@@ -65,10 +65,27 @@ const NewNavigation = () => {
     return (
         <div className="border-t h-full w-full flex justify-evenly gap-1 min-w-[360px] sm:min-w-0 sm:flex-col 
             sm:border-r sm:border-gray-300">
-        
-   
-      
-     
+            
+        <>
+         <Link to={'/dashboard'} className='navigationContainer'>
+                <img src={DashboardImage} alt="Dashboard" />
+            </Link>
+            <Link to={'/analytics'} className='navigationContainer'>
+                <img src={Analytics} alt="Analytics" />
+            </Link>
+            <Link to={'/new-patient'} className='navigationContainer'>
+                <img src={PatientImage} alt="New Patient" />
+            </Link>
+            <Link to={'/patient-record'} className='navigationContainer'>
+                <img src={RecordImage} alt="Patient Record" />
+            </Link>
+            <Link to={'/medicine-inventory'} className='navigationContainer'>
+                <img src={MedicineImage} alt="Medicine Inventory" />
+            </Link>
+            <div className='navigationContainer'>
+                <img src={ProfileImage} alt="Profile" />    
+            </div>
+        </>
            
 
          
@@ -82,8 +99,9 @@ const NewNavigation = () => {
                 </div>
             </div>
 
-            {userProfile?.role === "NURSE" ? (
-            <div className='newNavigationContainer gap-2 flex-col justify-center h-[70%] w-full'>
+        {userProfile?.role === "NURSE" ? (
+            <>
+             <div className='newNavigationContainer gap-2 flex-col justify-center h-[70%] w-full'>
                 <Link 
                     to={'/dashboard'}
                     className={`${currentPath === '/dashboard' ? 'inPage' : 'notPage'} mainNavigation`}
@@ -132,8 +150,10 @@ const NewNavigation = () => {
                     <p>NOTIFICATION</p>
                 </Link>
             </div>
-            ) : (
-                 <div className='newNavigationContainer gap-2 flex-col justify-center h-[70%] w-full'>
+            </>
+        ) : (
+            <>
+             <div className='newNavigationContainer gap-2 flex-col justify-center h-[70%] w-full'>
                 <Link 
                     to={'/dashboard'}
                     className={`${currentPath === '/dashboard' ? 'inPage' : 'notPage'} mainNavigation`}
@@ -154,7 +174,7 @@ const NewNavigation = () => {
                     to={'/personnel-list'}
                     className={`${currentPath === '/personnel-list' ? 'inPage' : 'notPage'} mainNavigation`}
                 >
-                    <img src={PatientImage} alt="Personnel List" />
+                    <img src={PatientImage} alt="New Patient" />
                     <p>PERSONNEL LIST</p>
                 </Link>
                 
@@ -182,7 +202,8 @@ const NewNavigation = () => {
                     <p>NOTIFICATION</p>
                 </Link>
             </div>
-            ) }
+            </>
+        )}
            
 
   

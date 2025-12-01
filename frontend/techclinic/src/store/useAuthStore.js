@@ -1,25 +1,26 @@
 import { create } from "zustand"
+import { persist } from "zustand/middleware"
 import supabase from "../config/supabaseClient"
+import useData from "./useDataStore";
 
-const useAuth = create((set) => ({
+const useAuth = create(
+    persist(
+        (set, get) => ({
     authenticatedUser: null,
-    userProfile: null, 
+    userProfile: null,
+    isLoading: true, 
     
     signIn: async (emailInput, passwordInput) => {
-      
-        
         try {
-          
-            
             const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
                 email: emailInput,
                 password: passwordInput
             });
 
-            console.log(" Got response from Supabase!");
+            console.log("Got response from Supabase!");
             
             if (signInError) {
-                console.error(` Sign-in error: ${signInError.message}`);
+                console.error(`Sign-in error: ${signInError.message}`);
                 return { data: null, error: signInError };
             }
 
@@ -28,174 +29,243 @@ const useAuth = create((set) => ({
             if (user) {
                 console.log("User authenticated:", user.email);
                 set({ authenticatedUser: user });
+                
+           
+                await get().fetchUserProfile(user.id);
             }
 
             return { data: signInData, error: null };
             
         } catch (err) {
-         
+            console.error("Sign-in error:", err);
             return { data: null, error: err };
         }
     },
     
     signUp: async (registerData) => {
         const { firstName, lastName, email, password } = registerData;
-        try{
+        try {
             const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
                 email, 
                 password
             });
-            if(signUpError) {
+            
+            if (signUpError) {
                 console.error(`Error signing up: ${signUpError.message}`);
                 return { success: false, error: signUpError.message };
             }
+            
             return { success: true, data: signUpData };
-        } catch(err){
+        } catch (err) {
             console.error(`Error signing up: ${err.message}`)
             return { success: false, error: err.message}
         }
     },
     
     signInWithGoogle: async () => {
-        try{
+        try {
             const { data, error } = await supabase.auth.signInWithOAuth({
                 provider: "google",
                 options: {
                     redirectTo: `${window.location.origin}/dashboard`,
                 }
             });
-            if(error){
+            
+            if (error) {
                 console.error(`Google Auth Error: ${error.message}`);
                 return { data: null, error: error.message};
             }
+            
             return { data, error: null };
-        } catch(err){
+        } catch (err) {
             console.error(`Error signing in with google:`, err);
             return { data: null, error: err.message };
         }
     },
     
+
+    fetchUserProfile: async (userId) => {
+        try {
+            console.log("📋 Fetching profile for user:", userId);
+            const { data: userProfile, error: profileError } = await supabase
+                .from("users")
+                .select("*")
+                .eq("id", userId)
+                .single();
+            
+            if (profileError) {
+          
+                if (profileError.code === 'PGRST116') {
+                    console.log("⚠️ User profile not found in database");
+                    return null;
+                }
+                console.error("Error fetching user profile:", profileError);
+                return null;
+            }
+            
+            if (userProfile) {
+                console.log("✅ User profile loaded:", userProfile.email);
+                set({ userProfile });
+                return userProfile;
+            }
+            
+            return null;
+        } catch (err) {
+            console.error("Error fetching user profile:", err);
+            return null;
+        }
+    },
+    
+
+    createUserInDB: async (user) => {
+        try {
+            const { email, user_metadata } = user;
+            const fullName = user_metadata?.full_name || user_metadata?.name || '';
+            const nameParts = fullName.split(' ');
+            
+            const { data: newUser, error: insertError } = await supabase
+                .from("users")
+                .insert({
+                    id: user.id,
+                    email,
+                    first_name: nameParts[0] || null,
+                    last_name: nameParts.slice(1).join(' ') || null,
+                })
+                .select()
+                .single();
+            
+            if (insertError) {
+                console.error(`Error inserting user to DB: ${insertError.message}`);
+                return null;
+            }
+            
+            console.log("✅ User created in DB:", newUser);
+            set({ userProfile: newUser });
+            return newUser;
+            
+        } catch (err) {
+            console.error("Error creating user in DB:", err);
+            return null;
+        }
+    },
+    
     authListener: () => {
-        try{
-            const { data: { subscription } } = supabase.auth.onAuthStateChange( async (_event, session ) => {
+        try {
+            const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
               
                 const user = session?.user;
-                
-                if(user){
-          
-                    set({ authenticatedUser: user });
+                if (user) {
+                    console.log("👤 User detected:", user.email);
+                    set({ authenticatedUser: user, isLoading: true });
+                    let retries = 3;
+                    let profile = null;
                     
-                
-                    try {
-                        const { data: userProfile, error: profileError } = await supabase
-                            .from("users")
-                            .select("*")
-                            .eq("id", user.id)
-                            .single();
+                    while (retries > 0 && !profile) {
+                        profile = await get().fetchUserProfile(user.id);
                         
-                        if (profileError) {
-                            console.error("Error fetching user profile:", profileError);
-                        } else if (userProfile) {
-                            console.log("✅ User profile loaded:", userProfile);
-                            set({ userProfile });
-                        }
-                    } catch (err) {
-                        console.error("Error fetching user profile:", err);
-                    }
-                    
-           
-                    setTimeout(async () => {
-                        try {
-                            const { data: existingUser, error: existingError } = await supabase
-                                .from("users")
-                                .select()
-                                .eq("id", user.id)
-                                .single();
+                        if (!profile) {
+                            retries--;
                         
-                            if(!existingUser && !existingError){
-                                const { email, user_metadata } = user;
-                                const { error: insertError } = await supabase.from("users").insert({
-                                    id: user.id,
-                                    email,
-                                    first_name: user_metadata?.full_name?.split(" ")[0] || null,
-                                    last_name: user_metadata?.full_name?.split(" ")[1] || null,
-                                });
-                                if(insertError){
-                                    console.error(`Error inserting user to DB: ${insertError.message}`);
-                                } else {
-                        
-                                    const { data: newProfile } = await supabase
-                                        .from("users")
-                                        .select("*")
-                                        .eq("id", user.id)
-                                        .single();
-                                    if (newProfile) set({ userProfile: newProfile });
-                                }    
+                            if (retries === 0) {
+                              
+                                profile = await get().createUserInDB(user);
+                            } else {
+                                await new Promise(resolve => setTimeout(resolve, 500));
                             }
-                        } catch (err) {
-                            console.error("Error in background user DB operation:", err);
                         }
-                    }, 0);
+                    }
+                    set({ isLoading: false });
                 } else {
-                    set({ authenticatedUser: null, userProfile: null });
+                   
+                  
+                    set({ 
+                        authenticatedUser: null, 
+                        userProfile: null,
+                        isLoading: false 
+                    });
                 }
             });
+            
             return () => subscription.unsubscribe();
-        } catch(err){
+        } catch (err) {
             console.error("Error setting up auth listener:", err);
+            set({ isLoading: false });
         }
     },
     
     getUser: async () => {
-        try{
+        try {
+            set({ isLoading: true });
             const { data, error } = await supabase.auth.getUser();
             console.log("getUser() result:", data?.user?.email || "No user");
-            if(data?.user){
+            
+            if (data?.user) {
                 set({ authenticatedUser: data.user });
+                let retries = 3;
+                let profile = null;
                 
-             
-                try {
-                    const { data: userProfile, error: profileError } = await supabase
-                        .from("users")
-                        .select("*")
-                        .eq("id", data.user.id)
-                        .single();
+                while (retries > 0 && !profile) {
+                    profile = await get().fetchUserProfile(data.user.id);
                     
-                    if (profileError) {
-                        console.error("Error fetching user profile:", profileError);
-                    } else if (userProfile) {
-                   
-                        set({ userProfile });
+                    if (!profile) {
+                        console.log(`⏳ Profile fetch retry, attempts left: ${retries - 1}`);
+                        retries--;
+                        
+                        if (retries === 0) {
+                            console.log("🆕 Creating user profile in getUser...");
+                            profile = await get().createUserInDB(data.user);
+                        } else {
+                            await new Promise(resolve => setTimeout(resolve, 500));
+                        }
                     }
-                } catch (err) {
-                    console.error("Error fetching user profile:", err);
                 }
+                
+                
             } else {
                 set({ authenticatedUser: null, userProfile: null });
             }
-        } catch(err){
-            console.error(`Error getting user: ${err.message}`)
+            
+            set({ isLoading: false });
+        } catch (err) {
+            console.error(`Error getting user: ${err.message}`);
+            set({ isLoading: false });
         }
     },
     
     signOut: async () => {
-        try{
+        try {
             console.log("🚪 Signing out...");
+            
+          
             const { error } = await supabase.auth.signOut();
             
-            if(error){
-             
-                return { success: false, error: error.message }
+            if (error) {
+                console.error("Sign out error:", error);
+                return { success: false, error: error.message };
             }
             
-     
-            set({ authenticatedUser: null, userProfile: null });
+        
+            set({ 
+                authenticatedUser: null, 
+                userProfile: null,
+                isLoading: false 
+            });
+            
             return { success: true };
-        } catch (err){
-         
+        } catch (err) {
+            console.error("Sign out error:", err);
             return { success: false, error: err.message };
         }
     }
-}));
+}),
+        {
+            name: 'auth-storage', 
+            partialize: (state) => ({ 
+                userProfile: state.userProfile, 
+                authenticatedUser: state.authenticatedUser 
+            }),
+        }
+    )
+);
 
 export default useAuth;

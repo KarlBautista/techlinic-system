@@ -19,16 +19,17 @@ function App() {
             console.log("🚀 App initializing...");
      
             unsubscribe = authListener();
-            
         
             await getUser();
-            
       
             await Promise.all([
                 getRecords(),
                 getPatients(),
                 getMedicines()
+                
             ]);
+
+            console.log("initialized lahat")
             
             setIsInitialized(true);
     
