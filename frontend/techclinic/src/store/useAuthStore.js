@@ -1,6 +1,7 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 import supabase from "../config/supabaseClient"
+import axios from "axios";
 
 const useAuth = create(
     persist(
@@ -9,8 +10,24 @@ const useAuth = create(
     userProfile: null,
     isLoading: true,
     password: null,
+    allUsers: null,
     storePassword: async (password) => {
         set({ password: password });
+    },
+
+    getAllUsers: async () => {
+        try {
+            const response = await axios.get("http://localhost:3000/api/get-all-users");
+            if(response.status === 200) {
+                set({ allUsers: response.data.data });
+            } else {
+                console.error(`Error getting all users: ${response}`);
+                return;
+            }
+        } catch (err) {
+            console.error(`Something went wrong getting all users: ${err.message}`);
+            return;
+        }
     },
     signIn: async (emailInput, passwordInput) => {
         try {

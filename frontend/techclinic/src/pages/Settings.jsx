@@ -18,6 +18,10 @@ const Settings = () => {
     }
   };
 
+ const maskPassword = (password) => {
+    return password ? '*'.repeat(password.length) : '********';
+  };
+
    const getDisplayName = () => {
     if (userProfile?.first_name && userProfile?.last_name) {
       return `Dr. ${userProfile.first_name} ${userProfile.last_name}`;
@@ -52,8 +56,11 @@ const Settings = () => {
         <Navigation />
       </div>
 
-      <div className='h-[92%] min-w-[360px] sm:min-w-0 w-full sm:h-full sm:w-[77%] md:w-[81%] lg:w-[83%] overflow-auto p-5 flex flex-col items-center gap-4'>
+      <div className='h-[92%] min-w-[360px] sm:min-w-0 w-full sm:h-full sm:w-[77%] md:w-[81%] lg:w-[83%] overflow-auto p-5 flex flex-col gap-2'>
+        <h1 className='text-2xl font-semibold text-gray-800'>Settings</h1>
+         <p className='text-[1rem] text-gray-500 mb-7'>Manage Information</p>
       <div className='flex flex-row items-center gap-6 mb-20'>
+         
           <div className='w-[70px] h-[70px] 2xl:w-24 2xl:h-24 rounded-full bg-red-500 flex items-center justify-center overflow-hidden'>
             <p className='text-black sm:text-[1.5rem] md:text-[1.5rem] lg:text-[1.5rem] xl:text-[1.9rem]  font-bold'>{getInitials()}</p>
           </div>
@@ -69,13 +76,14 @@ const Settings = () => {
             <ul className='space-y-2'>
               <li>Email: {authenticatedUser?.email || 'N/A'}</li>
               <li className='flex items-center'>
-                Password: {password || 'N/A'}
+                Password: {maskPassword(authenticatedUser?.password) || 'N/A'}
                 <button 
                   onClick={handleEditPassword} 
-                  className='ml-4 text-blue-500 hover:underline text-sm flex items-center gap-1'>
-                  <i class="fa-regular fa-pen-to-square"></i>
+                  className='ml-4 text-blue-500 hover:opacity-50 text-sm flex items-center gap-1'>
+                  <i class="fa-regular fa-pen-to-square text-black hover"></i>
                 </button>
               </li>
+                
             </ul>
           </div>
 

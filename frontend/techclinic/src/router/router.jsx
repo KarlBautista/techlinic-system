@@ -11,6 +11,7 @@ import Analytics from "../pages/newAnalytics";
 import Notifications from "../pages/Notifications";
 import PersonnelList from "../pages/PersonnelList"
 import Settings from "../pages/Settings";
+import AddPersonnel from "../pages/AddPersonnel";
 const router = createBrowserRouter([
   { path: "/", element: <Login /> },
   { path: "/dashboard", element: <Dashboard /> },
@@ -23,6 +24,7 @@ const router = createBrowserRouter([
   { path: "/notifications", element: <Notifications /> },
   { path: "/personnel-list", element: <PersonnelList />},
   { path: "/settings", element: <Settings /> },
+  { path: "/add-personnel", element: <AddPersonnel />}
 ]);
 
 export default router;

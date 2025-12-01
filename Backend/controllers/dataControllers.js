@@ -238,6 +238,22 @@ const addDiagnosis = async (req, res) => {
     }
 }
 
+const getAllUsers = async (req, res) => {
+    try {
+        const { data: allUsersData, error: allUsersError } = await supabase.from("users").select("*");
+        if (allUsersError) {
+            console.error(`Error getting all users: ${allUsersError.message}}`);
+            res.status(500).json({ success: false, error: allUsersError.message });
+            return;
+        }
+        res.status(200).json({ success: true, data: allUsersData });
+    } catch (err) {
+        console.error(`Error getting all users: ${err.message}`);
+        return;
+    }
+}
 
 
-module.exports = { insertRecord, getRecords, getRecord, getRecordsFromExisitingPatients, getPatients, getRecordToDiagnose, addDiagnosis}
+
+
+module.exports = { insertRecord, getRecords, getRecord, getRecordsFromExisitingPatients, getPatients, getRecordToDiagnose, addDiagnosis, getAllUsers}
