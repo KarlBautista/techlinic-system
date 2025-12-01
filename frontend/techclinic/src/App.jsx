@@ -26,10 +26,8 @@ function App() {
                 getRecords(),
                 getPatients(),
                 getMedicines()
-                
+             
             ]);
-
-            console.log("initialized lahat")
             
             setIsInitialized(true);
     

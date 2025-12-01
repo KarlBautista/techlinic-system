@@ -1,14 +1,34 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 import supabase from "../config/supabaseClient"
-import useData from "./useDataStore";
 
 const useAuth = create(
     persist(
         (set, get) => ({
     authenticatedUser: null,
     userProfile: null,
-    isLoading: true, 
+    isLoading: true,
+    
+    signInWithGoogle: async () => {
+        try {
+            const { data, error } = await supabase.auth.signInWithOAuth({
+                provider: "google",
+                options: {
+                    redirectTo: `${window.location.origin}/dashboard`,
+                }
+            });
+            
+            if (error) {
+                console.error(`Google Auth Error: ${error.message}`);
+                return { data: null, error: error.message};
+            }
+            
+            return { data, error: null };
+        } catch (err) {
+            console.error(`Error signing in with google:`, err);
+            return { data: null, error: err.message };
+        }
+    }, // Add loading state
     
     signIn: async (emailInput, passwordInput) => {
         try {
@@ -30,7 +50,7 @@ const useAuth = create(
                 console.log("User authenticated:", user.email);
                 set({ authenticatedUser: user });
                 
-           
+                // Fetch profile immediately after sign in
                 await get().fetchUserProfile(user.id);
             }
 
@@ -62,9 +82,28 @@ const useAuth = create(
         }
     },
     
-   
+    signInWithGoogle: async () => {
+        try {
+            const { data, error } = await supabase.auth.signInWithOAuth({
+                provider: "google",
+                options: {
+                    redirectTo: `${window.location.origin}/dashboard`,
+                }
+            });
+            
+            if (error) {
+                console.error(`Google Auth Error: ${error.message}`);
+                return { data: null, error: error.message};
+            }
+            
+            return { data, error: null };
+        } catch (err) {
+            console.error(`Error signing in with google:`, err);
+            return { data: null, error: err.message };
+        }
+    },
     
-
+    // Helper function to fetch user profile
     fetchUserProfile: async (userId) => {
         try {
             console.log("📋 Fetching profile for user:", userId);
@@ -75,7 +114,7 @@ const useAuth = create(
                 .single();
             
             if (profileError) {
-          
+                // If user doesn't exist in DB, return null so we can create them
                 if (profileError.code === 'PGRST116') {
                     console.log("⚠️ User profile not found in database");
                     return null;
@@ -97,7 +136,7 @@ const useAuth = create(
         }
     },
     
-
+    // Helper function to create user in database
     createUserInDB: async (user) => {
         try {
             const { email, user_metadata } = user;
@@ -133,10 +172,15 @@ const useAuth = create(
     authListener: () => {
         try {
             const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-              
+                console.log("🔔 Auth state changed:", event, "Session:", !!session);
+                
                 const user = session?.user;
+                
                 if (user) {
+                    console.log("👤 User detected:", user.email);
                     set({ authenticatedUser: user, isLoading: true });
+                    
+                    // Always fetch profile with retry logic
                     let retries = 3;
                     let profile = null;
                     
@@ -144,20 +188,24 @@ const useAuth = create(
                         profile = await get().fetchUserProfile(user.id);
                         
                         if (!profile) {
+                            console.log(`⏳ Profile not found, retries left: ${retries - 1}`);
                             retries--;
-                        
+                            
+                            // If profile still doesn't exist after retries, create it
                             if (retries === 0) {
-                              
+                                console.log("🆕 Creating new user profile...");
                                 profile = await get().createUserInDB(user);
                             } else {
+                                // Wait a bit before retrying
                                 await new Promise(resolve => setTimeout(resolve, 500));
                             }
                         }
                     }
+                    
                     set({ isLoading: false });
                 } else {
-                   
-                  
+                    // User logged out
+                    console.log("👋 User logged out");
                     set({ 
                         authenticatedUser: null, 
                         userProfile: null,
@@ -181,6 +229,8 @@ const useAuth = create(
             
             if (data?.user) {
                 set({ authenticatedUser: data.user });
+                
+                // Fetch profile with retry logic
                 let retries = 3;
                 let profile = null;
                 
@@ -192,6 +242,7 @@ const useAuth = create(
                         retries--;
                         
                         if (retries === 0) {
+                            // Last attempt - try to create profile
                             console.log("🆕 Creating user profile in getUser...");
                             profile = await get().createUserInDB(data.user);
                         } else {
@@ -200,7 +251,9 @@ const useAuth = create(
                     }
                 }
                 
-                
+                if (!profile) {
+                    console.error("❌ Failed to fetch or create user profile after all retries");
+                }
             } else {
                 set({ authenticatedUser: null, userProfile: null });
             }
@@ -216,7 +269,7 @@ const useAuth = create(
         try {
             console.log("🚪 Signing out...");
             
-          
+            // Sign out from Supabase
             const { error } = await supabase.auth.signOut();
             
             if (error) {
@@ -224,12 +277,19 @@ const useAuth = create(
                 return { success: false, error: error.message };
             }
             
-        
+            // Clear auth state
             set({ 
                 authenticatedUser: null, 
                 userProfile: null,
                 isLoading: false 
             });
+            
+            // Clear localStorage for auth
+            localStorage.removeItem('auth-storage');
+            localStorage.removeItem('data-storage');
+            localStorage.removeItem('medicine-storage');
+            
+            console.log("✅ Sign out successful, all data cleared");
             
             return { success: true };
         } catch (err) {
@@ -239,10 +299,10 @@ const useAuth = create(
     }
 }),
         {
-            name: 'auth-storage', 
+            name: 'auth-storage', // unique name for localStorage key
             partialize: (state) => ({ 
-                userProfile: state.userProfile, 
-                authenticatedUser: state.authenticatedUser 
+                userProfile: state.userProfile, // Only persist userProfile
+                authenticatedUser: state.authenticatedUser // Persist authenticatedUser too
             }),
         }
     )
