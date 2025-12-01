@@ -5,6 +5,7 @@ import Medicine from '../assets/image/medicine.svg'
 import { useNavigate } from 'react-router-dom'
 import useMedicine from '../store/useMedicineStore'
 import MedicineForm from '../components/MedicineForm'
+
 const MedicineInventory = () => {
   const { medicines, updateMedicine, deleteMedicine } = useMedicine();
   const navigate = useNavigate();

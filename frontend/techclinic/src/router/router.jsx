@@ -3,7 +3,7 @@ import { createBrowserRouter } from "react-router-dom";
 import Dashboard from "../pages/newDashboard";
 import Login from "../pages/Login";
 import NewPatient from "../pages/NewPatient";
-import MedicineInventory from "../pages/MedicineInventory";
+import MedicineInventory from "../pages/newMedicine";
 import PatientRecord from "../pages/PatientRecord";
 import IndividualRecord from "../pages/IndividualRecord";
 import AddMedicine from "../pages/AddMedicine";

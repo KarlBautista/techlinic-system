@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+
+.medicineInfo {
+    @apply flex items-center justify-center 
+}
+
+.medicineInfo p {
+    @apply  text-center text-[.9rem] tracking-[2px] font-medium
+}
+
+.medicineInfoData p {
+    @apply flex text-center justify-center text-[.8rem] tracking-[2px]
+}

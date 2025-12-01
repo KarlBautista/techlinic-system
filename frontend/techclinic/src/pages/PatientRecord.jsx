@@ -79,16 +79,16 @@ const PatientRecord = () => {
 
                 <div className=' h-10 w-[90%] flex gap-2 mt-5'>
                     <div className='h-full w-full flex items-center font-medium'>
-                      <p className='text-[.9remrem] tracking-[2px]'>Student ID</p>
+                      <p className='text-[.9rem] tracking-[2px]'>Student ID</p>
                     </div>
                     <div className='h-full w-full flex items-center font-medium'>
-                      <p className='text-[.9remrem] tracking-[2px]'>Name</p>
+                      <p className='text-[.9rem] tracking-[2px]'>Name</p>
                     </div>
                     <div className='h-full w-full flex items-center font-medium'>
-                      <p className='text-[.9remrem] tracking-[2px]'>Department</p>
+                      <p className='text-[.9rem] tracking-[2px]'>Department</p>
                     </div>
                     <div className='h-full w-full flex items-center font-medium'>
-                      <p className='text-[.9remrem] tracking-[2px]'>Diagnosis</p>
+                      <p className='text-[.9rem] tracking-[2px]'>Diagnosis</p>
                     </div>
                 </div>
 
