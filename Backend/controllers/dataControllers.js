@@ -37,6 +37,7 @@ console.log("Quantity:", quantity);
             address,
             date_of_birth: dateOfBirth,
             attending_physician: attendingPhysician,
+            status:  (diagnosis === "" || medication === "" || quantity === "" || treatment === "" || notes === "") ? "INCOMPLETE" : "COMPLETE"
         }).select();
         if(recordError){
             console.error(`Error inserting record: ${recordError.message}`);

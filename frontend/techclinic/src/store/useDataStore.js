@@ -26,7 +26,6 @@ const useData = create(
                     }
 
                     console.log('✅ Record inserted successfully');
-                    // Refresh records after successful insert
                     await get().getRecords();
 
                     return { success: true, data: payload.data };

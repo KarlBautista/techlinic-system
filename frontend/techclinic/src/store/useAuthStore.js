@@ -9,26 +9,6 @@ const useAuth = create(
     userProfile: null,
     isLoading: true,
     
-    signInWithGoogle: async () => {
-        try {
-            const { data, error } = await supabase.auth.signInWithOAuth({
-                provider: "google",
-                options: {
-                    redirectTo: `${window.location.origin}/dashboard`,
-                }
-            });
-            
-            if (error) {
-                console.error(`Google Auth Error: ${error.message}`);
-                return { data: null, error: error.message};
-            }
-            
-            return { data, error: null };
-        } catch (err) {
-            console.error(`Error signing in with google:`, err);
-            return { data: null, error: err.message };
-        }
-    }, // Add loading state
     
     signIn: async (emailInput, passwordInput) => {
         try {
@@ -79,27 +59,6 @@ const useAuth = create(
         } catch (err) {
             console.error(`Error signing up: ${err.message}`)
             return { success: false, error: err.message}
-        }
-    },
-    
-    signInWithGoogle: async () => {
-        try {
-            const { data, error } = await supabase.auth.signInWithOAuth({
-                provider: "google",
-                options: {
-                    redirectTo: `${window.location.origin}/dashboard`,
-                }
-            });
-            
-            if (error) {
-                console.error(`Google Auth Error: ${error.message}`);
-                return { data: null, error: error.message};
-            }
-            
-            return { data, error: null };
-        } catch (err) {
-            console.error(`Error signing in with google:`, err);
-            return { data: null, error: err.message };
         }
     },
     
@@ -211,6 +170,7 @@ const useAuth = create(
                         userProfile: null,
                         isLoading: false 
                     });
+                    localStorage.removeItem("auth-storage");
                 }
             });
             
@@ -299,9 +259,9 @@ const useAuth = create(
     }
 }),
         {
-            name: 'auth-storage', 
+            name: 'auth-storage', // unique name for localStorage key
             partialize: (state) => ({ 
-                userProfile: state.userProfile, 
+                userProfile: state.userProfile, // Only persist userProfile
                 authenticatedUser: state.authenticatedUser 
             }),
         }

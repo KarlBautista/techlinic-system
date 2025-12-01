@@ -30,7 +30,7 @@ const NewPatient = () => {
     attendingPhysician: authenticatedUser?.user_metadata?.full_name,
   });
 
-  // Normalize various date formats to YYYY-MM-DD for <input type="date">
+ 
   const formatDateForInput = (val) => {
     if (!val) return '';
     try {

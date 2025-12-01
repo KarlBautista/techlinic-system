@@ -52,6 +52,10 @@ const NewDashboard = () => {
     console.log("ito user profile", userProfile);
     console.log("ito authenticated user", authenticatedUser);
 
+    const handleDiagnose = (patientId) => {
+        alert(patientId)
+    }
+
     return (
         <div className='h-screen w-full flex flex-col sm:flex-row'>
             <div className='h-[8%] w-full order-last sm:order-0 sm:w-[23%] sm:h-full md:w-[19%] lg:w-[17%]'>
@@ -105,37 +109,68 @@ const NewDashboard = () => {
 
                 <div className='w-full flex items-center flex-col mt-10 p-2'>
                     <h1 className='text-1xl w-full font-semibold mb-2'>Recent records</h1>
-                    <div className=' w-full overflow-auto '>
-                        <table className='min-w-full border-collapse border border-gray-200 rounded-lg overflow-hidden'>
-                        <thead className='bg-[#C41E3A]'>
-                            <tr>
-                            <th className='px-4 py-2 text-left text-sm font-medium text-white border-b'>Student ID</th>
-                            <th className='px-4 py-2 text-left text-sm font-medium text-white border-b'>Name</th>
-                            <th className='px-4 py-2 text-left text-sm font-medium text-white border-b'>Diagnosis</th>
-                            <th className='px-4 py-2 text-left text-sm font-medium text-white border-b'>Department</th>
-                            <th className='px-4 py-2 text-left text-sm font-medium text-white border-b'>Created at</th>
-                             <th className='px-4 py-2 text-left text-sm font-medium text-white border-b'>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {records.length === 0 ? (
-                            <tr>
-                                <td colSpan={5} className='px-4 py-6 text-center text-sm text-gray-500'>No recent records found.</td>
-                            </tr>
-                            ) : (
-                            records.map((patient) => (
-                                <tr key={patient.id} className='hover:bg-gray-50 cursor-pointer transition-colors'>
-                                <td className='px-4 py-3 text-sm text-gray-800 border-b'>{patient.student_id ?? '-'}</td>
-                                <td className='px-4 py-3 text-sm text-gray-800 border-b'>{`${patient.first_name ?? ''} ${patient.last_name ?? ''}`.trim() || '-'}</td>
-                                <td className='px-4 py-3 text-sm text-gray-800 border-b'>{patient.diagnoses?.[0]?.diagnosis ?? '-'}</td>
-                                <td className='px-4 py-3 text-sm text-gray-800 border-b'>{patient.department ?? '-'}</td>
-                                <td className='px-4 py-3 text-sm text-gray-800 border-b'>{formatDate(patient.created_at)}</td>
-                                </tr>
-                            ))
-                            )}
-                        </tbody>
-                        </table>
+
+                <div className=' h-10 w-[90%] flex gap-2 mt-5'>
+                    <div className='h-full w-full flex items-center font-medium'>
+                      <p className='text-[.9remrem] tracking-[2px]'>Student ID</p>
                     </div>
+                    <div className='h-full w-full flex items-center font-medium'>
+                      <p className='text-[.9remrem] tracking-[2px]'>Name</p>
+                    </div>
+                    <div className='h-full w-full flex items-center font-medium'>
+                      <p className='text-[.9remrem] tracking-[2px]'>Department</p>
+                    </div>
+                    <div className='h-full w-full flex items-center font-medium'>
+                      <p className='text-[.9remrem] tracking-[2px]'>Diagnosis</p>
+                    </div>
+                    <div className='h-full w-full flex items-center font-medium'>
+                      <p className='text-[.9remrem] tracking-[2px]'>Status</p>
+                    </div>
+                </div>
+
+                      <div className='w-[90%] h-full overflow-y-auto '>
+                 {records?.length > 0 ? (
+                    records.map((patient) => (
+                      <div key={patient.id} className='studentCss cursor-default hover:underline hover:decoration-[#A12217] hover:decoration-2' onClick={() => handleDiagnose(patient.student_id)}>
+                        <div className='studentInfoContainer'>
+                          <p className='studentInfoData'>{patient.student_id}</p>
+                        </div>
+                        <div className='studentInfoContainer'>
+                          <p className='studentInfoData'>{`${patient.first_name} ${patient.last_name}`}</p>
+                          </div>
+                        <div className='studentInfoContainer'>
+                          <p className='studentInfoData'>{patient.department}</p>
+                        </div>
+                        <div className='studentInfoContainer'>
+                          <p className='studentInfoData'>{patient.diagnoses[0].diagnosis || "N/A"}</p>
+                       </div>
+                                                <div className='studentInfoContainer'>
+                                                    <p className='studentInfoData'>
+                                                        {patient.status === "COMPLETE" ? (
+                                                            <span
+                                                                className="inline-block w-3 h-3 rounded-full bg-green-500"
+                                                                role="img"
+                                                                aria-label="Complete"
+                                                                title="Complete"
+                                                            />
+                                                        ) : (
+                                                            <span
+                                                                className="inline-block w-3 h-3 rounded-full bg-red-500"
+                                                                role="img"
+                                                                aria-label="Incomplete"
+                                                                title="Incomplete"
+                                                            />
+                                                        )}
+                                                    </p>
+                                             </div>
+                       
+                      </div>
+                      ))
+                     ) : (
+                <p className="text-gray-500 text-sm mt-3">No results found.</p>
+            )}
+                </div>
+
                 </div>
             </div>
         </div>
