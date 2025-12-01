@@ -1,6 +1,9 @@
 import '../componentCss/newAnalytics.css'
 import Navigation from '../components/newNavigation.jsx'
 import MedicineChart from '../charts/MedicinesChart.jsx'
+import PatientCountsChart from '../charts/PatientCountsChart'
+import PatientsPerDepartmentChart from '../charts/PatientsPerDepartmentChart'
+import TopDiagnosisChart from '../charts/TopDiagnosisChart'
 
 const  newAnalytics= ()=> {
     return(
@@ -15,13 +18,39 @@ const  newAnalytics= ()=> {
                         <p className='text-[1.7rem] '>Medical Analytics</p>
                         <p className='text-[1rem] text-gray-500'>Manage reports</p>
                     </div>
-                    <div className='w-full h-[90%] flex flex-row overflow-auto gap-2 flex-wrap'>
-                        <div className='h-[50%] w-full bg-red-100 flex'>
+                    <div className='w-full h-[90%] flex justify-center flex-row overflow-auto gap-2 lg:flex-nowrap flex-wrap'>
+                        <div className='sm:hidden h-[50%] w-[98%] flex rounded-lg border border-gray-200 p-2 shadow-md'>
                             <MedicineChart/>
                         </div>
-                        <div className='h-[50%] w-full bg-red-100'></div>
-                        <div className='h-[50%] w-full bg-red-100'></div>
-                        <div className='h-[50%] w-full bg-red-100'></div>
+                        <div className='lg:hidden  h-[50%] w-[98%] flex rounded-lg border border-gray-200 p-2 shadow-lg'>
+                            <PatientCountsChart/>
+                        </div>
+                        <div className='lg:hidden  w-[98%] flex rounded-lg border border-gray-200 p-2 shadow-lg'>
+                            <TopDiagnosisChart/>
+                        </div>
+                        <div className='lg:hidden h-[60%] w-[98%] flex rounded-lg border border-gray-200 p-2 shadow-lg'>
+                            <PatientsPerDepartmentChart/>
+                        </div>
+
+                        <div className='lg:flex hidden w-[70%] gap-1 flex-col h-full'>
+                            <div className='h-[40%] w-full flex gap-1'>
+                                <div className='h-full w-[50%]  rounded-lg border border-gray-200 p-2 shadow-md'>
+                                    <MedicineChart/>
+                                </div>
+                                <div className='h-full w-[50%] rounded-lg border border-gray-200 p-2 shadow-md'>
+                                    <PatientCountsChart/>
+                                </div>
+                            </div>
+
+
+                            <div className='rounded-lg border border-gray-200 p-2 shadow-md w-full'>
+                                <TopDiagnosisChart/>
+                            </div>
+                        </div>
+                        <div className='lg:flex hidden rounded-lg border border-gray-200 p-2 shadow-md w-[30%] h-full overflow-hidden'>
+                                <PatientsPerDepartmentChart/>
+                        </div>
+                        
 
                     </div>
                 </div>
