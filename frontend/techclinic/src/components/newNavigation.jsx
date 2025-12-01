@@ -105,22 +105,50 @@ const NewNavigation = () => {
         return 'User';
     };
 
+
+    const getInitials = () => {
+    const name = getDisplayName();
+    const parts = name.replace('Dr. ', '').split(' ');
+    if (parts.length === 1) return parts[0][0].toUpperCase();
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+};
+
     return (
         <div className="border-t h-full w-full flex justify-evenly gap-1 min-w-[360px] sm:min-w-0 sm:flex-col 
-            sm:border-r sm:border-gray-300">
+            sm:border-r sm:border-gray-300 shadow-2xl">
         
-            {/* Logo Section */}
             <div className='newNavigationContainer h-[10%] w-full gap-1 p-1 border-b border-gray-300'>
                 <div className='w-[30%] h-full flex items-center justify-center'>
                     <img src={TUP} className='h-[80%] object-contain' alt="TUP Logo" />
                 </div>
                 <div className='h-full flex flex-col w-[70%] justify-center'>
-                    <p className='text-[#A12217] font-bold sm:text-[1rem] xl:text-[1.6rem] 2xl:text-[1.8rem] md:text-[1.3rem]'>TechClinic</p>
-                    <p className='text-[#A12217] text-[.5rem] md:text-[.6rem] xl:text-[.7rem] 2xl:text-[.9rem]'>Electronic Medical Record</p>
+                    <p className='text-[#A12217] font-bold sm:text-[1rem] xl:text-[1.6rem] lg:text-[1.5rem] 2xl:text-[1.8rem] md:text-[1.1rem]'>TechClinic</p>
+                    <p className='text-[#A12217] text-[.5rem] md:text-[.5rem] xl:text-[.7rem] 2xl:text-[.9rem]'>Electronic Medical Record</p>
                 </div>
             </div>
 
-            {/* Navigation Links */}
+            <>
+         <Link to={'/dashboard'} className='navigationContainer'>
+                <img src={DashboardImage} alt="Dashboard" />
+            </Link>
+            <Link to={'/analytics'} className='navigationContainer'>
+                <img src={Analytics} alt="Analytics" />
+            </Link>
+            <Link to={'/new-patient'} className='navigationContainer'>
+                <img src={PatientImage} alt="New Patient" />
+            </Link>
+            <Link to={'/patient-record'} className='navigationContainer'>
+                <img src={RecordImage} alt="Patient Record" />
+            </Link>
+            <Link to={'/medicine-inventory'} className='navigationContainer'>
+                <img src={MedicineImage} alt="Medicine Inventory" />
+            </Link>
+            <div className='navigationContainer'>
+                <img src={ProfileImage} alt="Profile" />    
+            </div>
+        </>
+
+
             {userProfile?.role === "NURSE" ? (
                 <div className='newNavigationContainer gap-2 flex-col justify-center h-[70%] w-full'>
                     <Link 
@@ -128,7 +156,7 @@ const NewNavigation = () => {
                         className={`${currentPath === '/dashboard' ? 'inPage' : 'notPage'} mainNavigation`}
                     >
                         <img src={DashboardImage} alt="Dashboard" />
-                        <p>DASHBOARDORD</p>
+                        <p>DASHBOARD</p>
                     </Link>
                     
                     <Link 
@@ -224,34 +252,22 @@ const NewNavigation = () => {
             )}
            
             {/* User Profile Section */}
-            <div className='newNavigationContainer h-[20%] w-full flex-col p-1 bg-[hsl(350,73%,40%)] text-white'>
+            <div className='newNavigationContainer h-[20%] w-full flex-col p-1 bg-[#C41E3A] text-white'>
                 <div className='h-[60%] w-full flex gap-2 items-center justify-center'>
-                    <div className='w-[50px] h-[50px] 2xl:w-17 2xl:h-17 rounded-full bg-amber-100 flex items-center justify-center overflow-hidden'>
-                        {authenticatedUser?.user_metadata?.avatar_url ? (
-                            <img 
-                                src={authenticatedUser.user_metadata.avatar_url} 
-                                className='w-full h-full object-cover rounded-full' 
-                                alt="User avatar" 
-                            />
-                        ) : (
-                            <img 
-                                src={TUP} 
-                                className='w-full h-full object-contain p-2' 
-                                alt="Default avatar" 
-                            />
-                        )}
+                    <div className='w-[50px] h-[50px]  2xl:w-15 2xl:h-15 rounded-full bg-white flex items-center justify-center overflow-hidden'>
+                        <p className='text-black sm:text-[1.5rem] md:text-[1.5rem] lg:text-[1.5rem] xl:text-[1.9rem]  font-bold'>{getInitials()}</p>
                     </div>
                     <div className='w-[60%] h-full flex flex-col justify-center xl:w-[70%]'>
                         <p className='font-bold text-[.7rem] md:text-[.8rem] lg:text-[.9rem] 2xl:text-[1.1rem]'>
                             {getDisplayName()}
                         </p>
-                        <p className='text-[.5rem] xl:text-[.8rem] 2xl:text-[1.1rem]'>
-                            {userProfile?.role || 'Primary Core Physician'}
+                        <p className='text-[.5rem] xl:text-[.8rem] 2xl:text-[1rem]'>
+                            {'Attending Personnel'}
                         </p>
                     </div>
                 </div>
                 
-                <div className='Settings h-[40%] w-full flex justify-end items-center gap-6 pr-4'>
+                <div className='Settings bg-[#b01c34ff] h-[40%] w-full flex justify-end items-center gap-6 pr-4'>
                     <button 
                         className='flex gap-1 justify-center items-center hover:opacity-80 transition-opacity'
                         title="Settings"

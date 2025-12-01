@@ -3,7 +3,7 @@
 
 
 .navigationContainer {
-    @apply w-[20%] h-full flex items-center justify-center sm:hidden 
+    @apply w-[20%] h-full flex items-center justify-center sm:hidden  
 }
 
 
@@ -17,15 +17,15 @@
 }
 
 .mainNavigation{
-    @apply  w-full  py-3 font-semibold text-[.7rem] flex gap-2
+    @apply  w-full  py-3 font-semibold text-[.7rem] flex gap-2 items-center
 }
 
 .mainNavigation img {
-    @apply h-4 xl:h-5 2xl:h-6 md:h-3 ml-7
+    @apply h-4 xl:h-5  md:h-3 ml-7
 }
 
 .mainNavigation p { 
-    @apply flex  cursor-pointer lg:text-[.8rem] 2xl:text-[1rem] xl:text-[.9rem] 
+    @apply flex  cursor-pointer lg:text-[.8rem] 2xl:text-[.8rem] xl:text-[.9rem] 
 }
 
 .inPage {
