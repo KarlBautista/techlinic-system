@@ -62,26 +62,7 @@ const useAuth = create(
         }
     },
     
-    signInWithGoogle: async () => {
-        try {
-            const { data, error } = await supabase.auth.signInWithOAuth({
-                provider: "google",
-                options: {
-                    redirectTo: `${window.location.origin}/dashboard`,
-                }
-            });
-            
-            if (error) {
-                console.error(`Google Auth Error: ${error.message}`);
-                return { data: null, error: error.message};
-            }
-            
-            return { data, error: null };
-        } catch (err) {
-            console.error(`Error signing in with google:`, err);
-            return { data: null, error: err.message };
-        }
-    },
+   
     
 
     fetchUserProfile: async (userId) => {
@@ -155,7 +136,6 @@ const useAuth = create(
               
                 const user = session?.user;
                 if (user) {
-                    console.log("👤 User detected:", user.email);
                     set({ authenticatedUser: user, isLoading: true });
                     let retries = 3;
                     let profile = null;

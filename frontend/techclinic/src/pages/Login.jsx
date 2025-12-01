@@ -96,12 +96,7 @@ const Login = () => {
         </form>
         <div className='h-[30%] w-full flex items-start justify-center'>
 
-            <div className='h-[70px] w-[40%] flex items-center justify-evenly'
-        onClick={() => handleSignInWithGoogle()}>
-            <button className='h-20 w-20 rounded-full bg-gray-200  transition duration-300'>
-                <img src={Google} alt="Google" />
-            </button>
-        </div>  
+ 
         </div>
       </div>
     <div className='hidden lg:block lg:w-[55%] h-full'> 
