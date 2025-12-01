@@ -2,7 +2,7 @@ import Navigation from '../components/newNavigation.jsx'
 import Search from '../assets/image/searcg.svg'
 import Medicine from '../assets/componentImage/addMedicine.svg'
 import '../componentCss/newMedicine.css'
-
+import MedicineForm from '../components/MedicineForm.jsx'
 
 import React, { useState } from 'react'
 
@@ -17,6 +17,7 @@ const newMedicine =()=> {
   const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
   const [medicineFormData, setMedicineFormData] = useState({});
+  const [search, setSearch] = useState("");
   console.log("mga medicines", medicines);
   const handleAddMedicine = () => {
     navigate("/add-medicine");
@@ -38,6 +39,15 @@ const newMedicine =()=> {
     setMedicineFormData(medicine)
   }
 
+  
+
+  const filteredMedicines = medicines?.filter((medicine) => {
+  
+    const matchesSearch = medicine.medicine_name.toLowerCase().includes(search.toLowerCase());
+    return matchesSearch;
+  })
+
+
 
 
     return(
@@ -46,7 +56,11 @@ const newMedicine =()=> {
                 <Navigation />
             </div>
 
-        
+              {showForm && <MedicineForm medicine={medicineFormData} 
+                                    onClose={() => setShowForm(false)} 
+                                    onUpdate={(updatedForm) => updateMedicine(updatedForm)}
+                                    onDelete={(medicineId) => deleteMedicine(medicineId)}/>
+                             }
 
             <div className='h-[92%] min-w-[360px] sm:min-w-0  w-full sm:h-full sm:w-[77%] md:w-[81%] lg:w-[83%] overflow-auto p-5'>
                 <div className='w-full h-full flex flex-col gap-4 items-center'>
@@ -58,9 +72,10 @@ const newMedicine =()=> {
                     <div className='h-[10%] w-full  flex justify-between items-center'>
                         <div className='w-[85%] h-[60%] rounded-[10px] border-[#EACBCB]  border flex items-center'>
                             <img src={Search} alt="" className='h-8 w-[10%]' />
-                            <input type="text" className='w-[90%] h-full outline-none'/>
+                            <input type="text" className='w-[90%] h-full outline-none' onChange={(e) => setSearch(e.target.value)}/>
                         </div>
-                        <div className='w-[10%] h-[90%] flex items-center justify-center'>
+                        <div className='w-[10%] h-[90%] flex items-center justify-center cursor-pointer'
+                        onClick={() => handleAddMedicine()}>
                             <img src={Medicine} alt="" className='h-[90%] md:h-[70%]' />
                         </div>
                     </div>
@@ -95,11 +110,12 @@ const newMedicine =()=> {
                         </div>
 
 
-                        {medicines && medicines.length > 0 ? (
-                            medicines.map((medicine) => (
+                        {filteredMedicines && filteredMedicines.length > 0 ? (
+                            filteredMedicines.map((medicine) => (
                                 <div 
                                     key={medicine.id} 
-                                    className='mt-4 md:mt-1 h-[5%] w-[95%] flex gap-2'
+                                    className='mt-4 md:mt-1 h-[5%] w-[95%] flex gap-2  hover:decoration-2 cursor-default hover:underline'
+                                    onClick={() => handleUpdateMedicine(medicine)}
                                 >
                                     <div className='medicineInfoData w-[25%] sm:w-[20%] h-full'>
                                         <p>{medicine.medicine_name}</p>
@@ -125,7 +141,7 @@ const newMedicine =()=> {
                                     <div className='hidden sm:flex items-center justify-center text-[.8rem] tracking-[2px] sm:w-[20%] h-full'>
                                         <div
                                             className={`h-3 w-3 rounded-full ${
-                                            medicine.stock_level < 20 ? "bg-red-600" : "bg-green-600"
+                                            medicine.stock_level > 30 ? "bg-[#10b981]" : medicine.stock_level > 10 && medicine.stock_level < 30 ? "bg-[#f59e0b]"  : "bg-[#ef4444]"
                                             }`}
                                         ></div>
                                     </div>

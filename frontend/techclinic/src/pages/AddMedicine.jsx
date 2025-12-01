@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Navigation from '../components/Navigation';
+import Navigation from '../components/newNavigation';
 import Swal from 'sweetalert2';
 import useMedicine from '../store/useMedicineStore';
 

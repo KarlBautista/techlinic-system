@@ -7,7 +7,7 @@ import useData from './store/useDataStore'
 import useMedicine from './store/useMedicineStore'
 
 function App() {
-    const { authListener, getUser } = useAuth();
+    const { authListener, getUser, getAllUsers } = useAuth();
     const { getRecords, getPatients } = useData();
     const { getMedicines } = useMedicine();
     const [isInitialized, setIsInitialized] = useState(false);
@@ -25,7 +25,8 @@ function App() {
             await Promise.all([
                 getRecords(),
                 getPatients(),
-                getMedicines()
+                getMedicines(),
+                getAllUsers(),
              
             ]);
             

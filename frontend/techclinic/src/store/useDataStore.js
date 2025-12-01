@@ -20,7 +20,23 @@ const useData = create(
                     return;
                 }
             },
-            
+
+            insertPersonnel: async (personnel) => {
+                try {
+                    const response = await axios.post("http://localhost:3000/api/insert-personnel", {
+                        personnel
+                    });
+                    if(response.status === 200) {
+                        return { success: true }
+                    } else {
+                        console.error(`Error inserting personnel: ${response.data.error}`);
+                        return;
+                    }
+                } catch (err) {
+                    console.error(`Something went wrong inserting personnel: ${err.message}`);
+                    return;
+                }
+            },
             insertRecord: async (formData) => {
                 try {
                     const response = await axios.post("http://localhost:3000/api/insert-record", {
