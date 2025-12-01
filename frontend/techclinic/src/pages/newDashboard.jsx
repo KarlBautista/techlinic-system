@@ -15,6 +15,7 @@ const NewDashboard = () => {
     const { patientRecords, patientsData } = useData();
     const records = patientRecords?.data ?? [];
     const { medicines } = useMedicine();
+    const navigate = useNavigate();
 
     function formatDate(dateString) {
         if (!dateString) return "";
@@ -27,9 +28,8 @@ const NewDashboard = () => {
             day: "numeric",
         });
     }
-    console.log(userProfile)
-
-    console.log("ito mga patient records ha", patientRecords)
+    
+   
    
     const getDisplayName = () => {
         if (userProfile?.first_name && userProfile?.last_name) {
@@ -49,11 +49,30 @@ const NewDashboard = () => {
         return userProfile?.role || "Staff";
     };
 
-    console.log("ito user profile", userProfile);
-    console.log("ito authenticated user", authenticatedUser);
 
-    const handleDiagnose = (patientId) => {
-        alert(patientId)
+
+    const handleDiagnose = (recordId) => {
+        try {
+            navigate(`/add-diagnosis/${recordId}`);
+        } catch (err) {
+            console.error(err.message);
+        }
+    }
+
+    const handleIndividualRecord = (studentId) => {
+        try {
+             navigate(`/individual-record/${studentId}`);
+        } catch (err) {
+            console.error(err.message);
+        }
+    }
+
+    const handleWaitingForDiagnosis = () => {
+        Swal.fire({
+            title: "Awaiting Physician Assessment",
+            text: "This patient is awaiting physician assessment; a formal diagnosis has not yet been provided.",
+            icon: "info"
+        })
     }
 
     return (
@@ -131,7 +150,13 @@ const NewDashboard = () => {
                       <div className='w-[90%] h-full overflow-y-auto '>
                  {records?.length > 0 ? (
                     records.map((patient) => (
-                      <div key={patient.id} className='studentCss cursor-default hover:underline hover:decoration-[#A12217] hover:decoration-2' onClick={() => handleDiagnose(patient.student_id)}>
+                      <div key={patient.id} className='studentCss cursor-default hover:underline hover:decoration-[#A12217] hover:decoration-2'
+                      //dito mapipindot lang table kapag doctor yung user
+                       onClick={patient.status === "INCOMPLETE" && userProfile?.role === "DOCTOR" ? () => handleDiagnose(patient.id) :
+                                patient.status === "INCOMPLETE" && userProfile?.role === "NURSE" ? () => handleWaitingForDiagnosis() :
+                                () => handleIndividualRecord(patient.student_id)}>
+
+
                         <div className='studentInfoContainer'>
                           <p className='studentInfoData'>{patient.student_id}</p>
                         </div>

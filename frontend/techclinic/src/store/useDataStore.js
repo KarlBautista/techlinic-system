@@ -9,6 +9,17 @@ const useData = create(
             patientsData: null,
             isLoadingRecords: false,
             isLoadingPatients: false,
+
+            insertDiagnose: async (recordId) => {
+                try {
+                    const response = await axios.post("http://localhost:3000/api/insert-diagnose", {
+                        
+                    })
+                } catch (err) {
+                    console.error(`Something went wrong inserting diagnosis: ${err.message}`);
+                    return;
+                }
+            },
             
             insertRecord: async (formData) => {
                 try {

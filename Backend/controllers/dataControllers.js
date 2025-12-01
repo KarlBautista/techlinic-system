@@ -137,6 +137,23 @@ const getRecord = async (req, res) => {
      }
 }
 
+const getRecordToDiagnose = async (req, res) => {
+    const { recordId } = req.params;
+    try {
+        const { data: patientRecordData, error: patientRecordError } = await supabase.from("records").select("*")
+        .eq("id", recordId);
+
+        if (patientRecordError) {
+            console.error(`Error getting patient record: ${patientRecordError.message}`);
+            res.status(500).json({ success: false, data: patientRecordData });
+            return;
+        }
+        res.status(200).json({ success: true, data: patientRecordData });
+    }  catch (err) {
+        console.error(`Something went wrong getting patient record: ${err.message}`);
+        res.status(500).json({ success: false, error: err.message });
+    }
+}
 const getRecordsFromExisitingPatients = async (req, res) => {
     const studentId = req.params.studentId;
     console.log(studentId)
@@ -171,6 +188,56 @@ const getPatients = async (req, res) => {
     }
 }
 
+const addDiagnosis = async (req, res) => {
+     const {
+        id,
+        firstName,
+        lastName,
+        studentId,
+        contactNumber,
+        yearLevel,
+        department,
+        sex,
+        email,
+        diagnosis,
+        medication,
+        address,
+        dateOfBirth,
+        quantity,
+        treatment,
+        notes,
+        attendingPhysician
+    } = req.body.patientInput;
+    console.log("ito medicationn", medication)
+    try {
+        const { data: addDiagnosisData, error: addDiagnosisError } = await supabase.from("diagnoses").update({
+            diagnosis,
+            medication: medication.medicine_name,
+            quantity,
+            treatment,
+            notes,
+        }).eq("record_id", id);
+
+        if (addDiagnosisError) {
+            console.error(`Error adding diagnosis: ${addDiagnosisError.message}`);
+            res.status(500).json({ success: false, error: addDiagnosisError.message });
+            return;
+        }
+        const { error: updateCompleteStatusError } = await supabase.from("records").update({
+            status: "COMPLETE"
+        }).eq("id", id);
+        
+        if (updateCompleteStatusError) {
+            console.error(`Error update status: ${updateCompleteStatusError}`);
+            return res.status(500).json({ success: false, error: updateCompleteStatusError.message });
+        }
+        res.status(200).json({ success: true, message: "success diagnosis"});
+    } catch (err) {
+        console.error(`Something went wrong adding diagnosis: ${err.message}`);
+        return;
+    }
+}
 
 
-module.exports = { insertRecord, getRecords, getRecord, getRecordsFromExisitingPatients, getPatients }
+
+module.exports = { insertRecord, getRecords, getRecord, getRecordsFromExisitingPatients, getPatients, getRecordToDiagnose, addDiagnosis}
