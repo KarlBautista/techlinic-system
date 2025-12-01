@@ -121,7 +121,7 @@ const newMedicine =()=> {
 
                                     <div className='hidden sm:flex items-center justify-center text-[.8rem] tracking-[2px] sm:w-[20%] h-full'>
                                         <div
-                                            className={`h-3 w-3~ rounded-full ${
+                                            className={`h-3 w-3 rounded-full ${
                                             medicine.stock_level < 20 ? "bg-red-600" : "bg-green-600"
                                             }`}
                                         ></div>
