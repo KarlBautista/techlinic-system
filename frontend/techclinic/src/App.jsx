@@ -16,9 +16,9 @@ function App() {
         let unsubscribe;
         
         const initialize = async () => {
-            console.log("🚀 App initializing...");
+          
      
-            unsubscribe = authListener();
+          
         
             await getUser();
       

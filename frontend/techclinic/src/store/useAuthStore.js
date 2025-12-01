@@ -299,10 +299,10 @@ const useAuth = create(
     }
 }),
         {
-            name: 'auth-storage', // unique name for localStorage key
+            name: 'auth-storage', 
             partialize: (state) => ({ 
-                userProfile: state.userProfile, // Only persist userProfile
-                authenticatedUser: state.authenticatedUser // Persist authenticatedUser too
+                userProfile: state.userProfile, 
+                authenticatedUser: state.authenticatedUser 
             }),
         }
     )
