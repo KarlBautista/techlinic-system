@@ -443,6 +443,302 @@ const getYearlyPatientsPerDepartment = async (req, res) => {
     }
 };
 
+
+// Helper function to get top N diagnoses from data
+const getTopDiagnoses = (diagnosesData, topN = 5) => {
+    const diagnosisCount = {};
+    
+    // Count occurrences of each diagnosis
+    diagnosesData.forEach(record => {
+        const diagnosis = record.diagnosis;
+        diagnosisCount[diagnosis] = (diagnosisCount[diagnosis] || 0) + 1;
+    });
+    
+    // Sort by count and get top N
+    const sortedDiagnoses = Object.entries(diagnosisCount)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, topN);
+    
+    return sortedDiagnoses;
+};
+
+// Helper function to calculate cumulative percentage
+const calculateCumulativePercent = (counts) => {
+    const total = counts.reduce((sum, count) => sum + count, 0);
+    let cumulative = 0;
+    return counts.map(count => {
+        cumulative += count;
+        return Math.round((cumulative / total) * 100);
+    });
+};
+
+// WEEKLY - Group by day (Monday to Sunday)
+const getWeeklyTopDiagnoses = async (req, res) => {
+    try {
+        const timezoneOffset = 8;
+        const startOfWeek = moment().utcOffset(timezoneOffset).startOf("isoWeek").utc().format("YYYY-MM-DD 00:00:00");
+        const endOfWeek = moment().utcOffset(timezoneOffset).endOf("isoWeek").utc().format("YYYY-MM-DD 23:59:59");
+
+        const { data: weeklyDiagnosesData, error: weeklyDiagnosesError } = await supabase
+            .from("diagnoses")
+            .select("*")
+            .gte("created_at", startOfWeek)
+            .lte("created_at", endOfWeek);
+
+        if (weeklyDiagnosesError) {
+            console.error(`Error getting weekly top diagnoses: ${weeklyDiagnosesError.message}`);
+            return res.status(500).json({ success: false, error: weeklyDiagnosesError.message });
+        }
+
+        // Get top 5 diagnoses
+        const topDiagnoses = getTopDiagnoses(weeklyDiagnosesData, 5);
+        const diagnosisNames = topDiagnoses.map(d => d[0]);
+        const diagnosisCounts = topDiagnoses.map(d => d[1]);
+        
+        // Group by day for each top diagnosis
+        const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+        const seriesData = diagnosisNames.map(diagnosisName => {
+            const dayData = new Array(7).fill(0);
+            
+            weeklyDiagnosesData
+                .filter(record => record.diagnosis === diagnosisName)
+                .forEach(record => {
+                    const dayIndex = moment(record.created_at).utcOffset(timezoneOffset).isoWeekday() - 1;
+                    dayData[dayIndex]++;
+                });
+            
+            return {
+                name: diagnosisName,
+                data: dayData
+            };
+        });
+
+        const cumulativePercent = calculateCumulativePercent(diagnosisCounts);
+
+        res.status(200).json({
+            success: true,
+            data: {
+                labels: daysOfWeek,
+                series: seriesData,
+                topDiagnosesCount: diagnosisCounts,
+                topDiagnosesNames: diagnosisNames,
+                cumulativePercent: cumulativePercent,
+                period: {
+                    type: "week",
+                    range: `${moment(startOfWeek).format("MMM DD")} - ${moment(endOfWeek).format("MMM DD, YYYY")}`
+                }
+            }
+        });
+    } catch (err) {
+        console.error(`Something went wrong getting weekly diagnoses: ${err.message}`);
+        return res.status(500).json({ success: false, error: err.message });
+    }
+};
+
+// MONTHLY - Group by week (Week 1, Week 2, etc.)
+const getMonthlyTopDiagnoses = async (req, res) => {
+    try {
+        const timezoneOffset = 8;
+        const startOfMonth = moment().utcOffset(timezoneOffset).startOf("month").utc().format("YYYY-MM-DD 00:00:00");
+        const endOfMonth = moment().utcOffset(timezoneOffset).endOf("month").utc().format("YYYY-MM-DD 23:59:59");
+
+        const { data: monthlyDiagnosesData, error: monthlyDiagnosesError } = await supabase
+            .from("diagnoses")
+            .select("*")
+            .gte("created_at", startOfMonth)
+            .lte("created_at", endOfMonth);
+
+        if (monthlyDiagnosesError) {
+            console.error(`Error getting monthly top diagnoses: ${monthlyDiagnosesError.message}`);
+            return res.status(500).json({ success: false, error: monthlyDiagnosesError.message });
+        }
+
+        const topDiagnoses = getTopDiagnoses(monthlyDiagnosesData, 5);
+        const diagnosisNames = topDiagnoses.map(d => d[0]);
+        const diagnosisCounts = topDiagnoses.map(d => d[1]);
+
+        // Calculate number of weeks in the month
+        const weeksInMonth = Math.ceil(moment().utcOffset(timezoneOffset).daysInMonth() / 7);
+        const weekLabels = Array.from({ length: weeksInMonth }, (_, i) => `Week ${i + 1}`);
+
+        // Group by week for each top diagnosis
+        const seriesData = diagnosisNames.map(diagnosisName => {
+            const weekData = new Array(weeksInMonth).fill(0);
+            
+            monthlyDiagnosesData
+                .filter(record => record.diagnosis === diagnosisName)
+                .forEach(record => {
+                    const dayOfMonth = moment(record.created_at).utcOffset(timezoneOffset).date();
+                    const weekIndex = Math.floor((dayOfMonth - 1) / 7);
+                    weekData[weekIndex]++;
+                });
+            
+            return {
+                name: diagnosisName,
+                data: weekData
+            };
+        });
+
+        const cumulativePercent = calculateCumulativePercent(diagnosisCounts);
+
+        res.status(200).json({
+            success: true,
+            data: {
+                labels: weekLabels,
+                series: seriesData,
+                topDiagnosesCount: diagnosisCounts,
+                topDiagnosesNames: diagnosisNames,
+                cumulativePercent: cumulativePercent,
+                period: {
+                    type: "month",
+                    month: moment().format("MMMM YYYY")
+                }
+            }
+        });
+    } catch (err) {
+        console.error(`Something went wrong getting monthly diagnoses: ${err.message}`);
+        return res.status(500).json({ success: false, error: err.message });
+    }
+};
+
+// QUARTERLY - Group by month within the quarter
+const getQuarterlyTopDiagnoses = async (req, res) => {
+    try {
+        const timezoneOffset = 8;
+        const startOfQuarter = moment().utcOffset(timezoneOffset).startOf("quarter").utc().format("YYYY-MM-DD 00:00:00");
+        const endOfQuarter = moment().utcOffset(timezoneOffset).endOf("quarter").utc().format("YYYY-MM-DD 23:59:59");
+
+        const { data: quarterlyDiagnosesData, error: quarterlyDiagnosesError } = await supabase
+            .from("diagnoses")
+            .select("*")
+            .gte("created_at", startOfQuarter)
+            .lte("created_at", endOfQuarter);
+
+        if (quarterlyDiagnosesError) {
+            console.error(`Error getting quarterly top diagnoses: ${quarterlyDiagnosesError.message}`);
+            return res.status(500).json({ success: false, error: quarterlyDiagnosesError.message });
+        }
+
+        const topDiagnoses = getTopDiagnoses(quarterlyDiagnosesData, 5);
+        const diagnosisNames = topDiagnoses.map(d => d[0]);
+        const diagnosisCounts = topDiagnoses.map(d => d[1]);
+
+        // Get months in current quarter
+        const quarterMonths = [];
+        for (let i = 0; i < 3; i++) {
+            quarterMonths.push(moment().startOf("quarter").add(i, "months").format("MMMM"));
+        }
+
+        // Group by month for each top diagnosis
+        const seriesData = diagnosisNames.map(diagnosisName => {
+            const monthData = new Array(3).fill(0);
+            
+            quarterlyDiagnosesData
+                .filter(record => record.diagnosis === diagnosisName)
+                .forEach(record => {
+                    const recordMonth = moment(record.created_at).utcOffset(timezoneOffset).month();
+                    const quarterStartMonth = moment().startOf("quarter").month();
+                    const monthIndex = recordMonth - quarterStartMonth;
+                    if (monthIndex >= 0 && monthIndex < 3) {
+                        monthData[monthIndex]++;
+                    }
+                });
+            
+            return {
+                name: diagnosisName,
+                data: monthData
+            };
+        });
+
+        const cumulativePercent = calculateCumulativePercent(diagnosisCounts);
+        const currentQuarter = moment().quarter();
+
+        res.status(200).json({
+            success: true,
+            data: {
+                labels: quarterMonths,
+                series: seriesData,
+                topDiagnosesCount: diagnosisCounts,
+                topDiagnosesNames: diagnosisNames,
+                cumulativePercent: cumulativePercent,
+                period: {
+                    type: "quarter",
+                    quarter: `Quarter ${currentQuarter}`,
+                    range: `${moment(startOfQuarter).format("MMM")} - ${moment(endOfQuarter).format("MMM YYYY")}`
+                }
+            }
+        });
+    } catch (err) {
+        console.error(`Something went wrong getting quarterly diagnoses: ${err.message}`);
+        return res.status(500).json({ success: false, error: err.message });
+    }
+};
+
+// YEARLY - Group by month (January to December)
+const getYearlyTopDiagnoses = async (req, res) => {
+    try {
+        const timezoneOffset = 8;
+        const startOfYear = moment().utcOffset(timezoneOffset).startOf("year").utc().format("YYYY-MM-DD 00:00:00");
+        const endOfYear = moment().utcOffset(timezoneOffset).endOf("year").utc().format("YYYY-MM-DD 23:59:59");
+
+        const { data: yearlyDiagnosesData, error: yearlyDiagnosesError } = await supabase
+            .from("diagnoses")
+            .select("*")
+            .gte("created_at", startOfYear)
+            .lte("created_at", endOfYear);
+
+        if (yearlyDiagnosesError) {
+            console.error(`Error getting yearly top diagnoses: ${yearlyDiagnosesError.message}`);
+            return res.status(500).json({ success: false, error: yearlyDiagnosesError.message });
+        }
+
+        const topDiagnoses = getTopDiagnoses(yearlyDiagnosesData, 5);
+        const diagnosisNames = topDiagnoses.map(d => d[0]);
+        const diagnosisCounts = topDiagnoses.map(d => d[1]);
+
+        const monthsOfYear = moment.months(); // ["January", "February", ..., "December"]
+
+        // Group by month for each top diagnosis
+        const seriesData = diagnosisNames.map(diagnosisName => {
+            const monthData = new Array(12).fill(0);
+            
+            yearlyDiagnosesData
+                .filter(record => record.diagnosis === diagnosisName)
+                .forEach(record => {
+                    const monthIndex = moment(record.created_at).utcOffset(timezoneOffset).month();
+                    monthData[monthIndex]++;
+                });
+            
+            return {
+                name: diagnosisName,
+                data: monthData
+            };
+        });
+
+        const cumulativePercent = calculateCumulativePercent(diagnosisCounts);
+
+        res.status(200).json({
+            success: true,
+            data: {
+                labels: monthsOfYear,
+                series: seriesData,
+                topDiagnosesCount: diagnosisCounts,
+                topDiagnosesNames: diagnosisNames,
+                cumulativePercent: cumulativePercent,
+                period: {
+                    type: "year",
+                    year: moment().year()
+                }
+            }
+        });
+    } catch (err) {
+        console.error(`Something went wrong getting yearly diagnoses: ${err.message}`);
+        return res.status(500).json({ success: false, error: err.message });
+    }
+};
+
+
+
 module.exports = { getWeeklyPatients, 
                     getMonthyPatients, 
                     getQuarterlyPatient, 
@@ -450,4 +746,9 @@ module.exports = { getWeeklyPatients,
                      getWeeklyPatientsPerDepartment,
                     getMonthlyPatientsPerDepartment,
                 getQuarterlyPatientsPerDepartment,
-            getYearlyPatientsPerDepartment}
+            getYearlyPatientsPerDepartment, 
+            getWeeklyTopDiagnoses,
+    getMonthlyTopDiagnoses,
+    getQuarterlyTopDiagnoses,
+    getYearlyTopDiagnoses
+        }

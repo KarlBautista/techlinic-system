@@ -9,6 +9,10 @@ const useChart = create((set) => ({
     monthlyPatientPerDepartment: null,
     quarterlyPatientPerDepartment:null,
     yearlyPatientPerDepartment: null,
+    weeklyTopDiagnoses: null,
+    monthlyTopDiagnoses: null,
+    quarterlyTopDiagnoses: null,
+    yearlyTopDiagnoses: null,
 
     getWeeklyPatientCount: async () => {
         try {
@@ -121,6 +125,64 @@ const useChart = create((set) => ({
             }
         } catch (err) {
             console.error(`Something went wrong getting yearly patients per department: ${err.message}`);
+            return;
+        }
+    },
+
+    getWeeklyTopDiagnoses: async () => {
+        try {
+            const response = await axios.get("http://localhost:3000/api/get-weekly-top-diagnoses");
+            if(response.status === 200) {
+                set({ weeklyTopDiagnoses: response.data.data });
+            } else {
+                console.error(`Error getting weekly top diagnoses: ${response.data.error}`);
+            }
+        } catch (err) {
+            console.error(`Something went wrong getting weekly top diagnoses: ${err.message}`);
+            return;
+        }
+    },
+
+    getMonthlyTopDiagnoses: async () => {
+        try {
+            const response = await axios.get("http://localhost:3000/api/get-monthly-top-diagnoses");
+            if(response.status === 200) {
+                set({ monthlyTopDiagnoses: response.data.data });
+            } else {
+                console.error(`Error getting monthly top diagnoses: ${response.data.error}`);
+            }
+        } catch (err) {
+            console.error(`Something went wrong getting monthly top diagnoses: ${err.message}`);
+            return;
+        }
+    },
+
+    getQuarterlyTopDiagnoses: async () => {
+        try {
+            const response = await axios.get("http://localhost:3000/api/get-quarterly-top-diagnoses");
+            if(response.status === 200) {
+                set({ quarterlyTopDiagnoses: response.data.data });
+            } else {
+                console.error(`Error getting quarterly top diagnoses: ${response.data.error}`);
+                return;
+            }
+        } catch (err) {
+            console.error(`Something went wrong getting quarterly top diagnoses: ${err.message}`);
+            return;
+        }
+    },
+
+    getYearlyTopDiagnoses: async () => {
+        try {
+            const response = await axios.get("http://localhost:3000/api/get-yearly-top-diagnoses");
+            if(response.status === 200) {
+                set({ yearlyTopDiagnoses: response.data.data });
+            } else {
+                console.error(`Error getting yearly top diagnoses: ${response.data.error}`);
+                return;
+            }
+        } catch (err) {
+            console.error(`Something went wrong getting yearly top diagnoses: ${err.message}`);
             return;
         }
     },

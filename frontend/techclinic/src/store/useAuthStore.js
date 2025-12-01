@@ -8,8 +8,10 @@ const useAuth = create(
     authenticatedUser: null,
     userProfile: null,
     isLoading: true,
-    
-    
+    password: null,
+    storePassword: async (password) => {
+        set({ password: password });
+    },
     signIn: async (emailInput, passwordInput) => {
         try {
             const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({

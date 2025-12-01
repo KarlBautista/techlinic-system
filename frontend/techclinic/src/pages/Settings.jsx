@@ -4,7 +4,7 @@ import useAuth from '../store/useAuthStore';
 
 
 const Settings = () => {
-  const { authenticatedUser, userProfile } = useAuth();
+  const { authenticatedUser, userProfile, password } = useAuth();
   const fullName = `${userProfile?.first_name || ''} ${userProfile?.last_name || ''}`.trim() || 'N/A';
 
   const formatDateForInput = (val) => {
@@ -69,7 +69,7 @@ const Settings = () => {
             <ul className='space-y-2'>
               <li>Email: {authenticatedUser?.email || 'N/A'}</li>
               <li className='flex items-center'>
-                Password: {authenticatedUser?.password || 'N/A'}
+                Password: {password || 'N/A'}
                 <button 
                   onClick={handleEditPassword} 
                   className='ml-4 text-blue-500 hover:underline text-sm flex items-center gap-1'>
