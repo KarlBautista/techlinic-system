@@ -10,5 +10,5 @@
 }
 
 .medicineInfoData p {
-    @apply flex text-center justify-center text-[.8rem] tracking-[2px]
+    @apply flex text-center justify-center text-[.8rem] tracking-[2px] p-3
 }

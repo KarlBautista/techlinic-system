@@ -71,7 +71,7 @@ const newMedicine =()=> {
 
                     <div className='h-[10%] w-full  flex justify-between items-center'>
                         <div className='w-[85%] h-[60%] rounded-[10px] border-[#EACBCB]  border flex items-center'>
-                            <img src={Search} alt="" className='h-8 w-[10%]' />
+                            <img src={Search} alt="" className='h-8 w-[10%] lg:w-[5%]' />
                             <input type="text" className='w-[90%] h-full outline-none' onChange={(e) => setSearch(e.target.value)}/>
                         </div>
                         <div className='w-[10%] h-[90%] flex items-center justify-center cursor-pointer'
@@ -83,7 +83,7 @@ const newMedicine =()=> {
                     <div className='w-full h-[75%] overflow-auto flex items-center flex-col gap-2'>
 
 
-                        <div className="h-[5%] w-[95%] flex gap-2">
+                        <div className=" w-[95%] flex gap-3 sticky top-0 bg-white">
                             <div className="medicineInfoData font-medium w-[25%] sm:w-[20%] h-full">
                                 <p>Medicine Name</p>
                             </div>
@@ -100,11 +100,11 @@ const newMedicine =()=> {
                                 <p>Stock</p>
                             </div>
 
-                            <div className="hidden 2xl:flex  justify-center text-[.8rem] sm:w-[20%] h-full tracking-[2px] font-medium">
+                            <div className="hidden 2xl:flex p-3  justify-center text-[.8rem] sm:w-[20%] h-full tracking-[2px] font-medium">
                                 <p>Expiry date</p>
                             </div>
 
-                            <div className="hidden sm:flex  justify-center text-[.8rem] sm:w-[20%] h-full tracking-[2px] font-medium">
+                            <div className="hidden sm:flex  p-3 justify-center text-[.8rem] sm:w-[20%] h-full tracking-[2px] font-medium">
                                 <p>Status</p>
                             </div>
                         </div>
@@ -114,7 +114,7 @@ const newMedicine =()=> {
                             filteredMedicines.map((medicine) => (
                                 <div 
                                     key={medicine.id} 
-                                    className='mt-4 md:mt-1 h-[5%] w-[95%] flex gap-2  hover:decoration-2 cursor-default hover:underline'
+                                    className='mt-4 md:mt-4 h-[5%] w-[95%] flex gap-3  hover:decoration-2 cursor-default hover:underline'
                                     onClick={() => handleUpdateMedicine(medicine)}
                                 >
                                     <div className='medicineInfoData w-[25%] sm:w-[20%] h-full'>
