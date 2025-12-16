@@ -10,6 +10,7 @@ const insertRecord = async (req, res) => {
         department,
         sex,
         email,
+        diseaseId,
         diagnosis,
         medication,
         address,
@@ -19,11 +20,14 @@ const insertRecord = async (req, res) => {
         notes,
         attendingPhysician
     } = req.body.formData;
-    console.log("Medication received:", medication);
-console.log("Stock level:", medication.stock_level);
-console.log("Quantity:", quantity);
-
-
+    
+    // Enhanced logging
+    console.log('=== INSERT RECORD DEBUG ===');
+    console.log(`diseaseId: "${diseaseId}" (type: ${typeof diseaseId})`);
+    console.log(`diagnosis: "${diagnosis}" (type: ${typeof diagnosis})`);
+    console.log(`medication:`, medication);
+    console.log(`quantity: "${quantity}"`);
+    
     try{
         const { data: recordData, error: recordError } = await supabase.from("records").insert({
             first_name: firstName,
@@ -37,18 +41,21 @@ console.log("Quantity:", quantity);
             address,
             date_of_birth: dateOfBirth,
             attending_physician: attendingPhysician,
-            status:  (diagnosis === "" || medication === "" || quantity === "" || treatment === "" || notes === "") ? "INCOMPLETE" : "COMPLETE"
+            status: (diagnosis === "" || !medication || quantity === "" || treatment === "" || notes === "") ? "INCOMPLETE" : "COMPLETE"
         }).select();
+        
         if(recordError){
             console.error(`Error inserting record: ${recordError.message}`);
-            res.status(500).json({ success: false, error: recordError.message });
+            return res.status(500).json({ success: false, error: recordError.message });
         }
 
         const recordId = recordData && recordData.length ? recordData[0].id : null;
         if(!recordId){
             console.error('Inserted patient data missing id', recordData);
-             res.status(500).json({ success: false, error: 'Failed to retrieve patient id after insert' });
+            return res.status(500).json({ success: false, error: 'Failed to retrieve patient id after insert' });
         }
+
+        console.log(`Record created with ID: ${recordId}`);
 
         const { error: patientError } = await supabase.from("patients").insert({
             first_name: firstName,
@@ -67,37 +74,79 @@ console.log("Quantity:", quantity);
             console.log("Patient is already in patient data: ", patientError.message);
         }
         
+        let diagnosisData = null;
         
-        const { data: diagnosisData, error: diagnosisError } = await supabase.from("diagnoses").insert({
-            record_id: recordId,
-            student_id :studentId,
-            diagnosis,
-            medication: medication.medicine_name,
-            quantity,
-            treatment,
-            notes
-        }).select();
-
-        if(diagnosisError){
-            console.error(`Error inserting diagnosis :${diagnosisError.message}`);
-            return res.status(500).json({ success: false, error: diagnosisError.message });
+        // Check if we have both disease ID and diagnosis name
+        const hasDiseaseId = diseaseId && String(diseaseId).trim() !== "";
+        const hasDiagnosis = diagnosis && String(diagnosis).trim() !== "";
+        
+        console.log(`hasDiseaseId: ${hasDiseaseId}, hasDiagnosis: ${hasDiagnosis}`);
+        
+        if (hasDiseaseId && hasDiagnosis) {
+            console.log('✓ Attempting to insert diagnosis...');
+            
+            const diagnosisPayload = {
+                record_id: recordId,
+                student_id: studentId,
+                disease_id: diseaseId,
+                diagnosis: diagnosis,
+                medication: medication?.medicine_name || null,
+                quantity: quantity ? Number(quantity) : null,
+                treatment: treatment || null,
+                notes: notes || null
+            };
+            
+            console.log('Diagnosis payload:', diagnosisPayload);
+            
+            const { data, error: diagnosisError } = await supabase
+                .from("diagnoses")
+                .insert(diagnosisPayload)
+                .select();
+            
+            if(diagnosisError){
+                console.error(`✗ Error inserting diagnosis: ${diagnosisError.message}`);
+                console.error('Diagnosis error details:', diagnosisError);
+                return res.status(500).json({ success: false, error: diagnosisError.message });
+            }
+            
+            diagnosisData = data;
+            console.log('✓ Diagnosis inserted successfully:', diagnosisData);
+        } else {
+            console.log('⊘ Skipping diagnosis insert - missing required data');
+            console.log(`  - diseaseId present: ${hasDiseaseId}`);
+            console.log(`  - diagnosis present: ${hasDiagnosis}`);
         }
 
-        if(diagnosis !== "") {
-            const { error: decreaseMedicationStockQuantityError } = await supabase.from("medicines").update({
-                "stock_level": Number(medication.stock_level) - Number(quantity)
-            }).eq("id", medication.id);
+        // Update medication stock only if we have valid data
+        if(hasDiagnosis && medication && medication.id && quantity && Number(quantity) > 0) {
+            console.log(`Updating medication stock for medicine ID: ${medication.id}`);
+            const newStockLevel = Number(medication.stock_level) - Number(quantity);
+            
+            const { error: decreaseMedicationStockQuantityError } = await supabase
+                .from("medicines")
+                .update({ stock_level: newStockLevel })
+                .eq("id", medication.id);
 
             if(decreaseMedicationStockQuantityError) {
                 console.error(`Error updating stock level: ${decreaseMedicationStockQuantityError.message}`);
+            } else {
+                console.log(`✓ Stock updated: ${medication.stock_level} -> ${newStockLevel}`);
             }
         }
 
-        return res.status(200).json({ success: true, data: { patient: recordData, diagnosis: diagnosisData } });
+        console.log('=== INSERT COMPLETE ===');
+        return res.status(200).json({ 
+            success: true, 
+            data: { 
+                patient: recordData, 
+                diagnosis: diagnosisData 
+            } 
+        });
 
     } catch (err) {
         console.error(`Error inserting record: ${err.message}`);
-        res.status(500).json({ success: false, error: err.message });
+        console.error('Full error:', err);
+        return res.status(500).json({ success: false, error: err.message });
     }
 }
 
@@ -199,6 +248,7 @@ const addDiagnosis = async (req, res) => {
         department,
         sex,
         email,
+        diseaseId,
         diagnosis,
         medication,
         address,
@@ -208,15 +258,17 @@ const addDiagnosis = async (req, res) => {
         notes,
         attendingPhysician
     } = req.body.patientInput;
-    console.log("ito medicationn", medication)
+    console.log(`ito diagnosis: ${diagnosis}, ito naman diseaseId: ${diseaseId}`)
     try {
-        const { data: addDiagnosisData, error: addDiagnosisError } = await supabase.from("diagnoses").update({
+        const { data: addDiagnosisData, error: addDiagnosisError } = await supabase.from("diagnoses").insert({
             diagnosis,
+            record_id: id,
             medication: medication.medicine_name,
+            disease_id: diseaseId,
             quantity,
             treatment,
             notes,
-        }).eq("record_id", id);
+        });
 
         if (addDiagnosisError) {
             console.error(`Error adding diagnosis: ${addDiagnosisError.message}`);

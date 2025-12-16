@@ -27,7 +27,7 @@ const IndividualRecord = () => {
          }
 
           console.log(`ito mga response`, response.data.data);
-         setDiagnoses(response.data.data.map((d) => d.diagnoses));
+         setDiagnoses(response.data.data.map((d) => d?.diagnoses));
          setPatientRecord(response.data.data[0]);
      
       } catch (err) {
@@ -67,7 +67,6 @@ const handleBack = () => {
                       <h2 className='text-2xl font-semibold'>{`${patientRecord?.first_name ?? ''} ${patientRecord?.last_name ?? ''}`}</h2>
                       <p className='text-gray-600'>{`ID : ${studentId ?? '—'}`}</p>
                   </div>
-                {/* Kaliwang component */}
               <div className='w-full'>
                 <div className='flex flex-col md:flex-row gap-6 mt-4 px-5'>
                   <div className='md:w-1/4 flex items-center justify-center'>
@@ -169,10 +168,10 @@ const handleBack = () => {
               <div className='p-4 text-gray-500'>No diagnoses recorded.</div>
             ) : (
               <div className='flex flex-col gap-3'>
-                {diagnoses.map((d, idx) => {
+                {diagnoses?.map((d, idx) => {
                   const diagDate = d[0]?.created_at ? new Date(d[0].created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : '—';
                   return (
-                    <div key={d[0].id ?? idx} className=' rounded-md overflow-hidden'>
+                    <div key={d[0]?.id ?? idx} className=' rounded-md overflow-hidden'>
                       <button
                         type='button'
                         className='w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100'

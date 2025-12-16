@@ -167,7 +167,7 @@ const NewDashboard = () => {
                           <p className='studentInfoData'>{patient.department}</p>
                         </div>
                         <div className='studentInfoContainer'>
-                          <p className='studentInfoData'>{patient.diagnoses[0].diagnosis || "N/A"}</p>
+                          <p className='studentInfoData'>{patient.diagnoses[0]?.diagnosis || "N/A"}</p>
                        </div>
                                                 <div className='studentInfoContainer'>
                                                     <p className='studentInfoData'>

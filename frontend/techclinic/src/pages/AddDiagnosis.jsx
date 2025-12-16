@@ -15,6 +15,7 @@ const AddDiagnosis = () => {
   const { medicines } = useMedicine();
   const { recordId } = useParams();
   const [patientData, setPatientData] = useState([]);
+   const [diseases, setDiseases] = useState([]);
   const navigate = useNavigate();
   const [patientInput, setPatientInput] = useState({
     id: "",
@@ -28,6 +29,7 @@ const AddDiagnosis = () => {
     email: "",
     dateOfBirth: "",
     address: "",
+    diseaseId: "",
     diagnosis: "",
     medication: {},
     quantity: "",
@@ -87,6 +89,28 @@ const AddDiagnosis = () => {
         getRecord();
   }, [])
 
+  
+  useEffect(() => {
+      const getAllDiseases = async () => {
+        try {
+          const response = await axios.get("http://localhost:3000/api/get-all-diseases");
+  
+          if(response.data.success) {
+          
+            setDiseases(response.data.data);
+          } else {
+            throw new Error(`Error getting diseases: ${response.data.error}`);
+          
+          }
+        } catch (err) {
+          console.error(`Error fetching diseases data: ${err.message}`);
+        }
+      
+      }
+      getAllDiseases();
+  }, [])
+  
+
  
 
 
@@ -94,10 +118,21 @@ const AddDiagnosis = () => {
   const handleSetPatientInput = (e) => {
     const { name, value } = e.target;
 
-    if(name === "medication"){
+    if(name === "medication") {
       const medjObj = medicines.find((m) => m.id === Number(value));
       setPatientInput((prev) => ({...prev, medication: medjObj}));
-        return; 
+      return; 
+    }
+
+    // Diagnosis select sends the disease id; we store id in `diseaseId` and name in `diagnosis`
+    if (name === "diseaseId") {
+      const disease = diseases.find((d) => String(d.id) === String(value));
+      setPatientInput((prev) => ({
+        ...prev,
+        diseaseId: value,
+        diagnosis: disease?.name ?? "",
+      }));
+      return;
     }
     setPatientInput((prev) => ({ ...prev, [name]: value }));
   }
@@ -287,19 +322,11 @@ const AddDiagnosis = () => {
                   <div className='w-full h-[400px] flex'>
                       <div className='w-[50%] h-full flex items-center flex-col '>
                           <div className='formDiagnosis'>
-                            <select id="diagnosis" name="diagnosis" value={patientInput.diagnosis} onChange={handleSetPatientInput} className='w-full p-2 rounded-[10px] border outline-none'>
-                              <option value="" disabled>Diagnosis</option>
-                              <option value="HEENT">HEENT</option>
-                              <option value="Pulmonary">Chest and Lungs / Pulmonary</option>
-                              <option value="Heart">Heart</option>
-                              <option value="Endocrine">Endocrine</option>
-                              <option value="Gastrointestinal">Gastrointestinal</option>
-                              <option value="Genito-Urinary">Genito-Urinary</option>
-                              <option value="Musculoskeletal">Musculoskeletal</option>
-                              <option value="Surgical">Surgical</option>
-                              <option value="Neurology">Neurology / Psych</option>
-                              <option value="Derma">Derma</option>
-                              <option value="Infectious Disease">Infectious Disease</option>
+                             <select id="diseaseId" name="diseaseId" value={patientInput.diseaseId} onChange={handleSetPatientInput} className='w-full p-2 rounded-[10px] border outline-none'>
+                              <option value="" disabled>Select Diagnosis</option>
+                              {diseases && diseases.length > 0 ? (
+                                diseases.map((disease) => <option key={disease.id} value={disease.id}>{disease.name}</option>)
+                              ) : null}
                             </select>
                           </div>
 

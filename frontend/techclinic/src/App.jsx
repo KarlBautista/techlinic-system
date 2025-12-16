@@ -17,9 +17,7 @@ function App() {
         
         const initialize = async () => {
           
-     
-        
-        
+    
             await getUser();
       
             await Promise.all([

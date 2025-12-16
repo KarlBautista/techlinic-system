@@ -48,8 +48,6 @@ const useAuth = create(
             if (user) {
                 console.log("User authenticated:", user.email);
                 set({ authenticatedUser: user });
-                
-                // Fetch profile immediately after sign in
                 await get().fetchUserProfile(user.id);
             }
 

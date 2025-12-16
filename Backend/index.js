@@ -11,9 +11,13 @@ dotenv.config();
 const dataRoutes = require("./routes/dataRoutes");
 const medicineRoutes = require("./routes/medicineRoutes");
 const analyticsRoutes = require("./routes/analyticsRoutes");
+const diseasesRoutes = require("./routes/diseasesRoute");
+const notificationRoutes = require('./routes/notificationRoutes')
 app.use("/api", dataRoutes);
 app.use("/api", medicineRoutes);
 app.use("/api", analyticsRoutes);
+app.use("/api", diseasesRoutes);
+app.use("/api", notificationRoutes);
 
 
 

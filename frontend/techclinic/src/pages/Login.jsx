@@ -126,15 +126,7 @@ const Login = () => {
                 
                 <div className='h-[30%] w-full flex items-start justify-center'>
                     <div className='h-[70px] w-[40%] flex items-center justify-evenly'>
-                        <button 
-                            onClick={handleSignInWithGoogle}
-                            className='h-20 w-20 rounded-full bg-gray-200 hover:bg-gray-300 transition duration-300 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed'
-                            type="button"
-                            disabled={isLoading}
-                            title="Sign in with Google"
-                        >
-                            <img src={Google} alt="Google" className='h-12 w-12' />
-                        </button>
+                      
                     </div>  
                 </div>
             </div>

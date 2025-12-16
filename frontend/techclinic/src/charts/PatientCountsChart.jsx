@@ -163,7 +163,9 @@ const PatientCountsChart = () => {
       <div className='h-[10%] w-full'>
         <div className='text-[.9rem] font-semibold'>Patient record count</div>
       </div>  
+      
       <div className='h-[90%] w-full'>
+          
           {patientData.length > 0 && (
           <Chart
             key={`${selectedCategory}-${patientData.length}`}
@@ -193,17 +195,9 @@ const PatientCountsChart = () => {
         </div>
       </div>
 
-      <div className='w-full h-96 md:h-80'>
-        {patientData.length > 0 && (
-          <Chart
-            key={`${selectedCategory}-${patientData.length}`}
-            options={patientOptions}
-            series={[{ name: "Patient Records", data: patientData }]}
-            type="area"
-            height="100%"
-          />
-        )}
-      </div> */}
+    
+        
+      </div> */ }
     </div>
   );
 };

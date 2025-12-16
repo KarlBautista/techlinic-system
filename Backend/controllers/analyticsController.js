@@ -739,6 +739,8 @@ const getYearlyTopDiagnoses = async (req, res) => {
 
 
 
+
+
 module.exports = { getWeeklyPatients, 
                     getMonthyPatients, 
                     getQuarterlyPatient, 
