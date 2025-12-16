@@ -206,15 +206,12 @@ const fetchNotifications = async () => {
                                         </span>
                                     )}
                                 </p>
-                                <p className='text-[.9rem] text-gray-500'>
-                                    Auto-checking every 10 seconds
-                                </p>
                             </div>
                             <div className='flex gap-2'>
                                 {unreadCount > 0 && (
                                     <button
                                         onClick={markAllAsRead}
-                                        className='px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition-colors'
+                                        className='sm:px-4 sm:py-2 px-1 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-[.7rem] sm:text-sm font-medium transition-colors'
                                     >
                                         Mark All Read
                                     </button>

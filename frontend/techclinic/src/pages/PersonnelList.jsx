@@ -10,7 +10,11 @@ const PersonnelList = () => {
   const navigate = useNavigate();
   useEffect(() => {
     const getAllUsersData = async () => {
-      await getAllUsers;
+      try {
+        await getAllUsers();
+      } catch (err) {
+        console.error("Failed to fetch users:", err);
+      }
     };
     getAllUsersData();
   }, [])

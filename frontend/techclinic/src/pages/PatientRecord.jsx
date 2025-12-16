@@ -61,7 +61,7 @@ const PatientRecord = () => {
 
                     <div className='w-[25%] border  h-[50px] border-[#EACBCB] p-2 rounded-[10px]'>
                       <select id="department" name="department"  className='w-full h-full rounded-[10px] outline-none'
-                      value={selectedDepartment} onChange={(e) => (e.target.value)}>setSelectedDepartment
+                      value={selectedDepartment} onChange={(e) => setSelectedDepartment(e.target.value)}>
                         <option value="All Department" >All Department</option>
                         <option value="College of Science">College of Science</option>
                         <option value="College of Engineering">College of Engineering</option>
