@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navigation from '../components/newNavigation';
 import useAuth from '../store/useAuthStore';
 
@@ -63,6 +63,22 @@ const getInitials = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [editMode, setEditMode] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+
+  // displayed profile for UI-only edits
+  const [displayedProfile, setDisplayedProfile] = useState(userProfile || {});
+
+  // editable fields
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [sex, setSex] = useState('');
+  const [address, setAddress] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [role, setRole] = useState('');
+  const [email, setEmail] = useState('');
+  const [profileMessage, setProfileMessage] = useState('');
 
   const handleEditPassword = () => {
     setError('');
@@ -70,6 +86,64 @@ const getInitials = () => {
     setNewPassword('');
     setConfirmPassword('');
     setShowModal(true);
+  };
+
+  useEffect(() => {
+    // populate editable fields when profile/auth load
+    setDisplayedProfile(userProfile || {});
+    setFirstName(userProfile?.first_name || '');
+    setLastName(userProfile?.last_name || '');
+    setSex(userProfile?.sex || '');
+    setAddress(userProfile?.address || '');
+    setDateOfBirth(userProfile?.date_of_birth ? formatDateForInput(userProfile.date_of_birth) : '');
+    setRole(userProfile?.role || '');
+    setEmail(authenticatedUser?.email || '');
+  }, [userProfile, authenticatedUser]);
+
+  const handleToggleEdit = () => {
+    setProfileMessage('');
+    setShowProfileModal(true);
+  };
+
+  const handleCancelEdit = () => {
+    // reset values to store values
+    setFirstName(userProfile?.first_name || '');
+    setLastName(userProfile?.last_name || '');
+    setSex(userProfile?.sex || '');
+    setAddress(userProfile?.address || '');
+    setDateOfBirth(userProfile?.date_of_birth ? formatDateForInput(userProfile.date_of_birth) : '');
+    setRole(userProfile?.role || '');
+    setEmail(authenticatedUser?.email || '');
+    setEditMode(false);
+    setProfileMessage('');
+  };
+
+  const handleSaveProfile = async (e) => {
+    e.preventDefault();
+    setProfileMessage('');
+    setSaving(true);
+
+    // UI-only: simulate save by updating local displayed profile only
+    try {
+      const newProfile = {
+        ...displayedProfile,
+        first_name: firstName || null,
+        last_name: lastName || null,
+        sex: sex || null,
+        address: address || null,
+        date_of_birth: dateOfBirth || null,
+        role: role || null,
+      };
+
+      setDisplayedProfile(newProfile);
+      setProfileMessage('Saved (UI-only)');
+      setShowProfileModal(false);
+    } catch (err) {
+      console.error('Save profile (UI-only) failed:', err);
+      setProfileMessage('Save failed: ' + (err?.message || err));
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleSavePassword = (e) => {
@@ -126,7 +200,7 @@ const getInitials = () => {
                  Password: ********
                 <button 
                   onClick={handleEditPassword} 
-                  className='ml-4 text-blue-500 hover:opacity-50 text-sm flex items-center gap-1'>
+                  className='ml-4  hover:opacity-50 text-sm flex items-center gap-1'>
                   <i className="fa-regular fa-pen-to-square text-black hover"></i>
                 </button>
               </li>
@@ -134,19 +208,23 @@ const getInitials = () => {
             </ul>   
           </div>
 
-          <div className='Settings red-[500] w-full max-w-md bg-white shadow-md rounded-lg p-4'>
+          <div className='Settings red-[500] w-full max-w-md bg-white shadow-md rounded-lg p-4 relative'>
             <h2 className='text-xl font-semibold mb-4 '>Personal Information</h2>
 
-            <ul className='space-y-2'>
-                
-              <li>First Name: {userProfile?.first_name || 'N/A'}</li>
-              <li>Last Name: {userProfile?.last_name || 'N/A'}</li>
-              <li>Gender: {userProfile?.sex || 'N/A'}</li>
-              <li>Address: {userProfile?.address || 'N/A'}</li>
-              <li>Date of Birth: {formatDateForInput(userProfile?.date_of_birth) || 'N/A'}</li>
-              <li>Role: {userProfile?.role || 'N/A'}</li>
-              
-            </ul>
+            <button onClick={handleToggleEdit} className='absolute top-3 right-3 hover:opacity-50 p-1'>
+              <i className="fa-regular fa-pen-to-square"></i>
+            </button>
+
+            <div>
+              <ul className='space-y-2'>
+                <li>First Name: {displayedProfile?.first_name || 'N/A'}</li>
+                <li>Last Name: {displayedProfile?.last_name || 'N/A'}</li>
+                <li>Gender: {displayedProfile?.sex || 'N/A'}</li>
+                <li>Address: {displayedProfile?.address || 'N/A'}</li>
+                <li>Date of Birth: {formatDateForInput(displayedProfile?.date_of_birth) || 'N/A'}</li>
+                <li>Role: {displayedProfile?.role || 'N/A'}</li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -193,16 +271,67 @@ const getInitials = () => {
             {error && <p className="text-sm text-red-600">{error}</p>}
 
             <div className="flex justify-end gap-2 mt-4">
-              <button type="button" onClick={handleCloseModal} className="px-4 py-2 rounded bg-gray-200">Cancel</button>
-              <button type="submit" className="px-4 py-2 rounded bg-[#b01c34] text-white">Save</button>
+              <button type="button" onClick={handleCloseModal} className="px-4 py-2 rounded bg-gray-200 hover:opacity-90">Cancel</button>
+              <button type="submit" className="px-4 py-2 rounded bg-[#b01c34] text-white hover:opacity-90">Save</button>
             </div>
           </form>
         </div>
       </div>
 
     )}
+    {showProfileModal && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="absolute inset-0 bg-black opacity-40" onClick={() => setShowProfileModal(false)}></div>
+        <div className="relative bg-white rounded-lg shadow-lg w-[90%] max-w-md p-6 z-10">
+          <h3 className="text-lg font-semibold mb-3">Edit Personal Information</h3>
+          <form onSubmit={handleSaveProfile} className="space-y-3">
+            
+             <div>
+              <label className="block text-sm text-gray-700">Role</label>
+              <input value={role} disabled className="w-full mt-1 p-2 border rounded bg-gray-100" />
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-700">First name</label>
+              <input value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full mt-1 p-2 border rounded" />
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-700">Last name</label>
+              <input value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full mt-1 p-2 border rounded" />
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-700">Gender</label>
+              <select value={sex} onChange={(e) => setSex(e.target.value)} className="w-full mt-1 p-2 border rounded">
+                <option value=''>Select</option>
+                <option value='Male'>Male</option>
+                <option value='Female'>Female</option>
+                
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-700">Address</label>
+              <input value={address} onChange={(e) => setAddress(e.target.value)} className="w-full mt-1 p-2 border rounded" />
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-700">Date of birth</label>
+              <input type='date' value={dateOfBirth} onChange={(e) => setDateOfBirth(e.target.value)} className="w-full mt-1 p-2 border rounded" />
+            </div>
+
+            <div className="flex justify-end gap-2 mt-4">
+              <button type="button" onClick={() => setShowProfileModal(false)} className="px-4 py-2 rounded bg-gray-200 hover:opacity-90">Cancel</button>
+              <button type="submit" disabled={saving} className="px-4 py-2 rounded bg-[#b01c34] text-white hover:opacity-90 ">{saving ? 'Saving...' : 'Save'}</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    )}
     </>
   );
 };
 
 export default Settings;
+    
