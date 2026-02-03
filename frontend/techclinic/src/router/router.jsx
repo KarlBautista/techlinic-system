@@ -13,8 +13,10 @@ import PersonnelList from "../pages/PersonnelList"
 import Settings from "../pages/Settings";
 import AddPersonnel from "../pages/AddPersonnel";
 import AddDiagnosis from "../pages/AddDiagnosis";
+import LandingPage from "../pages/LandingPage"
 const router = createBrowserRouter([
-  { path: "/", element: <Login /> },
+  { path: "/", element: <LandingPage /> },
+  { path: "/login", element: <Login /> },
   { path: "/dashboard", element: <Dashboard /> },
   { path: "/new-patient", element: <NewPatient /> },
   { path: "/patient-record", element: <PatientRecord />},
