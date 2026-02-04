@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import Navigation from '../components/newNavigation'
-import Receipt from '../components/Receipt'
 import Search from '../assets/image/searcg.svg'
 import useAuth from '../store/useAuthStore'
 import { useNavigate } from 'react-router-dom'

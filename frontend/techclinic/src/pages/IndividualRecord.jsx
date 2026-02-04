@@ -9,10 +9,14 @@ import Calendar from '../assets/image/calendar.svg'
 import Building from '../assets/image/department.svg'
 import { useNavigate } from 'react-router-dom';
 import Patient from "../assets/image/patient.png"
+import CertificateModal from '../components/CertificateModal'
+import PrescriptionModal from '../components/PrescriptionModal'
 const IndividualRecord = () => {
   const { studentId } = useParams();
   const [ patientRecord, setPatientRecord ] = useState([]);
   const [diagnoses, setDiagnoses] = useState([]);
+  const [showCert, setShowCert] = useState(false);
+  const [showPrescription, setShowPrescription] = useState(false);
   const [expandedIndex, setExpandedIndex] = useState(null);
   const navigate = useNavigate();
   console.log(studentId)
@@ -58,9 +62,14 @@ const handleBack = () => {
       <div className='sm:w-[30%] w-[17%] h-full md:w-[25%] lg:w-[17%]  sticky top-0 '>
           <Navigation />
       </div>
-      <div className='w-[83%]  h-auto flex p-5  flex-col gap-5'>
-          <div>
-              <h1 className='text-2xl font-bold'>Patient Information</h1>
+        <div className='w-[83%] h-auto flex p-5 gap-5'>
+        <div className='flex-1 flex flex-col gap-5'>
+          <div className='flex items-center justify-between'>
+            <h1 className='text-2xl font-bold'>Patient Information</h1>
+            <div className='flex gap-2'>
+              <button onClick={() => setShowPrescription(true)} className='bg-amber-600 text-white px-3 py-1 rounded text-sm'><i class="fa-solid fa-prescription"></i></button>
+              <button onClick={() => setShowCert(true)} className='bg-blue-600 text-white px-3 py-1 rounded text-sm'><i class="fa-solid fa-certificate"></i></button>
+            </div>
           </div>
           <section className='w-full h-[50%] border-gray-100 rounded-lg bg-white shadow-lg p-5 flex flex-col justify-center gap-5'>
                   <div className='text-center'>
@@ -216,7 +225,11 @@ const handleBack = () => {
               </div>
             )}
           </section>
+        </div>
+
       </div>
+      <PrescriptionModal open={showPrescription} onClose={() => setShowPrescription(false)} patient={patientRecord} prescription={patientRecord?.diagnoses?.[0]} />
+      <CertificateModal open={showCert} onClose={() => setShowCert(false)} patient={patientRecord} />
     </div>
   )
 }
