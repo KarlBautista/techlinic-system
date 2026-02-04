@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-function RegistrationInfo({ message, type = 'text', value = '', onChange, name, onClear, onBlur }) {
+function RegistrationInfo({ message, type = 'text', value = '', onChange, name, onClear, onBlur, showValidation = false, disabled = false, labelPosition = 'left' }) {
     const [isFocused, setIsFocused] = useState(false);
 
     const handleClear = () => {
@@ -19,6 +19,12 @@ function RegistrationInfo({ message, type = 'text', value = '', onChange, name, 
         }
     };
 
+    const borderColor = showValidation && !value ? 'outline-[#B22222]' : 'outline-[black]';
+
+    const labelPositionClass = labelPosition === 'right'
+        ? (isFocused || value ? 'top-[-5px] right-[0] text-[.6rem] text-gray-600' : 'top-5 right-4 text-[.8rem] text-gray-400')
+        : (isFocused || value ? 'top-[-5px] left-[0] text-[.6rem] text-gray-600' : 'top-5 left-4 text-[.8rem] text-gray-400');
+
     return (
         <>
             <div className="relative shrink-0 h-[60px] items-center flex w-full">
@@ -29,7 +35,8 @@ function RegistrationInfo({ message, type = 'text', value = '', onChange, name, 
                     onChange={onChange}
                     onFocus={() => setIsFocused(true)}
                     onBlur={handleBlur}
-                    className="w-full flex items-center text-[.9rem] px-4 py-2 outline outline-[black] rounded-[5px]"
+                    disabled={disabled}
+                    className={`w-full flex items-center text-[.9rem] px-4 py-2 outline ${borderColor} rounded-[5px] text-black ${disabled ? 'bg-gray-200 cursor-not-allowed' : ''}`}
                 />
                 {value && (
                     <button
@@ -42,10 +49,7 @@ function RegistrationInfo({ message, type = 'text', value = '', onChange, name, 
                 )}
                 <label
                     htmlFor={name}
-                    className={`absolute left-4 transition-all duration-300 pointer-events-none ${isFocused || value
-                        ? 'top-[-5px] left-[0] text-[.6rem] text-gray-600'
-                        : 'top-5  text-[.8rem] text-gray-400'
-                        }`}
+                    className={`absolute transition-all duration-300 pointer-events-none ${labelPositionClass}`}
                 >
                     {message}
                 </label>

@@ -12,10 +12,38 @@ import AnimateNumber from "../components/AnimateNumber"
 
 const NewDashboard = () => {
     const { authenticatedUser, userProfile } = useAuth();
-    const { patientRecords, patientsData } = useData();
+    const { patientRecords, patientsData, getRecords } = useData();
     const records = patientRecords?.data ?? [];
-    const { medicines } = useMedicine();
+    const { medicines, getMedicines } = useMedicine();
     const navigate = useNavigate();
+    const refreshIntervalRef = useRef(null);
+
+    // Auto-refresh data every 5 seconds
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                await getRecords();
+                await getMedicines();
+            } catch (err) {
+                console.error('Error auto-refreshing data:', err);
+            }
+        };
+
+        // Fetch data on component mount
+        fetchData();
+
+        // Set up interval to refresh every 5 seconds
+        refreshIntervalRef.current = setInterval(() => {
+            fetchData();
+        }, 5000);
+
+        // Cleanup interval on component unmount
+        return () => {
+            if (refreshIntervalRef.current) {
+                clearInterval(refreshIntervalRef.current);
+            }
+        };
+    }, [getRecords, getMedicines]);
 
     function formatDate(dateString) {
         if (!dateString) return "";

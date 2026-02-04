@@ -1,14 +1,16 @@
 import { useState } from 'react'
 
-function Dropdown({ options = [], placeholder = 'Select an option', value = '', onChange, name }) {
+function Dropdown({ options = [], placeholder = 'Select an option', value = '', onChange, name, showValidation = false, disabled = false }) {
     const [isOpen, setIsOpen] = useState(false);
 
     const handleSelect = (option) => {
-        if (onChange) {
+        if (onChange && !disabled) {
             onChange({ target: { name, value: option } });
         }
         setIsOpen(false);
     };
+
+    const borderColor = showValidation && !value ? 'outline-[#B22222]' : 'outline-[black]';
 
     return (
         <>
@@ -16,8 +18,9 @@ function Dropdown({ options = [], placeholder = 'Select an option', value = '', 
                 <div className="relative w-full">
                     <button
                         type="button"
-                        onClick={() => setIsOpen(!isOpen)}
-                        className="w-full flex items-center justify-between text-[.9rem] px-4 py-2 outline outline-[black] rounded-[5px] bg-white"
+                        onClick={() => !disabled && setIsOpen(!isOpen)}
+                        disabled={disabled}
+                        className={`w-full flex items-center justify-between text-[.9rem] px-4 py-2 outline ${borderColor} rounded-[5px] bg-white ${disabled ? 'bg-gray-200 cursor-not-allowed' : ''}`}
                     >
                         <span className={value ? 'text-black' : 'text-gray-400'}>{value || placeholder}</span>
                         <span className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
@@ -26,7 +29,7 @@ function Dropdown({ options = [], placeholder = 'Select an option', value = '', 
                     </button>
 
                     {isOpen && (
-                        <div className="absolute top-full left-0 right-0 mt-1 bg-white outline outline-[black] rounded-[5px] z-10">
+                        <div className={`absolute top-full left-0 right-0 mt-1 bg-white outline ${borderColor} rounded-[5px] z-10`}>
                             {options.map((option) => (
                                 <button
                                     key={option}
