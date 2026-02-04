@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Search from '../assets/image/searcg.svg'
 import Navigation from '../components/newNavigation'
 import Medicine from '../assets/image/medicine.svg'
@@ -7,7 +7,7 @@ import useMedicine from '../store/useMedicineStore'
 import MedicineForm from '../components/MedicineForm'
 
 const MedicineInventory = () => {
-  const { medicines, updateMedicine, deleteMedicine } = useMedicine();
+  const { medicines, updateMedicine, deleteMedicine, fetchMedicines } = useMedicine();
   const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
   const [medicineFormData, setMedicineFormData] = useState({});
@@ -32,6 +32,15 @@ const MedicineInventory = () => {
     setMedicineFormData(medicine)
   }
 
+  // Auto-refresh inventory every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (typeof fetchMedicines === 'function') {
+        fetchMedicines();
+      }
+    }, 15000); // 30 seconds
+    return () => clearInterval(interval);
+  }, [fetchMedicines]);
 
   return (
     
