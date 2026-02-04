@@ -6,6 +6,7 @@ import { useState } from 'react'
 import useData from '../store/useDataStore'
 import useAuth from '../store/useAuthStore'
 import Swal from 'sweetalert2'
+import Doctor from '../assets/componentImage/doctor.jpg'
 
 function LandingPage() {
     const navigate = useNavigate();
@@ -117,73 +118,23 @@ function LandingPage() {
 
     return (
         <>
-            <div className="h-screen w-screen min-w-[360px] flex flex-col justify-evenly md:items-center lg:justify-between">
-                <div className="w-full h-[10%] flex  p-2">
-                    <div className="w-[50%] h-full">
-                        <div className='h-full flex items-center gap-1'>
-                            <img src={Logo} alt="" className='h-full' />
-                            <div className='flex flex-col'>
-                                <p className='text-[1.1rem] font-bold tracking-[2px]'>TechClinic</p>
-                                <p className='text-[.6rem]'>Electronic Medical System</p>
-                            </div>
+           <div className='flex h-screen'>
+                <div className='w-[25%] bg-fuchsia-200 h-full'>
+                    <img src={Doctor} alt=""  className='h-full'/>
+                </div>
+                <div className='w-[75%] bg-fuchsia-300 h-full flex items-center justify-center'>
+                    <div className='h-[80%] flex flex-col w-[80%] bg-white'>
+                        <div className='flex flex-col'>
+                            <p className='text-[1.2rem] font-medium'>Fill out your information</p>
+                            <p className='text-[.9rem]'>Kindly provide the necessary details before continuing.</p>
+                        </div>
+
+                        <div>
+                            
                         </div>
                     </div>
-                    <div className="w-[50%] h-full flex items-center justify-end">
-                        <button className="py-2 px-6 bg-[#626262] text-white text-[.8rem] rounded-[10px]"
-                            onClick={handleLog}
-                        >Login</button>
-                    </div>
                 </div>
-                <div className="w-full h-[85%] px-10 py-1 flex flex-col gap-2 text-center md:w-[85%] lg:hidden">
-                    <p className='text-[1.2rem] font-bold tracking-[2px]'>Personal Information</p>
-                    <form onSubmit={handleFormSubmit} className='h-full w-full flex flex-col gap-2 p-2 overflow-auto'>
-                        <RegistrationInfo message={'Student Id'} name='studentId' value={formData.studentId} onChange={handleInputChange} />
-                        <RegistrationInfo message={'Last name'} name='lastName' value={formData.lastName} onChange={handleInputChange} />
-                        <RegistrationInfo message={'First name'} name='firstName' value={formData.firstName} onChange={handleInputChange} />
-                        <RegistrationInfo message={'Contact number'} name='contactNumber' value={formData.contactNumber} onChange={handleInputChange} />
-                        <Dropdown name='yearLevel' options={['1st year', '2nd year', '3rd year', '4th year']} placeholder='Select year' value={formData.yearLevel} onChange={handleInputChange} />
-                        <Dropdown name='department' options={["College of Science", "College of Engineering", "College of Industrial Technology", "College of Architecture and Fine Arts", "College of Industrial Education", "College of Liberal Arts"]} placeholder='Select department' value={formData.department} onChange={handleInputChange} />
-                        <Dropdown name='sex' options={['Male', 'Female']} placeholder='Sex' value={formData.sex} onChange={handleInputChange} />
-                        <RegistrationInfo message={'Email'} name='email' value={formData.email} onChange={handleInputChange} />
-                        <RegistrationInfo message={'Address'} name='address' value={formData.address} onChange={handleInputChange} />
-                        <RegistrationInfo message={'Date of Birth'} type='date' name='dateOfBirth' value={formData.dateOfBirth} onChange={handleInputChange} />
-
-                        <button type='submit' className='w-full py-3 bg-[#CB2727] text-white tracking-[2px]  text-[.9rem] rounded-[10px]'>Confirm</button>
-                    </form>
-                </div>
-
-                <div className='hidden lg:flex flex-col h-[85%] w-full items-center'>
-                    <div className='w-full  text-center'>
-                        <p className='text-[1.2rem] font-bold tracking-[2px]'>
-                            Personal Information
-                        </p>
-                    </div>
-
-                    <form onSubmit={handleFormSubmit} className=' flex justify-center w-full gap-3 '>
-                        <div className='w-[40%] h-[95%] flex flex-col gap-2 p-2'>
-                            <RegistrationInfo message={'Student Id'} name='studentId' value={formData.studentId} onChange={handleInputChange} />
-                            <RegistrationInfo message={'Last name'} name='lastName' value={formData.lastName} onChange={handleInputChange} />
-                            <RegistrationInfo message={'First name'} name='firstName' value={formData.firstName} onChange={handleInputChange} />
-                            <RegistrationInfo message={'Contact number'} name='contactNumber' value={formData.contactNumber} onChange={handleInputChange} />
-                            <Dropdown name='yearLevel' options={['1st year', '2nd year', '3rd year', '4th year']} placeholder='Select year' value={formData.yearLevel} onChange={handleInputChange} />
-                        </div>
-                        <div className='w-[40%]  flex flex-col gap-2 p-2'>
-                            <Dropdown name='department' options={["College of Science", "College of Engineering", "College of Industrial Technology", "College of Architecture and Fine Arts", "College of Industrial Education", "College of Liberal Arts"]} placeholder='Select department' value={formData.department} onChange={handleInputChange} />
-                            <Dropdown name='sex' options={['Male', 'Female']} placeholder='Sex' value={formData.sex} onChange={handleInputChange} />
-                            <RegistrationInfo message={'Email'} name='email' value={formData.email} onChange={handleInputChange} />
-                            <RegistrationInfo message={'Address'} name='address' value={formData.address} onChange={handleInputChange} />
-                            <RegistrationInfo message={'Date of Birth'} type='date' name='dateOfBirth' value={formData.dateOfBirth} onChange={handleInputChange} />
-                        </div>
-                    </form>
-
-                    <div>
-                        <button onClick={handleFormSubmit} className='px-20 py-3 bg-[#CB2727] text-white tracking-[2px]  text-[.9rem] rounded-[10px]'>Confirm</button>
-                    </div>
-                </div>
-
-
-
-            </div>
+           </div>
         </>
     )
 }
