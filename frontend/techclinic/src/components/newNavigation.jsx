@@ -10,15 +10,37 @@ import Logout from '../assets/image/logout.svg'
 import Analytics from '../assets/componentImage/analytics.svg'
 import Notification from '../assets/componentImage/notification.svg'
 import useAuth from '../store/useAuthStore'
+import useNotificationStore, { requestNotificationPermission } from '../store/useNotificationStore'
 import Swal from 'sweetalert2'
+import { useEffect } from 'react'
 
 import { useLocation, Link, useNavigate } from 'react-router-dom'
 
 const NewNavigation = () => {
     const { authenticatedUser, userProfile, signOut } = useAuth();
+    const { unreadCount, fetchNotifications, checkForAlerts } = useNotificationStore();
     const location = useLocation();
     const currentPath = location.pathname;
     const navigate = useNavigate();
+
+    // Request notification permission and start polling
+    useEffect(() => {
+        if (!authenticatedUser?.id) return;
+        
+        // Request browser notification permission
+        requestNotificationPermission();
+        
+        // Initial fetch
+        fetchNotifications(authenticatedUser.id);
+        checkForAlerts(authenticatedUser.id);
+        
+        // Poll every 30 seconds
+        const intervalId = setInterval(() => {
+            checkForAlerts(authenticatedUser.id);
+        }, 30000);
+        
+        return () => clearInterval(intervalId);
+    }, [authenticatedUser?.id, fetchNotifications, checkForAlerts]);
 
     const handleSignOut = async () => {
         try {
@@ -208,9 +230,16 @@ const getInitials = () => {
 
                     <Link 
                         to={'/notifications'}
-                        className={`${currentPath === '/notifications' ? 'inPage' : 'notPage'} mainNavigation`}
+                        className={`${currentPath === '/notifications' ? 'inPage' : 'notPage'} mainNavigation relative`}
                     >
-                        <img src={Notification} alt="Notifications" />
+                        <div className="relative">
+                            <img src={Notification} alt="Notifications" />
+                            {unreadCount > 0 && (
+                                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                                    {unreadCount > 9 ? '9+' : unreadCount}
+                                </span>
+                            )}
+                        </div>
                         <p>NOTIFICATION</p>
                     </Link>
                 </div>
@@ -258,9 +287,16 @@ const getInitials = () => {
 
                     <Link 
                         to={'/notifications'}
-                        className={`${currentPath === '/notifications' ? 'inPage' : 'notPage'} mainNavigation`}
+                        className={`${currentPath === '/notifications' ? 'inPage' : 'notPage'} mainNavigation relative`}
                     >
-                        <img src={Notification} alt="Notifications" />
+                        <div className="relative">
+                            <img src={Notification} alt="Notifications" />
+                            {unreadCount > 0 && (
+                                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                                    {unreadCount > 9 ? '9+' : unreadCount}
+                                </span>
+                            )}
+                        </div>
                         <p>NOTIFICATION</p>
                     </Link>
                 </div>

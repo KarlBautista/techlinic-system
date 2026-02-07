@@ -240,4 +240,4 @@ const PatientsPerDepartmentChart = () => {
   )
 }
 
-export default PatientsPerDepartmentChart
+export default React.memo(PatientsPerDepartmentChart)

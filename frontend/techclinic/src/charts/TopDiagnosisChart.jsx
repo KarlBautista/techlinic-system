@@ -344,4 +344,4 @@ const TopDiagnosisChart = () => {
   );
 };
 
-export default TopDiagnosisChart;
+export default React.memo(TopDiagnosisChart);

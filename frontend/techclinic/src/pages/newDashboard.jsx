@@ -35,7 +35,7 @@ const NewDashboard = () => {
         // Set up interval to refresh every 5 seconds
         refreshIntervalRef.current = setInterval(() => {
             fetchData();
-        }, 5000);
+        }, 15000);
 
         // Cleanup interval on component unmount
         return () => {

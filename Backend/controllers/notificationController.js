@@ -110,7 +110,14 @@ const checkAndCreateAlerts = async (req, res) => {
                     user_id: user.id,
                     title: `⚠️ Disease Alert: ${disease.disease_name}`,
                     message: `${disease.total_cases} cases detected (${disease.percentage}% of population). Immediate attention required.`,
-                    is_read: false
+                    is_read: false,
+                    metadata: {
+                        disease_id: disease.disease_id,
+                        total_cases: disease.total_cases,
+                        percentage: disease.percentage,
+                        status: 'ALERT',
+                        created_timestamp: new Date().toISOString()
+                    }
                 });
             }
         }
