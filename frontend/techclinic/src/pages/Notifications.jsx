@@ -134,19 +134,19 @@ const Notifications = () => {
                 <Navigation />
             </div>
             
-            <div className='h-[92%] min-w-[360px] sm:min-w-0 w-full sm:h-full sm:w-[77%] md:w-[81%] lg:w-[83%] overflow-auto p-2 flex flex-col gap-2'>
+            <div className='h-[92%] min-w-[360px] sm:min-w-0 w-full sm:h-full sm:w-[77%] md:w-[81%] lg:w-[83%] overflow-auto p-6 flex flex-col gap-4'>
                 <div className='w-full h-full flex flex-col items-center gap-5 scrollbar'>
                     <div className='w-full flex flex-col gap-2'>
                         <div className='flex justify-between items-center'>
                             <div>
-                                <p className='text-[1.5rem] font-semibold text-gray-900'>
+                                <h1 className='text-2xl font-bold text-gray-800'>
                                     Notifications
                                     {unreadCount > 0 && (
                                         <span className='ml-2 text-sm bg-red-500 text-white px-2 py-1 rounded-full'>
                                             {unreadCount}
                                         </span>
                                     )}
-                                </p>
+                                </h1>
                             </div>
                             <div className='flex gap-2'>
                                 {unreadCount > 0 && (

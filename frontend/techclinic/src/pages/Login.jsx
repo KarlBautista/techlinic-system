@@ -10,7 +10,7 @@ const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const { signInWithGoogle, authenticatedUser, signIn, storePassword } = useAuth();
+    const { signInWithGoogle, authenticatedUser, signIn, isSessionVerified } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
     
@@ -18,12 +18,12 @@ const Login = () => {
     const from = location.state?.from?.pathname || "/dashboard";
     
     useEffect(() => {
-       
-        if (authenticatedUser) {
-            console.log("✅ User already authenticated, redirecting to:", from);
+        // Only redirect if the session has been verified by Supabase (not from stale localStorage)
+        if (isSessionVerified && authenticatedUser) {
+            console.log("✅ User has valid session, redirecting to:", from);
             navigate(from, { replace: true });
         }
-    }, [authenticatedUser, navigate, from]);
+    }, [authenticatedUser, isSessionVerified, navigate, from]);
 
     const handleSignInWithGoogle = async () => {
         try {
@@ -62,7 +62,6 @@ const Login = () => {
                 alert(`Error signing in: ${response.error.message || response.error}`);
             } else {
                 console.log("✅ Sign-in successful! Navigating to:", from);
-                storePassword(password)
                 navigate(from, { replace: true });
             }
         } catch (err) {

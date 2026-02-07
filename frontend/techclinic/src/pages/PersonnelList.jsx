@@ -3,21 +3,24 @@ import Navigation from '../components/newNavigation'
 import Search from '../assets/image/searcg.svg'
 import useAuth from '../store/useAuthStore'
 import { useNavigate } from 'react-router-dom'
+import { PageLoader } from '../components/PageLoader'
 const PersonnelList = () => {
   const [search, setSearch] = useState("");
-  const { allUsers, getAllUsers } = useAuth();
+  const { allUsers, getAllUsers, isLoadingUsers } = useAuth();
   const navigate = useNavigate();
+  const [initialLoading, setInitialLoading] = useState(true);
   useEffect(() => {
     const getAllUsersData = async () => {
       try {
         await getAllUsers();
       } catch (err) {
         console.error("Failed to fetch users:", err);
+      } finally {
+        setInitialLoading(false);
       }
     };
     getAllUsersData();
   }, [])
-  console.log("itoo all users", allUsers);
 
   function formatDate(dateString) {
     if (!dateString) return "";
@@ -40,8 +43,13 @@ const PersonnelList = () => {
       <div className='h-[8%] w-full order-last sm:order-0 sm:w-[23%] sm:h-full md:w-[19%] lg:w-[17%] '>
         <Navigation />
       </div>
-      <div className='h-[92%] min-w-[360px] sm:min-w-0  w-full sm:h-full sm:w-[77%] md:w-[81%] lg:w-[83%] overflow-auto p-5 flex flex-col gap-2'>
-        <h1 className='text-3xl font-semibold text-gray-800'>Personnel List</h1>
+      <div className='h-[92%] min-w-[360px] sm:min-w-0 w-full sm:h-full sm:w-[77%] md:w-[81%] lg:w-[83%] overflow-auto p-6 flex flex-col gap-4'>
+        {initialLoading || isLoadingUsers ? (
+          <PageLoader message="Loading personnel list..." />
+        ) : (
+        <>
+        <h1 className='text-2xl font-bold text-gray-800'>Personnel List</h1>
+        <p className='text-sm text-gray-500 mt-1'>Manage clinic staff and personnel</p>
         <div className='w-full flex flex-col gap-2'>
         </div>
         <div className='w-[90%] flex justify-between '>
@@ -100,7 +108,8 @@ const PersonnelList = () => {
           )}
         </div>
 
-
+        </>
+        )}
       </div>
 
     </div>

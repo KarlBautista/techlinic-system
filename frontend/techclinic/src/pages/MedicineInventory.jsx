@@ -5,13 +5,14 @@ import Medicine from '../assets/image/medicine.svg'
 import { useNavigate } from 'react-router-dom'
 import useMedicine from '../store/useMedicineStore'
 import MedicineForm from '../components/MedicineForm'
+import { PageLoader } from '../components/PageLoader'
 
 const MedicineInventory = () => {
-  const { medicines, updateMedicine, deleteMedicine, fetchMedicines } = useMedicine();
+  const { medicines, updateMedicine, deleteMedicine, getMedicines, isLoading } = useMedicine();
   const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
   const [medicineFormData, setMedicineFormData] = useState({});
-  console.log("mga medicines", medicines);
+  const [initialLoading, setInitialLoading] = useState(true);
   const handleAddMedicine = () => {
     navigate("/add-medicine");
   }
@@ -34,13 +35,18 @@ const MedicineInventory = () => {
 
   // Auto-refresh inventory every 30 seconds
   useEffect(() => {
+    // Fetch on mount
+    const fetchInitial = async () => {
+      await getMedicines();
+      setInitialLoading(false);
+    };
+    fetchInitial();
+
     const interval = setInterval(() => {
-      if (typeof fetchMedicines === 'function') {
-        fetchMedicines();
-      }
-    }, 15000); // 30 seconds
+      getMedicines();
+    }, 15000);
     return () => clearInterval(interval);
-  }, [fetchMedicines]);
+  }, [getMedicines]);
 
   return (
     
@@ -48,23 +54,25 @@ const MedicineInventory = () => {
      <div className='h-[8%] w-full order-last sm:order-0 sm:w-[23%] sm:h-full md:w-[19%] lg:w-[17%]'>
         <Navigation />
       </div>
-      <div className='h-[92%] min-w-[360px] sm:min-w-0  w-full sm:h-full sm:w-[77%] md:w-[81%] lg:w-[83%] overflow-auto p-2 flex flex-col gap-2'>
+      <div className='h-[92%] min-w-[360px] sm:min-w-0 w-full sm:h-full sm:w-[77%] md:w-[81%] lg:w-[83%] overflow-auto p-6 flex flex-col gap-4'>
          {showForm && <MedicineForm medicine={medicineFormData} 
                                     onClose={() => setShowForm(false)} 
                                     onUpdate={(updatedForm) => updateMedicine(updatedForm)}
-                                    onDelete={(medicineId) => deleteMedicine(medicineId)}/>
-                             }
+                                    onDelete={(medicineId) => deleteMedicine(medicineId)}/>}
       
+        {initialLoading || isLoading ? (
+          <PageLoader message="Loading medicine inventory..." />
+        ) : (
         <div className='w-full h-full flex flex-col items-center gap-5 '  >
           
           <div className='w-full flex flex-col gap-2'>
-              <p className='text-[1.5rem] font-semibold text-gray-900'>Medicine Inventory</p>
-              <p className='text-[1rem] text-gray-500'>Manage Medicines</p>
+              <h1 className='text-2xl font-bold text-gray-800'>Medicine Inventory</h1>
+              <p className='text-sm text-gray-500 mt-1'>Manage medicines and inventory</p>
               
           </div>
 
           <div className='w-[90%] flex justify-between'>
-              <div className='flex h-[50px]  p-2 rounded-[10px] border-1 border-[#EACBCB] gap-2 w-[70%]' >
+              <div className='flex h-[50px]  p-2 rounded-[10px] border border-[#EACBCB] gap-2 w-[70%]' >
                 <img src={Search} alt="" className='h-full'/>
                 <input type="text" className='outline-none w-full'  placeholder='Search'/>
               </div>
@@ -76,33 +84,33 @@ const MedicineInventory = () => {
               </div>
           </div>
              <div className='w-[90%] overflow-x-auto mt-4'>
-            <table className='min-w-full border border-gray-200  rounded-lg overflow-hidden text-left'>
+            <table className='min-w-full rounded-lg overflow-hidden text-left'>
               <thead className='bg-[#C41E3A]'>
                 <tr>
-                  <th className='px-4 py-2 border-b text-white'>Medicine Name</th>
-                  <th className='px-4 py-2 border-b text-white'>Generic Name</th>
-                  <th className='px-4 py-2 border-b text-white'>Brand / Manufacturer</th>
-                  <th className='px-4 py-2 border-b text-white'>Type / Form</th>
-                  <th className='px-4 py-2 border-b text-white'>Dosage</th>
-                  <th className='px-4 py-2 border-b text-white'>Unit of Measure</th>
-                  <th className='px-4 py-2 border-b text-white'>Stock Level</th>
-                  <th className='px-4 py-2 border-b text-white'>Batch Number</th>
-                  <th className='px-4 py-2 border-b text-white'>Expiry Date</th>
+                  <th className='px-4 py-3 text-white text-sm font-semibold'>Medicine Name</th>
+                  <th className='px-4 py-3 text-white text-sm font-semibold'>Generic Name</th>
+                  <th className='px-4 py-3 text-white text-sm font-semibold'>Brand / Manufacturer</th>
+                  <th className='px-4 py-3 text-white text-sm font-semibold'>Type / Form</th>
+                  <th className='px-4 py-3 text-white text-sm font-semibold'>Dosage</th>
+                  <th className='px-4 py-3 text-white text-sm font-semibold'>Unit of Measure</th>
+                  <th className='px-4 py-3 text-white text-sm font-semibold'>Stock Level</th>
+                  <th className='px-4 py-3 text-white text-sm font-semibold'>Batch Number</th>
+                  <th className='px-4 py-3 text-white text-sm font-semibold'>Expiry Date</th>
                 </tr>
               </thead>
               <tbody>
            {medicines && medicines.length > 0 ? 
              ( medicines.map((medicine) => {
               return <tr key={medicine.id} className='odd:bg-white even:bg-gray-50 hover:bg-gray-100' onClick={() => handleUpdateMedicine(medicine)}>
-                <td className='px-4 py-2 border-b'>{medicine.medicine_name}</td>
-                <td className='px-4 py-2 border-b'>{medicine.generic_name}</td>
-                <td className='px-4 py-2 border-b'>{medicine.brand}</td>
-                <td className='px-4 py-2 border-b'>{medicine.type}</td>
-                <td className='px-4 py-2 border-b'>{medicine.dosage}</td>
-                <td className='px-4 py-2 border-b'>{medicine.unit_of_measure}</td>
-                <td className='px-4 py-2 border-b'>{medicine.stock_level}</td>
-                <td className='px-4 py-2 border-b'>{medicine.batch_number}</td>
-                <td className='px-4 py-2 border-b'>{formatDate(medicine.expiry_date)}</td>
+                <td className='px-4 py-3 text-sm text-gray-700'>{medicine.medicine_name}</td>
+                <td className='px-4 py-3 text-sm text-gray-700'>{medicine.generic_name}</td>
+                <td className='px-4 py-3 text-sm text-gray-700'>{medicine.brand}</td>
+                <td className='px-4 py-3 text-sm text-gray-700'>{medicine.type}</td>
+                <td className='px-4 py-3 text-sm text-gray-700'>{medicine.dosage}</td>
+                <td className='px-4 py-3 text-sm text-gray-700'>{medicine.unit_of_measure}</td>
+                <td className='px-4 py-3 text-sm text-gray-700'>{medicine.stock_level}</td>
+                <td className='px-4 py-3 text-sm text-gray-700'>{medicine.batch_number}</td>
+                <td className='px-4 py-3 text-sm text-gray-700'>{formatDate(medicine.expiry_date)}</td>
              
             </tr>
          
@@ -117,6 +125,7 @@ const MedicineInventory = () => {
           
 
         </div>
+        )}
       </div>
     </div>
   )

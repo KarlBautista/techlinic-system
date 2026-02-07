@@ -1,42 +1,31 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import useAuth from '../store/useAuthStore';
-import { useEffect, useState } from 'react';
+import { PageLoader } from './PageLoader';
 
+/**
+ * ProtectedRoute - Wraps routes that require authentication.
+ * Session verification happens once in App.jsx via getUser().
+ * This component just checks the verified state.
+ */
 const ProtectedRoute = ({ children }) => {
-    const { authenticatedUser, isLoading, getUser } = useAuth();
+    const { authenticatedUser, isLoading, isSessionVerified } = useAuth();
     const location = useLocation();
-    const [checking, setChecking] = useState(true);
     
-    useEffect(() => {
-        const verifyAuth = async () => {
-            // Verify session is still valid
-            await getUser();
-            setChecking(false);
-        };
-        
-        verifyAuth();
-    }, []);
-    
-    // Show loading while checking auth or while app is loading
-    if (isLoading || checking) {
+    // Still verifying session (App.jsx is running getUser) — show loader
+    if (isLoading || !isSessionVerified) {
         return (
             <div className='w-full h-screen flex items-center justify-center bg-gray-50'>
-                <div className='text-center'>
-                    <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-[#A12217] mx-auto mb-4'></div>
-                    <p className='text-lg text-gray-700 font-medium'>Verifying authentication...</p>
-                </div>
+                <PageLoader message="Verifying session..." />
             </div>
         );
     }
     
-    // If not authenticated, redirect to login
+    // Session verified but no user — redirect to login
     if (!authenticatedUser) {
-        console.log("🚫 Not authenticated, redirecting to login from:", location.pathname);
-        return <Navigate to="/" replace state={{ from: location }} />;
+        return <Navigate to="/login" replace state={{ from: location }} />;
     }
     
     // User is authenticated, render the protected content
-    console.log("✅ User authenticated, rendering protected route:", location.pathname);
     return children;
 };
 

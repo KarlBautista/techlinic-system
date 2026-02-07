@@ -14,21 +14,23 @@ import Settings from "../pages/Settings";
 import AddPersonnel from "../pages/AddPersonnel";
 import AddDiagnosis from "../pages/AddDiagnosis";
 import LandingPage from "../pages/LandingPage"
+import ProtectedRoute from "../components/ProtectedRoute";
+
 const router = createBrowserRouter([
   { path: "/", element: <LandingPage /> },
   { path: "/login", element: <Login /> },
-  { path: "/dashboard", element: <Dashboard /> },
-  { path: "/new-patient", element: <NewPatient /> },
-  { path: "/patient-record", element: <PatientRecord />},
-  { path: "/medicine-inventory", element: <MedicineInventory /> },
-  { path: "/individual-record/:studentId", element: <IndividualRecord /> },
-  { path: "/add-medicine", element: <AddMedicine /> },
-  { path: "/analytics", element: <Analytics /> },
-  { path: "/notifications", element: <Notifications /> },
-  { path: "/personnel-list", element: <PersonnelList />},
-  { path: "/settings", element: <Settings /> },
-  { path: "/add-personnel", element: <AddPersonnel />},
-  { path: "/add-diagnosis/:recordId", element: <AddDiagnosis /> }
+  { path: "/dashboard", element: <ProtectedRoute><Dashboard /></ProtectedRoute> },
+  { path: "/new-patient", element: <ProtectedRoute><NewPatient /></ProtectedRoute> },
+  { path: "/patient-record", element: <ProtectedRoute><PatientRecord /></ProtectedRoute> },
+  { path: "/medicine-inventory", element: <ProtectedRoute><MedicineInventory /></ProtectedRoute> },
+  { path: "/individual-record/:studentId", element: <ProtectedRoute><IndividualRecord /></ProtectedRoute> },
+  { path: "/add-medicine", element: <ProtectedRoute><AddMedicine /></ProtectedRoute> },
+  { path: "/analytics", element: <ProtectedRoute><Analytics /></ProtectedRoute> },
+  { path: "/notifications", element: <ProtectedRoute><Notifications /></ProtectedRoute> },
+  { path: "/personnel-list", element: <ProtectedRoute><PersonnelList /></ProtectedRoute> },
+  { path: "/settings", element: <ProtectedRoute><Settings /></ProtectedRoute> },
+  { path: "/add-personnel", element: <ProtectedRoute><AddPersonnel /></ProtectedRoute> },
+  { path: "/add-diagnosis/:recordId", element: <ProtectedRoute><AddDiagnosis /></ProtectedRoute> }
 ]);
 
 export default router;

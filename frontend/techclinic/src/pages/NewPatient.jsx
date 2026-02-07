@@ -7,6 +7,7 @@ import Swal from 'sweetalert2'
 import { useEffect } from 'react'
 import useMedicine from "../store/useMedicineStore";
 import axios from 'axios'
+import { PageLoader, ButtonLoader } from '../components/PageLoader'
 
 const NewPatient = () => {
   const { insertRecord, getRecords, getRecordsFromExistingPatient } = useData();
@@ -14,6 +15,8 @@ const NewPatient = () => {
   const { medicines } = useMedicine();
   const [studentInformation, setStudentInformation] = useState(null);
   const [diseases, setDiseases] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [patientInput, setPatientInput] = useState({
     firstName: "",
     lastName: "",
@@ -108,6 +111,8 @@ const NewPatient = () => {
         }
       } catch (err) {
         console.error(`Error fetching diseases data: ${err.message}`);
+      } finally {
+        setIsLoading(false);
       }
     }
     getAllDiseases();
@@ -151,6 +156,8 @@ const NewPatient = () => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     
     // Log what's being sent for debugging
     console.log('Submitting patientInput:', {
@@ -210,6 +217,8 @@ const NewPatient = () => {
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -219,11 +228,14 @@ const NewPatient = () => {
         <Navigation />
       </div>
 
-      <div className='h-[92%] min-w-[360px] sm:min-w-0  w-full sm:h-full sm:w-[77%] md:w-[81%] lg:w-[83%] overflow-auto p-2 flex flex-col gap-2'>
+      <div className='h-[92%] min-w-[360px] sm:min-w-0 w-full sm:h-full sm:w-[77%] md:w-[81%] lg:w-[83%] overflow-auto p-6 flex flex-col gap-4'>
+        {isLoading ? (
+          <PageLoader message="Loading patient form..." />
+        ) : (
         <div className='w-full overflow-y-scroll h-full flex flex-col items-center gap-5 scrollbar'>
           <div className='w-full flex flex-col gap-2'>
-            <p className='text-[1.5rem] font-semibold text-gray-900'>Add Patient Record</p>
-            <p className='text-[1rem] text-gray-500'>Patient Clinical Documentation</p>
+            <h1 className='text-2xl font-bold text-gray-800'>Add Patient Record</h1>
+            <p className='text-sm text-gray-500 mt-1'>Patient clinical documentation</p>
           </div>
 
           <div className='w-[90%] flex flex-col items-center'>
@@ -404,10 +416,12 @@ const NewPatient = () => {
                   </div>
                   
                   <div className='w-full h-[50%]  flex justify-center items-center'>
-                    <button className='text-white px-5 py-3 rounded-lg bg-[#ef4444]'>
-                      {patientInput && patientInput.diagnosis && patientInput.diagnosis.length > 0
-                        ? "Insert Record"
-                        : "Send for Diagnosis"}
+                    <button disabled={isSubmitting} className='text-white px-5 py-3 rounded-lg bg-[#ef4444] inline-flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed'>
+                      {isSubmitting ? <><ButtonLoader /> Submitting...</> : (
+                        patientInput && patientInput.diagnosis && patientInput.diagnosis.length > 0
+                          ? "Insert Record"
+                          : "Send for Diagnosis"
+                      )}
                     </button>
                   </div>
                 </div>
@@ -437,6 +451,7 @@ const NewPatient = () => {
             </form>
           </div>
         </div>
+        )}
       </div>
     </div>
   )

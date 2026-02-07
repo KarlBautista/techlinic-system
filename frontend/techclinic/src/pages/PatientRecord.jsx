@@ -1,15 +1,26 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Search from '../assets/image/searcg.svg'
 import Printer from '../assets/image/printer.svg'
 import Navigation from '../components/newNavigation'
 import useData from '../store/useDataStore'
 import { useNavigate } from 'react-router-dom'
+import { PageLoader } from '../components/PageLoader'
 const PatientRecord = () => {
-  const { patientRecords } = useData();
+  const { patientRecords, getRecords, isLoadingRecords } = useData();
   const [search, setSearch] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("All Department");
   const navigate = useNavigate();
-  console.log("ito mga patientRecords", patientRecords);
+  const [initialLoading, setInitialLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!patientRecords) {
+        await getRecords();
+      }
+      setInitialLoading(false);
+    };
+    fetchData();
+  }, []);
 
   const filteredRecords = patientRecords?.data?.filter((patient) => {
     const fullname = `${patient.first_name} ${patient.last_name}`.toLowerCase();
@@ -46,11 +57,14 @@ const PatientRecord = () => {
       <div className='h-[8%] w-full order-last sm:order-0 sm:w-[23%] sm:h-full md:w-[19%] lg:w-[17%]'>
         <Navigation />
       </div>
-      <div className='h-[92%] min-w-[360px] sm:min-w-0  w-full sm:h-full sm:w-[77%] md:w-[81%] lg:w-[83%] overflow-auto p-2 flex flex-col gap-2'>
+      <div className='h-[92%] min-w-[360px] sm:min-w-0 w-full sm:h-full sm:w-[77%] md:w-[81%] lg:w-[83%] overflow-auto p-6 flex flex-col gap-4'>
+        {initialLoading || isLoadingRecords ? (
+          <PageLoader message="Loading patient records..." />
+        ) : (
         <div className='w-full h-full flex flex-col items-center gap-5 scrollbar'  >
           <div className='w-full flex flex-col gap-2'>
-            <p className='text-[1.5rem] font-semibold text-gray-900'>Patient Record</p>
-            <p className='text-[1rem] text-gray-500'>Manage patient information and medical records</p>
+            <h1 className='text-2xl font-bold text-gray-800'>Patient Record</h1>
+            <p className='text-sm text-gray-500 mt-1'>Manage patient information and medical records</p>
           </div>
           <div className='w-[90%] flex justify-between '>
             <div className='flex h-[50px]  p-2 rounded-[10px] border border-[#EACBCB] gap-2 w-[50%]' >
@@ -115,6 +129,7 @@ const PatientRecord = () => {
             )}
           </div>
         </div>
+        )}
       </div>
     </div>
   )

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Navigation from '../components/newNavigation';
 import Swal from 'sweetalert2';
+import { ButtonLoader } from '../components/PageLoader';
 // import usePersonnel from '../store/usePersonnelStore'; // You'll need to create this
 import useData from '../store/useDataStore';
 const AddPersonnel = () => {
@@ -19,6 +20,7 @@ const AddPersonnel = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { insertPersonnel } = useData();
 
   const handleChange = (e) => {
@@ -27,6 +29,8 @@ const AddPersonnel = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     console.log(personnel);
     
     // Validation
@@ -103,18 +107,20 @@ const AddPersonnel = () => {
         icon: "error",
         showConfirmButton: true
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="flex h-full w-full gap-2 overflow-y-auto">
-      <div className="sm:w-[30%] w-[17%] h-full md:w-[25%] lg:w-[17%] sticky top-0">
+    <div className='h-screen w-full flex flex-col sm:flex-row'>
+      <div className='h-[8%] w-full order-last sm:order-0 sm:w-[23%] sm:h-full md:w-[19%] lg:w-[17%]'>
         <Navigation />
       </div>
-      <div className="p-5 w-[83%] h-full flex flex-col gap-5">
+      <div className='h-[92%] min-w-[360px] sm:min-w-0 w-full sm:h-full sm:w-[77%] md:w-[81%] lg:w-[83%] overflow-auto p-6 flex flex-col gap-4'>
         <div className="w-full flex flex-col gap-2">
-          <h2 className="text-2xl font-semibold text-gray-900">Add Personnel</h2>
-          <p className="text-gray-500">Fill in the details below to add a new staff member</p>
+          <h1 className='text-2xl font-bold text-gray-800'>Add Personnel</h1>
+          <p className='text-sm text-gray-500 mt-1'>Fill in the details below to add a new staff member</p>
         </div>
 
         <form 
@@ -294,9 +300,10 @@ const AddPersonnel = () => {
           <div className="col-span-full flex justify-end mt-4">
             <button
               type="submit"
-              className="bg-[#A12217] text-white px-6 py-2 rounded-md hover:bg-[#b01c34] transition"
+              disabled={isSubmitting}
+              className="bg-[#A12217] text-white px-6 py-2 rounded-md hover:bg-[#b01c34] transition inline-flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Add Personnel
+              {isSubmitting ? <><ButtonLoader /> Adding...</> : 'Add Personnel'}
             </button>
           </div>
         </form>

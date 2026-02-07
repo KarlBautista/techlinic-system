@@ -9,23 +9,24 @@ const useAuth = create(
     authenticatedUser: null,
     userProfile: null,
     isLoading: true,
-    password: null,
+    isSessionVerified: false,
     allUsers: null,
-    storePassword: async (password) => {
-        set({ password: password });
-    },
+    isLoadingUsers: false,
 
     getAllUsers: async () => {
         try {
+            set({ isLoadingUsers: true });
             const response = await axios.get("http://localhost:3000/api/get-all-users");
             if(response.status === 200) {
-                set({ allUsers: response.data.data });
+                set({ allUsers: response.data.data, isLoadingUsers: false });
             } else {
                 console.error(`Error getting all users: ${response}`);
+                set({ isLoadingUsers: false });
                 return;
             }
         } catch (err) {
             console.error(`Something went wrong getting all users: ${err.message}`);
+            set({ isLoadingUsers: false });
             return;
         }
     },
@@ -47,7 +48,7 @@ const useAuth = create(
             
             if (user) {
                 console.log("User authenticated:", user.email);
-                set({ authenticatedUser: user });
+                set({ authenticatedUser: user, isSessionVerified: true, isLoading: false });
                 await get().fetchUserProfile(user.id);
             }
 
@@ -153,27 +154,31 @@ const useAuth = create(
                 const user = session?.user;
                 
                 if (user) {
-                    console.log("👤 User detected:", user.email);
-                    set({ authenticatedUser: user, isLoading: true });
+                    console.log("👤 Auth state change - user detected:", user.email);
                     
-                    // Always fetch profile with retry logic
-                    let retries = 3;
-                    let profile = null;
+                    // If already verified (e.g. from signIn), skip re-fetching
+                    const currentState = get();
+                    if (currentState.isSessionVerified && currentState.authenticatedUser?.id === user.id) {
+                        return;
+                    }
                     
-                    while (retries > 0 && !profile) {
-                        profile = await get().fetchUserProfile(user.id);
+                    set({ authenticatedUser: user, isSessionVerified: true });
+                    
+                    // Fetch profile if not already loaded
+                    if (!currentState.userProfile) {
+                        let retries = 3;
+                        let profile = null;
                         
-                        if (!profile) {
-                            console.log(`⏳ Profile not found, retries left: ${retries - 1}`);
-                            retries--;
+                        while (retries > 0 && !profile) {
+                            profile = await get().fetchUserProfile(user.id);
                             
-                            // If profile still doesn't exist after retries, create it
-                            if (retries === 0) {
-                                console.log("🆕 Creating new user profile...");
-                                profile = await get().createUserInDB(user);
-                            } else {
-                                // Wait a bit before retrying
-                                await new Promise(resolve => setTimeout(resolve, 500));
+                            if (!profile) {
+                                retries--;
+                                if (retries === 0) {
+                                    profile = await get().createUserInDB(user);
+                                } else {
+                                    await new Promise(resolve => setTimeout(resolve, 500));
+                                }
                             }
                         }
                     }
@@ -185,9 +190,10 @@ const useAuth = create(
                     set({ 
                         authenticatedUser: null, 
                         userProfile: null,
-                        isLoading: false 
+                        isLoading: false,
+                        isSessionVerified: true
                     });
-                    localStorage.removeItem("auth-storage");
+                    sessionStorage.removeItem("auth-storage");
                 }
             });
             
@@ -201,10 +207,37 @@ const useAuth = create(
     getUser: async () => {
         try {
             set({ isLoading: true });
+            
+            // First check if there's a valid session
+            const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+            
+            if (sessionError || !session) {
+                console.log("No valid session found, clearing auth state");
+                set({ 
+                    authenticatedUser: null, 
+                    userProfile: null, 
+                    isLoading: false,
+                    isSessionVerified: true
+                });
+                localStorage.removeItem('auth-storage');
+                return;
+            }
+            
+            // Verify the user with the server (not just local token)
             const { data, error } = await supabase.auth.getUser();
             console.log("getUser() result:", data?.user?.email || "No user");
             
-            if (data?.user) {
+            if (error || !data?.user) {
+                console.log("Session invalid or expired, clearing state");
+                set({ 
+                    authenticatedUser: null, 
+                    userProfile: null, 
+                    isLoading: false,
+                    isSessionVerified: true
+                });
+                localStorage.removeItem('auth-storage');
+                return;
+            }
                 set({ authenticatedUser: data.user });
                 
                 // Fetch profile with retry logic
@@ -231,14 +264,11 @@ const useAuth = create(
                 if (!profile) {
                     console.error("❌ Failed to fetch or create user profile after all retries");
                 }
-            } else {
-                set({ authenticatedUser: null, userProfile: null });
-            }
             
-            set({ isLoading: false });
+            set({ isLoading: false, isSessionVerified: true });
         } catch (err) {
             console.error(`Error getting user: ${err.message}`);
-            set({ isLoading: false });
+            set({ isLoading: false, isSessionVerified: true, authenticatedUser: null, userProfile: null });
         }
     },
     
@@ -258,10 +288,16 @@ const useAuth = create(
             set({ 
                 authenticatedUser: null, 
                 userProfile: null,
-                isLoading: false 
+                isLoading: false,
+                isSessionVerified: false
             });
             
-            // Clear localStorage for auth
+            // Clear sessionStorage for auth
+            sessionStorage.removeItem('auth-storage');
+            sessionStorage.removeItem('data-storage');
+            sessionStorage.removeItem('medicine-storage');
+            
+            // Also clear localStorage in case old data lingers
             localStorage.removeItem('auth-storage');
             localStorage.removeItem('data-storage');
             localStorage.removeItem('medicine-storage');
@@ -276,10 +312,22 @@ const useAuth = create(
     }
 }),
         {
-            name: 'auth-storage', // unique name for localStorage key
+            name: 'auth-storage',
+            storage: {
+                getItem: (name) => {
+                    const str = sessionStorage.getItem(name);
+                    return str ? JSON.parse(str) : null;
+                },
+                setItem: (name, value) => {
+                    sessionStorage.setItem(name, JSON.stringify(value));
+                },
+                removeItem: (name) => {
+                    sessionStorage.removeItem(name);
+                },
+            },
             partialize: (state) => ({ 
-                userProfile: state.userProfile, // Only persist userProfile
-                authenticatedUser: state.authenticatedUser 
+                userProfile: state.userProfile
+                // authenticatedUser is NOT persisted — session must be verified on each load
             }),
         }
     )

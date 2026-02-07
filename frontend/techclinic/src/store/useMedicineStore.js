@@ -2,6 +2,7 @@ import { create } from "zustand";
 import axios from "axios";
 const useMedicine = create((set) => ({
     medicines: null,
+    isLoading: false,
     insertMedicine: async (medicine) => {
         try {
             const response = await axios.post("http://localhost:3000/api/insert-medicine", {
@@ -22,16 +23,19 @@ const useMedicine = create((set) => ({
     },
     getMedicines: async () => {
         try {
+            set({ isLoading: true });
             const response = await axios.get("http://localhost:3000/api/get-medicines");
             if(response.status === 200) {
-                set({ medicines: response.data.data });
+                set({ medicines: response.data.data, isLoading: false });
                 return;
             } else {
                 console.error(`Error getting medicines: ${response.data.error}`);
+                set({ isLoading: false });
                 return;
             }
         } catch (err) {
             console.error(`Something went wrong getting medicines: ${err.message}`);
+            set({ isLoading: false });
             return;
         }
     },

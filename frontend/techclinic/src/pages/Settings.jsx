@@ -177,153 +177,281 @@ const getInitials = () => {
         <Navigation />
       </div>
 
-      <div className='h-[92%] min-w-[360px] sm:min-w-0 w-full sm:h-full sm:w-[77%] md:w-[81%] lg:w-[83%] overflow-auto p-5 flex flex-col gap-2'>
-        <h1 className='text-2xl font-semibold text-gray-800'>Settings</h1>
-         <p className='text-[1rem] text-gray-500 mb-7'>Manage Information</p>
-      <div className='flex flex-row items-center gap-6 mb-20'>
-         
-          <div className='w-[70px] h-[70px] 2xl:w-24 2xl:h-24 rounded-full bg-red-500 flex items-center justify-center overflow-hidden'>
-            <p className='text-black sm:text-[1.5rem] md:text-[1.5rem] lg:text-[1.5rem] xl:text-[1.9rem]  font-bold'>{getInitials()}</p>
+      <div className='h-[92%] min-w-[360px] sm:min-w-0 w-full sm:h-full sm:w-[77%] md:w-[81%] lg:w-[83%] overflow-auto p-6 flex flex-col gap-4'>
+        {/* Page Header */}
+        <div>
+          <h1 className='text-2xl font-bold text-gray-800'>Settings</h1>
+          <p className='text-sm text-gray-500 mt-1'>Manage your profile and account settings</p>
+        </div>
+
+        {/* Profile Banner */}
+        <div className='bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden'>
+          {/* Banner top stripe */}
+          <div className='h-28 bg-linear-to-r from-[#b01c34] to-[#d4375a] relative'>
+            <div className='absolute -bottom-10 left-6 md:left-10'>
+              <div className='w-20 h-20 md:w-24 md:h-24 rounded-full bg-white border-4 border-white shadow-md flex items-center justify-center'>
+                <div className='w-full h-full rounded-full bg-[#b01c34] flex items-center justify-center'>
+                  <p className='text-white text-xl md:text-2xl font-bold'>{getInitials()}</p>
+                </div>
+              </div>
+            </div>
           </div>
-         <div className='flex flex-col'>
-            <h1 className='text-3xl font-semibold text-gray-800'>{fullName}</h1>
-            <h5 className='text-lg font-medium text-gray-600'>ID: {authenticatedUser?.id || 'N/A'}</h5>
+          <div className='pt-14 pb-6 px-6 md:px-10'>
+            <div className='flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3'>
+              <div>
+                <h2 className='text-xl md:text-2xl font-bold text-gray-800'>{getDisplayName()}</h2>
+                <p className='text-sm text-gray-500 mt-0.5'>
+                  <span className='inline-flex items-center gap-1.5'>
+                    <i className='fa-solid fa-id-badge text-gray-400'></i>
+                    {authenticatedUser?.id ? `${authenticatedUser.id.slice(0, 8)}...` : 'N/A'}
+                  </span>
+                  <span className='mx-2 text-gray-300'>|</span>
+                  <span className='inline-flex items-center gap-1.5'>
+                    <i className='fa-solid fa-user-tag text-gray-400'></i>
+                    {displayedProfile?.role || 'N/A'}
+                  </span>
+                </p>
+              </div>
+              <button onClick={handleToggleEdit} className='inline-flex items-center gap-2 px-4 py-2 bg-[#b01c34] hover:bg-[#8f1629] text-white text-sm font-medium rounded-lg transition-colors'>
+                <i className='fa-solid fa-pen-to-square'></i>
+                Edit Profile
+              </button>
+            </div>
           </div>
         </div>
 
-        <div className='w-full flex flex-col sm:flex-row gap-8 items-start justify-around'>
-          <div className='w-full max-w-md bg-white shadow-md rounded-lg p-4'>
-            <h2 className='text-xl font-semibold mb-4 '>Login Information</h2>
-            <ul className='space-y-2'>
-              <li>Email: {authenticatedUser?.email || 'N/A'}</li>
-              <li className='flex items-center'>
-                 Password: ********
-                <button 
-                  onClick={handleEditPassword} 
-                  className='ml-4  hover:opacity-50 text-sm flex items-center gap-1'>
-                  <i className="fa-regular fa-pen-to-square text-black hover"></i>
-                </button>
-              </li>
-                
-            </ul>   
+        {/* Info Cards Grid */}
+        <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+          {/* Personal Information Card */}
+          <div className='bg-white rounded-xl shadow-sm border border-gray-100 p-6'>
+            <div className='flex items-center gap-3 mb-5'>
+              <div className='w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center'>
+                <i className='fa-solid fa-user text-[#b01c34] text-sm'></i>
+              </div>
+              <h3 className='text-base font-semibold text-gray-800'>Personal Information</h3>
+            </div>
+
+            <div className='space-y-4'>
+              <div className='flex items-start justify-between'>
+                <div>
+                  <p className='text-xs font-medium text-gray-400 uppercase tracking-wider'>First Name</p>
+                  <p className='text-sm font-medium text-gray-800 mt-0.5'>{displayedProfile?.first_name || 'N/A'}</p>
+                </div>
+                <div className='text-right'>
+                  <p className='text-xs font-medium text-gray-400 uppercase tracking-wider'>Last Name</p>
+                  <p className='text-sm font-medium text-gray-800 mt-0.5'>{displayedProfile?.last_name || 'N/A'}</p>
+                </div>
+              </div>
+
+              <div className='border-t border-gray-50'></div>
+
+              <div className='flex items-start justify-between'>
+                <div>
+                  <p className='text-xs font-medium text-gray-400 uppercase tracking-wider'>Gender</p>
+                  <p className='text-sm font-medium text-gray-800 mt-0.5'>{displayedProfile?.sex || 'N/A'}</p>
+                </div>
+                <div className='text-right'>
+                  <p className='text-xs font-medium text-gray-400 uppercase tracking-wider'>Date of Birth</p>
+                  <p className='text-sm font-medium text-gray-800 mt-0.5'>{formatDateForInput(displayedProfile?.date_of_birth) || 'N/A'}</p>
+                </div>
+              </div>
+
+              <div className='border-t border-gray-50'></div>
+
+              <div>
+                <p className='text-xs font-medium text-gray-400 uppercase tracking-wider'>Address</p>
+                <p className='text-sm font-medium text-gray-800 mt-0.5'>{displayedProfile?.address || 'N/A'}</p>
+              </div>
+
+              <div className='border-t border-gray-50'></div>
+
+              <div>
+                <p className='text-xs font-medium text-gray-400 uppercase tracking-wider'>Role</p>
+                <span className='inline-flex items-center gap-1.5 mt-0.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-red-50 text-[#b01c34]'>
+                  <i className='fa-solid fa-shield-halved text-[10px]'></i>
+                  {displayedProfile?.role || 'N/A'}
+                </span>
+              </div>
+            </div>
           </div>
 
-          <div className='Settings red-[500] w-full max-w-md bg-white shadow-md rounded-lg p-4 relative'>
-            <h2 className='text-xl font-semibold mb-4 '>Personal Information</h2>
+          {/* Login & Security Card */}
+          <div className='bg-white rounded-xl shadow-sm border border-gray-100 p-6'>
+            <div className='flex items-center gap-3 mb-5'>
+              <div className='w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center'>
+                <i className='fa-solid fa-lock text-[#b01c34] text-sm'></i>
+              </div>
+              <h3 className='text-base font-semibold text-gray-800'>Login & Security</h3>
+            </div>
 
-            <button onClick={handleToggleEdit} className='absolute top-3 right-3 hover:opacity-50 p-1'>
-              <i className="fa-regular fa-pen-to-square"></i>
-            </button>
+            <div className='space-y-4'>
+              <div>
+                <p className='text-xs font-medium text-gray-400 uppercase tracking-wider'>Email Address</p>
+                <div className='flex items-center gap-2 mt-1'>
+                  <i className='fa-solid fa-envelope text-gray-400 text-xs'></i>
+                  <p className='text-sm font-medium text-gray-800'>{authenticatedUser?.email || 'N/A'}</p>
+                </div>
+              </div>
 
-            <div>
-              <ul className='space-y-2'>
-                <li>First Name: {displayedProfile?.first_name || 'N/A'}</li>
-                <li>Last Name: {displayedProfile?.last_name || 'N/A'}</li>
-                <li>Gender: {displayedProfile?.sex || 'N/A'}</li>
-                <li>Address: {displayedProfile?.address || 'N/A'}</li>
-                <li>Date of Birth: {formatDateForInput(displayedProfile?.date_of_birth) || 'N/A'}</li>
-                <li>Role: {displayedProfile?.role || 'N/A'}</li>
-              </ul>
+              <div className='border-t border-gray-50'></div>
+
+              <div>
+                <p className='text-xs font-medium text-gray-400 uppercase tracking-wider'>Password</p>
+                <div className='flex items-center justify-between mt-1'>
+                  <div className='flex items-center gap-2'>
+                    <i className='fa-solid fa-key text-gray-400 text-xs'></i>
+                    <p className='text-sm font-medium text-gray-800 tracking-widest'>••••••••</p>
+                  </div>
+                  <button 
+                    onClick={handleEditPassword} 
+                    className='inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#b01c34] bg-red-50 hover:bg-red-100 rounded-lg transition-colors'>
+                    <i className='fa-solid fa-pen text-[10px]'></i>
+                    Change
+                  </button>
+                </div>
+              </div>
+
+              <div className='border-t border-gray-50'></div>
+
+              <div>
+                <p className='text-xs font-medium text-gray-400 uppercase tracking-wider'>Account Status</p>
+                <span className='inline-flex items-center gap-1.5 mt-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-700'>
+                  <span className='w-1.5 h-1.5 rounded-full bg-green-500'></span>
+                  Active
+                </span>
+              </div>
+
+              <div className='border-t border-gray-50'></div>
+
+              <div>
+                <p className='text-xs font-medium text-gray-400 uppercase tracking-wider'>Last Sign In</p>
+                <p className='text-sm font-medium text-gray-800 mt-0.5'>
+                  {authenticatedUser?.last_sign_in_at 
+                    ? new Date(authenticatedUser.last_sign_in_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+                    : 'N/A'
+                  }
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    {/* Change Password Modal */}
     {showModal && (
       <div className="fixed inset-0 z-50 flex items-center justify-center">
-        <div className="absolute inset-0 bg-black opacity-40" onClick={handleCloseModal}></div>
-        <div className="relative bg-white rounded-lg shadow-lg w-[90%] max-w-md p-6 z-10">
-          <h3 className="text-lg font-semibold mb-3">Change Password</h3>
-          <form onSubmit={handleSavePassword} className="space-y-3">
+        <div className="absolute inset-0 bg-black/50 modal-backdrop-enter" onClick={handleCloseModal}></div>
+        <div className="relative bg-white rounded-xl shadow-xl w-[90%] max-w-md p-6 z-10 modal-content-enter">
+          <div className='flex items-center gap-3 mb-5'>
+            <div className='w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center'>
+              <i className='fa-solid fa-lock text-[#b01c34] text-sm'></i>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-800">Change Password</h3>
+          </div>
+          <form onSubmit={handleSavePassword} className="space-y-4">
             <div>
-              <label className="block text-sm text-gray-700">Current password</label>
+              <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Current password</label>
               <input
                 type="password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                className="w-full mt-1 p-2 border rounded"
-              
+                className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#b01c34]/20 focus:border-[#b01c34] outline-none transition-all"
+                placeholder="Enter current password"
               />
             </div>
 
             <div>
-              <label className="block text-sm text-gray-700">New password</label>
+              <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">New password</label>
               <input
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full mt-1 p-2 border rounded"
-                
+                className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#b01c34]/20 focus:border-[#b01c34] outline-none transition-all"
+                placeholder="Enter new password"
               />
             </div>
 
             <div>
-              <label className="block text-sm text-gray-700">Confirm new password</label>
+              <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Confirm new password</label>
               <input
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full mt-1 p-2 border rounded"
-              
+                className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#b01c34]/20 focus:border-[#b01c34] outline-none transition-all"
+                placeholder="Confirm new password"
               />
             </div>
 
-            {error && <p className="text-sm text-red-600">{error}</p>}
+            {error && (
+              <div className='flex items-center gap-2 p-3 bg-red-50 rounded-lg'>
+                <i className='fa-solid fa-circle-exclamation text-red-500 text-sm'></i>
+                <p className="text-sm text-red-600">{error}</p>
+              </div>
+            )}
 
-            <div className="flex justify-end gap-2 mt-4">
-              <button type="button" onClick={handleCloseModal} className="px-4 py-2 rounded bg-gray-200 hover:opacity-90">Cancel</button>
-              <button type="submit" className="px-4 py-2 rounded bg-[#b01c34] text-white hover:opacity-90">Save</button>
+            <div className="flex justify-end gap-2 pt-2">
+              <button type="button" onClick={handleCloseModal} className="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 hover:bg-gray-200 transition-colors">Cancel</button>
+              <button type="submit" className="px-4 py-2 rounded-lg text-sm font-medium bg-[#b01c34] text-white hover:bg-[#8f1629] transition-colors">Update Password</button>
             </div>
           </form>
         </div>
       </div>
-
     )}
+
+    {/* Edit Profile Modal */}
     {showProfileModal && (
       <div className="fixed inset-0 z-50 flex items-center justify-center">
-        <div className="absolute inset-0 bg-black opacity-40" onClick={() => setShowProfileModal(false)}></div>
-        <div className="relative bg-white rounded-lg shadow-lg w-[90%] max-w-md p-6 z-10">
-          <h3 className="text-lg font-semibold mb-3">Edit Personal Information</h3>
-          <form onSubmit={handleSaveProfile} className="space-y-3">
-            
-             <div>
-              <label className="block text-sm text-gray-700">Role</label>
-              <input value={role} disabled className="w-full mt-1 p-2 border rounded bg-gray-100" />
+        <div className="absolute inset-0 bg-black/50 modal-backdrop-enter" onClick={() => setShowProfileModal(false)}></div>
+        <div className="relative bg-white rounded-xl shadow-xl w-[90%] max-w-lg p-6 z-10 modal-content-enter max-h-[90vh] overflow-auto">
+          <div className='flex items-center gap-3 mb-5'>
+            <div className='w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center'>
+              <i className='fa-solid fa-user-pen text-[#b01c34] text-sm'></i>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-800">Edit Personal Information</h3>
+          </div>
+          <form onSubmit={handleSaveProfile} className="space-y-4">
+            <div>
+              <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Role</label>
+              <input value={role} disabled className="w-full p-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-500 cursor-not-allowed" />
+            </div>
+
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+              <div>
+                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">First name</label>
+                <input value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#b01c34]/20 focus:border-[#b01c34] outline-none transition-all" placeholder="First name" />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Last name</label>
+                <input value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#b01c34]/20 focus:border-[#b01c34] outline-none transition-all" placeholder="Last name" />
+              </div>
+            </div>
+
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+              <div>
+                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Gender</label>
+                <select value={sex} onChange={(e) => setSex(e.target.value)} className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#b01c34]/20 focus:border-[#b01c34] outline-none transition-all">
+                  <option value=''>Select</option>
+                  <option value='Male'>Male</option>
+                  <option value='Female'>Female</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Date of birth</label>
+                <input type='date' value={dateOfBirth} onChange={(e) => setDateOfBirth(e.target.value)} className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#b01c34]/20 focus:border-[#b01c34] outline-none transition-all" />
+              </div>
             </div>
 
             <div>
-              <label className="block text-sm text-gray-700">First name</label>
-              <input value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full mt-1 p-2 border rounded" />
+              <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Address</label>
+              <input value={address} onChange={(e) => setAddress(e.target.value)} className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#b01c34]/20 focus:border-[#b01c34] outline-none transition-all" placeholder="Full address" />
             </div>
 
-            <div>
-              <label className="block text-sm text-gray-700">Last name</label>
-              <input value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full mt-1 p-2 border rounded" />
-            </div>
-
-            <div>
-              <label className="block text-sm text-gray-700">Gender</label>
-              <select value={sex} onChange={(e) => setSex(e.target.value)} className="w-full mt-1 p-2 border rounded">
-                <option value=''>Select</option>
-                <option value='Male'>Male</option>
-                <option value='Female'>Female</option>
-                
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm text-gray-700">Address</label>
-              <input value={address} onChange={(e) => setAddress(e.target.value)} className="w-full mt-1 p-2 border rounded" />
-            </div>
-
-            <div>
-              <label className="block text-sm text-gray-700">Date of birth</label>
-              <input type='date' value={dateOfBirth} onChange={(e) => setDateOfBirth(e.target.value)} className="w-full mt-1 p-2 border rounded" />
-            </div>
-
-            <div className="flex justify-end gap-2 mt-4">
-              <button type="button" onClick={() => setShowProfileModal(false)} className="px-4 py-2 rounded bg-gray-200 hover:opacity-90">Cancel</button>
-              <button type="submit" disabled={saving} className="px-4 py-2 rounded bg-[#b01c34] text-white hover:opacity-90 ">{saving ? 'Saving...' : 'Save'}</button>
+            <div className="flex justify-end gap-2 pt-2">
+              <button type="button" onClick={() => setShowProfileModal(false)} className="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 hover:bg-gray-200 transition-colors">Cancel</button>
+              <button type="submit" disabled={saving} className="px-4 py-2 rounded-lg text-sm font-medium bg-[#b01c34] text-white hover:bg-[#8f1629] transition-colors inline-flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">{saving ? <><span className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin'></span> Saving...</> : 'Save Changes'}</button>
             </div>
           </form>
         </div>
@@ -334,4 +462,3 @@ const getInitials = () => {
 };
 
 export default Settings;
-    

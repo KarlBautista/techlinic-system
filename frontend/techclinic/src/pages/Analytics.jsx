@@ -3,7 +3,7 @@ import Navigation from '../components/newNavigation'
 
 // Professional Loader component for use across all pages
 export const Loader = () => (
-  <div className="w-full h-48 flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg">
+  <div className="w-full h-48 flex items-center justify-center bg-linear-to-br from-gray-100 to-gray-200 rounded-lg">
     <div className="flex flex-col items-center gap-3">
       <div className="relative">
         <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
@@ -30,9 +30,10 @@ const Analytics = () => {
       <div className='h-[8%] w-full order-last sm:order-0 sm:w-[23%] sm:h-full md:w-[19%] lg:w-[17%]'>
         <Navigation />
       </div>
-    <div className='h-[92%] min-w-[360px] sm:min-w-0  w-full sm:h-full sm:w-[77%] md:w-[81%] lg:w-[83%] overflow-auto p-5'>
+    <div className='h-[92%] min-w-[360px] sm:min-w-0 w-full sm:h-full sm:w-[77%] md:w-[81%] lg:w-[83%] overflow-auto p-6 flex flex-col gap-4'>
         <div className='w-full flex flex-col gap-2'>
-          <h2 className='text-2xl font-semibold text-gray-900 mb-5'>Medical Analytics</h2>
+          <h1 className='text-2xl font-bold text-gray-800'>Medical Analytics</h1>
+          <p className='text-sm text-gray-500 mt-1'>View clinic statistics and insights</p>
         </div>
         <div className='w-full flex flex-col gap-5'>
           <Suspense fallback={<Loader />}>

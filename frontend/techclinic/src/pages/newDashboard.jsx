@@ -1,9 +1,10 @@
 import NewNavigation from '../components/newNavigation.jsx'
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import useAuth from '../store/useAuthStore';
 import useData from '../store/useDataStore';
 import Notification from '../assets/componentImage/notification.svg'
 import useMedicine from '../store/useMedicineStore';
+import { PageLoader } from '../components/PageLoader';
 
 import Swal from "sweetalert2";
 import { useLocation, Link, useNavigate } from 'react-router-dom'
@@ -17,6 +18,7 @@ const NewDashboard = () => {
     const { medicines, getMedicines } = useMedicine();
     const navigate = useNavigate();
     const refreshIntervalRef = useRef(null);
+    const [initialLoading, setInitialLoading] = useState(true);
 
     // Auto-refresh data every 5 seconds
     useEffect(() => {
@@ -30,7 +32,7 @@ const NewDashboard = () => {
         };
 
         // Fetch data on component mount
-        fetchData();
+        fetchData().finally(() => setInitialLoading(false));
 
         // Set up interval to refresh every 5 seconds
         refreshIntervalRef.current = setInterval(() => {
@@ -115,7 +117,11 @@ const NewDashboard = () => {
             <div className='h-[8%] w-full order-last sm:order-0 sm:w-[23%] sm:h-full md:w-[19%] lg:w-[17%]'>
                 <NewNavigation />
             </div>
-            <div className='h-[92%] min-w-[360px] sm:min-w-0  w-full sm:h-full sm:w-[77%] md:w-[81%] lg:w-[83%] overflow-auto p-5 flex flex-col gap-2'>
+            <div className='h-[92%] min-w-[360px] sm:min-w-0 w-full sm:h-full sm:w-[77%] md:w-[81%] lg:w-[83%] overflow-auto p-6 flex flex-col gap-4'>
+              {initialLoading ? (
+                  <PageLoader message="Loading dashboard..." />
+              ) : (
+              <>
                 <div className='h-[10%] p-2 w-full flex gap-1'>
                     <div className='w-[90%] h-full flex flex-col'>
                         <h2 className='text-[1.2rem] font-semibold text-gray-900'>
@@ -232,6 +238,8 @@ const NewDashboard = () => {
                     </div>
 
                 </div>
+              </>
+              )}
             </div>
         </div>
     )
