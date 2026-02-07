@@ -285,61 +285,6 @@ const TopDiagnosisChart = () => {
                   </div>
                 )}
             </div>
-
-
-      {/* <div className='w-full flex flex-col gap-2 mb-3'>
-        <div className='w-full flex items-center justify-between'>
-          <h3 className='text-2xl font-semibold'>Top Diagnoses Analysis</h3>
-          <div className='group inline-block'>
-            <select
-              id='diagnoses-timeframe'
-              name='diagnoses-timeframe'
-              aria-label='Diagnoses timeframe'
-              value={selectedCategory}
-              onChange={handleCategoryChange}
-              className='appearance-none bg-white border border-gray-300 text-gray-700 text-sm rounded-md pl-3 pr-8 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-150 ease-in-out cursor-pointer'>
-              <option value='week'>This week</option>
-              <option value='month'>This month</option>
-              <option value='quarter'>This quarter</option>
-              <option value='year'>This year</option>
-            </select>
-          </div>
-        </div>
-        {periodInfo && (
-          <div className='w-full'>
-            <p className='text-[17px] font-semibold px-5'>{getPeriodDisplay()}</p>
-          </div>
-        )}
-      </div>
-
-      {!hasData ? (
-        <div className='w-full h-96 flex items-center justify-center'>
-          <p className='text-gray-500'>No diagnosis data available for this period</p>
-        </div>
-      ) : (
-        <div className='w-full space-y-6'>
-
-          <div className='w-full'>
-            <Chart
-              options={paretoOptions}
-              series={paretoSeries}
-              type="line"
-              height={400}
-            />
-          </div>
-
-          <div className='w-full'>
-            <Chart
-              options={trendOptions}
-              series={trendSeries}
-              type="line"
-              height={400}
-            />
-          </div>
-        </div>
-      )} */}
-
-      
     </div>
   );
 };

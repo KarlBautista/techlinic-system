@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import supabase from '../config/supabaseClient'
 import useAuth from '../store/useAuthStore'
+import tupLogo from '../assets/image/TUP.png'
 
 const DiagnosisModal = ({ open = false, onClose = () => {}, patient = {}, record = {}, diagnoses = [] }) => {
   const { userProfile } = useAuth();
@@ -285,7 +286,7 @@ const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime, physicianDa
       {/* TUP Header */}
       <div className="grid grid-cols-[140px_1fr] grid-rows-[84px_46px] border-b border-gray-900">
         <div className="row-span-2 border-r border-gray-900 flex items-center justify-center p-2">
-          <div className="w-full h-full flex items-center justify-center text-xs text-gray-500">Logo</div>
+          <img src={tupLogo} alt="TUP Logo" className="w-[100px] h-[100px] object-contain" />
         </div>
         <div className="border-b border-gray-900 flex flex-col items-center justify-center p-2">
           <div className="font-extrabold text-sm tracking-wide text-center">
@@ -323,6 +324,11 @@ const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime, physicianDa
             {patient?.department ?? ''}{patient?.year_level ? ` — ${patient.year_level}` : ''}
           </span>
         </div>
+      </div>
+
+      {/* Rx Symbol */}
+      <div className="px-4 pt-4 pb-1">
+        <span className="text-3xl font-bold italic text-gray-800" style={{ fontFamily: 'serif' }}>&#8478;</span>
       </div>
 
       {/* Diagnosis / reason */}
@@ -407,7 +413,7 @@ const CertificateTab = ({ patient, diagnosis, visitDate, physicianData, attendin
       {/* TUP Header */}
       <div className="grid grid-cols-[140px_1fr] grid-rows-[84px_46px] border-b border-gray-900">
         <div className="row-span-2 border-r border-gray-900 flex items-center justify-center p-2">
-          <div className="w-full h-full flex items-center justify-center text-xs text-gray-500">Logo</div>
+          <img src={tupLogo} alt="TUP Logo" className="w-[100px] h-[100px] object-contain" />
         </div>
         <div className="border-b border-gray-900 flex flex-col items-center justify-center p-2">
           <div className="font-extrabold text-sm tracking-wide text-center">

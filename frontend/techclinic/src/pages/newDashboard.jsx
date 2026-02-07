@@ -324,7 +324,7 @@ const NewDashboard = () => {
                                             }
                                         >
                                             <td className='px-5 py-3.5'>
-                                                <span className='text-sm font-medium text-gray-900 group-hover:text-[#b01c34] transition-colors'>
+                                                <span className='text-sm font-medium text-gray-900 group-hover:text-[#b01c34] group-hover:underline transition-colors'>
                                                     {patient.student_id}
                                                 </span>
                                             </td>
@@ -333,21 +333,21 @@ const NewDashboard = () => {
                                                     <div className='w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-500 shrink-0'>
                                                         {patient.first_name?.[0]}{patient.last_name?.[0]}
                                                     </div>
-                                                    <span className='text-sm text-gray-700 truncate'>{`${patient.first_name} ${patient.last_name}`}</span>
+                                                    <span className='text-sm text-gray-700 truncate group-hover:underline'>{`${patient.first_name} ${patient.last_name}`}</span>
                                                 </div>
                                             </td>
                                             <td className='px-5 py-3.5 hidden md:table-cell'>
-                                                <span className='text-sm text-gray-600'>{patient.department}</span>
+                                                <span className='text-sm text-gray-600 group-hover:underline'>{patient.department}</span>
                                             </td>
                                             <td className='px-5 py-3.5 hidden lg:table-cell'>
-                                                <span className='text-sm text-gray-600 truncate max-w-[200px] block'>
+                                                <span className='text-sm text-gray-600 truncate max-w-[200px] block group-hover:underline'>
                                                     {patient.diagnoses[0]?.diagnosis || (
                                                         <span className='text-gray-400 italic'>Pending</span>
                                                     )}
                                                 </span>
                                             </td>
                                             <td className='px-5 py-3.5 hidden sm:table-cell'>
-                                                <div className='flex items-center gap-1.5 text-gray-400'>
+                                                <div className='flex items-center gap-1.5 text-gray-400 group-hover:underline'>
                                                     <IconClock />
                                                     <span className='text-xs'>{formatTime(patient.created_at)}</span>
                                                 </div>

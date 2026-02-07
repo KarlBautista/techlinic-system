@@ -741,6 +741,44 @@ const getYearlyTopDiagnoses = async (req, res) => {
 
 
 
+const getMostUsedMedicines = async (req, res) => {
+    try {
+        const { data: diagnoses, error } = await supabase
+            .from("diagnoses")
+            .select("medication, quantity")
+            .not("medication", "is", null)
+            .neq("medication", "");
+
+        if (error) {
+            console.error(`Error getting most used medicines: ${error.message}`);
+            return res.status(500).json({ success: false, error: error.message });
+        }
+
+        // Aggregate total dispensed quantity per medicine
+        const usageMap = {};
+        diagnoses.forEach((d) => {
+            const name = d.medication.trim();
+            const qty = parseInt(d.quantity, 10) || 0;
+            if (!usageMap[name]) {
+                usageMap[name] = { totalDispensed: 0, timesPrescribed: 0 };
+            }
+            usageMap[name].totalDispensed += qty;
+            usageMap[name].timesPrescribed += 1;
+        });
+
+        // Convert to sorted array (top 10 by total dispensed)
+        const sorted = Object.entries(usageMap)
+            .map(([name, stats]) => ({ name, ...stats }))
+            .sort((a, b) => b.totalDispensed - a.totalDispensed)
+            .slice(0, 10);
+
+        return res.status(200).json({ success: true, data: sorted });
+    } catch (err) {
+        console.error(`Something went wrong getting most used medicines: ${err.message}`);
+        return res.status(500).json({ success: false, error: err.message });
+    }
+};
+
 module.exports = { getWeeklyPatients, 
                     getMonthyPatients, 
                     getQuarterlyPatient, 
@@ -752,5 +790,6 @@ module.exports = { getWeeklyPatients,
             getWeeklyTopDiagnoses,
     getMonthlyTopDiagnoses,
     getQuarterlyTopDiagnoses,
-    getYearlyTopDiagnoses
+    getYearlyTopDiagnoses,
+    getMostUsedMedicines
         }

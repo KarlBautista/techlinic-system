@@ -55,12 +55,14 @@ const useNotificationStore = create((set, get) => ({
     isLoading: false,
     error: null,
     lastChecked: null,
+    _isFetching: false,
 
     // Fetch notifications for a user
     fetchNotifications: async (userId) => {
         if (!userId) return;
+        if (get()._isFetching) return; // Prevent concurrent fetches
         
-        set({ isLoading: true, error: null });
+        set({ _isFetching: true, isLoading: !get().notifications.length, error: null });
         
         try {
             const response = await axios.get(`${API_BASE}/user/${userId}`);
@@ -81,12 +83,13 @@ const useNotificationStore = create((set, get) => ({
                     notifications: response.data.notifications,
                     unreadCount: newUnreadCount,
                     isLoading: false,
+                    _isFetching: false,
                     lastChecked: new Date().toISOString()
                 });
             }
         } catch (err) {
             console.error('Error fetching notifications:', err);
-            set({ error: err.message, isLoading: false });
+            set({ error: err.message, isLoading: false, _isFetching: false });
         }
     },
 

@@ -43,9 +43,8 @@ const NewNavigation = () => {
         // Request browser notification permission
         requestNotificationPermission();
         
-        // Initial fetch
+        // Initial fetch only (no checkForAlerts on mount — interval handles it)
         fetchNotifications(authenticatedUser.id);
-        checkForAlerts(authenticatedUser.id);
         
         // Poll every 30 seconds
         const intervalId = setInterval(() => {
@@ -53,7 +52,7 @@ const NewNavigation = () => {
         }, 30000);
         
         return () => clearInterval(intervalId);
-    }, [authenticatedUser?.id, fetchNotifications, checkForAlerts]);
+    }, [authenticatedUser?.id]);
 
     const handleSignOut = async () => {
         try {

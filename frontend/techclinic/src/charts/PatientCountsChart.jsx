@@ -176,28 +176,6 @@ const PatientCountsChart = () => {
           />
         )}
       </div>
-
-      {/* <div className='w-full flex items-center justify-between mb-3'>
-        <h3 className='text-2xl font-semibold'>Patient Records Count</h3>
-
-        <div className='group inline-block'>
-          <select
-            id='patients'
-            value={selectedCategory}
-            onChange={(e) => handleCategoryChange(e.target.value)}
-            className='appearance-none bg-white border border-gray-300 text-gray-700 text-sm rounded-md pl-3 pr-3 py-1.5'
-          >
-            <option value='week'>This week</option>
-            <option value='month'>This month</option>
-            <option value="quarter">This Quarter</option>
-            <option value="year">This Year</option>
-          </select>
-        </div>
-      </div>
-
-    
-        
-      </div> */ }
     </div>
   );
 };

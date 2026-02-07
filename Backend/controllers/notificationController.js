@@ -6,6 +6,7 @@ const checkAndCreateAlerts = async (req, res) => {
         const MIN_POPULATION = 10;
         const MIN_CASES = 5;
         const ALERT_THRESHOLD = 10;
+        const LOW_STOCK_THRESHOLD = 10; // Alert when medicine has ≤ 10 units
 
         // 1️⃣ Fetch all diagnosis records
         const { data: allRecordsData, error: allRecordsError } = await supabase
@@ -74,11 +75,7 @@ const checkAndCreateAlerts = async (req, res) => {
         // 6️⃣ Filter diseases that need alerts
         const alertDiseases = stats.filter(d => d.alert);
 
-        if (alertDiseases.length === 0) {
-            return res.json({ success: true, message: 'No alerts to create', alerts: [] });
-        }
-
-        // 7️⃣ Fetch all users
+        // 7️⃣ Fetch all users (needed for both disease and stock alerts)
         const { data: users, error: usersError } = await supabase
             .from('users')
             .select('id');
@@ -88,9 +85,11 @@ const checkAndCreateAlerts = async (req, res) => {
             return res.status(500).json({ success: false, error: usersError.message });
         }
 
+        const allCreatedNotifications = [];
         const newNotifications = [];
 
         // 8️⃣ Create notifications for each alert disease
+        if (alertDiseases.length > 0) {
         for (const disease of alertDiseases) {
             const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
 
@@ -98,7 +97,7 @@ const checkAndCreateAlerts = async (req, res) => {
             const { data: existingNotif } = await supabase
                 .from('notifications')
                 .select('id')
-                .eq('title', `⚠️ Disease Alert: ${disease.disease_name}`)
+                .eq('title', `Disease Alert: ${disease.disease_name}`)
                 .gte('created_at', oneHourAgo)
                 .limit(1);
 
@@ -108,21 +107,14 @@ const checkAndCreateAlerts = async (req, res) => {
             for (const user of users) {
                 newNotifications.push({
                     user_id: user.id,
-                    title: `⚠️ Disease Alert: ${disease.disease_name}`,
+                    title: `Disease Alert: ${disease.disease_name}`,
                     message: `${disease.total_cases} cases detected (${disease.percentage}% of population). Immediate attention required.`,
-                    is_read: false,
-                    metadata: {
-                        disease_id: disease.disease_id,
-                        total_cases: disease.total_cases,
-                        percentage: disease.percentage,
-                        status: 'ALERT',
-                        created_timestamp: new Date().toISOString()
-                    }
+                    is_read: false
                 });
             }
         }
 
-        // 9️⃣ Bulk insert notifications
+        // 9️⃣ Bulk insert disease alert notifications
         if (newNotifications.length > 0) {
             const { data: insertedNotifs, error: insertError } = await supabase
                 .from('notifications')
@@ -131,13 +123,78 @@ const checkAndCreateAlerts = async (req, res) => {
 
             if (insertError) {
                 console.error('Error inserting notifications:', insertError);
-                return res.status(500).json({ success: false, error: insertError.message });
+                // Continue — don't return, still need to check stock
+            } else {
+                allCreatedNotifications.push(...(insertedNotifs || []));
+            }
+        }
+        } // end if (alertDiseases.length > 0)
+
+        // ══════════════════════════════════════════════════════════════
+        // 🔟 LOW STOCK MEDICINE ALERTS
+        // ══════════════════════════════════════════════════════════════
+
+        const { data: lowStockMeds, error: stockError } = await supabase
+            .from('medicines')
+            .select('id, medicine_name, stock_level')
+            .lte('stock_level', LOW_STOCK_THRESHOLD);
+
+        if (stockError) {
+            console.error('Error checking medicine stock:', stockError.message);
+        }
+
+        if (lowStockMeds && lowStockMeds.length > 0) {
+            // Ensure we have users list
+            const usersList = users || [];
+            const stockNotifications = [];
+
+            for (const med of lowStockMeds) {
+                const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+
+                // Check for duplicate (same title within last hour)
+                const { data: existingStockNotif } = await supabase
+                    .from('notifications')
+                    .select('id')
+                    .eq('title', `Low Stock Alert: ${med.medicine_name}`)
+                    .gte('created_at', oneHourAgo)
+                    .limit(1);
+
+                if (existingStockNotif && existingStockNotif.length > 0) continue;
+
+                const stockMsg = med.stock_level <= 0
+                    ? `${med.medicine_name} is out of stock. Please reorder immediately.`
+                    : `${med.medicine_name} is running low with only ${med.stock_level} unit(s) remaining. Please reorder soon.`;
+
+                for (const user of usersList) {
+                    stockNotifications.push({
+                        user_id: user.id,
+                        title: `Low Stock Alert: ${med.medicine_name}`,
+                        message: stockMsg,
+                        is_read: false
+                    });
+                }
             }
 
+            if (stockNotifications.length > 0) {
+                const { data: insertedStock, error: stockInsertErr } = await supabase
+                    .from('notifications')
+                    .insert(stockNotifications)
+                    .select();
+
+                if (stockInsertErr) {
+                    console.error('Error inserting stock notifications:', stockInsertErr);
+                } else {
+                    allCreatedNotifications.push(...(insertedStock || []));
+                }
+            }
+        }
+
+        // Final response
+        if (allCreatedNotifications.length > 0) {
             return res.json({
                 success: true,
-                message: `Created ${insertedNotifs.length} notifications`,
-                notifications: insertedNotifs
+                message: `Created ${allCreatedNotifications.length} notifications`,
+                notifications: allCreatedNotifications
             });
         }
 

@@ -19,6 +19,9 @@ const AddDiagnosis = () => {
   const [diseases, setDiseases] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showAddDisease, setShowAddDisease] = useState(false);
+  const [newDiseaseName, setNewDiseaseName] = useState("");
+  const [isAddingDisease, setIsAddingDisease] = useState(false);
   const navigate = useNavigate();
   const [patientInput, setPatientInput] = useState({
     id: "",
@@ -157,7 +160,60 @@ const AddDiagnosis = () => {
     setPatientInput((prev) => ({ ...prev, [name]: value }));
   }
 
+  const handleAddDisease = async () => {
+    const trimmed = newDiseaseName.trim();
+    if (!trimmed) return;
 
+    setIsAddingDisease(true);
+    try {
+      const response = await axios.post("http://localhost:3000/api/add-disease", { name: trimmed });
+      if (response.data.success) {
+        const added = response.data.data;
+        setDiseases((prev) => [...prev, added].sort((a, b) => a.name.localeCompare(b.name)));
+        setPatientInput((prev) => ({
+          ...prev,
+          diseaseId: String(added.id),
+          diagnosis: added.name,
+        }));
+        setNewDiseaseName("");
+        setShowAddDisease(false);
+        Swal.fire({
+          title: "Disease Added",
+          text: `"${added.name}" has been added and selected.`,
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      } else {
+        Swal.fire({ title: "Error", text: response.data.error, icon: "error" });
+      }
+    } catch (err) {
+      const msg = err.response?.data?.error || err.message;
+      if (err.response?.status === 409) {
+        const existing = err.response.data.data;
+        if (existing) {
+          setPatientInput((prev) => ({
+            ...prev,
+            diseaseId: String(existing.id),
+            diagnosis: existing.name,
+          }));
+          setNewDiseaseName("");
+          setShowAddDisease(false);
+          Swal.fire({
+            title: "Already Exists",
+            text: `"${existing.name}" is already in the list and has been selected.`,
+            icon: "info",
+            timer: 1500,
+            showConfirmButton: false,
+          });
+        }
+      } else {
+        Swal.fire({ title: "Error", text: msg, icon: "error" });
+      }
+    } finally {
+      setIsAddingDisease(false);
+    }
+  };
 
 
   const handleFormSubmit = async (e) => {
@@ -404,12 +460,49 @@ const AddDiagnosis = () => {
               <div className='w-full h-[400px] flex'>
                 <div className='w-[50%] h-full flex items-center flex-col '>
                   <div className='formDiagnosis'>
-                    <select id="diseaseId" name="diseaseId" value={patientInput.diseaseId} onChange={handleSetPatientInput} className='w-full p-2 rounded-[10px] border outline-none'>
-                      <option value="" disabled>Select Diagnosis</option>
-                      {diseases && diseases.length > 0 ? (
-                        diseases.map((disease) => <option key={disease.id} value={disease.id}>{disease.name}</option>)
-                      ) : null}
-                    </select>
+                    <div className='flex flex-col gap-2'>
+                      <div className='flex items-center gap-2'>
+                        <select id="diseaseId" name="diseaseId" value={patientInput.diseaseId} onChange={handleSetPatientInput} className='flex-1 p-2 rounded-[10px] border outline-none'>
+                          <option value="" disabled>Select Diagnosis</option>
+                          {diseases && diseases.length > 0 ? (
+                            diseases.map((disease) => <option key={disease.id} value={disease.id}>{disease.name}</option>)
+                          ) : null}
+                        </select>
+                        <button
+                          type="button"
+                          onClick={() => setShowAddDisease(!showAddDisease)}
+                          className={`shrink-0 w-9 h-9 rounded-lg flex items-center justify-center text-sm transition-colors ${
+                            showAddDisease 
+                              ? 'bg-gray-200 text-gray-600' 
+                              : 'bg-[#b01c34] text-white hover:bg-[#8f1629]'
+                          }`}
+                          title={showAddDisease ? 'Cancel' : 'Add new disease'}
+                        >
+                          <i className={`fa-solid ${showAddDisease ? 'fa-xmark' : 'fa-plus'} text-xs`}></i>
+                        </button>
+                      </div>
+                      {showAddDisease && (
+                        <div className='flex items-center gap-2'>
+                          <input
+                            type="text"
+                            value={newDiseaseName}
+                            onChange={(e) => setNewDiseaseName(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddDisease(); } }}
+                            placeholder="Enter disease name..."
+                            className='flex-1 p-2 rounded-[10px] border outline-none text-sm focus:border-[#b01c34] transition-colors'
+                            autoFocus
+                          />
+                          <button
+                            type="button"
+                            onClick={handleAddDisease}
+                            disabled={!newDiseaseName.trim() || isAddingDisease}
+                            className='shrink-0 px-3 py-2 rounded-lg bg-[#b01c34] text-white text-sm font-medium hover:bg-[#8f1629] transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+                          >
+                            {isAddingDisease ? 'Adding...' : 'Add'}
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   <div className='formDiagnosis'>

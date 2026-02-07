@@ -3,6 +3,7 @@ import Navigation from '../components/newNavigation'
 import {useState} from 'react'
 import useData from '../store/useDataStore'
 import useAuth from '../store/useAuthStore'
+import { useSearchParams } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import { useEffect } from 'react'
 import useMedicine from "../store/useMedicineStore";
@@ -13,10 +14,14 @@ const NewPatient = () => {
   const { insertRecord, getRecords, getRecordsFromExistingPatient } = useData();
   const { authenticatedUser, userProfile } = useAuth();
   const { medicines } = useMedicine();
+  const [searchParams] = useSearchParams();
   const [studentInformation, setStudentInformation] = useState(null);
   const [diseases, setDiseases] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showAddDisease, setShowAddDisease] = useState(false);
+  const [newDiseaseName, setNewDiseaseName] = useState("");
+  const [isAddingDisease, setIsAddingDisease] = useState(false);
   const [patientInput, setPatientInput] = useState({
     firstName: "",
     lastName: "",
@@ -38,7 +43,14 @@ const NewPatient = () => {
     attendingPhysicianId: authenticatedUser?.id || null,
   });
 
- 
+  // Pre-fill studentId from URL search params (e.g., from "New Visit" button)
+  useEffect(() => {
+    const urlStudentId = searchParams.get('studentId');
+    if (urlStudentId) {
+      setPatientInput((prev) => ({ ...prev, studentId: urlStudentId }));
+    }
+  }, [searchParams]);
+
   const formatDateForInput = (val) => {
     if (!val) return '';
     try {
@@ -154,6 +166,62 @@ const NewPatient = () => {
     }
     setPatientInput((prev) => ({ ...prev, [name]: value }));
   }
+
+  const handleAddDisease = async () => {
+    const trimmed = newDiseaseName.trim();
+    if (!trimmed) return;
+
+    setIsAddingDisease(true);
+    try {
+      const response = await axios.post("http://localhost:3000/api/add-disease", { name: trimmed });
+      if (response.data.success) {
+        const added = response.data.data;
+        setDiseases((prev) => [...prev, added].sort((a, b) => a.name.localeCompare(b.name)));
+        setPatientInput((prev) => ({
+          ...prev,
+          diseaseId: String(added.id),
+          diagnosis: added.name,
+        }));
+        setNewDiseaseName("");
+        setShowAddDisease(false);
+        Swal.fire({
+          title: "Disease Added",
+          text: `"${added.name}" has been added and selected.`,
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      } else {
+        Swal.fire({ title: "Error", text: response.data.error, icon: "error" });
+      }
+    } catch (err) {
+      const msg = err.response?.data?.error || err.message;
+      if (err.response?.status === 409) {
+        // Disease already exists — select it
+        const existing = err.response.data.data;
+        if (existing) {
+          setPatientInput((prev) => ({
+            ...prev,
+            diseaseId: String(existing.id),
+            diagnosis: existing.name,
+          }));
+          setNewDiseaseName("");
+          setShowAddDisease(false);
+          Swal.fire({
+            title: "Already Exists",
+            text: `"${existing.name}" is already in the list and has been selected.`,
+            icon: "info",
+            timer: 1500,
+            showConfirmButton: false,
+          });
+        }
+      } else {
+        Swal.fire({ title: "Error", text: msg, icon: "error" });
+      }
+    } finally {
+      setIsAddingDisease(false);
+    }
+  };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -334,18 +402,55 @@ const NewPatient = () => {
                 {/* Left Column — Dropdowns & Quantity */}
                 <div className='w-full lg:w-1/2 flex flex-col gap-0'>
                   <div className='formDiagnosis'>
-                    <select 
-                      id="diseaseId" name="diseaseId" 
-                      value={patientInput.diseaseId} onChange={handleSetPatientInput} 
-                      className='w-full p-2 rounded-lg border border-gray-300 outline-none text-sm focus:border-[#b01c34] transition-colors'
-                    >
-                      <option value="">Select Diagnosis</option>
-                      {diseases && diseases.length > 0 ? (
-                        diseases.map((disease) => (
-                          <option key={disease.id} value={disease.id}>{disease.name}</option>
-                        ))
-                      ) : null}
-                    </select>
+                    <div className='flex flex-col gap-2'>
+                      <div className='flex items-center gap-2'>
+                        <select 
+                          id="diseaseId" name="diseaseId" 
+                          value={patientInput.diseaseId} onChange={handleSetPatientInput} 
+                          className='flex-1 p-2 rounded-lg border border-gray-300 outline-none text-sm focus:border-[#b01c34] transition-colors'
+                        >
+                          <option value="">Select Diagnosis</option>
+                          {diseases && diseases.length > 0 ? (
+                            diseases.map((disease) => (
+                              <option key={disease.id} value={disease.id}>{disease.name}</option>
+                            ))
+                          ) : null}
+                        </select>
+                        <button
+                          type="button"
+                          onClick={() => setShowAddDisease(!showAddDisease)}
+                          className={`shrink-0 w-9 h-9 rounded-lg flex items-center justify-center text-sm transition-colors ${
+                            showAddDisease 
+                              ? 'bg-gray-200 text-gray-600' 
+                              : 'bg-[#b01c34] text-white hover:bg-[#8f1629]'
+                          }`}
+                          title={showAddDisease ? 'Cancel' : 'Add new disease'}
+                        >
+                          <i className={`fa-solid ${showAddDisease ? 'fa-xmark' : 'fa-plus'} text-xs`}></i>
+                        </button>
+                      </div>
+                      {showAddDisease && (
+                        <div className='flex items-center gap-2 animate-in fade-in'>
+                          <input
+                            type="text"
+                            value={newDiseaseName}
+                            onChange={(e) => setNewDiseaseName(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddDisease(); } }}
+                            placeholder="Enter disease name..."
+                            className='flex-1 p-2 rounded-lg border border-gray-300 outline-none text-sm focus:border-[#b01c34] transition-colors'
+                            autoFocus
+                          />
+                          <button
+                            type="button"
+                            onClick={handleAddDisease}
+                            disabled={!newDiseaseName.trim() || isAddingDisease}
+                            className='shrink-0 px-3 py-2 rounded-lg bg-[#b01c34] text-white text-sm font-medium hover:bg-[#8f1629] transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+                          >
+                            {isAddingDisease ? 'Adding...' : 'Add'}
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   <div className='formDiagnosis'>

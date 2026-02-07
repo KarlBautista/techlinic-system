@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 
 const { getWeeklyPatients, getMonthyPatients, getQuarterlyPatient, getYearlyPatientCount, getWeeklyPatientsPerDepartment, getMonthlyPatientsPerDepartment,
-getQuarterlyPatientsPerDepartment, getYearlyPatientsPerDepartment, getWeeklyTopDiagnoses, getMonthlyTopDiagnoses, getQuarterlyTopDiagnoses, getYearlyTopDiagnoses
+getQuarterlyPatientsPerDepartment, getYearlyPatientsPerDepartment, getWeeklyTopDiagnoses, getMonthlyTopDiagnoses, getQuarterlyTopDiagnoses, getYearlyTopDiagnoses,
+getMostUsedMedicines
  } = require("../controllers/analyticsController");
 
 router.get("/get-weekly-patients", getWeeklyPatients);
@@ -17,4 +18,5 @@ router.get("/get-weekly-top-diagnoses", getWeeklyTopDiagnoses);
 router.get("/get-monthly-top-diagnoses", getMonthlyTopDiagnoses);
 router.get("/get-quarterly-top-diagnoses", getQuarterlyTopDiagnoses);
 router.get("/get-yearly-top-diagnoses", getYearlyTopDiagnoses);
+router.get("/get-most-used-medicines", getMostUsedMedicines);
 module.exports = router;

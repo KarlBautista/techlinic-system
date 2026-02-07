@@ -4,7 +4,7 @@ const supabase = require("../config/supabaseClient");
 const getAllDiseases = async (req, res) => {
     console.log('gumagana ako diseases')
     try {
-        const { data: diseasesData, error: diseasesError } = await supabase.from("diseases").select("*");
+        const { data: diseasesData, error: diseasesError } = await supabase.from("diseases").select("*").order("name", { ascending: true });
 
         if (diseasesError) {
             console.error("Error getting all diseases");
@@ -14,6 +14,47 @@ const getAllDiseases = async (req, res) => {
         
     } catch (err) {
         console.error(`Something went wrong getting all diseases: ${err.message}`);
+        return res.status(500).json({ success: false, error: err.message });
+    }
+}
+
+const addDisease = async (req, res) => {
+    try {
+        const { name } = req.body;
+        if (!name || !name.trim()) {
+            return res.status(400).json({ success: false, error: "Disease name is required" });
+        }
+
+        const trimmedName = name.trim();
+
+        // Check if already exists (case-insensitive)
+        const { data: existing, error: checkError } = await supabase
+            .from("diseases")
+            .select("id, name")
+            .ilike("name", trimmedName)
+            .maybeSingle();
+
+        if (checkError) {
+            return res.status(500).json({ success: false, error: checkError.message });
+        }
+
+        if (existing) {
+            return res.status(409).json({ success: false, error: "Disease already exists", data: existing });
+        }
+
+        const { data: newDisease, error: insertError } = await supabase
+            .from("diseases")
+            .insert({ name: trimmedName })
+            .select()
+            .single();
+
+        if (insertError) {
+            return res.status(500).json({ success: false, error: insertError.message });
+        }
+
+        return res.status(201).json({ success: true, data: newDisease });
+    } catch (err) {
+        console.error(`Error adding disease: ${err.message}`);
         return res.status(500).json({ success: false, error: err.message });
     }
 }
@@ -112,5 +153,6 @@ const getAllNumberOfDiseases = async (req, res) => {
 
 module.exports = {
     getAllDiseases,
-    getAllNumberOfDiseases
+    getAllNumberOfDiseases,
+    addDisease
 }
