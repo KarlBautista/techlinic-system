@@ -11,7 +11,6 @@ import Analytics from "../pages/newAnalytics";
 import Notifications from "../pages/Notifications";
 import PersonnelList from "../pages/PersonnelList"
 import Settings from "../pages/Settings";
-import AddPersonnel from "../pages/AddPersonnel";
 import AddDiagnosis from "../pages/AddDiagnosis";
 import LandingPage from "../pages/LandingPage"
 import ProtectedRoute from "../components/ProtectedRoute";
@@ -29,7 +28,6 @@ const router = createBrowserRouter([
   { path: "/notifications", element: <ProtectedRoute><Notifications /></ProtectedRoute> },
   { path: "/personnel-list", element: <ProtectedRoute><PersonnelList /></ProtectedRoute> },
   { path: "/settings", element: <ProtectedRoute><Settings /></ProtectedRoute> },
-  { path: "/add-personnel", element: <ProtectedRoute><AddPersonnel /></ProtectedRoute> },
   { path: "/add-diagnosis/:recordId", element: <ProtectedRoute><AddDiagnosis /></ProtectedRoute> }
 ]);
 

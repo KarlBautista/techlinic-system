@@ -200,7 +200,22 @@ const IndividualRecord = () => {
               </span>
             </div>
             <button 
-              onClick={() => navigate(`/new-patient?studentId=${studentId}`)}
+              onClick={() => navigate('/new-patient', { 
+                state: { 
+                  patientData: {
+                    studentId: studentId,
+                    firstName: patientRecord?.first_name || '',
+                    lastName: patientRecord?.last_name || '',
+                    email: patientRecord?.email || '',
+                    contactNumber: patientRecord?.contact_number || '',
+                    yearLevel: patientRecord?.year_level || '',
+                    department: patientRecord?.department || '',
+                    sex: patientRecord?.sex || '',
+                    dateOfBirth: patientRecord?.date_of_birth || patientRecord?.dob || '',
+                    address: patientRecord?.address || '',
+                  }
+                }
+              })}
               className='inline-flex items-center gap-2 px-3 py-1.5 bg-[#b01c34] hover:bg-[#8f1629] text-white text-xs font-medium rounded-lg transition-colors'
             >
               <i className='fa-solid fa-plus text-[10px]'></i>

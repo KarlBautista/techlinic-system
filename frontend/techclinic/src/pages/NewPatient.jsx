@@ -3,7 +3,7 @@ import Navigation from '../components/newNavigation'
 import {useState} from 'react'
 import useData from '../store/useDataStore'
 import useAuth from '../store/useAuthStore'
-import { useSearchParams } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import { useEffect } from 'react'
 import useMedicine from "../store/useMedicineStore";
@@ -14,7 +14,7 @@ const NewPatient = () => {
   const { insertRecord, getRecords, getRecordsFromExistingPatient } = useData();
   const { authenticatedUser, userProfile } = useAuth();
   const { medicines } = useMedicine();
-  const [searchParams] = useSearchParams();
+  const location = useLocation();
   const [studentInformation, setStudentInformation] = useState(null);
   const [diseases, setDiseases] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -43,13 +43,26 @@ const NewPatient = () => {
     attendingPhysicianId: authenticatedUser?.id || null,
   });
 
-  // Pre-fill studentId from URL search params (e.g., from "New Visit" button)
+  // Pre-fill patient data from navigation state (e.g., from "New Visit" button)
   useEffect(() => {
-    const urlStudentId = searchParams.get('studentId');
-    if (urlStudentId) {
-      setPatientInput((prev) => ({ ...prev, studentId: urlStudentId }));
+    const passedData = location.state?.patientData;
+    if (passedData) {
+      setPatientInput((prev) => ({
+        ...prev,
+        studentId: passedData.studentId || '',
+        firstName: passedData.firstName || '',
+        lastName: passedData.lastName || '',
+        email: passedData.email || '',
+        contactNumber: passedData.contactNumber || '',
+        yearLevel: passedData.yearLevel || '',
+        department: passedData.department || '',
+        sex: passedData.sex || '',
+        dateOfBirth: passedData.dateOfBirth ? formatDateForInput(passedData.dateOfBirth) : '',
+        address: passedData.address || '',
+      }));
+      setStudentInformation(passedData); // Mark as existing student
     }
-  }, [searchParams]);
+  }, [location.state]);
 
   const formatDateForInput = (val) => {
     if (!val) return '';
