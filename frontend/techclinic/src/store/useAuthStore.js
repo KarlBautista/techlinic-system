@@ -272,6 +272,109 @@ const useAuth = create(
         }
     },
     
+    // Update user profile in database
+    updateProfile: async (updates) => {
+        try {
+            const userId = get().authenticatedUser?.id;
+            if (!userId) {
+                console.error("No authenticated user to update profile for");
+                return { success: false, error: "Not authenticated" };
+            }
+
+            const { data, error } = await supabase
+                .from("users")
+                .update(updates)
+                .eq("id", userId)
+                .select()
+                .single();
+
+            if (error) {
+                console.error("Error updating profile:", error.message);
+                return { success: false, error: error.message };
+            }
+
+            console.log("✅ Profile updated:", data);
+            set({ userProfile: data });
+            return { success: true, data };
+        } catch (err) {
+            console.error("Error updating profile:", err);
+            return { success: false, error: err.message };
+        }
+    },
+
+    // Upload signature to Supabase Storage and save URL to profile
+    uploadSignature: async (dataUrl) => {
+        try {
+            const userId = get().authenticatedUser?.id;
+            if (!userId) {
+                return { success: false, error: "Not authenticated" };
+            }
+
+            // Convert base64 data URL to blob
+            const response = await fetch(dataUrl);
+            const blob = await response.blob();
+
+            const fileName = `${userId}.png`;
+
+            // Upload to Supabase Storage (upsert to overwrite existing)
+            const { data: uploadData, error: uploadError } = await supabase.storage
+                .from("signatures")
+                .upload(fileName, blob, {
+                    contentType: "image/png",
+                    upsert: true,
+                });
+
+            if (uploadError) {
+                console.error("Error uploading signature:", uploadError.message);
+                return { success: false, error: uploadError.message };
+            }
+
+            // Get the public URL
+            const { data: { publicUrl } } = supabase.storage
+                .from("signatures")
+                .getPublicUrl(fileName);
+
+            // Add cache-busting timestamp to URL
+            const signatureUrl = `${publicUrl}?t=${Date.now()}`;
+
+            // Save URL to user profile
+            const result = await get().updateProfile({ signature_url: signatureUrl });
+
+            if (!result.success) {
+                return result;
+            }
+
+            console.log("✅ Signature uploaded and saved:", signatureUrl);
+            return { success: true, url: signatureUrl };
+        } catch (err) {
+            console.error("Error uploading signature:", err);
+            return { success: false, error: err.message };
+        }
+    },
+
+    // Fetch a specific user's signature URL by their user ID
+    fetchUserSignature: async (userId) => {
+        try {
+            if (!userId) return null;
+
+            const { data, error } = await supabase
+                .from("users")
+                .select("signature_url, first_name, last_name, role")
+                .eq("id", userId)
+                .single();
+
+            if (error) {
+                console.error("Error fetching user signature:", error.message);
+                return null;
+            }
+
+            return data;
+        } catch (err) {
+            console.error("Error fetching user signature:", err);
+            return null;
+        }
+    },
+
     signOut: async () => {
         try {
             console.log("🚪 Signing out...");

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Navigation from '../components/newNavigation';
 import useAuth from '../store/useAuthStore';
-
+import SignaturePad from '../components/SignaturePad';
 
 
 const Settings = () => {
-  const { authenticatedUser, userProfile, password } = useAuth();
+  const { authenticatedUser, userProfile, password, updateProfile, uploadSignature } = useAuth();
   const fullName = `${userProfile?.first_name || ''} ${userProfile?.last_name || ''}`.trim() || 'N/A';
 
   const formatDateForInput = (val) => {
@@ -66,6 +66,9 @@ const getInitials = () => {
   const [editMode, setEditMode] = useState(false);
   const [saving, setSaving] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [showSignatureModal, setShowSignatureModal] = useState(false);
+  const [signatureSaving, setSignatureSaving] = useState(false);
+  const [signatureMessage, setSignatureMessage] = useState('');
 
   // displayed profile for UI-only edits
   const [displayedProfile, setDisplayedProfile] = useState(userProfile || {});
@@ -123,26 +126,50 @@ const getInitials = () => {
     setProfileMessage('');
     setSaving(true);
 
-    // UI-only: simulate save by updating local displayed profile only
     try {
-      const newProfile = {
-        ...displayedProfile,
+      const updates = {
         first_name: firstName || null,
         last_name: lastName || null,
         sex: sex || null,
         address: address || null,
         date_of_birth: dateOfBirth || null,
-        role: role || null,
       };
 
-      setDisplayedProfile(newProfile);
-      setProfileMessage('Saved (UI-only)');
-      setShowProfileModal(false);
+      const result = await updateProfile(updates);
+
+      if (result.success) {
+        setDisplayedProfile(result.data);
+        setProfileMessage('Profile saved successfully!');
+        setShowProfileModal(false);
+      } else {
+        setProfileMessage('Save failed: ' + (result.error || 'Unknown error'));
+      }
     } catch (err) {
-      console.error('Save profile (UI-only) failed:', err);
+      console.error('Save profile failed:', err);
       setProfileMessage('Save failed: ' + (err?.message || err));
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleSaveSignature = async (dataUrl) => {
+    setSignatureSaving(true);
+    setSignatureMessage('');
+
+    try {
+      const result = await uploadSignature(dataUrl);
+
+      if (result.success) {
+        setSignatureMessage('Signature saved successfully!');
+        setShowSignatureModal(false);
+      } else {
+        setSignatureMessage('Failed to save signature: ' + (result.error || 'Unknown error'));
+      }
+    } catch (err) {
+      console.error('Save signature failed:', err);
+      setSignatureMessage('Failed: ' + (err?.message || err));
+    } finally {
+      setSignatureSaving(false);
     }
   };
 
@@ -335,6 +362,56 @@ const getInitials = () => {
             </div>
           </div>
         </div>
+
+        {/* Signature Card - Full Width */}
+        <div className='bg-white rounded-xl shadow-sm border border-gray-100 p-6'>
+          <div className='flex items-center justify-between mb-5'>
+            <div className='flex items-center gap-3'>
+              <div className='w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center'>
+                <i className='fa-solid fa-signature text-[#b01c34] text-sm'></i>
+              </div>
+              <div>
+                <h3 className='text-base font-semibold text-gray-800'>Digital Signature</h3>
+                <p className='text-xs text-gray-400 mt-0.5'>Used on prescriptions and medical certificates</p>
+              </div>
+            </div>
+            <button
+              onClick={() => { setSignatureMessage(''); setShowSignatureModal(true); }}
+              className='inline-flex items-center gap-2 px-4 py-2 bg-[#b01c34] hover:bg-[#8f1629] text-white text-sm font-medium rounded-lg transition-colors'
+            >
+              <i className='fa-solid fa-pen-nib text-xs'></i>
+              {userProfile?.signature_url ? 'Update Signature' : 'Add Signature'}
+            </button>
+          </div>
+
+          {userProfile?.signature_url ? (
+            <div className='border border-gray-200 rounded-lg p-6 bg-gray-50 flex flex-col items-center gap-3'>
+              <img
+                src={userProfile.signature_url}
+                alt="Your signature"
+                className='max-h-[120px] max-w-full object-contain'
+              />
+              <p className='text-xs text-gray-400'>Your current digital signature</p>
+            </div>
+          ) : (
+            <div className='border-2 border-dashed border-gray-200 rounded-lg p-8 flex flex-col items-center gap-3'>
+              <div className='w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center'>
+                <i className='fa-solid fa-pen-fancy text-2xl text-gray-300'></i>
+              </div>
+              <p className='text-sm font-medium text-gray-500'>No signature added yet</p>
+              <p className='text-xs text-gray-400'>Add your signature to appear on prescriptions and certificates</p>
+            </div>
+          )}
+
+          {signatureMessage && (
+            <div className={`mt-3 flex items-center gap-2 p-3 rounded-lg text-sm ${
+              signatureMessage.includes('success') ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600'
+            }`}>
+              <i className={`fa-solid ${signatureMessage.includes('success') ? 'fa-check-circle' : 'fa-circle-exclamation'} text-sm`}></i>
+              {signatureMessage}
+            </div>
+          )}
+        </div>
       </div>
     </div>
 
@@ -449,11 +526,60 @@ const getInitials = () => {
               <input value={address} onChange={(e) => setAddress(e.target.value)} className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#b01c34]/20 focus:border-[#b01c34] outline-none transition-all" placeholder="Full address" />
             </div>
 
+            {profileMessage && (
+              <div className={`flex items-center gap-2 p-3 rounded-lg text-sm ${
+                profileMessage.includes('success') ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600'
+              }`}>
+                <i className={`fa-solid ${profileMessage.includes('success') ? 'fa-check-circle' : 'fa-circle-exclamation'} text-sm`}></i>
+                {profileMessage}
+              </div>
+            )}
+
             <div className="flex justify-end gap-2 pt-2">
               <button type="button" onClick={() => setShowProfileModal(false)} className="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 hover:bg-gray-200 transition-colors">Cancel</button>
               <button type="submit" disabled={saving} className="px-4 py-2 rounded-lg text-sm font-medium bg-[#b01c34] text-white hover:bg-[#8f1629] transition-colors inline-flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">{saving ? <><span className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin'></span> Saving...</> : 'Save Changes'}</button>
             </div>
           </form>
+        </div>
+      </div>
+    )}
+
+    {/* Signature Modal */}
+    {showSignatureModal && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="absolute inset-0 bg-black/50 modal-backdrop-enter" onClick={() => setShowSignatureModal(false)}></div>
+        <div className="relative bg-white rounded-xl shadow-xl w-[90%] max-w-lg p-6 z-10 modal-content-enter max-h-[90vh] overflow-auto">
+          <div className='flex items-center gap-3 mb-5'>
+            <div className='w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center'>
+              <i className='fa-solid fa-signature text-[#b01c34] text-sm'></i>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-800">
+              {userProfile?.signature_url ? 'Update Your Signature' : 'Add Your Signature'}
+            </h3>
+          </div>
+
+          {signatureSaving ? (
+            <div className="flex flex-col items-center gap-3 py-8">
+              <span className='w-8 h-8 border-3 border-[#b01c34] border-t-transparent rounded-full animate-spin'></span>
+              <p className="text-sm text-gray-500">Saving signature...</p>
+            </div>
+          ) : (
+            <SignaturePad
+              onSave={handleSaveSignature}
+              existingSignature={userProfile?.signature_url}
+              onClear={() => {}}
+            />
+          )}
+
+          <div className="flex justify-end mt-4">
+            <button
+              type="button"
+              onClick={() => setShowSignatureModal(false)}
+              className="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 hover:bg-gray-200 transition-colors"
+            >
+              Close
+            </button>
+          </div>
         </div>
       </div>
     )}

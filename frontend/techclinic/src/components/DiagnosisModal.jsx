@@ -1,9 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react'
+import supabase from '../config/supabaseClient'
+import useAuth from '../store/useAuthStore'
 
 const DiagnosisModal = ({ open = false, onClose = () => {}, patient = {}, record = {}, diagnoses = [] }) => {
+  const { userProfile } = useAuth();
   const [activeTab, setActiveTab] = useState('record');
   const [isVisible, setIsVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const [physicianData, setPhysicianData] = useState(null);
+  const [showSignature, setShowSignature] = useState(true);
   const prevTabRef = useRef(activeTab);
 
   // Handle open/close transitions
@@ -14,6 +19,66 @@ const DiagnosisModal = ({ open = false, onClose = () => {}, patient = {}, record
       setActiveTab('record');
     }
   }, [open]);
+
+  // Fetch attending physician's signature and info when modal opens
+  useEffect(() => {
+    const fetchPhysicianSignature = async () => {
+      if (!open || !record) return;
+
+      // Try to fetch by attending_physician_id first
+      if (record.attending_physician_id) {
+        try {
+          const { data, error } = await supabase
+            .from('users')
+            .select('signature_url, first_name, last_name, role')
+            .eq('id', record.attending_physician_id)
+            .single();
+
+          if (!error && data) {
+            setPhysicianData(data);
+            return;
+          }
+        } catch (err) {
+          console.error('Error fetching physician by ID:', err);
+        }
+      }
+
+      // Fallback: try matching by attending_physician name
+      if (record.attending_physician) {
+        try {
+          const nameParts = record.attending_physician.trim().split(' ');
+          let query = supabase.from('users').select('signature_url, first_name, last_name, role');
+
+          if (nameParts.length >= 2) {
+            query = query.eq('first_name', nameParts[0]).eq('last_name', nameParts.slice(1).join(' '));
+          } else {
+            query = query.or(`first_name.eq.${nameParts[0]},last_name.eq.${nameParts[0]}`);
+          }
+
+          const { data, error } = await query.limit(1).single();
+
+          if (!error && data) {
+            setPhysicianData(data);
+            return;
+          }
+        } catch (err) {
+          console.error('Error fetching physician by name:', err);
+        }
+      }
+
+      setPhysicianData(null);
+    };
+
+    fetchPhysicianSignature();
+  }, [open, record]);
+
+  // Fallback: use logged-in user's profile when record has no attending physician
+  const effectivePhysician = physicianData || (userProfile ? {
+    signature_url: userProfile.signature_url,
+    first_name: userProfile.first_name,
+    last_name: userProfile.last_name,
+    role: userProfile.role,
+  } : null);
 
   const handleClose = () => {
     setIsClosing(true);
@@ -63,6 +128,21 @@ const DiagnosisModal = ({ open = false, onClose = () => {}, patient = {}, record
           <div className="flex items-center gap-3">
             {(activeTab === 'prescription' || activeTab === 'certificate') && (
               <>
+                {/* Signature Toggle */}
+                {effectivePhysician?.signature_url && (
+                  <label className="inline-flex items-center gap-2 cursor-pointer select-none">
+                    <span className="text-xs text-gray-500 font-medium">Signature</span>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={showSignature}
+                      onClick={() => setShowSignature(prev => !prev)}
+                      className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors duration-200 ${showSignature ? 'bg-[#b01c34]' : 'bg-gray-300'}`}
+                    >
+                      <span className={`inline-block h-3.5 w-3.5 rounded-full bg-white shadow-sm transform transition-transform duration-200 ${showSignature ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                    </button>
+                  </label>
+                )}
                 <button onClick={handlePrint} className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-sm flex items-center gap-1.5 transition-colors">
                   <i className="fa-solid fa-print"></i>
                   <span>Print</span>
@@ -104,10 +184,10 @@ const DiagnosisModal = ({ open = false, onClose = () => {}, patient = {}, record
               <RecordTab patient={patient} record={record} diagnoses={diagnoses} visitDate={visitDate} />
             )}
             {activeTab === 'prescription' && (
-              <PrescriptionTab patient={patient} diagnosis={primaryDiagnosis} visitDate={visitDate} visitTime={visitTime} />
+              <PrescriptionTab patient={patient} diagnosis={primaryDiagnosis} visitDate={visitDate} visitTime={visitTime} physicianData={effectivePhysician} attendingPhysician={record?.attending_physician} showSignature={showSignature} />
             )}
             {activeTab === 'certificate' && (
-              <CertificateTab patient={patient} diagnosis={primaryDiagnosis} visitDate={visitDate} />
+              <CertificateTab patient={patient} diagnosis={primaryDiagnosis} visitDate={visitDate} physicianData={effectivePhysician} attendingPhysician={record?.attending_physician} showSignature={showSignature} />
             )}
           </div>
         </div>
@@ -199,7 +279,7 @@ const RecordTab = ({ patient, record, diagnoses, visitDate }) => {
 };
 
 /* ────────────────────────── Prescription Tab ────────────────────────── */
-const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime }) => {
+const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime, physicianData, attendingPhysician, showSignature }) => {
   return (
     <div className="border border-gray-900 print:border-black">
       {/* TUP Header */}
@@ -294,8 +374,26 @@ const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime }) => {
       </div>
 
       <div className="px-4 pb-6 text-right text-sm text-gray-900">
-        <div className="inline-block border-t border-gray-900 pt-1 px-4">
-          Physician/Nurse On Duty
+        <div className="inline-block text-center">
+          {showSignature && physicianData?.signature_url ? (
+            <img
+              src={physicianData.signature_url}
+              alt="Physician signature"
+              className="max-h-[80px] max-w-[200px] object-contain mx-auto mb-1"
+            />
+          ) : (
+            <div className="h-[60px]"></div>
+          )}
+          <div className="border-t border-gray-900 pt-1 px-4">
+            <div className="font-medium">
+              {physicianData
+                ? `${physicianData.first_name || ''} ${physicianData.last_name || ''}`.trim()
+                : attendingPhysician || ''}
+            </div>
+            <div className="text-gray-600">
+              {physicianData?.role === 'DOCTOR' ? 'Attending Physician' : 'Attending Personnel'}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -303,7 +401,7 @@ const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime }) => {
 };
 
 /* ────────────────────────── Certificate Tab ────────────────────────── */
-const CertificateTab = ({ patient, diagnosis, visitDate }) => {
+const CertificateTab = ({ patient, diagnosis, visitDate, physicianData, attendingPhysician, showSignature }) => {
   return (
     <div className="border border-gray-900 print:border-black">
       {/* TUP Header */}
@@ -369,8 +467,26 @@ const CertificateTab = ({ patient, diagnosis, visitDate }) => {
         </p>
 
         <div className="mt-12 text-right">
-          <div className="inline-block border-t border-gray-900 pt-1 px-4">
-            Physician/Nurse On Duty
+          <div className="inline-block text-center">
+            {showSignature && physicianData?.signature_url ? (
+              <img
+                src={physicianData.signature_url}
+                alt="Physician signature"
+                className="max-h-[80px] max-w-[200px] object-contain mx-auto mb-1"
+              />
+            ) : (
+              <div className="h-[60px]"></div>
+            )}
+            <div className="border-t border-gray-900 pt-1 px-4">
+              <div className="font-medium">
+                {physicianData
+                  ? `${physicianData.first_name || ''} ${physicianData.last_name || ''}`.trim()
+                  : attendingPhysician || ''}
+              </div>
+              <div className="text-gray-600">
+                {physicianData?.role === 'DOCTOR' ? 'Attending Physician' : 'Attending Personnel'}
+              </div>
+            </div>
           </div>
         </div>
       </div>

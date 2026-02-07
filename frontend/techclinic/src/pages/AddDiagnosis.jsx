@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom'
 import { PageLoader, ButtonLoader } from '../components/PageLoader'
 const AddDiagnosis = () => {
   const { insertRecord, getRecords, getRecordsFromExistingPatient } = useData();
-  const { authenticatedUser } = useAuth();
+  const { authenticatedUser, userProfile } = useAuth();
   const { medicines, updateMedicine, getMedicines } = useMedicine();
   const { recordId } = useParams();
   const [patientData, setPatientData] = useState([]);
@@ -38,7 +38,8 @@ const AddDiagnosis = () => {
     quantity: "",
     treatment: "",
     notes: "",
-    attendingPhysician: authenticatedUser?.user_metadata?.full_name,
+    attendingPhysician: userProfile ? `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim() : authenticatedUser?.user_metadata?.full_name,
+    attendingPhysicianId: authenticatedUser?.id || null,
   });
 
 

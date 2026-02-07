@@ -11,7 +11,7 @@ import { PageLoader, ButtonLoader } from '../components/PageLoader'
 
 const NewPatient = () => {
   const { insertRecord, getRecords, getRecordsFromExistingPatient } = useData();
-  const { authenticatedUser } = useAuth();
+  const { authenticatedUser, userProfile } = useAuth();
   const { medicines } = useMedicine();
   const [studentInformation, setStudentInformation] = useState(null);
   const [diseases, setDiseases] = useState([]);
@@ -34,7 +34,8 @@ const NewPatient = () => {
     quantity: "",
     treatment: "",
     notes: "",
-    attendingPhysician: authenticatedUser?.user_metadata?.full_name,
+    attendingPhysician: userProfile ? `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim() : authenticatedUser?.user_metadata?.full_name,
+    attendingPhysicianId: authenticatedUser?.id || null,
   });
 
  
@@ -211,7 +212,8 @@ const NewPatient = () => {
           quantity: "",
           treatment: "",
           notes: "",
-          attendingPhysician: authenticatedUser?.user_metadata?.full_name,
+          attendingPhysician: userProfile ? `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim() : authenticatedUser?.user_metadata?.full_name,
+          attendingPhysicianId: authenticatedUser?.id || null,
         });
         getRecords();
       }

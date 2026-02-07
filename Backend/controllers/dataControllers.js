@@ -18,7 +18,8 @@ const insertRecord = async (req, res) => {
         quantity,
         treatment,
         notes,
-        attendingPhysician
+        attendingPhysician,
+        attendingPhysicianId
     } = req.body.formData;
     
     // Enhanced logging
@@ -41,6 +42,7 @@ const insertRecord = async (req, res) => {
             address,
             date_of_birth: dateOfBirth,
             attending_physician: attendingPhysician,
+            attending_physician_id: attendingPhysicianId || null,
             status: (diagnosis === "" || !medication || quantity === "" || treatment === "" || notes === "") ? "INCOMPLETE" : "COMPLETE"
         }).select();
         
@@ -256,7 +258,8 @@ const addDiagnosis = async (req, res) => {
         quantity,
         treatment,
         notes,
-        attendingPhysician
+        attendingPhysician,
+        attendingPhysicianId
     } = req.body.patientInput;
     console.log(`ito diagnosis: ${diagnosis}, ito naman diseaseId: ${diseaseId}`)
     try {
@@ -275,9 +278,10 @@ const addDiagnosis = async (req, res) => {
             res.status(500).json({ success: false, error: addDiagnosisError.message });
             return;
         }
-        const { error: updateCompleteStatusError } = await supabase.from("records").update({
-            status: "COMPLETE"
-        }).eq("id", id);
+        const updateData = { status: "COMPLETE" };
+        if (attendingPhysician) updateData.attending_physician = attendingPhysician;
+        if (attendingPhysicianId) updateData.attending_physician_id = attendingPhysicianId;
+        const { error: updateCompleteStatusError } = await supabase.from("records").update(updateData).eq("id", id);
         
         if (updateCompleteStatusError) {
             console.error(`Error update status: ${updateCompleteStatusError}`);
