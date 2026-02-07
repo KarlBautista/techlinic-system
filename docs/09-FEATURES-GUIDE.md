@@ -70,6 +70,7 @@ Detailed breakdown of every feature in the TechClinic system.
 - Filters `patientRecords` by today's date
 - Shows: Time, Patient Name, Student ID, Department, Status (COMPLETE/INCOMPLETE)
 - Color coding: Green tag = COMPLETE, Red tag = INCOMPLETE
+- **Hover effect:** All data cells show underline + patient name turns `#b01c34` (brand red) on row hover (`group-hover:underline` + `group-hover:text-[#b01c34]`)
 
 ### Role-Based Click Behavior:
 - **Doctor** clicks an INCOMPLETE record → navigates to `/add-diagnosis/:recordId`
@@ -96,10 +97,13 @@ Detailed breakdown of every feature in the TechClinic system.
 **Page:** Individual Record (`/individual-record/:studentId`)  
 **File:** `pages/IndividualRecord.jsx`
 
-- Displays patient personal info card
-- Lists all diagnoses in expandable accordions
-- Each diagnosis shows: diagnosis name, treatment, medication, quantity, notes, date
-- Action buttons: Medical Certificate, Prescription
+- Displays patient personal info card (profile banner with gradient, contact cards grid)
+- Lists all visit records with clickable rows → opens `DiagnosisModal`
+- Each record shows: diagnosis name, date, medication, and status badge
+- **New Visit button:** Passes the current patient's data via React Router navigation state to `/new-patient`, so the NewPatient form is pre-filled without an extra API call:
+  ```js
+  navigate('/new-patient', { state: { patientData: { studentId, firstName, lastName, ... } } })
+  ```
 
 ---
 
@@ -112,11 +116,15 @@ Detailed breakdown of every feature in the TechClinic system.
 1. **Personal Information** — same fields as Landing Page + attending physician
 2. **Medical Information:**
    - Disease/Condition (dropdown from diseases API)
+   - **Add Disease inline:** A "+" button next to the disease dropdown toggles an inline input + "Add" button. Calls `POST /api/add-disease` to add a new disease. On success, the disease list is refreshed, and the new disease is auto-selected in the dropdown.
    - Diagnosis description
    - Medication (dropdown from medicines inventory with stock display)
    - Quantity (validated against stock)
    - Treatment instructions
    - Notes
+
+### Pre-fill from Navigation State:
+- If navigated from Individual Record's "New Visit" button, the form is pre-filled with the patient's existing data from `location.state.patientData` — no additional API call is needed.
 
 ### Stock Validation:
 - When quantity is entered, checks if `quantity <= medication.stock_level`
@@ -140,6 +148,7 @@ Detailed breakdown of every feature in the TechClinic system.
 ### How it works:
 1. Pre-populates all patient info from the record
 2. Doctor selects disease, enters diagnosis, selects medication
+   - **Add Disease inline:** Same as NewPatient — a "+" button next to the disease dropdown toggles an inline input + "Add" button. Calls `POST /api/add-disease` to add a new disease. On success, the disease list is refreshed and the new disease is auto-selected.
 3. Validates stock availability
 4. On submit:
    - `PUT /api/insert-diagnosis` → inserts diagnosis + marks record COMPLETE
@@ -195,8 +204,10 @@ Detailed breakdown of every feature in the TechClinic system.
 - **Trend chart:** Line chart showing diagnosis cases over time
 - Same 4 timeframe options
 
-### Chart 4: Medicines Stock (Horizontal Bar Chart)
+### Chart 4: Lowest Stock (Horizontal Bar Chart)
+- **Title:** "Lowest Stock" (displayed in `MedicinesChart.jsx`)
 - Shows 5 medicines with the lowest stock levels
+- Subtitle: "Total medicines tracked: {count}"
 - Helps identify which medicines need restocking
 - No timeframe filter (current snapshot)
 
@@ -207,27 +218,49 @@ Detailed breakdown of every feature in the TechClinic system.
 **Page:** Notifications (`/notifications`)  
 **File:** `pages/Notifications.jsx`
 
-### Alert Trigger Logic:
-A disease triggers an alert when ALL conditions are met:
-1. Total patient population ≥ 10
-2. Disease has ≥ 5 cases
-3. Disease cases ≥ 10% of total population
+### Alert Types:
+1. **Disease Outbreak Alerts** — triggered when a disease exceeds threshold:
+   - Total patient population ≥ 10
+   - Disease has ≥ 5 cases
+   - Disease cases ≥ 10% of total population
+2. **Low Stock Medicine Alerts** — triggered when any medicine has `stock_level ≤ 10` (out-of-stock = 0 has a stronger message)
 
 ### How alerts are created:
 1. Navigation component calls `POST /api/check-alerts` every 30 seconds
-2. Backend calculates disease statistics
+2. Backend calculates disease statistics **and** checks medicine stock levels
 3. If thresholds exceeded → creates notification for **every** user
-4. Deduplication: same disease alert is not duplicated within 1 hour
+4. Deduplication: same alert is not duplicated within 1 hour
+
+### Redesigned Notification UI:
+- Modern card-based layout with icon + accent color per notification type:
+  - Disease alerts → amber icon (`fa-triangle-exclamation`)
+  - Low stock alerts → rose icon (`fa-pills`)
+  - System updates → blue icon (`fa-circle-info`)
+  - Default → gray icon (`fa-bell`)
+- Unread indicator: colored dot + bolder text styling
+- Inline delete button (appears on hover)
+- Clean header with unread count summary + "Mark all read" / "Clear all" buttons
 
 ### Notification Actions:
-- Mark individual as read
+- Click unread notification → auto-marks as read
 - Mark all as read
-- Delete individual notification (with confirmation)
-- Delete all notifications (with confirmation)
+- Delete individual notification (with SweetAlert confirmation)
+- Delete all notifications (with SweetAlert confirmation)
+
+### `_isFetching` Guard:
+- `useNotificationStore` uses an `_isFetching` boolean to prevent concurrent polling calls from stacking up. If a fetch is already in progress, subsequent calls are skipped.
 
 ### Browser Notifications:
 - On first load, requests browser notification permission
 - When new alerts are detected, shows browser push notification
+
+### Test Script:
+- **File:** `Backend/test-notifications.js`
+- Commands:
+  - `node test-notifications.js seed` — Inserts test patients + low-stock medicines
+  - `node test-notifications.js check` — Triggers alert check manually
+  - `node test-notifications.js cleanup` — Removes seeded test data
+  - `node test-notifications.js full` — Seed → Check → verify (no cleanup)
 
 ---
 
@@ -237,17 +270,23 @@ A disease triggers an alert when ALL conditions are met:
 **Page:** Personnel List (`/personnel-list`)  
 **File:** `pages/PersonnelList.jsx`
 
-- Table showing: Full Name, Role, Email, Sex, Date of Birth
-- Search by name
-- "Add Personnel" button → `/add-personnel`
+- **Modern table design** with responsive columns (Email hidden on mobile, Sex hidden on small screens)
+- Search by name or email
+- **Role filter dropdown:** filter personnel by role (All, Doctor, Nurse)
+- **Initials avatars:** each row shows a circular avatar with the user's initials
+- **Role badges:** color-coded badges — blue for Doctor, green for Nurse
+- **Hover underline** on data cells (matching Dashboard/PatientRecord style)
+- "Add Personnel" button opens an **inline modal** (no separate page/route)
 
-### Add Personnel
-**Page:** Add Personnel (`/add-personnel`)  
-**File:** `pages/AddPersonnel.jsx`
+### Add Personnel (Modal)
+**Component:** Inline modal within `PersonnelList.jsx`  
+**No separate route** — the `/add-personnel` route is no longer used.
 
+- Animated modal with backdrop (open/close transitions via `isModalVisible` / `isModalClosing` state)
 - Form fields: First Name, Last Name, Email, Password, Confirm Password, Address, DOB, Role (NURSE/DOCTOR), Sex
 - Password validation: minimum 8 characters, must match confirmation
 - On submit: creates Supabase Auth user + inserts into `users` table
+- On success: modal closes + personnel list refreshes automatically
 
 ---
 
@@ -281,12 +320,41 @@ A disease triggers an alert when ALL conditions are met:
 **Page:** Settings (`/settings`)  
 **File:** `pages/Settings.jsx`
 
-### Displays:
-- Login info: email, masked password (dots)
-- Personal info: name, gender, address, DOB, role
+### Layout:
+- **Profile Banner:** Gradient header with avatar initials, display name ("Dr. FirstName LastName"), user ID, role badge
+- Two-column info card grid (Personal Information + Login & Security)
+- Full-width **Digital Signature** card
 
-### Modals (UI-only):
-- Change Password modal (form exists but does **not** persist changes to backend)
-- Edit Profile modal (form exists but does **not** persist changes to backend)
+### Personal Information Card:
+- First/Last Name, Gender, DOB, Address, Role
+- "Edit Profile" button → opens **Edit Profile modal** (changes **are** persisted via `updateProfile()` → Supabase `users` table)
 
-> **Note:** Settings save functionality is UI-only — changes are not actually saved to the database.
+### Login & Security Card:
+- Email, masked password, account status, last sign-in timestamp
+- "Change" button → opens Change Password modal (UI-only, not yet wired to backend)
+
+### Digital Signature Card:
+- Shows current signature image (from `userProfile.signature_url`) or empty placeholder
+- "Add Signature" / "Update Signature" button → opens **Signature Modal**
+- **Signature Modal** embeds the `SignaturePad` component:
+  - **Draw mode:** Canvas-based signature drawing (via `react-signature-canvas`)
+  - **Upload mode:** Upload a PNG/JPG image file (max 2MB)
+  - Clear and save buttons
+- On save: `uploadSignature(dataUrl)` converts to blob → uploads to Supabase Storage (`signatures` bucket) → saves public URL to `users.signature_url`
+
+## Feature 14: Signature System
+
+### SignaturePad Component
+**File:** `components/SignaturePad.jsx`
+
+- Two input modes: **Draw** (canvas) and **Upload** (file input)
+- Manual canvas trimming (avoids `trim-canvas` ESM/CJS compatibility issues with Vite)
+- Props: `onSave(dataUrl)`, `existingSignature`, `onClear()`
+- File upload validation: image types only, max 2MB
+
+### Signature in DiagnosisModal
+**File:** `components/DiagnosisModal.jsx`
+
+- When a record is opened, the modal fetches the attending physician's signature via `attending_physician_id`
+- Queries `users` table for `signature_url`, `first_name`, `last_name`, `role`
+- Renders the signature image in the diagnosis view if available
