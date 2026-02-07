@@ -202,4 +202,4 @@ const PatientCountsChart = () => {
   );
 };
 
-export default PatientCountsChart;
+export default React.memo(PatientCountsChart);

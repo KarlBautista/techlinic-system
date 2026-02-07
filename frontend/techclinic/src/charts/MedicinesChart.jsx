@@ -62,4 +62,4 @@ const MedicinesChart = () => {
   )
 }
 
-export default MedicinesChart;
+export default React.memo(MedicinesChart);

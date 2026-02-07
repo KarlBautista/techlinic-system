@@ -1,103 +1,61 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import Navigation from '../components/newNavigation'
-import axios from 'axios'
 import Swal from 'sweetalert2'
-import useAuth from '../store/useAuthStore' 
+import useAuth from '../store/useAuthStore'
+import useNotificationStore, { requestNotificationPermission } from '../store/useNotificationStore'
 
 const Notifications = () => {
-    const { authenticatedUser } = useAuth(); 
-    const [notifications, setNotifications] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [unreadCount, setUnreadCount] = useState(0);
+    const { authenticatedUser } = useAuth();
+    const {
+        notifications,
+        unreadCount,
+        isLoading,
+        fetchNotifications,
+        checkForAlerts,
+        markAsRead,
+        markAllAsRead,
+        deleteNotification,
+        deleteAllNotifications
+    } = useNotificationStore();
 
-const fetchNotifications = async () => {
-    if (!authenticatedUser?.id) return;
-
-    try {
-        const response = await axios.get(
-            `http://localhost:3000/api/user/${authenticatedUser.id}`
-        );
-        
-        if (response.data.success) {
-            setNotifications(response.data.notifications);
-            setUnreadCount(response.data.unreadCount);
-        }
-        
-        setIsLoading(false);
-    } catch (err) {
-        console.error('Error fetching notifications:', err);
-        setIsLoading(false);
-    }
-};
-
-    // Check for new alerts (this runs every 10 seconds)
-  const checkForAlerts = async () => {
-    try {
-       await axios.post('http://localhost:3000/api/check-alerts');
-        fetchNotifications();
-    } catch (err) {
-        console.error('Error checking for alerts:', err);
-    }
-};
+    // Request notification permission on mount
+    useEffect(() => {
+        requestNotificationPermission();
+    }, []);
 
     useEffect(() => {
         if (!authenticatedUser?.id) return;
 
         // Initial fetch
-        fetchNotifications();
+        fetchNotifications(authenticatedUser.id);
         
         // Check for alerts immediately
-        checkForAlerts();
+        checkForAlerts(authenticatedUser.id);
         
-        // Set up polling every 10 seconds
+        // Set up polling every 30 seconds
         const intervalId = setInterval(() => {
-            checkForAlerts();
-        }, 10000); // 10 seconds
+            checkForAlerts(authenticatedUser.id);
+        }, 30000);
         
         // Cleanup interval on unmount
         return () => clearInterval(intervalId);
-    }, [authenticatedUser?.id]);
+    }, [authenticatedUser?.id, fetchNotifications, checkForAlerts]);
 
-    const markNotificationAsRead = async (notificationId) => {
-        try {
-            const response = await axios.patch(
-                `http://localhost:3000/api/${notificationId}/read`
-            );
-            
-            if (response.data.success) {
-                // Update local state
-                setNotifications(prev => 
-                    prev.map(notif => 
-                        notif.id === notificationId 
-                            ? { ...notif, is_read: true }
-                            : notif
-                    )
-                );
-                setUnreadCount(prev => Math.max(0, prev - 1));
-            }
-        } catch (err) {
-            console.error('Error marking as read:', err);
-        }
+    const handleMarkAsRead = async (notificationId) => {
+        await markAsRead(notificationId);
     };
 
-    const deleteNotification = async (notificationId) => {
-        try {
-            const response = await axios.delete(
-                `http://localhost:3000/api/notifications/${notificationId}`
-            );
-            
-            if (response.data.success) {
-                setNotifications(prev => prev.filter(notif => notif.id !== notificationId));
-                Swal.fire({
-                    title: 'Deleted!',
-                    text: 'Notification has been deleted.',
-                    icon: 'success',
-                    timer: 1500,
-                    showConfirmButton: false
-                });
-            }
-        } catch (err) {
-            console.error('Error deleting notification:', err);
+    const handleDeleteNotification = async (notificationId) => {
+        const result = await deleteNotification(notificationId);
+        if (result?.success) {
+            Swal.fire({
+                title: 'Deleted!',
+                text: 'Notification has been deleted.',
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        } else {
             Swal.fire({
                 title: 'Error',
                 text: 'Failed to delete notification',
@@ -106,15 +64,9 @@ const fetchNotifications = async () => {
         }
     };
 
-    const markAllAsRead = async () => {
-    try {
-        const response = await axios.patch(
-            `http://localhost:3000/api/user/${authenticatedUser.id}/read-all`
-        );
-        
-        if (response.data.success) {
-            setNotifications(prev => prev.map(notif => ({ ...notif, is_read: true })));
-            setUnreadCount(0);
+    const handleMarkAllAsRead = async () => {
+        const result = await markAllAsRead(authenticatedUser.id);
+        if (result?.success) {
             Swal.fire({
                 title: 'Success!',
                 text: 'All notifications marked as read.',
@@ -123,12 +75,9 @@ const fetchNotifications = async () => {
                 showConfirmButton: false
             });
         }
-    } catch (err) {
-        console.error('Error marking all as read:', err);
-    }
-};
+    };
 
-    const clearAllNotifications = () => {
+    const handleClearAllNotifications = () => {
         Swal.fire({
             title: 'Clear all notifications?',
             text: "This action cannot be undone",
@@ -139,24 +88,16 @@ const fetchNotifications = async () => {
             confirmButtonText: 'Yes, clear all'
         }).then(async (result) => {
             if (result.isConfirmed) {
-                try {
-                    const response = await axios.delete(
-                        `http://localhost:3000/api/user/${authenticatedUser.id}/all`
-                    );
-                    
-                    if (response.data.success) {
-                        setNotifications([]);
-                        setUnreadCount(0);
-                        Swal.fire({
-                            title: 'Cleared!',
-                            text: 'All notifications have been cleared.',
-                            icon: 'success',
-                            timer: 1500,
-                            showConfirmButton: false
-                        });
-                    }
-                } catch (err) {
-                    console.error('Error clearing notifications:', err);
+                const response = await deleteAllNotifications(authenticatedUser.id);
+                if (response?.success) {
+                    Swal.fire({
+                        title: 'Cleared!',
+                        text: 'All notifications have been cleared.',
+                        icon: 'success',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                } else {
                     Swal.fire({
                         title: 'Error',
                         text: 'Failed to clear notifications',
@@ -210,7 +151,7 @@ const fetchNotifications = async () => {
                             <div className='flex gap-2'>
                                 {unreadCount > 0 && (
                                     <button
-                                        onClick={markAllAsRead}
+                                        onClick={handleMarkAllAsRead}
                                         className='sm:px-4 sm:py-2 px-1 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-[.7rem] sm:text-sm font-medium transition-colors'
                                     >
                                         Mark All Read
@@ -218,7 +159,7 @@ const fetchNotifications = async () => {
                                 )}
                                 {notifications.length > 0 && (
                                     <button
-                                        onClick={clearAllNotifications}
+                                        onClick={handleClearAllNotifications}
                                         className='px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-medium transition-colors'
                                     >
                                         Clear All
@@ -246,7 +187,7 @@ const fetchNotifications = async () => {
                                 <div 
                                     key={notif.id} 
                                     className={`border ${!notif.is_read ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-white'} p-3 rounded-[10px] min-h-[80px] mt-2 w-full flex flex-col shadow-sm hover:shadow-md transition-shadow cursor-pointer`}
-                                    onClick={() => !notif.is_read && markNotificationAsRead(notif.id)}
+                                    onClick={() => !notif.is_read && handleMarkAsRead(notif.id)}
                                 >
                                     <div className='h-[40%] w-full flex justify-between items-center'>
                                         <p className='text-[1rem] font-bold text-gray-900 flex items-center gap-2'>
@@ -260,7 +201,7 @@ const fetchNotifications = async () => {
                                         <button
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                deleteNotification(notif.id);
+                                                handleDeleteNotification(notif.id);
                                             }}
                                             className='text-gray-400 hover:text-red-500 transition-colors'
                                             title='Delete notification'
