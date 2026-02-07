@@ -1,76 +1,67 @@
-import React, { useEffect, useState } from 'react'
-import Swal from 'sweetalert2';
-const MedicineForm = ({ medicine, onUpdate, onDelete, onClose }) => {
-  const [form, setForm] = useState({})
+import React, { useState } from 'react'
+import Swal from 'sweetalert2'
+import useMedicine from '../store/useMedicineStore'
+
+const AddMedicineModal = ({ onClose }) => {
+  const { insertMedicine } = useMedicine()
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [isClosing, setIsClosing] = useState(false)
+  const [form, setForm] = useState({
+    name: '',
+    generic: '',
+    brand: '',
+    type: '',
+    dosage: '',
+    unit: '',
+    stock: '',
+    batch: '',
+    expiry: ''
+  })
 
-  useEffect(() => {
-    setForm(prev => ({ ...prev, ...medicine }))
-  }, [medicine])
-
-  const handleChange = e => {
+  const handleChange = (e) => {
     const { name, value } = e.target
     setForm(prev => ({ ...prev, [name]: value }))
   }
 
   const handleClose = () => {
-    setIsClosing(true);
+    setIsClosing(true)
     setTimeout(() => {
-      setIsClosing(false);
-      if (onClose) onClose();
-    }, 150);
-  };
+      setIsClosing(false)
+      if (onClose) onClose()
+    }, 150)
+  }
 
-  const handleUpdate = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    if (onUpdate) onUpdate(form)
-    const response = await Swal.fire({ 
-        title: "Medicine update successfully",
-        text: "the updated medicine version will be display in the table",
-        icon: "success",
-        showConfirmButton: true,
-    });
-    handleClose();
-    if(response.isConfirmed){
-        handleClose();
-        window.location.reload();
+    if (isSubmitting) return
+    setIsSubmitting(true)
+
+    try {
+      const response = await insertMedicine(form)
+      if (!response.success) {
+        Swal.fire({
+          title: 'Something went wrong',
+          text: 'Could not add medicine, please retry',
+          icon: 'error',
+          showConfirmButton: true
+        })
+        return
+      }
+      const result = await Swal.fire({
+        title: 'Medicine Added Successfully',
+        text: 'The new medicine has been added to inventory',
+        icon: 'success',
+        showConfirmButton: true
+      })
+      if (result.isConfirmed) {
+        handleClose()
+        window.location.reload()
+      }
+    } catch (err) {
+      console.error(`Something went wrong adding medicine: ${err.message}`)
+    } finally {
+      setIsSubmitting(false)
     }
-  }
-
-  const handleDelete = async () => {
-    const response = await Swal.fire({ 
-        title: `Are you sure you want to delete this medicine (${form.id} - ${form.medicine_name})?`,
-        text: "deleting this will be permanently removed from table.",
-        showConfirmButton: true,
-        showCancelButton: true,
-        icon: "info",
-    });
-    if(response.isConfirmed) {
-        if (onDelete) onDelete(form.id);
-        const deleteRes = await Swal.fire({
-            title: "Medicine deleted successfully",
-            text: "The table will be updated",
-            icon: "success",
-            showConfirmButton: true,
-
-        });
-
-        if(deleteRes.isConfirmed) {
-            onClose();
-            window.location.reload();
-        }
-       
-    } 
-  }
-  
-  
-    function formatDateForInput(dateString) {
-        if (!dateString) return "";
-        const date = new Date(dateString);
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0"); 
-        const day = String(date.getDate()).padStart(2, "0");
-        return `${year}-${month}-${day}`; 
   }
 
   return (
@@ -83,7 +74,7 @@ const MedicineForm = ({ medicine, onUpdate, onDelete, onClose }) => {
 
       {/* Modal */}
       <form
-        onSubmit={handleUpdate}
+        onSubmit={handleSubmit}
         className={`relative z-10 w-[min(640px,92%)] bg-white rounded-2xl shadow-2xl overflow-hidden ${isClosing ? 'modal-content-exit' : 'modal-content-enter'}`}
         role="dialog"
         aria-modal="true"
@@ -93,12 +84,12 @@ const MedicineForm = ({ medicine, onUpdate, onDelete, onClose }) => {
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg bg-[#b01c34]/10 flex items-center justify-center">
               <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-[#b01c34]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
               </svg>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">Medicine Details</h3>
-              <p className="text-xs text-gray-500">Update or remove this medicine</p>
+              <h3 className="text-lg font-semibold text-gray-900">Add New Medicine</h3>
+              <p className="text-xs text-gray-500">Fill in the details to add to inventory</p>
             </div>
           </div>
           <button
@@ -117,11 +108,11 @@ const MedicineForm = ({ medicine, onUpdate, onDelete, onClose }) => {
           <label className="flex flex-col gap-1.5">
             <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">Medicine Name</span>
             <input
-              name="medicine_name"
-              value={form?.medicine_name || ''}
+              name="name"
+              value={form.name}
               onChange={handleChange}
               className="h-10 px-3 rounded-lg border border-gray-200 text-sm text-gray-800 bg-gray-50 focus:bg-white focus:border-[#b01c34] focus:ring-1 focus:ring-[#b01c34]/20 transition-all outline-none"
-              placeholder="Medicine name"
+              placeholder="Paracetamol"
               required
             />
           </label>
@@ -129,11 +120,11 @@ const MedicineForm = ({ medicine, onUpdate, onDelete, onClose }) => {
           <label className="flex flex-col gap-1.5">
             <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">Generic Name</span>
             <input
-              name="generic_name"
-              value={form.generic_name || ''}
+              name="generic"
+              value={form.generic}
               onChange={handleChange}
               className="h-10 px-3 rounded-lg border border-gray-200 text-sm text-gray-800 bg-gray-50 focus:bg-white focus:border-[#b01c34] focus:ring-1 focus:ring-[#b01c34]/20 transition-all outline-none"
-              placeholder="Generic name"
+              placeholder="Acetaminophen"
             />
           </label>
 
@@ -141,10 +132,10 @@ const MedicineForm = ({ medicine, onUpdate, onDelete, onClose }) => {
             <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">Brand / Manufacturer</span>
             <input
               name="brand"
-              value={form.brand || ''}
+              value={form.brand}
               onChange={handleChange}
               className="h-10 px-3 rounded-lg border border-gray-200 text-sm text-gray-800 bg-gray-50 focus:bg-white focus:border-[#b01c34] focus:ring-1 focus:ring-[#b01c34]/20 transition-all outline-none"
-              placeholder="Brand or manufacturer"
+              placeholder="ABC Pharma"
             />
           </label>
 
@@ -152,7 +143,7 @@ const MedicineForm = ({ medicine, onUpdate, onDelete, onClose }) => {
             <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">Type / Form</span>
             <input
               name="type"
-              value={form.type || ''}
+              value={form.type}
               onChange={handleChange}
               className="h-10 px-3 rounded-lg border border-gray-200 text-sm text-gray-800 bg-gray-50 focus:bg-white focus:border-[#b01c34] focus:ring-1 focus:ring-[#b01c34]/20 transition-all outline-none"
               placeholder="e.g. Tablet, Syrup, Injection"
@@ -163,18 +154,18 @@ const MedicineForm = ({ medicine, onUpdate, onDelete, onClose }) => {
             <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">Dosage</span>
             <input
               name="dosage"
-              value={form.dosage || ''}
+              value={form.dosage}
               onChange={handleChange}
               className="h-10 px-3 rounded-lg border border-gray-200 text-sm text-gray-800 bg-gray-50 focus:bg-white focus:border-[#b01c34] focus:ring-1 focus:ring-[#b01c34]/20 transition-all outline-none"
-              placeholder="e.g. 500 mg"
+              placeholder="500mg"
             />
           </label>
 
           <label className="flex flex-col gap-1.5">
             <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">Unit of Measure</span>
             <input
-              name="unit_of_measure"
-              value={form.unit_of_measure || ''}
+              name="unit"
+              value={form.unit}
               onChange={handleChange}
               className="h-10 px-3 rounded-lg border border-gray-200 text-sm text-gray-800 bg-gray-50 focus:bg-white focus:border-[#b01c34] focus:ring-1 focus:ring-[#b01c34]/20 transition-all outline-none"
               placeholder="e.g. mg, mL, IU"
@@ -184,32 +175,32 @@ const MedicineForm = ({ medicine, onUpdate, onDelete, onClose }) => {
           <label className="flex flex-col gap-1.5">
             <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">Stock Level</span>
             <input
-              name="stock_level"
-              value={form.stock_level || ''}
+              name="stock"
+              value={form.stock}
               onChange={handleChange}
               type="number"
               min="0"
               className="h-10 px-3 rounded-lg border border-gray-200 text-sm text-gray-800 bg-gray-50 focus:bg-white focus:border-[#b01c34] focus:ring-1 focus:ring-[#b01c34]/20 transition-all outline-none"
-              placeholder="Quantity in stock"
+              placeholder="100"
             />
           </label>
 
           <label className="flex flex-col gap-1.5">
             <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">Batch Number</span>
             <input
-              name="batch_number"
-              value={form.batch_number || ''}
+              name="batch"
+              value={form.batch}
               onChange={handleChange}
               className="h-10 px-3 rounded-lg border border-gray-200 text-sm text-gray-800 bg-gray-50 focus:bg-white focus:border-[#b01c34] focus:ring-1 focus:ring-[#b01c34]/20 transition-all outline-none"
-              placeholder="Batch number"
+              placeholder="B1234"
             />
           </label>
 
           <label className="flex flex-col gap-1.5 md:col-span-2">
             <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">Expiry Date</span>
             <input
-              name="expiry_date"
-              value={formatDateForInput(form.expiry_date) || ''}
+              name="expiry"
+              value={form.expiry}
               onChange={handleChange}
               type="date"
               className="h-10 px-3 rounded-lg border border-gray-200 text-sm text-gray-800 bg-gray-50 focus:bg-white focus:border-[#b01c34] focus:ring-1 focus:ring-[#b01c34]/20 transition-all outline-none max-w-xs"
@@ -218,37 +209,35 @@ const MedicineForm = ({ medicine, onUpdate, onDelete, onClose }) => {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100 bg-gray-50/50">
+        <div className="flex items-center justify-end gap-2 px-6 py-4 border-t border-gray-100 bg-gray-50/50">
           <button
             type="button"
-            onClick={handleDelete}
-            className="inline-flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg text-red-600 hover:bg-red-50 font-medium transition-colors cursor-pointer"
+            onClick={handleClose}
+            className="text-sm px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 font-medium transition-colors cursor-pointer"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-            </svg>
-            Delete
+            Cancel
           </button>
-
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={handleClose}
-              className="text-sm px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 font-medium transition-colors cursor-pointer"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="text-sm px-5 py-2 rounded-lg bg-[#b01c34] text-white hover:bg-[#8f1629] font-medium transition-colors shadow-sm cursor-pointer"
-            >
-              Update Medicine
-            </button>
-          </div>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="text-sm px-5 py-2 rounded-lg bg-[#b01c34] text-white hover:bg-[#8f1629] font-medium transition-colors shadow-sm cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed inline-flex items-center gap-2"
+          >
+            {isSubmitting ? (
+              <>
+                <svg className="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Adding...
+              </>
+            ) : (
+              'Add Medicine'
+            )}
+          </button>
         </div>
       </form>
     </div>
   )
 }
 
-export default MedicineForm
+export default AddMedicineModal

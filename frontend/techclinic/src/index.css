@@ -78,41 +78,43 @@
 /* FOR STUDENT INFORMATION */
 
 .formInfo {
-    @apply w-[45%] flex flex-col relative  flex-wrap mt-7
+    @apply w-[45%] flex flex-col relative flex-wrap mt-7
 }
 
 .formInfo input {
-    @apply border-1 p-2 rounded-[10px] outline-none
+    @apply border border-gray-300 p-2 rounded-lg outline-none text-sm transition-colors focus:border-[#b01c34]
 }
 
 .formInfo label {
-    @apply absolute left-2 top-1/4 transform -translate-y-0 transition-all duration-200  pointer-events-none bg-transparent px-1;
+    @apply absolute left-2 top-1/4 transform translate-y-0 transition-all duration-200 pointer-events-none bg-transparent px-1 text-gray-500;
     transform-origin: left top;
 }
 
 .formInfo input:focus + label,
 .formInfo input:not(:placeholder-shown) + label {
     transform: translateY(-1.8rem) scale(0.85) translateX(-.8rem);
-    color: gray;
+    color: #b01c34;
+    background: white;
 }
 
 .formDiagnosis {
-    @apply w-[90%] flex flex-col relative  flex-wrap mt-7
+    @apply w-[90%] flex flex-col relative flex-wrap mt-7
 }
 
 .formDiagnosis input {
-    @apply border-1 p-2 rounded-[10px] outline-none
+    @apply border border-gray-300 p-2 rounded-lg outline-none text-sm transition-colors focus:border-[#b01c34]
 }
 
 .formDiagnosis label {
-    @apply absolute left-2 top-1/4 transform -translate-y-0 transition-all duration-200  pointer-events-none bg-transparent px-1;
+    @apply absolute left-2 top-1/4 transform translate-y-0 transition-all duration-200 pointer-events-none bg-transparent px-1 text-gray-500;
     transform-origin: left top;
 }
 
 .formDiagnosis input:focus + label,
 .formDiagnosis input:not(:placeholder-shown) + label {
     transform: translateY(-1.8rem) scale(0.85) translateX(-.8rem);
-    color: gray;
+    color: #b01c34;
+    background: white;
 }
 
 .scrollbar::-webkit-scrollbar {
