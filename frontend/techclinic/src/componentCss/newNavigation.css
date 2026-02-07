@@ -16,6 +16,35 @@
     @apply hidden sm:flex 
 }
 
+/* ─── Nav Link Base ─── */
+.navLink {
+    @apply w-full py-2.5 px-3 text-sm font-medium flex gap-3 items-center rounded-lg cursor-pointer
+           transition-all duration-200 ease-in-out
+}
+
+.navLink img {
+    @apply h-4 xl:h-[18px] md:h-3.5 opacity-70
+}
+
+.navLink p { 
+    @apply text-xs lg:text-[0.8rem] xl:text-sm
+}
+
+/* ─── Active State ─── */
+.navActive {
+    @apply text-[#b01c34] bg-red-50/80
+}
+
+.navActive img {
+    @apply opacity-100
+}
+
+/* ─── Inactive State ─── */
+.navInactive {
+    @apply text-gray-600 hover:bg-gray-50 hover:text-gray-900
+}
+
+/* ─── Legacy classes (keeping for backward compat) ─── */
 .mainNavigation{
     @apply  w-full  py-3 font-semibold text-[.7rem] flex gap-2 items-center
 }

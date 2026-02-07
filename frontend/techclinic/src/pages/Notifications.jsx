@@ -130,11 +130,11 @@ const Notifications = () => {
 
     return (
         <div className='h-screen w-full flex flex-col sm:flex-row'>
-            <div className='h-[8%] w-full order-last sm:order-0 sm:w-[23%] sm:h-full md:w-[19%] lg:w-[17%]'>
+            <div className='h-[8%] w-full order-last sm:order-0 sm:w-[20%] sm:h-full md:w-[16%] lg:w-[14%]'>
                 <Navigation />
             </div>
             
-            <div className='h-[92%] min-w-[360px] sm:min-w-0 w-full sm:h-full sm:w-[77%] md:w-[81%] lg:w-[83%] overflow-auto p-6 flex flex-col gap-4'>
+            <div className='h-[92%] min-w-[360px] sm:min-w-0 w-full sm:h-full sm:w-[80%] md:w-[84%] lg:w-[86%] overflow-auto p-6 flex flex-col gap-4'>
                 <div className='w-full h-full flex flex-col items-center gap-5 scrollbar'>
                     <div className='w-full flex flex-col gap-2'>
                         <div className='flex justify-between items-center'>
