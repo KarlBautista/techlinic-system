@@ -1,11 +1,11 @@
 import { create } from "zustand";
-import axios from "axios";
+import api from "../lib/api";
 const useMedicine = create((set) => ({
     medicines: null,
     isLoading: false,
     insertMedicine: async (medicine) => {
         try {
-            const response = await axios.post("http://localhost:3000/api/insert-medicine", {
+            const response = await api.post("/insert-medicine", {
                 medicine
             });
            if(response.status === 200) {
@@ -24,7 +24,7 @@ const useMedicine = create((set) => ({
     getMedicines: async () => {
         try {
             set({ isLoading: true });
-            const response = await axios.get("http://localhost:3000/api/get-medicines");
+            const response = await api.get("/get-medicines");
             if(response.status === 200) {
                 set({ medicines: response.data.data, isLoading: false });
                 return;
@@ -41,7 +41,7 @@ const useMedicine = create((set) => ({
     },
     updateMedicine: async (medicine) => {
         try {
-            const response = await axios.put("http://localhost:3000/api/update-medicine", {
+            const response = await api.put("/update-medicine", {
                 medicine
             });
             if(response.status === 200) {
@@ -56,7 +56,7 @@ const useMedicine = create((set) => ({
     },
     deleteMedicine: async (medicineId) => {
         try {
-            const response = await axios.delete(`http://localhost:3000/api/delete-medicine/${medicineId}`);
+            const response = await api.delete(`/delete-medicine/${medicineId}`);
             if(response.status === 200) {
                 return { success: true };
             } else {

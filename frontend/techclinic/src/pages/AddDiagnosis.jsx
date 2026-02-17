@@ -7,7 +7,7 @@ import Swal from 'sweetalert2'
 import { useEffect } from 'react'
 import useMedicine from "../store/useMedicineStore";
 import { useParams } from 'react-router-dom'
-import axios from 'axios'
+import api from '../lib/api'
 import { useNavigate } from 'react-router-dom'
 import { PageLoader, ButtonLoader } from '../components/PageLoader'
 const AddDiagnosis = () => {
@@ -80,7 +80,7 @@ const AddDiagnosis = () => {
   useEffect(() => {
     const getRecord = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/get-record-to-diagnose/${recordId}`);
+        const response = await api.get(`/get-record-to-diagnose/${recordId}`);
         if (response.status === 200) {
 
           setPatientData(response.data.data);
@@ -102,7 +102,7 @@ const AddDiagnosis = () => {
   useEffect(() => {
     const getAllDiseases = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/get-all-diseases");
+        const response = await api.get("/get-all-diseases");
 
         if (response.data.success) {
 
@@ -166,7 +166,7 @@ const AddDiagnosis = () => {
 
     setIsAddingDisease(true);
     try {
-      const response = await axios.post("http://localhost:3000/api/add-disease", { name: trimmed });
+      const response = await api.post("/add-disease", { name: trimmed });
       if (response.data.success) {
         const added = response.data.data;
         setDiseases((prev) => [...prev, added].sort((a, b) => a.name.localeCompare(b.name)));
@@ -247,7 +247,7 @@ const AddDiagnosis = () => {
     }
 
     try {
-      const response = await axios.put("http://localhost:3000/api/insert-diagnosis", {
+      const response = await api.put("/insert-diagnosis", {
         patientInput
       });
       if (response.status === 200) {

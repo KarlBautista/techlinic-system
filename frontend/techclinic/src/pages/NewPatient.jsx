@@ -7,7 +7,7 @@ import { useLocation } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import { useEffect } from 'react'
 import useMedicine from "../store/useMedicineStore";
-import axios from 'axios'
+import api from '../lib/api'
 import { PageLoader, ButtonLoader } from '../components/PageLoader'
 
 const NewPatient = () => {
@@ -128,7 +128,7 @@ const NewPatient = () => {
   useEffect(() => {
     const getAllDiseases = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/get-all-diseases");
+        const response = await api.get("/get-all-diseases");
 
         if(response.data.success) {
           setDiseases(response.data.data);
@@ -186,7 +186,7 @@ const NewPatient = () => {
 
     setIsAddingDisease(true);
     try {
-      const response = await axios.post("http://localhost:3000/api/add-disease", { name: trimmed });
+      const response = await api.post("/add-disease", { name: trimmed });
       if (response.data.success) {
         const added = response.data.data;
         setDiseases((prev) => [...prev, added].sort((a, b) => a.name.localeCompare(b.name)));

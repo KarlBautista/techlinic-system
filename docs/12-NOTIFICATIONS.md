@@ -1,6 +1,6 @@
 # 12. Notifications System
 
-The notification system monitors disease statistics and alerts clinic staff when potential outbreaks are detected.
+The notification system monitors disease statistics **and medicine stock levels**, alerting clinic staff when potential outbreaks are detected or medicines are running low.
 
 ---
 
@@ -81,9 +81,17 @@ Step 5: Deduplication check
 
 Step 6: Create notifications for ALL users
         For each alert disease × each user:
-        → INSERT INTO notifications (user_id, title, message, metadata)
+        → INSERT INTO notifications (user_id, title, message)
 
-Result: Every user gets notified about every disease alert
+Step 7: Check low stock medicines
+        SELECT * FROM medicines WHERE stock_level <= 10
+
+Step 8: Create low stock notifications for ALL users
+        For each low-stock medicine × each user:
+        → Dedup check (same title within 1 hour)
+        → INSERT INTO notifications
+
+Result: Every user gets notified about every disease alert AND low stock medicine
 ```
 
 ---
@@ -112,19 +120,50 @@ Result: Every user gets notified about every disease alert
 
 ## Frontend Notification Features
 
+### `_isFetching` Guard
+The `useNotificationStore` uses an `_isFetching` boolean flag to prevent concurrent polling calls from overlapping:
+```js
+_isFetching: false,
+
+fetchNotifications: async (userId) => {
+    if (get()._isFetching) return; // Prevent concurrent fetches
+    set({ _isFetching: true, ... });
+    // ... fetch logic ...
+    set({ _isFetching: false });
+}
+```
+This prevents race conditions when both the Navigation sidebar and Notifications page polling are active.
+
 ### Navigation Badge
 - Red badge on the bell icon in the sidebar
 - Shows count of unread notifications
 - Updates every 30 seconds
 
-### Notifications Page
+### Redesigned Notifications Page
+The notifications page (`Notifications.jsx`) has a modern card-based UI:
+
+- **Header:** Page title with unread count + "Mark all read" / "Clear all" action buttons
+- **Notification cards:** Each card includes:
+  - Context-aware icon + color based on notification title:
+    - Disease/alert → amber (`fa-triangle-exclamation`)
+    - Stock/medicine/inventory → rose (`fa-pills`)
+    - System/update → blue (`fa-circle-info`)
+    - Default → gray (`fa-bell`)
+  - Unread indicator: colored dot + bolder text  
+  - Relative timestamp ("3m ago", "2h ago", "5d ago")
+  - Hover-to-reveal delete button
+- **Empty state:** Bell-slash icon + "No notifications" message
+- **Click-to-read:** Clicking an unread notification auto-marks it as read
+- Emoji stripping: Titles are cleaned of emojis (`cleanTitle()`) for consistent display
+
+### Actions
 | Action | API Call | Effect |
 |--------|---------|--------|
 | View notifications | `GET /api/user/:userId` | List sorted by date (newest first) |
-| Mark one as read | `PATCH /api/:id/read` | Changes `is_read` to true |
+| Click unread notification | `PATCH /api/:id/read` | Auto-marks as read |
 | Mark all as read | `PATCH /api/user/:userId/read-all` | All unread → read |
-| Delete one | `DELETE /api/:id` | Removes with SweetAlert confirmation |
-| Delete all | `DELETE /api/user/:userId/all` | Removes all with confirmation |
+| Delete one | `DELETE /api/:id` | SweetAlert confirmation → removes |
+| Delete all | `DELETE /api/user/:userId/all` | SweetAlert confirmation → removes all |
 
 ### Time Display
 Notifications show relative time:
@@ -175,3 +214,26 @@ Next check (30s later):
   Same alert? → Skipped (deduplication: 1 hour window)
   New alert?  → New notification created
 ```
+
+---
+
+## Testing
+
+### Test Script: `Backend/test-notifications.js`
+
+A utility script to seed test data and manually trigger the alert system.
+
+**Usage:**
+```bash
+node test-notifications.js seed      # Seed test patients + low-stock medicines
+node test-notifications.js check     # Trigger POST /api/check-alerts manually
+node test-notifications.js cleanup   # Remove all seeded test data
+node test-notifications.js full      # Seed → Check → verify (no cleanup)
+```
+
+**Test data includes:**
+- 6 test patients (to reach `MIN_POPULATION ≥ 10` with existing data)
+- 3 test medicines with low stock (stock levels: 3, 0, 8)
+- Test records with a disease linked to enough cases to trigger outbreak alerts
+
+Test data is tagged with `TEST_SEED` for easy identification and cleanup.

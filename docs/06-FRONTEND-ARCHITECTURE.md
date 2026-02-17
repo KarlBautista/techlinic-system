@@ -50,7 +50,7 @@ All routes are defined in `src/router/router.jsx` using `react-router-dom`'s `cr
 - **Features:**
   - Greeting with user name and role
   - 4 animated stat cards: Total Patients, Total Visits, Total Diagnoses, Medicine Inventory count
-  - Today's records table
+  - Today's records table with **hover underline** effect (`group-hover:underline`) on all data cells + patient name turns brand red on hover
   - Role-based record click: Doctor → navigate to diagnosis, Nurse → "awaiting physician" alert
   - Auto-refresh every 15 seconds
 - **Data Flow:** Reads from `useData` and `useMedicine` stores
@@ -59,7 +59,9 @@ All routes are defined in `src/router/router.jsx` using `react-router-dom`'s `cr
 - **Purpose:** Nurse creates a new patient record with optional diagnosis
 - **Features:**
   - Student ID auto-fill from existing patients
+  - **Pre-fill from navigation state:** When navigated from Individual Record's "New Visit" button, the form is pre-filled via `location.state.patientData` (no re-fetch)
   - Disease dropdown (fetched from `/api/get-all-diseases`)
+  - **Add Disease inline:** "+" button toggles an inline input to add a new disease via `POST /api/add-disease`
   - Medicine dropdown with stock level display
   - Stock validation before submission
 - **Data Flow:** `useData.insertRecord()` → `POST /api/insert-record`
@@ -76,10 +78,10 @@ All routes are defined in `src/router/router.jsx` using `react-router-dom`'s `cr
 ### IndividualRecord (`/individual-record/:studentId`)
 - **Purpose:** Detailed view of a single patient
 - **Features:**
-  - Personal info card (name, ID, department, contact, etc.)
-  - Expandable accordion of all diagnoses
-  - Each diagnosis shows: treatment, medication, quantity, notes, date
-  - Buttons: Medical Certificate, Prescription
+  - Profile banner card with gradient header, avatar initials, and patient badges (sex, year, last visit)
+  - Contact cards grid (phone, email, address)
+  - Visit records list with clickable rows → opens `DiagnosisModal`
+  - **"New Visit" button:** Passes patient data via React Router navigation state to `/new-patient` (avoids re-fetch)
 - **Data Flow:** `GET /api/get-record/:studentId`
 
 ### AddDiagnosis (`/add-diagnosis/:recordId`)
@@ -106,21 +108,41 @@ All routes are defined in `src/router/router.jsx` using `react-router-dom`'s `cr
 - **Features:**
   - Lazy-loaded charts (4 chart components)
   - Loading spinners per chart
-- **Charts:** PatientCountsChart, PatientsPerDepartmentChart, MedicinesChart, TopDiagnosisChart
+- **Charts:** PatientCountsChart, PatientsPerDepartmentChart, MedicinesChart (title: "Lowest Stock"), TopDiagnosisChart
 
 ### Notifications (`/notifications`)
-- **Purpose:** Disease outbreak alerts
+- **Purpose:** Disease outbreak alerts and low stock medicine alerts
 - **Features:**
-  - Mark as read (individual/all)
-  - Delete (individual/all) with SweetAlert2 confirmation
-  - Relative time display ("3 hours ago")
-  - Polls for new alerts every 30 seconds
+  - Redesigned card-based UI with context-aware icons (disease=amber, stock=rose, system=blue)
+  - Unread indicator dot + bold text styling
+  - Click-to-mark-as-read, hover-to-reveal delete button
+  - Mark all as read / clear all buttons
+  - Relative time display ("3m ago", "2h ago")
+  - `_isFetching` guard prevents concurrent polling
 - **Data Flow:** Via `useNotificationStore`
 
 ### PersonnelList (`/personnel-list`)
 - **Purpose:** View all clinic staff
-- **Features:** Searchable list with name, role, email, sex, DOB
+- **Features:** Modern responsive table (name, role, email, sex, DOB). "Add Personnel" opens an inline modal with animated transitions (no separate route/page).
 
 ### Settings (`/settings`)
-- **Purpose:** View/edit user profile
-- **Features:** Login info display, profile info, change password modal (UI-only, not persisted)
+- **Purpose:** View/edit user profile and manage digital signature
+- **Features:**
+  - Profile banner with gradient header + avatar initials
+  - Personal Info card (editable via modal → persisted with `updateProfile()`)
+  - Login & Security card (email, password change modal — UI-only)
+  - **Digital Signature card:** View current signature image, add/update via `SignaturePad` modal
+  - Signature is uploaded to Supabase Storage (`signatures` bucket) and URL saved to `users.signature_url`
+
+### Key Shared Components
+
+| Component | File | Purpose |
+|-----------|------|--------|
+| `newNavigation` | `components/newNavigation.jsx` | Sidebar with notification badge + polling |
+| `DiagnosisModal` | `components/DiagnosisModal.jsx` | View diagnosis details + attending physician's signature |
+| `SignaturePad` | `components/SignaturePad.jsx` | Draw or upload signature (draw/upload modes, canvas trimming) |
+| `CertificateModal` | `components/CertificateModal.jsx` | Printable TUP clinic pass |
+| `PrescriptionModal` | `components/PrescriptionModal.jsx` | Printable prescription form |
+| `MedicineForm` | `components/MedicineForm.jsx` | Edit/delete medicine modal |
+| `PageLoader` | `components/PageLoader.jsx` | Loading spinner component |
+| `ProtectedRoute` | `components/ProtectedRoute.jsx` | Auth-guarded route wrapper |

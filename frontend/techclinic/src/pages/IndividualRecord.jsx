@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import axios from 'axios';
+import api from '../lib/api';
 import Navigation from '../components/newNavigation';
 import Phone from '../assets/image/phone.svg'
 import Email from '../assets/image/email.svg'
@@ -22,7 +22,7 @@ const IndividualRecord = () => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-         const response = await axios.get(`http://localhost:3000/api/get-record/${studentId}`);
+         const response = await api.get(`/get-record/${studentId}`);
         
          if (response.status !== 200) {
            console.error(`Error getting record: HTTP ${response.status}`);

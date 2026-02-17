@@ -1,7 +1,8 @@
 import { create } from 'zustand';
-import axios from 'axios';
+import api from '../lib/api';
 
-const API_BASE = 'http://localhost:3000/api';
+// API_BASE is empty because api.js already has baseURL = "http://localhost:3000/api"
+const API_BASE = '';
 
 // Request browser notification permission
 export const requestNotificationPermission = async () => {
@@ -65,7 +66,7 @@ const useNotificationStore = create((set, get) => ({
         set({ _isFetching: true, isLoading: !get().notifications.length, error: null });
         
         try {
-            const response = await axios.get(`${API_BASE}/user/${userId}`);
+            const response = await api.get(`${API_BASE}/user/${userId}`);
             
             if (response.data.success) {
                 const prevUnreadCount = get().unreadCount;
@@ -96,7 +97,7 @@ const useNotificationStore = create((set, get) => ({
     // Check for new alerts
     checkForAlerts: async (userId) => {
         try {
-            const response = await axios.post(`${API_BASE}/check-alerts`);
+            const response = await api.post(`${API_BASE}/check-alerts`);
             
             // If new notifications were created, show browser notification
             if (response.data.success && response.data.notifications?.length > 0) {
@@ -122,7 +123,7 @@ const useNotificationStore = create((set, get) => ({
     // Mark notification as read
     markAsRead: async (notificationId) => {
         try {
-            const response = await axios.patch(`${API_BASE}/${notificationId}/read`);
+            const response = await api.patch(`${API_BASE}/${notificationId}/read`);
             
             if (response.data.success) {
                 set(state => ({
@@ -142,7 +143,7 @@ const useNotificationStore = create((set, get) => ({
     // Mark all as read for a user
     markAllAsRead: async (userId) => {
         try {
-            const response = await axios.patch(`${API_BASE}/user/${userId}/read-all`);
+            const response = await api.patch(`${API_BASE}/user/${userId}/read-all`);
             
             if (response.data.success) {
                 set(state => ({
@@ -160,7 +161,7 @@ const useNotificationStore = create((set, get) => ({
     // Delete a notification
     deleteNotification: async (notificationId) => {
         try {
-            const response = await axios.delete(`${API_BASE}/${notificationId}`);
+            const response = await api.delete(`${API_BASE}/${notificationId}`);
             
             if (response.data.success) {
                 set(state => ({
@@ -180,7 +181,7 @@ const useNotificationStore = create((set, get) => ({
     // Delete all notifications for a user
     deleteAllNotifications: async (userId) => {
         try {
-            const response = await axios.delete(`${API_BASE}/user/${userId}/all`);
+            const response = await api.delete(`${API_BASE}/user/${userId}/all`);
             
             if (response.data.success) {
                 set({ notifications: [], unreadCount: 0 });

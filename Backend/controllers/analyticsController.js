@@ -1,4 +1,4 @@
-const supabase = require("../config/supabaseClient");
+const supabase = require("../config/supabaseAdmin");
 const moment = require("moment");
 
 const getWeeklyPatients = async (req, res) => {

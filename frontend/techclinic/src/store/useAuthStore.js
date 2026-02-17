@@ -1,7 +1,7 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 import supabase from "../config/supabaseClient"
-import axios from "axios";
+import api from "../lib/api";
 
 const useAuth = create(
     persist(
@@ -16,7 +16,7 @@ const useAuth = create(
     getAllUsers: async () => {
         try {
             set({ isLoadingUsers: true });
-            const response = await axios.get("http://localhost:3000/api/get-all-users");
+            const response = await api.get("/get-all-users");
             if(response.status === 200) {
                 set({ allUsers: response.data.data, isLoadingUsers: false });
             } else {

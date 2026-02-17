@@ -368,13 +368,50 @@ All analytics endpoints are **GET** requests with no parameters. They use server
 ## Diseases (`diseasesRoute.js`)
 
 ### GET `/api/get-all-diseases`
-Fetch all diseases in the catalog.
+Fetch all diseases in the catalog (sorted alphabetically).
 
 **Response:**
 ```json
 {
   "success": true,
   "data": [{ "id": 1, "name": "Common Cold" }, { "id": 2, "name": "Flu" }]
+}
+```
+
+---
+
+### POST `/api/add-disease`
+Add a new disease to the catalog. Performs case-insensitive duplicate check.
+
+**Request Body:**
+```json
+{
+  "name": "Dengue"
+}
+```
+
+**Response (success):** `201 Created`
+```json
+{
+  "success": true,
+  "data": { "id": 5, "name": "Dengue" }
+}
+```
+
+**Response (duplicate):** `409 Conflict`
+```json
+{
+  "success": false,
+  "error": "Disease already exists",
+  "data": { "id": 2, "name": "Dengue" }
+}
+```
+
+**Response (validation):** `400 Bad Request`
+```json
+{
+  "success": false,
+  "error": "Disease name is required"
 }
 ```
 
@@ -411,7 +448,11 @@ Get disease case statistics with outbreak alert logic.
 ## Notifications (`notificationRoutes.js`)
 
 ### POST `/api/check-alerts`
-Check disease statistics and create notifications for any diseases that exceed the alert threshold. Prevents duplicate notifications within 1 hour.
+Check disease statistics and medicine stock levels, and create notifications for any that exceed alert thresholds. Prevents duplicate notifications within 1 hour.
+
+**Alert Types:**
+1. **Disease Alerts** — triggered when a disease exceeds 10% of population with ≥ 5 cases and ≥ 10 total patients
+2. **Low Stock Alerts** — triggered when any medicine has `stock_level ≤ 10` (`LOW_STOCK_THRESHOLD = 10`)
 
 **Response:**
 ```json
@@ -419,6 +460,24 @@ Check disease statistics and create notifications for any diseases that exceed t
   "success": true,
   "message": "Created 6 notifications",
   "notifications": [{ /* notification objects */ }]
+}
+```
+
+**Low Stock Notification Example:**
+```json
+{
+  "title": "Low Stock Alert: Paracetamol",
+  "message": "Paracetamol is running low with only 5 unit(s) remaining. Please reorder soon.",
+  "is_read": false
+}
+```
+
+**Out of Stock Notification Example:**
+```json
+{
+  "title": "Low Stock Alert: Ibuprofen",
+  "message": "Ibuprofen is out of stock. Please reorder immediately.",
+  "is_read": false
 }
 ```
 

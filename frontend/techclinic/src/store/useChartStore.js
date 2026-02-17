@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import axios from "axios";
+import api from "../lib/api";
 const useChart = create((set) => ({
     weeklyPatientCount: null,
     monthlyPatientCount: null,
@@ -16,7 +16,7 @@ const useChart = create((set) => ({
 
     getWeeklyPatientCount: async () => {
         try {
-            const response = await axios.get("http://localhost:3000/api/get-weekly-patients");
+            const response = await api.get("/get-weekly-patients");
             if(response.status === 200) {
                 set({ weeklyPatientCount: response.data });
             } else {
@@ -29,7 +29,7 @@ const useChart = create((set) => ({
     },
     getMonthlyPatientsCount: async () => {
         try {
-            const response = await axios.get("http://localhost:3000/api/get-monthly-patients");
+            const response = await api.get("/get-monthly-patients");
             if(response.status === 200) {
                 set({ monthlyPatientCount: response.data.data });
             } else {
@@ -42,7 +42,7 @@ const useChart = create((set) => ({
     },
     getQuarterlyPatientsCount: async () => {
         try {
-            const response = await axios.get("http://localhost:3000/api/get-quarterly-patients");
+            const response = await api.get("/get-quarterly-patients");
             if(response.status === 200) {
                 set({ quarterlyPatientCount: response.data });
             } else {
@@ -56,7 +56,7 @@ const useChart = create((set) => ({
     },
     getYearlyPatientCount: async () => {
         try {
-            const response = await axios.get("http://localhost:3000/api/get-yearly-patients");
+            const response = await api.get("/get-yearly-patients");
             if(response.status === 200) {
                 set({ yearlyPatientCount: response.data });
             } else {
@@ -71,7 +71,7 @@ const useChart = create((set) => ({
 
     getWeeklyPatientPerDepartmentCount: async () => {
         try {
-            const response = await axios.get("http://localhost:3000/api/get-weekly-patients-per-department");
+            const response = await api.get("/get-weekly-patients-per-department");
             if(response.status === 200) {
                 set({ weeklyPatientPerDepartment: response.data });
             } else {
@@ -86,7 +86,7 @@ const useChart = create((set) => ({
 
      getMonthlyPatientPerDepartmentCount: async () => {
         try {
-            const response = await axios.get("http://localhost:3000/api/get-monthly-patients-per-department");
+            const response = await api.get("/get-monthly-patients-per-department");
             if(response.status === 200) {
                 set({ monthlyPatientPerDepartment: response.data });
             } else {
@@ -101,7 +101,7 @@ const useChart = create((set) => ({
 
      getQuarterlyPatientPerDepartmentCount: async () => {
         try {
-            const response = await axios.get("http://localhost:3000/api/get-quarterly-patients-per-department");
+            const response = await api.get("/get-quarterly-patients-per-department");
             if(response.status === 200) {
                 set({ quarterlyPatientPerDepartment: response.data });
             } else {
@@ -116,7 +116,7 @@ const useChart = create((set) => ({
 
      getYearlyPatientPerDepartmentCount: async () => {
         try {
-            const response = await axios.get("http://localhost:3000/api/get-yearly-patients-per-department");
+            const response = await api.get("/get-yearly-patients-per-department");
             if(response.status === 200) {
                 set({ yearlyPatientPerDepartment: response.data });
             } else {
@@ -131,7 +131,7 @@ const useChart = create((set) => ({
 
     getWeeklyTopDiagnoses: async () => {
         try {
-            const response = await axios.get("http://localhost:3000/api/get-weekly-top-diagnoses");
+            const response = await api.get("/get-weekly-top-diagnoses");
             if(response.status === 200) {
                 set({ weeklyTopDiagnoses: response.data.data });
             } else {
@@ -145,7 +145,7 @@ const useChart = create((set) => ({
 
     getMonthlyTopDiagnoses: async () => {
         try {
-            const response = await axios.get("http://localhost:3000/api/get-monthly-top-diagnoses");
+            const response = await api.get("/get-monthly-top-diagnoses");
             if(response.status === 200) {
                 set({ monthlyTopDiagnoses: response.data.data });
             } else {
@@ -159,7 +159,7 @@ const useChart = create((set) => ({
 
     getQuarterlyTopDiagnoses: async () => {
         try {
-            const response = await axios.get("http://localhost:3000/api/get-quarterly-top-diagnoses");
+            const response = await api.get("/get-quarterly-top-diagnoses");
             if(response.status === 200) {
                 set({ quarterlyTopDiagnoses: response.data.data });
             } else {
@@ -174,7 +174,7 @@ const useChart = create((set) => ({
 
     getYearlyTopDiagnoses: async () => {
         try {
-            const response = await axios.get("http://localhost:3000/api/get-yearly-top-diagnoses");
+            const response = await api.get("/get-yearly-top-diagnoses");
             if(response.status === 200) {
                 set({ yearlyTopDiagnoses: response.data.data });
             } else {

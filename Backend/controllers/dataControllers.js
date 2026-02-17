@@ -1,4 +1,4 @@
-const supabase = require("../config/supabaseClient");
+const supabase = require("../config/supabaseAdmin");
 const supabaseAdmin = require("../config/supabaseAdmin")
 const insertRecord = async (req, res) => {
     const {

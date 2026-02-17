@@ -16,19 +16,26 @@ import LandingPage from "../pages/LandingPage"
 import ProtectedRoute from "../components/ProtectedRoute";
 
 const router = createBrowserRouter([
+  // ── Public routes ──
   { path: "/", element: <LandingPage /> },
   { path: "/login", element: <Login /> },
+
+  // ── Both DOCTOR and NURSE ──
   { path: "/dashboard", element: <ProtectedRoute><Dashboard /></ProtectedRoute> },
-  { path: "/new-patient", element: <ProtectedRoute><NewPatient /></ProtectedRoute> },
   { path: "/patient-record", element: <ProtectedRoute><PatientRecord /></ProtectedRoute> },
   { path: "/medicine-inventory", element: <ProtectedRoute><MedicineInventory /></ProtectedRoute> },
   { path: "/individual-record/:studentId", element: <ProtectedRoute><IndividualRecord /></ProtectedRoute> },
   { path: "/add-medicine", element: <ProtectedRoute><AddMedicine /></ProtectedRoute> },
   { path: "/analytics", element: <ProtectedRoute><Analytics /></ProtectedRoute> },
   { path: "/notifications", element: <ProtectedRoute><Notifications /></ProtectedRoute> },
-  { path: "/personnel-list", element: <ProtectedRoute><PersonnelList /></ProtectedRoute> },
   { path: "/settings", element: <ProtectedRoute><Settings /></ProtectedRoute> },
-  { path: "/add-diagnosis/:recordId", element: <ProtectedRoute><AddDiagnosis /></ProtectedRoute> }
+
+  // ── NURSE only ──
+  { path: "/new-patient", element: <ProtectedRoute allowedRoles={["NURSE"]}><NewPatient /></ProtectedRoute> },
+
+  // ── DOCTOR only ──
+  { path: "/personnel-list", element: <ProtectedRoute allowedRoles={["DOCTOR"]}><PersonnelList /></ProtectedRoute> },
+  { path: "/add-diagnosis/:recordId", element: <ProtectedRoute allowedRoles={["DOCTOR"]}><AddDiagnosis /></ProtectedRoute> }
 ]);
 
 export default router;

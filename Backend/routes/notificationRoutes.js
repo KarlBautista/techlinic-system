@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { authenticate, authorize } = require("../middleware/auth");
 const {
     checkAndCreateAlerts,
     getUserNotifications,
@@ -9,22 +10,12 @@ const {
     deleteAllNotifications
 } = require('../controllers/notificationController');
 
-
-router.post('/check-alerts', checkAndCreateAlerts);
-
-
-router.get('/user/:userId', getUserNotifications);
-
-
-router.patch('/:notificationId/read', markAsRead);
-
-
-router.patch('/user/:userId/read-all', markAllAsRead);
-
-
-router.delete('/:notificationId', deleteNotification);
-
-
-router.delete('/user/:userId/all', deleteAllNotifications);
+// ── All notification endpoints require authentication, both roles ──
+router.post('/check-alerts', authenticate, authorize("DOCTOR", "NURSE"), checkAndCreateAlerts);
+router.get('/user/:userId', authenticate, authorize("DOCTOR", "NURSE"), getUserNotifications);
+router.patch('/:notificationId/read', authenticate, authorize("DOCTOR", "NURSE"), markAsRead);
+router.patch('/user/:userId/read-all', authenticate, authorize("DOCTOR", "NURSE"), markAllAsRead);
+router.delete('/:notificationId', authenticate, authorize("DOCTOR", "NURSE"), deleteNotification);
+router.delete('/user/:userId/all', authenticate, authorize("DOCTOR", "NURSE"), deleteAllNotifications);
 
 module.exports = router;

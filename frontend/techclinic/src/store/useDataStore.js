@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import axios from "axios";
+import api from "../lib/api";
 
 const useData = create(
     persist(
@@ -12,7 +12,7 @@ const useData = create(
 
             insertDiagnose: async (recordId) => {
                 try {
-                    const response = await axios.post("http://localhost:3000/api/insert-diagnose", {
+                    const response = await api.post("/insert-diagnose", {
                         
                     })
                 } catch (err) {
@@ -23,8 +23,8 @@ const useData = create(
 
             insertPersonnel: async (personnelData) => {
         try {
-            const response = await axios.post(
-                "http://localhost:3000/api/insert-personnel", 
+            const response = await api.post(
+                "/insert-personnel", 
                 { personnel: personnelData }
             );
             
@@ -50,7 +50,7 @@ const useData = create(
     },
             insertRecord: async (formData) => {
                 try {
-                    const response = await axios.post("http://localhost:3000/api/insert-record", {
+                    const response = await api.post("/insert-record", {
                         formData
                     });
 
@@ -85,7 +85,7 @@ const useData = create(
                     set({ isLoadingRecords: true });
                     console.log("📊 Fetching patient records...");
                     
-                    const response = await axios.get("http://localhost:3000/api/get-records");
+                    const response = await api.get("/get-records");
                     
                     if (response.error) {
                         console.error(`Error getting records: ${response.error}`);
@@ -122,7 +122,7 @@ const useData = create(
                     set({ isLoadingPatients: true });
                     console.log("👥 Fetching patients...");
                     
-                    const response = await axios.get("http://localhost:3000/api/get-patients");
+                    const response = await api.get("/get-patients");
                     
                     if (!response.data.success) {
                         console.error(`Error getting patients: ${response.error}`);
@@ -147,7 +147,7 @@ const useData = create(
             getRecordsFromExistingPatient: async (studentId) => {
                 try {
                     console.log(`📋 Fetching records for student: ${studentId}`);
-                    const response = await axios.get(`http://localhost:3000/api/get-records-from-existing-patients/${studentId}`);
+                    const response = await api.get(`/get-records-from-existing-patients/${studentId}`);
                     
                     if (response.error) {
                         console.error(`Error getting records: ${response.error}`);
