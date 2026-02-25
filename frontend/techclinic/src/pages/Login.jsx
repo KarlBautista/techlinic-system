@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import useAuth from '../store/useAuthStore';
 import TUP from "../assets/image/TUP.png"
-import School from "../assets/image/school.jpg"
+import CrimsonAbstract from '../components/CrimsonAbstract'
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const Login = () => {
@@ -73,7 +73,7 @@ const Login = () => {
     }
     
     return (
-        <div className='flex h-screen w-full'>
+        <div className='flex h-screen w-full bg-[#ffffff]'>
             {/* ─── Left: Login Form ─── */}
             <div className='flex flex-1 items-center justify-center px-6 py-12 lg:px-8'>
                 <motion.div
@@ -170,10 +170,11 @@ const Login = () => {
                 </motion.div>
             </div>
 
-            {/* ─── Right: Image Panel ─── */}
-            <div className='hidden lg:block lg:w-[50%] relative'>
-                <img src={School} alt="TUP Campus" className='h-full w-full object-cover' />
-                <div className='absolute inset-0 bg-linear-to-l from-transparent to-crimson-900/20' />
+            {/* ─── Right: Crimson Abstract Panel ─── */}
+            <div className='hidden lg:block lg:w-[50%] relative overflow-hidden bg-white'>
+                <CrimsonAbstract className='absolute inset-0 w-full h-full' />
+                {/* Smooth fade into content area (left edge) */}
+                <div className='absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-white via-white/50 to-transparent' />
             </div>
         </div>
     )

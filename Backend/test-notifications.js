@@ -14,7 +14,7 @@
  *   - Medicine stock_level <= 10 for low stock alerts
  */
 
-const supabase = require('./config/supabaseClient');
+const supabase = require('./config/supabaseAdmin');
 const axios = require('axios');
 
 const API_BASE = 'http://localhost:3000/api';

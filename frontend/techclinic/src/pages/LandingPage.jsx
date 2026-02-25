@@ -4,9 +4,9 @@ import RegistrationInfo from '../components/registrationInfo';
 import Dropdown from '../components/Dropdown'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
+import CrimsonAbstract from '../components/CrimsonAbstract'
 import useData from '../store/useDataStore'
 import Swal from 'sweetalert2'
-import Doctor from '../assets/componentImage/doctor.jpg'
 
 // Constants
 const INITIAL_FORM_DATA = {
@@ -265,11 +265,12 @@ function LandingPage() {
     }
 
     return (
-        <div className='flex h-screen w-full'>
-            {/* ─── Left: Doctor Image (desktop only) ─── */}
-            <div className='hidden lg:block lg:w-[30%] relative'>
-                <img src={Doctor} alt="Doctor" className='h-full w-full object-cover' />
-                <div className='absolute inset-0 bg-linear-to-r from-transparent to-crimson-900/10' />
+        <div className='flex h-screen w-full bg-[#ffffff]'>
+            {/* ─── Left: Crimson Abstract Panel (desktop only) ─── */}
+            <div className='hidden lg:block lg:w-[30%] relative overflow-hidden bg-white'>
+                <CrimsonAbstract className='absolute inset-0 w-full h-full' flip />
+                {/* Smooth fade into content area (right edge) */}
+                <div className='absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-white via-white/50 to-transparent' />
             </div>
 
             {/* ─── Right: Registration Form ─── */}
