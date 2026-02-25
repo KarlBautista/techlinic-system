@@ -36,12 +36,12 @@ const MedicinesChart = () => {
   }];
 
   return (
-    <div className='w-full h-full'>
-      <div className='h-[10%] w-full'>
-        <div className='text-[.9rem] font-semibold'>Lowest Stock</div>
-            <p className='text-[13px] p-1'>Total medicines tracked: {medicines.length}</p> 
+    <div className='w-full h-full flex flex-col min-h-0'>
+      <div className='shrink-0'>
+        <div className='text-sm font-semibold text-gray-800'>Lowest Stock</div>
+        <p className='text-xs text-gray-400 mt-0.5'>Total medicines tracked: {medicines.length}</p> 
       </div>  
-      <div className='h-[90%] w-full '>
+      <div className='flex-1 min-h-0 mt-2'>
        <Chart
           options={medicineChartOptions}
           series={medicineData}

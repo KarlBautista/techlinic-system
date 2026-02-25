@@ -151,48 +151,47 @@ const PatientsPerDepartmentChart = () => {
   };
 
   return (
-    <div className='w-full h-full'>
-          <div className='w-full h-full'>
-            <div className='h-[10%] w-full flex justify-between p-2'>
-              <div className='text-[.9rem] w-[70%] font-semibold'>Patient Records Per Department</div>
-              <div className='text-[.9rem] h-[60%] w-[30%] '>
-                <select
+    <div className='w-full h-full flex flex-col min-h-0'>
+          <div className='w-full h-full flex flex-col min-h-0'>
+            {/* Header */}
+            <div className='shrink-0 flex items-start justify-between gap-2 pb-2'>
+              <div className='text-sm font-semibold text-gray-800'>Patient Records Per Department</div>
+              <select
                   id='departments'
                   name='departments'
                   aria-label='Departments timeframe'
                   value={selectedCategory}
-                  className='h-[95%] w-[98%] text-[.7rem] font-medium' 
+                  className='shrink-0 text-xs font-medium px-2 py-1 rounded-lg ring-1 ring-gray-200 outline-none bg-white text-gray-600 focus:ring-crimson-400' 
                   onChange={handleCategoryChange}>
                   <option value='week'>This week</option>
                   <option value='month'>This month</option>
                   <option value='quarter'>This quarter</option>
                   <option value='year'>This year</option>
-                </select>
+              </select>
+            </div>
+
+            {/* Period info */}
+            {periodInfo && (
+              <div className='shrink-0 text-xs font-medium text-gray-400 pb-2'>
+                <p>{getPeriodDisplay()}</p>
               </div>
-           </div>  
+            )}
 
-            <div className='h-[10%] w-full  text-[.7rem] font-medium'>
-               {periodInfo && (
-                <div className='w-full'>
-                  <p>{getPeriodDisplay()}</p>
-                </div>
-              )}
-            </div>
-
-            <div className='h-[80%] w-full '>
+            {/* Chart */}
+            <div className='flex-1 min-h-0'>
               {totalPatients === 0 ? (
-            <div className='w-full h-full flex items-center justify-center'>
-              <p className='text-gray-500'>No patient records for this period</p>
-            </div>
-          ) : (
-            <Chart
-              options={patientOptions}
-              series={patientData}
-              type='donut'
-              height="100%"
-              width="100%"
-            />
-          )}
+                <div className='w-full h-full flex items-center justify-center'>
+                  <p className='text-sm text-gray-400'>No patient records for this period</p>
+                </div>
+              ) : (
+                <Chart
+                  options={patientOptions}
+                  series={patientData}
+                  type='donut'
+                  height="100%"
+                  width="100%"
+                />
+              )}
             </div>
           </div>
     </div>

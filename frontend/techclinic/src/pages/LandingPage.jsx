@@ -287,9 +287,9 @@ function LandingPage() {
                     </div>
 
                     {/* Form Card */}
-                    <div className='bg-white rounded-xl ring-1 ring-gray-100 shadow-sm overflow-hidden'>
+                    <div className='bg-white rounded-xl ring-1 ring-gray-100 shadow-sm'>
                         <div className='p-5 md:p-6'>
-                            <div className='grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-1'>
+                            <div className='grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4'>
                                 {/* Left Column */}
                                 <RegistrationInfo message={'Student Id'} name='studentId' value={formData.studentId} onChange={handleInputChange} onBlur={handleStudentIdBlur} disabled={isStudentConfirmed} />
                                 <Dropdown name='department' options={DEPARTMENT_OPTIONS} placeholder='Select department' value={formData.department} onChange={handleInputChange} disabled={isStudentConfirmed} />
@@ -300,7 +300,7 @@ function LandingPage() {
                                 <RegistrationInfo message={'Contact number'} name='contactNumber' value={formData.contactNumber} onChange={handleInputChange} disabled={isStudentConfirmed} />
                                 <RegistrationInfo message={'Address'} name='address' value={formData.address} onChange={handleInputChange} disabled={isStudentConfirmed} />
                                 <Dropdown name='yearLevel' options={YEAR_OPTIONS} placeholder='Select year' value={formData.yearLevel} onChange={handleInputChange} disabled={isStudentConfirmed} />
-                                <RegistrationInfo type='date' message={'Date of Birth'} name='dateOfBirth' value={formData.dateOfBirth} onChange={handleInputChange} disabled={isStudentConfirmed} labelPosition='right' />
+                                <RegistrationInfo type='date' message={'Date of Birth'} name='dateOfBirth' value={formData.dateOfBirth} onChange={handleInputChange} disabled={isStudentConfirmed} />
                             </div>
 
                             {/* Clear link */}
