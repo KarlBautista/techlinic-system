@@ -14,28 +14,44 @@ import Settings from "../pages/Settings";
 import AddDiagnosis from "../pages/AddDiagnosis";
 import LandingPage from "../pages/LandingPage"
 import ProtectedRoute from "../components/ProtectedRoute";
+import AppLayout from "../components/AppLayout";
 
 const router = createBrowserRouter([
   // ── Public routes ──
   { path: "/", element: <LandingPage /> },
   { path: "/login", element: <Login /> },
 
-  // ── Both DOCTOR and NURSE ──
-  { path: "/dashboard", element: <ProtectedRoute><Dashboard /></ProtectedRoute> },
-  { path: "/patient-record", element: <ProtectedRoute><PatientRecord /></ProtectedRoute> },
-  { path: "/medicine-inventory", element: <ProtectedRoute><MedicineInventory /></ProtectedRoute> },
-  { path: "/individual-record/:studentId", element: <ProtectedRoute><IndividualRecord /></ProtectedRoute> },
-  { path: "/add-medicine", element: <ProtectedRoute><AddMedicine /></ProtectedRoute> },
-  { path: "/analytics", element: <ProtectedRoute><Analytics /></ProtectedRoute> },
-  { path: "/notifications", element: <ProtectedRoute><Notifications /></ProtectedRoute> },
-  { path: "/settings", element: <ProtectedRoute><Settings /></ProtectedRoute> },
+  // ── Protected routes (with AppLayout — sidebar + content) ──
+  {
+    element: <ProtectedRoute><AppLayout /></ProtectedRoute>,
+    children: [
+      { path: "/dashboard", element: <Dashboard /> },
+      { path: "/patient-record", element: <PatientRecord /> },
+      { path: "/medicine-inventory", element: <MedicineInventory /> },
+      { path: "/individual-record/:studentId", element: <IndividualRecord /> },
+      { path: "/add-medicine", element: <AddMedicine /> },
+      { path: "/analytics", element: <Analytics /> },
+      { path: "/notifications", element: <Notifications /> },
+      { path: "/settings", element: <Settings /> },
+    ],
+  },
 
-  // ── NURSE only ──
-  { path: "/new-patient", element: <ProtectedRoute allowedRoles={["NURSE"]}><NewPatient /></ProtectedRoute> },
+  // ── NURSE only (with AppLayout) ──
+  {
+    element: <ProtectedRoute allowedRoles={["NURSE"]}><AppLayout /></ProtectedRoute>,
+    children: [
+      { path: "/new-patient", element: <NewPatient /> },
+    ],
+  },
 
-  // ── DOCTOR only ──
-  { path: "/personnel-list", element: <ProtectedRoute allowedRoles={["DOCTOR"]}><PersonnelList /></ProtectedRoute> },
-  { path: "/add-diagnosis/:recordId", element: <ProtectedRoute allowedRoles={["DOCTOR"]}><AddDiagnosis /></ProtectedRoute> }
+  // ── DOCTOR only (with AppLayout) ──
+  {
+    element: <ProtectedRoute allowedRoles={["DOCTOR"]}><AppLayout /></ProtectedRoute>,
+    children: [
+      { path: "/personnel-list", element: <PersonnelList /> },
+      { path: "/add-diagnosis/:recordId", element: <AddDiagnosis /> },
+    ],
+  },
 ]);
 
 export default router;

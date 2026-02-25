@@ -1,5 +1,4 @@
 import React from 'react'
-import Navigation from '../components/newNavigation'
 import {useState} from 'react'
 import useData from '../store/useDataStore'
 import useAuth from '../store/useAuthStore'
@@ -9,6 +8,8 @@ import { useEffect } from 'react'
 import useMedicine from "../store/useMedicineStore";
 import api from '../lib/api'
 import { PageLoader, ButtonLoader } from '../components/PageLoader'
+import { motion } from 'framer-motion'
+import { UserPlus, ClipboardList, Plus, X, FileText, StickyNote } from 'lucide-react'
 
 const NewPatient = () => {
   const { insertRecord, getRecords, getRecordsFromExistingPatient } = useData();
@@ -306,32 +307,41 @@ const NewPatient = () => {
   }
 
   return (
-    <div className='h-screen w-full flex flex-col sm:flex-row'>
-      <div className='h-[8%] w-full order-last sm:order-0 sm:w-[20%] sm:h-full md:w-[16%] lg:w-[14%]'>
-        <Navigation />
-      </div>
-
-      <div className='h-[92%] min-w-[360px] sm:min-w-0 w-full sm:h-full sm:w-[80%] md:w-[84%] lg:w-[86%] overflow-auto p-6 flex flex-col gap-4'>
+      <div className='flex flex-col gap-4'>
         {isLoading ? (
           <PageLoader message="Loading patient form..." />
         ) : (
-        <div className='w-full overflow-y-auto h-full flex flex-col gap-5 scrollbar'>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+          className='w-full overflow-y-auto h-full flex flex-col gap-5 scrollbar'
+        >
           {/* ─── Page Header ─── */}
-          <div>
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
             <h1 className='text-2xl font-bold text-gray-800'>Add Patient Record</h1>
             <p className='text-sm text-gray-500 mt-1'>Register a new patient or add a visit for an existing student</p>
-          </div>
+          </motion.div>
 
           <form onSubmit={handleFormSubmit} className='flex flex-col gap-6'>
             {/* ─── Student Information Card ─── */}
-            <div className='bg-white rounded-xl shadow-sm p-6'>
-              <div className='flex items-center gap-2 mb-2'>
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-[#b01c34]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                </svg>
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1, duration: 0.35 }}
+              className='bg-white rounded-xl shadow-sm ring-1 ring-gray-100 p-6'
+            >
+              <div className='flex items-center gap-2.5 mb-2'>
+                <div className='w-8 h-8 rounded-lg bg-crimson-50 flex items-center justify-center'>
+                  <UserPlus className="w-4 h-4 text-crimson-600" />
+                </div>
                 <h2 className='text-base font-semibold text-gray-800'>Student Information</h2>
               </div>
-              <p className='text-xs text-gray-400 mb-4'>Enter the student ID (11 digits) to auto-fill existing records</p>
+              <p className='text-xs text-gray-400 mb-5 ml-[42px]'>Enter the student ID (11 digits) to auto-fill existing records</p>
 
               <div className='flex flex-wrap gap-x-[5%] gap-y-0'>
                 <div className='formInfo'>
@@ -355,7 +365,7 @@ const NewPatient = () => {
                 </div>
 
                 <div className='formInfo'>
-                  <select id="year" name="yearLevel" value={patientInput.yearLevel} onChange={handleSetPatientInput} className='w-full p-2 rounded-lg border border-gray-300 outline-none text-sm focus:border-[#b01c34] transition-colors'>
+                  <select id="year" name="yearLevel" value={patientInput.yearLevel} onChange={handleSetPatientInput} className='w-full p-2 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'>
                     <option value="" disabled>Select Year</option>
                     <option value="1">1st year</option>
                     <option value="2">2nd year</option>
@@ -365,7 +375,7 @@ const NewPatient = () => {
                 </div>
 
                 <div className='formInfo'>
-                  <select id="department" name="department" value={patientInput.department} onChange={handleSetPatientInput} className='w-full p-2 rounded-lg border border-gray-300 outline-none text-sm focus:border-[#b01c34] transition-colors'>
+                  <select id="department" name="department" value={patientInput.department} onChange={handleSetPatientInput} className='w-full p-2 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'>
                     <option value="" disabled>Select Department</option>
                     <option value="College of Science">College of Science</option>
                     <option value="College of Engineering">College of Engineering</option>
@@ -377,7 +387,7 @@ const NewPatient = () => {
                 </div>
                 
                 <div className='formInfo'>
-                  <select id="sex" name="sex" value={patientInput.sex} onChange={handleSetPatientInput} className='w-full p-2 rounded-lg border border-gray-300 outline-none text-sm focus:border-[#b01c34] transition-colors'>
+                  <select id="sex" name="sex" value={patientInput.sex} onChange={handleSetPatientInput} className='w-full p-2 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'>
                     <option value="" disabled>Sex</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
@@ -399,17 +409,22 @@ const NewPatient = () => {
                   <label htmlFor="dateOfBirth" className='text-[.8rem]'>Date of Birth</label>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* ─── Medical Information Card ─── */}
-            <div className='bg-white rounded-xl shadow-sm p-6'>
-              <div className='flex items-center gap-2 mb-2'>
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-[#b01c34]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15a2.25 2.25 0 0 1 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0 1 18 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3 1.5 1.5 3-3.75" />
-                </svg>
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.35 }}
+              className='bg-white rounded-xl shadow-sm ring-1 ring-gray-100 p-6'
+            >
+              <div className='flex items-center gap-2.5 mb-2'>
+                <div className='w-8 h-8 rounded-lg bg-crimson-50 flex items-center justify-center'>
+                  <ClipboardList className="w-4 h-4 text-crimson-600" />
+                </div>
                 <h2 className='text-base font-semibold text-gray-800'>Medical Information</h2>
               </div>
-              <p className='text-xs text-gray-400 mb-4'>Diagnosis, medication, and treatment details</p>
+              <p className='text-xs text-gray-400 mb-5 ml-[42px]'>Diagnosis, medication, and treatment details</p>
 
               <div className='flex flex-col lg:flex-row gap-6'>
                 {/* Left Column — Dropdowns & Quantity */}
@@ -420,7 +435,7 @@ const NewPatient = () => {
                         <select 
                           id="diseaseId" name="diseaseId" 
                           value={patientInput.diseaseId} onChange={handleSetPatientInput} 
-                          className='flex-1 p-2 rounded-lg border border-gray-300 outline-none text-sm focus:border-[#b01c34] transition-colors'
+                          className='flex-1 p-2 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'
                         >
                           <option value="">Select Diagnosis</option>
                           {diseases && diseases.length > 0 ? (
@@ -432,36 +447,41 @@ const NewPatient = () => {
                         <button
                           type="button"
                           onClick={() => setShowAddDisease(!showAddDisease)}
-                          className={`shrink-0 w-9 h-9 rounded-lg flex items-center justify-center text-sm transition-colors ${
+                          className={`shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-sm transition-all ${
                             showAddDisease 
-                              ? 'bg-gray-200 text-gray-600' 
-                              : 'bg-[#b01c34] text-white hover:bg-[#8f1629]'
+                              ? 'bg-gray-100 text-gray-600 ring-1 ring-gray-200' 
+                              : 'bg-crimson-600 text-white hover:bg-crimson-700 shadow-sm'
                           }`}
                           title={showAddDisease ? 'Cancel' : 'Add new disease'}
                         >
-                          <i className={`fa-solid ${showAddDisease ? 'fa-xmark' : 'fa-plus'} text-xs`}></i>
+                          {showAddDisease ? <X className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
                         </button>
                       </div>
                       {showAddDisease && (
-                        <div className='flex items-center gap-2 animate-in fade-in'>
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          transition={{ duration: 0.2 }}
+                          className='flex items-center gap-2'
+                        >
                           <input
                             type="text"
                             value={newDiseaseName}
                             onChange={(e) => setNewDiseaseName(e.target.value)}
                             onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddDisease(); } }}
                             placeholder="Enter disease name..."
-                            className='flex-1 p-2 rounded-lg border border-gray-300 outline-none text-sm focus:border-[#b01c34] transition-colors'
+                            className='flex-1 p-2 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'
                             autoFocus
                           />
                           <button
                             type="button"
                             onClick={handleAddDisease}
                             disabled={!newDiseaseName.trim() || isAddingDisease}
-                            className='shrink-0 px-3 py-2 rounded-lg bg-[#b01c34] text-white text-sm font-medium hover:bg-[#8f1629] transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+                            className='shrink-0 px-3 py-2 rounded-xl bg-crimson-600 text-white text-sm font-medium hover:bg-crimson-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm'
                           >
                             {isAddingDisease ? 'Adding...' : 'Add'}
                           </button>
-                        </div>
+                        </motion.div>
                       )}
                     </div>
                   </div>
@@ -470,7 +490,7 @@ const NewPatient = () => {
                     <select 
                       id="medication" name="medication" 
                       value={patientInput.medication?.id || ""} onChange={handleSetPatientInput} 
-                      className='w-full p-2 rounded-lg border border-gray-300 outline-none text-sm focus:border-[#b01c34] transition-colors'
+                      className='w-full p-2 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'
                     >
                       <option value="">Medication</option>
                       {medicines?.map((medicine) => (
@@ -490,23 +510,29 @@ const NewPatient = () => {
                 {/* Right Column — Textareas */}
                 <div className='w-full lg:w-1/2 flex flex-col gap-4'>
                   <div>
-                    <label className='text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5 block'>Treatment</label>
+                    <label className='text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5'>
+                      <FileText className="w-3 h-3 text-gray-400" />
+                      Treatment
+                    </label>
                     <textarea
                       name='treatment'
                       value={patientInput.treatment}
                       onChange={handleSetPatientInput}
-                      className='w-full h-28 p-3 resize-none outline-none rounded-lg border border-gray-300 text-sm focus:border-[#b01c34] transition-colors placeholder:text-gray-400'
+                      className='w-full h-28 p-3 resize-none outline-none rounded-xl border border-gray-200 text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all placeholder:text-gray-400'
                       placeholder='Describe the treatment plan...'
                     />
                   </div>
 
                   <div>
-                    <label className='text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5 block'>Additional Notes</label>
+                    <label className='text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5'>
+                      <StickyNote className="w-3 h-3 text-gray-400" />
+                      Additional Notes
+                    </label>
                     <textarea
                       name='notes'
                       value={patientInput.notes}
                       onChange={handleSetPatientInput}
-                      className='w-full h-28 p-3 resize-none outline-none rounded-lg border border-gray-300 text-sm focus:border-[#b01c34] transition-colors placeholder:text-gray-400'
+                      className='w-full h-28 p-3 resize-none outline-none rounded-xl border border-gray-200 text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all placeholder:text-gray-400'
                       placeholder='Any additional observations or notes...'
                     />
                   </div>
@@ -517,7 +543,7 @@ const NewPatient = () => {
               <div className='flex justify-end mt-6 pt-4 border-t border-gray-100'>
                 <button 
                   disabled={isSubmitting} 
-                  className='text-white px-6 py-2.5 rounded-lg bg-[#b01c34] hover:bg-[#8f1629] transition-colors text-sm font-medium inline-flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed shadow-sm'
+                  className='text-white px-6 py-2.5 rounded-xl bg-crimson-600 hover:bg-crimson-700 transition-colors text-sm font-medium inline-flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed shadow-sm'
                 >
                   {isSubmitting ? <><ButtonLoader /> Submitting...</> : (
                     patientInput && patientInput.diagnosis && patientInput.diagnosis.length > 0
@@ -526,12 +552,11 @@ const NewPatient = () => {
                   )}
                 </button>
               </div>
-            </div>
+            </motion.div>
           </form>
-        </div>
+        </motion.div>
         )}
       </div>
-    </div>
   )
 }
 

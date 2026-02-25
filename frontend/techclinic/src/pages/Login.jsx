@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import "../App.css"
+import { motion } from 'framer-motion'
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import useAuth from '../store/useAuthStore';
 import TUP from "../assets/image/TUP.png"
-import Google from "../assets/image/google.png"
 import School from "../assets/image/school.jpg"
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const { signInWithGoogle, authenticatedUser, signIn, isSessionVerified } = useAuth();
     const navigate = useNavigate();
@@ -18,7 +19,6 @@ const Login = () => {
     const from = location.state?.from?.pathname || "/dashboard";
     
     useEffect(() => {
-        // Only redirect if the session has been verified by Supabase (not from stale localStorage)
         if (isSessionVerified && authenticatedUser) {
             console.log("✅ User has valid session, redirecting to:", from);
             navigate(from, { replace: true });
@@ -73,65 +73,107 @@ const Login = () => {
     }
     
     return (
-        <div className='fullScreen min-w-[640px]'>
-            <div className='flex flex-col h-full gap-10 sm:w-full min-w-[640px] lg:w-[60%]'>
-                <form onSubmit={handleSignin} className='form flex flex-col items-center space-y-4 sm:space-y-6 lg:space-y-8 py-4'>
-                    <div className='logoDiv'> 
-                        <div className="logo justify-center items-center flex">
-                            <img src={TUP} alt="TUP" className='h-10 md:h-12 lg:h-16 xl:h-20 object-contain'/>
+        <div className='flex h-screen w-full'>
+            {/* ─── Left: Login Form ─── */}
+            <div className='flex flex-1 items-center justify-center px-6 py-12 lg:px-8'>
+                <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4 }}
+                    className='w-full max-w-md'
+                >
+                    {/* Logo / Branding */}
+                    <div className='flex items-center gap-4 mb-10'>
+                        <img src={TUP} alt="TUP" className='h-14 md:h-16 object-contain' />
+                        <div>
+                            <p className='text-crimson-600 text-2xl md:text-3xl font-bold tracking-wider'>Techclinic</p>
+                            <p className='text-crimson-800/60 text-xs md:text-sm'>Health Record and Analytics System</p>
                         </div>
-                        <div className="rightLogo">
-                            <p className='text-[#FF3A3A] text-[2.5rem] tracking-[10px] font-bold lg:text-[1.6rem] xl:text-[2.5rem]'>Techclinic</p>
-                            <p className='text-[#A12217] lg:text-[.8rem]'>Health Record and Analytics System</p>
-                        </div>
-                    </div>
-                    
-                    <div className='formDiv'>
-                        <input
-                            type="text"
-                            name="email"
-                            placeholder=" "
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
-                        <label htmlFor="email">Email</label>
                     </div>
 
-                    <div className='formDiv'>
-                        <input
-                            type="password"
-                            name="password"
-                            value={password}
-                            placeholder=" "
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
-                        <label htmlFor="password">Password</label>
+                    {/* Welcome Text */}
+                    <div className='mb-8'>
+                        <h1 className='text-2xl font-bold text-gray-800'>Welcome back</h1>
+                        <p className='text-sm text-gray-500 mt-1'>Sign in to your clinic account to continue</p>
                     </div>
-                    
-                    <button 
-                        className='tracking-[5px] bg-[#B22222] w-[60%] md:w-[60%] lg:w-[50%] py-3 text-white rounded-lg text-center hover:bg-[hsl(0,68%,48%)] transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed' 
-                        type="submit"
-                        disabled={isLoading}
-                    >
-                        {isLoading ? 'SIGNING IN...' : 'LOGIN'}
-                    </button>
-                    
-                    <div className='w-[60%] md:w-[60%] lg:w-[50%] flex items-center'>
-                        <div className='flex-1 h-px bg-gray-300' />
-                        <p className='px-3 text-sm text-gray-500 text-center'>or login with</p>
-                        <div className='flex-1 h-px bg-gray-300' />
+
+                    {/* Form */}
+                    <form onSubmit={handleSignin} className='space-y-5'>
+                        {/* Email Field */}
+                        <div className='space-y-1.5'>
+                            <label className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Email Address</label>
+                            <div className='relative'>
+                                <div className='absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400'>
+                                    <Mail className="w-4 h-4" />
+                                </div>
+                                <input
+                                    type="text"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="you@tup.edu.ph"
+                                    className='w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'
+                                />
+                            </div>
+                        </div>
+
+                        {/* Password Field */}
+                        <div className='space-y-1.5'>
+                            <label className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Password</label>
+                            <div className='relative'>
+                                <div className='absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400'>
+                                    <Lock className="w-4 h-4" />
+                                </div>
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    placeholder="Enter your password"
+                                    className='w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className='absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600'
+                                >
+                                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Submit Button */}
+                        <motion.button
+                            whileTap={{ scale: 0.98 }}
+                            type="submit"
+                            disabled={isLoading}
+                            className='w-full py-3 rounded-xl bg-crimson-600 text-white text-sm font-semibold tracking-wider hover:bg-crimson-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed'
+                        >
+                            {isLoading ? (
+                                <span className='inline-flex items-center gap-2'>
+                                    <span className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' />
+                                    SIGNING IN...
+                                </span>
+                            ) : 'LOGIN'}
+                        </motion.button>
+                    </form>
+
+                    {/* Divider */}
+                    <div className='flex items-center my-6'>
+                        <div className='flex-1 h-px bg-gray-200' />
+                        <span className='px-3 text-xs text-gray-400'>or</span>
+                        <div className='flex-1 h-px bg-gray-200' />
                     </div>
-                </form>
-                
-                <div className='h-[30%] w-full flex items-start justify-center'>
-                    <div className='h-[70px] w-[40%] flex items-center justify-evenly'>
-                      
-                    </div>  
-                </div>
+
+                    {/* Google Sign In (placeholder kept) */}
+                    <div className='text-center'>
+                        <p className='text-xs text-gray-400'>Clinic personnel access only</p>
+                    </div>
+                </motion.div>
             </div>
-            
-            <div className='hidden lg:block lg:w-[55%] h-full'> 
-                <img src={School} alt="" className='h-full w-full object-cover'/>
+
+            {/* ─── Right: Image Panel ─── */}
+            <div className='hidden lg:block lg:w-[50%] relative'>
+                <img src={School} alt="TUP Campus" className='h-full w-full object-cover' />
+                <div className='absolute inset-0 bg-linear-to-l from-transparent to-crimson-900/20' />
             </div>
         </div>
     )

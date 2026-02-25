@@ -10,7 +10,7 @@ function Dropdown({ options = [], placeholder = 'Select an option', value = '', 
         setIsOpen(false);
     };
 
-    const borderColor = showValidation && !value ? 'outline-[#B22222]' : 'outline-[black]';
+    const borderColor = showValidation && !value ? 'ring-crimson-500' : (isOpen ? 'ring-crimson-400 ring-2' : 'ring-gray-200');
 
     return (
         <>
@@ -20,22 +20,22 @@ function Dropdown({ options = [], placeholder = 'Select an option', value = '', 
                         type="button"
                         onClick={() => !disabled && setIsOpen(!isOpen)}
                         disabled={disabled}
-                        className={`w-full flex items-center justify-between text-[.9rem] px-4 py-2 outline ${borderColor} rounded-[5px] bg-white ${disabled ? 'bg-gray-200 cursor-not-allowed' : ''}`}
+                        className={`w-full flex items-center justify-between text-sm px-4 py-2.5 ring-1 ${borderColor} rounded-xl outline-none transition-all ${disabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'}`}
                     >
-                        <span className={value ? 'text-black' : 'text-gray-400'}>{value || placeholder}</span>
-                        <span className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
+                        <span className={value ? 'text-gray-800' : 'text-gray-400'}>{value || placeholder}</span>
+                        <span className={`transition-transform duration-300 text-gray-400 text-xs ${isOpen ? 'rotate-180' : ''}`}>
                             ▼
                         </span>
                     </button>
 
                     {isOpen && (
-                        <div className={`absolute top-full left-0 right-0 mt-1 bg-white outline ${borderColor} rounded-[5px] z-10`}>
+                        <div className='absolute top-full left-0 right-0 mt-1 bg-white ring-1 ring-gray-200 rounded-xl z-10 shadow-lg overflow-hidden'>
                             {options.map((option) => (
                                 <button
                                     key={option}
                                     type="button"
                                     onClick={() => handleSelect(option)}
-                                    className="w-full text-left px-4 py-2 text-[.9rem] hover:bg-gray-100 cursor-pointer"
+                                    className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-crimson-50 hover:text-crimson-600 cursor-pointer transition-colors"
                                 >
                                     {option}
                                 </button>

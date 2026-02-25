@@ -1,5 +1,4 @@
 import React from 'react'
-import Navigation from '../components/newNavigation'
 import { useState } from 'react'
 import useData from '../store/useDataStore'
 import useAuth from '../store/useAuthStore'
@@ -10,6 +9,8 @@ import { useParams } from 'react-router-dom'
 import api from '../lib/api'
 import { useNavigate } from 'react-router-dom'
 import { PageLoader, ButtonLoader } from '../components/PageLoader'
+import { motion } from 'framer-motion'
+import { UserPlus, ClipboardList, Plus, X, FileText, StickyNote } from 'lucide-react'
 const AddDiagnosis = () => {
   const { insertRecord, getRecords, getRecordsFromExistingPatient } = useData();
   const { authenticatedUser, userProfile } = useAuth();
@@ -305,164 +306,123 @@ const AddDiagnosis = () => {
 
 
   return (
-    <div className='h-screen w-full flex flex-col sm:flex-row'>
-      <div className='h-[8%] w-full order-last sm:order-0 sm:w-[20%] sm:h-full md:w-[16%] lg:w-[14%]'>
-        <Navigation />
-      </div>
-
-
-
-      <div className='h-[92%] min-w-[360px] sm:min-w-0 w-full sm:h-full sm:w-[80%] md:w-[84%] lg:w-[86%] overflow-auto p-6 flex flex-col gap-4'>
+      <div className='flex flex-col gap-4'>
         {isLoading ? (
           <PageLoader message="Loading diagnosis form..." />
         ) : (
-        <div className='w-full overflow-y-scroll h-full flex flex-col items-center gap-5 scrollbar'  >
-          <div className='w-full flex flex-col gap-2'>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+          className='w-full overflow-y-auto h-full flex flex-col gap-5 scrollbar'
+        >
+          {/* Page Header */}
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
             <h1 className='text-2xl font-bold text-gray-800'>Add Patient Diagnosis</h1>
             <p className='text-sm text-gray-500 mt-1'>Patient clinical documentation</p>
-          </div>
+          </motion.div>
 
-          <div className='w-[90%] flex flex-col items-center'>
-
-            <div className='w-full'>
-              <p className='text-[1rem] text-gray-800'>Student Information</p>
-            </div>
-            <div className='border border-gray-200 w-full'></div>
-
-
-            <form onSubmit={handleFormSubmit} className=' w-full  flex flex-wrap gap-2 justify-evenly mt-2'>
-
-              <div className='formInfo'>
-
-                <input
-                  type="text"
-                  name="studentId"
-                  placeholder=" "
-                  id='studentID'
-                  value={patientInput.studentId}
-                  onChange={handleSetPatientInput}
-                />
-
-                <label htmlFor="studentID" className='text-[.8rem]'>Student ID</label>
+          <form onSubmit={handleFormSubmit} className='flex flex-col gap-6'>
+            {/* ─── Student Information Card ─── */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1, duration: 0.35 }}
+              className='bg-white rounded-xl shadow-sm ring-1 ring-gray-100 p-6'
+            >
+              <div className='flex items-center gap-2.5 mb-2'>
+                <div className='w-8 h-8 rounded-lg bg-crimson-50 flex items-center justify-center'>
+                  <UserPlus className="w-4 h-4 text-crimson-600" />
+                </div>
+                <h2 className='text-base font-semibold text-gray-800'>Student Information</h2>
               </div>
-              <div className='formInfo'>
-                <input
-                  type="text"
-                  name="firstName"
-                  placeholder=" "
-                  id='firstName'
-                  value={patientInput.firstName}
-                  onChange={handleSetPatientInput}
-                />
+              <p className='text-xs text-gray-400 mb-5 ml-[42px]'>Patient details from the intake record</p>
 
-                <label htmlFor="firstName" className='text-[.8rem]'>First name</label>
+              <div className='flex flex-wrap gap-x-[5%] gap-y-0'>
+                <div className='formInfo'>
+                  <input type="text" name="studentId" placeholder=" " id='studentID' value={patientInput.studentId} onChange={handleSetPatientInput} />
+                  <label htmlFor="studentID" className='text-[.8rem]'>Student ID</label>
+                </div>
+                <div className='formInfo'>
+                  <input type="text" name="firstName" placeholder=" " id='firstName' value={patientInput.firstName} onChange={handleSetPatientInput} />
+                  <label htmlFor="firstName" className='text-[.8rem]'>First name</label>
+                </div>
+                <div className='formInfo'>
+                  <input type="text" name="lastName" placeholder=" " id='lastName' value={patientInput.lastName} onChange={handleSetPatientInput} />
+                  <label htmlFor="lastName" className='text-[.8rem]'>Last name</label>
+                </div>
+                <div className='formInfo'>
+                  <input type="tel" inputMode="numeric" name="contactNumber" placeholder=" " id='contactNum' value={patientInput.contactNumber} onChange={handleSetPatientInput} />
+                  <label htmlFor="contactNum" className='text-[.8rem]'>Contact Number</label>
+                </div>
+                <div className='formInfo'>
+                  <select id="year" name="yearLevel" value={patientInput.yearLevel} onChange={handleSetPatientInput} className='w-full p-2 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'>
+                    <option value="" disabled>Select Year</option>
+                    <option value="1">1st year</option>
+                    <option value="2">2nd year</option>
+                    <option value="3">3rd year</option>
+                    <option value="4">4th year</option>
+                  </select>
+                </div>
+                <div className='formInfo'>
+                  <select id="department" name="department" value={patientInput.department} onChange={handleSetPatientInput} className='w-full p-2 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'>
+                    <option value="" disabled>Select Department</option>
+                    <option value="College of Science">College of Science</option>
+                    <option value="College of Engineering">College of Engineering</option>
+                    <option value="College of Industrial Technology">College of Industrial Technology</option>
+                    <option value="College of Architecture and Fine Arts">College of Architecture and Fine Arts</option>
+                    <option value="College of Industrial Education">College of Industrial Education</option>
+                    <option value="College of Liberal Arts">College of Liberal Arts</option>
+                  </select>
+                </div>
+                <div className='formInfo'>
+                  <select id="sex" name="sex" value={patientInput.sex} onChange={handleSetPatientInput} className='w-full p-2 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'>
+                    <option value="" disabled>Sex</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                  </select>
+                </div>
+                <div className='formInfo'>
+                  <input type="text" name="email" placeholder=" " id='email' value={patientInput.email} onChange={handleSetPatientInput} />
+                  <label htmlFor="email" className='text-[.8rem]'>Email</label>
+                </div>
+                <div className='formInfo'>
+                  <input type="text" name='address' placeholder=' ' id='address' value={patientInput.address} onChange={handleSetPatientInput} />
+                  <label htmlFor="address" className='text-[.8rem]'>Address</label>
+                </div>
+                <div className='formInfo'>
+                  <input type="date" name='dateOfBirth' placeholder='' id='dateOfBirth' value={patientInput.dateOfBirth} onChange={handleSetPatientInput} />
+                  <label htmlFor="dateOfBirth" className='text-[.8rem]'>Date of Birth</label>
+                </div>
               </div>
+            </motion.div>
 
-              <div className='formInfo'>
-                <input
-                  type="text"
-                  name="lastName"
-                  placeholder=" "
-                  id='lastName'
-                  value={patientInput.lastName}
-                  onChange={handleSetPatientInput}
-                />
-                <label htmlFor="lastName" className='text-[.8rem]'>Last name</label>
+            {/* ─── Medical Information Card ─── */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.35 }}
+              className='bg-white rounded-xl shadow-sm ring-1 ring-gray-100 p-6'
+            >
+              <div className='flex items-center gap-2.5 mb-2'>
+                <div className='w-8 h-8 rounded-lg bg-crimson-50 flex items-center justify-center'>
+                  <ClipboardList className="w-4 h-4 text-crimson-600" />
+                </div>
+                <h2 className='text-base font-semibold text-gray-800'>Medical Information</h2>
               </div>
+              <p className='text-xs text-gray-400 mb-5 ml-[42px]'>Diagnosis, medication, and treatment details</p>
 
-
-
-              <div className='formInfo'>
-                <input
-                  type="tel"
-                  inputMode="numeric"
-                  name="contactNumber"
-                  placeholder=" "
-                  id='contactNum'
-                  value={patientInput.contactNumber}
-                  onChange={handleSetPatientInput}
-                />
-                <label htmlFor="contactNum" className='text-[.8rem]'>Contact Number</label>
-              </div>
-
-              <div className='formInfo'>
-                <select id="year" name="yearLevel" value={patientInput.yearLevel} onChange={handleSetPatientInput} className='w-full p-2 rounded-[10px] border outline-none'>
-                  <option value="" disabled>Select Year</option>
-                  <option value="1">1st year</option>
-                  <option value="2">2nd year</option>
-                  <option value="3">3rd year</option>
-                  <option value="4">4th year</option>
-                </select>
-              </div>
-
-              <div className='formInfo'>
-                <select id="department" name="department" value={patientInput.department} onChange={handleSetPatientInput} className='w-full p-2 rounded-[10px] border outline-none'>
-                  <option value="" disabled>Select Department</option>
-                  <option value="College of Science">College of Science</option>
-                  <option value="College of Engineering">College of Engineering</option>
-                  <option value="College of Industrial Technology">College of Industrial Technology</option>
-                  <option value="College of Architecture and Fine Arts">College of Architecture and Fine Arts</option>
-                  <option value="College of Industrial Education">College of Industrial Education</option>
-                  <option value="College of Liberal Arts">College of Liberal Arts</option>
-                </select>
-              </div>
-
-              <div className='formInfo'>
-                <select id="sex" name="sex" value={patientInput.sex} onChange={handleSetPatientInput} className='w-full p-2 rounded-[10px] border outline-none'>
-                  <option value="" disabled>Sex</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                </select>
-              </div>
-
-              <div className='formInfo'>
-                <input
-                  type="text"
-                  name="email"
-                  placeholder=" "
-                  id='email'
-                  value={patientInput.email}
-                  onChange={handleSetPatientInput}
-                />
-                <label htmlFor="email" className='text-[.8rem]'>Email</label>
-              </div>
-
-              <div className='formInfo'>
-                <input type="text"
-                  name='address'
-                  placeholder=''
-                  id='address'
-                  value={patientInput.address}
-                  onChange={handleSetPatientInput} />
-                <label htmlFor="address" className='text-[.8rem]'>Address</label>
-              </div>
-
-              <div className='formInfo'>
-                <input type="date"
-                  name='dateOfBirth'
-                  placeholder=''
-                  id='dateOfBirth'
-                  value={patientInput.dateOfBirth}
-                  onChange={handleSetPatientInput} />
-                <label htmlFor="address" className='text-[.8rem]'>Date of Birth</label>
-              </div>
-
-
-
-
-
-
-              <div className='w-full mt-10'>
-                <p className='text-[1rem]'>Medical Information</p>
-              </div>
-              <div className='border border-gray-200 w-full'></div>
-
-              <div className='w-full h-[400px] flex'>
-                <div className='w-[50%] h-full flex items-center flex-col '>
+              <div className='flex flex-col lg:flex-row gap-6'>
+                {/* Left Column — Dropdowns & Quantity */}
+                <div className='w-full lg:w-1/2 flex flex-col gap-0'>
                   <div className='formDiagnosis'>
                     <div className='flex flex-col gap-2'>
                       <div className='flex items-center gap-2'>
-                        <select id="diseaseId" name="diseaseId" value={patientInput.diseaseId} onChange={handleSetPatientInput} className='flex-1 p-2 rounded-[10px] border outline-none'>
+                        <select id="diseaseId" name="diseaseId" value={patientInput.diseaseId} onChange={handleSetPatientInput} className='flex-1 p-2 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'>
                           <option value="" disabled>Select Diagnosis</option>
                           {diseases && diseases.length > 0 ? (
                             diseases.map((disease) => <option key={disease.id} value={disease.id}>{disease.name}</option>)
@@ -471,99 +431,106 @@ const AddDiagnosis = () => {
                         <button
                           type="button"
                           onClick={() => setShowAddDisease(!showAddDisease)}
-                          className={`shrink-0 w-9 h-9 rounded-lg flex items-center justify-center text-sm transition-colors ${
+                          className={`shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-sm transition-all ${
                             showAddDisease 
-                              ? 'bg-gray-200 text-gray-600' 
-                              : 'bg-[#b01c34] text-white hover:bg-[#8f1629]'
+                              ? 'bg-gray-100 text-gray-600 ring-1 ring-gray-200' 
+                              : 'bg-crimson-600 text-white hover:bg-crimson-700 shadow-sm'
                           }`}
                           title={showAddDisease ? 'Cancel' : 'Add new disease'}
                         >
-                          <i className={`fa-solid ${showAddDisease ? 'fa-xmark' : 'fa-plus'} text-xs`}></i>
+                          {showAddDisease ? <X className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
                         </button>
                       </div>
                       {showAddDisease && (
-                        <div className='flex items-center gap-2'>
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          transition={{ duration: 0.2 }}
+                          className='flex items-center gap-2'
+                        >
                           <input
                             type="text"
                             value={newDiseaseName}
                             onChange={(e) => setNewDiseaseName(e.target.value)}
                             onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddDisease(); } }}
                             placeholder="Enter disease name..."
-                            className='flex-1 p-2 rounded-[10px] border outline-none text-sm focus:border-[#b01c34] transition-colors'
+                            className='flex-1 p-2 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'
                             autoFocus
                           />
                           <button
                             type="button"
                             onClick={handleAddDisease}
                             disabled={!newDiseaseName.trim() || isAddingDisease}
-                            className='shrink-0 px-3 py-2 rounded-lg bg-[#b01c34] text-white text-sm font-medium hover:bg-[#8f1629] transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+                            className='shrink-0 px-3 py-2 rounded-xl bg-crimson-600 text-white text-sm font-medium hover:bg-crimson-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm'
                           >
                             {isAddingDisease ? 'Adding...' : 'Add'}
                           </button>
-                        </div>
+                        </motion.div>
                       )}
                     </div>
                   </div>
 
                   <div className='formDiagnosis'>
-                    <select id="medication" name="medication" value={patientInput.medication?.id || ""} onChange={handleSetPatientInput} className='w-full p-2 rounded-[10px] border outline-none'>
+                    <select id="medication" name="medication" value={patientInput.medication?.id || ""} onChange={handleSetPatientInput} className='w-full p-2 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'>
                       <option value="" disabled>Medication</option>
-                      {medicines?.map((medicine) => {
-                        return <option key={medicine.id} value={medicine.id}>{`${medicine.medicine_name}, ${medicine.generic_name} - ${medicine.stock_level} in stock`}</option>
-                      })}
-
-
+                      {medicines?.map((medicine) => (
+                        <option key={medicine.id} value={medicine.id}>{`${medicine.medicine_name}, ${medicine.generic_name} - ${medicine.stock_level} in stock`}</option>
+                      ))}
                     </select>
                   </div>
 
                   <div className='formDiagnosis'>
-                    <input
-                      type="number"
-                      name="quantity"
-                      placeholder=" "
-                      id='quantity'
-                      value={patientInput.quantity}
-                      onChange={handleSetPatientInput}
-                    />
+                    <input type="number" name="quantity" placeholder=" " id='quantity' value={patientInput.quantity} onChange={handleSetPatientInput} />
                     <label htmlFor="quantity" className='text-[.8rem]'>Quantity</label>
-                  </div>
-                  {/*ito button*/}
-                  <div className='w-full h-[50%]  flex justify-center items-center'>
-                    <button disabled={isSubmitting} className='text-white px-5 py-3 rounded-lg bg-[#ef4444] inline-flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed'>{isSubmitting ? <><ButtonLoader /> Submitting...</> : 'Insert Record'}</button>
                   </div>
                 </div>
 
-                <div className='w-[50%] h-full flex flex-col gap-2 py-2'>
-                  <div className='h-[48%] w-[95%]'>
+                {/* Right Column — Textareas */}
+                <div className='w-full lg:w-1/2 flex flex-col gap-4'>
+                  <div>
+                    <label className='text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5'>
+                      <FileText className="w-3 h-3 text-gray-400" />
+                      Treatment
+                    </label>
                     <textarea
                       name='treatment'
                       value={patientInput.treatment}
                       onChange={handleSetPatientInput}
-                      className='h-full w-full p-2 resize-none outline-none rounded-md border'
-                      placeholder='Treatment'
+                      className='w-full h-28 p-3 resize-none outline-none rounded-xl border border-gray-200 text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all placeholder:text-gray-400'
+                      placeholder='Describe the treatment plan...'
                     />
                   </div>
 
-                  <div className='h-[50%] w-[95%]'>
+                  <div>
+                    <label className='text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5'>
+                      <StickyNote className="w-3 h-3 text-gray-400" />
+                      Additional Notes
+                    </label>
                     <textarea
                       name='notes'
                       value={patientInput.notes}
                       onChange={handleSetPatientInput}
-                      className='h-full w-full p-2  resize-none outline-none rounded-md border'
-                      placeholder='Additional notes'
+                      className='w-full h-28 p-3 resize-none outline-none rounded-xl border border-gray-200 text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all placeholder:text-gray-400'
+                      placeholder='Any additional observations or notes...'
                     />
                   </div>
                 </div>
-
               </div>
 
-            </form>
-
-          </div>
-        </div>
+              {/* Submit Button */}
+              <div className='flex justify-end mt-6 pt-4 border-t border-gray-100'>
+                <button 
+                  disabled={isSubmitting} 
+                  className='text-white px-6 py-2.5 rounded-xl bg-crimson-600 hover:bg-crimson-700 transition-colors text-sm font-medium inline-flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed shadow-sm'
+                >
+                  {isSubmitting ? <><ButtonLoader /> Submitting...</> : 'Insert Diagnosis'}
+                </button>
+              </div>
+            </motion.div>
+          </form>
+        </motion.div>
         )}
       </div>
-    </div>
   )
 }
 

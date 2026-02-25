@@ -4,150 +4,10 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* LOGIN */
-
-.school {
-    background-image: url(../src/assets/image/school.jpg);
-    background-size: cover;
-   background-position: center;
-    background-repeat: no-repeat;
-}
-
-/* .logoDiv {
-    @apply w-[50%] h-[20%] flex justify-center
-}
-
-.logo {
-    @apply h-full flex items-center justify-center
-}
-
-.rightLogo{
-    @apply w-[70%] flex flex-col justify-center
-} */
-
-.logoDiv{
-    @apply flex h-[20%] lg:w-[50%]  gap-2 xl:w-[50%];
-}
-
-.rightLogo{
-    @apply w-[80%] flex flex-col justify-center items-start
-}
-
-.fullScreen {
-    @apply h-full w-full flex gap-2 justify-center items-center min-h-screen;
-}
-
-.form{
-    @apply w-full h-[70%]  flex flex-col justify-end items-center;
-}
-
-.formDiv {
-    @apply w-[60%] flex flex-col relative lg:w-[50%];
-}
-
-.formDiv input {
-    @apply w-full border-b-2 pt-6 pb-2 outline-none duration-200 text-gray-400;
-}
-
-.formDiv label {
-    @apply absolute left-2 top-1/2 transform -translate-y-0 transition-all duration-200  pointer-events-none bg-transparent px-1;
-    transform-origin: left top;
-}
-
-.formDiv input:focus + label,
-.formDiv input:not(:placeholder-shown) + label {
-    transform: translateY(-1.6rem) scale(0.85) translateX(-1rem);
-    color: gray;
-}
-
-/* For Navigation */
-
-.nav {
-    /* 1024 */
-    @apply w-full h-full border-r-1 border-gray-300 shadow-2xl flex sm:flex-col
-    /* sm */
-
-    /* sm:w-[200px] */
-
-}
-
-.nav button {
-    @apply xl:text-[1.2rem] xl:text-[.8rem]
-}
-
-/* FOR STUDENT INFORMATION */
-
-.formInfo {
-    @apply w-[45%] flex flex-col relative flex-wrap mt-7
-}
-
-.formInfo input {
-    @apply border border-gray-300 p-2 rounded-lg outline-none text-sm transition-colors focus:border-[#b01c34]
-}
-
-.formInfo label {
-    @apply absolute left-2 top-1/4 transform translate-y-0 transition-all duration-200 pointer-events-none bg-transparent px-1 text-gray-500;
-    transform-origin: left top;
-}
-
-.formInfo input:focus + label,
-.formInfo input:not(:placeholder-shown) + label {
-    transform: translateY(-1.8rem) scale(0.85) translateX(-.8rem);
-    color: #b01c34;
-    background: white;
-}
-
-.formDiagnosis {
-    @apply w-[90%] flex flex-col relative flex-wrap mt-7
-}
-
-.formDiagnosis input {
-    @apply border border-gray-300 p-2 rounded-lg outline-none text-sm transition-colors focus:border-[#b01c34]
-}
-
-.formDiagnosis label {
-    @apply absolute left-2 top-1/4 transform translate-y-0 transition-all duration-200 pointer-events-none bg-transparent px-1 text-gray-500;
-    transform-origin: left top;
-}
-
-.formDiagnosis input:focus + label,
-.formDiagnosis input:not(:placeholder-shown) + label {
-    transform: translateY(-1.8rem) scale(0.85) translateX(-.8rem);
-    color: #b01c34;
-    background: white;
-}
-
-.scrollbar::-webkit-scrollbar {
-    width: 0;
-}
-
-.studentCss {
-    @apply h-[40px] w-full flex gap-2 mt-2
-}
-
-.studentInfoContainer {
-    @apply h-full w-full flex items-center
-}
-
-.studentInfoData {
-    @apply text-[.8rem] tracking-[2px]
-}
-
-.medicineContainer {
-    @apply h-[70px] w-full  gap-2 items-center justify-between bg-[#FFE5E5] flex rounded-[10px] p-2;
-}
-
-.info {
-    @apply w-[18%] h-full flex flex-col items-center justify-center bg-red-100
-}
-
-.infoName {
-    @apply  w-full flex items-center justify-center text-[.8rem] text-[#9f8f8f];
-}
-
-.medicineInfo{
-    @apply w-full flex items-center justify-center text-[1rem] font-medium
-}
+/* ════════════════════════════════════════════════════════════
+   TechClinic Design System v2
+   Color palette built around TUP Crimson (#b01c34)
+   ════════════════════════════════════════════════════════════ */
 
 @theme inline {
     --radius-sm: calc(var(--radius) - 4px);
@@ -185,41 +45,53 @@
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-ring: var(--sidebar-ring);
+
+    /* ── TechClinic Brand Tokens ── */
+    --color-crimson-50: #fef2f2;
+    --color-crimson-100: #fee2e2;
+    --color-crimson-200: #fecaca;
+    --color-crimson-300: #f89898;
+    --color-crimson-400: #e05a5a;
+    --color-crimson-500: #d4375a;
+    --color-crimson-600: #b01c34;
+    --color-crimson-700: #a12217;
+    --color-crimson-800: #7f1d1d;
+    --color-crimson-900: #581c1c;
 }
 
 :root {
-    --radius: 0.625rem;
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
+    --radius: 0.75rem;
+    --background: oklch(0.985 0.002 75);
+    --foreground: oklch(0.175 0.01 260);
     --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
+    --card-foreground: oklch(0.175 0.01 260);
     --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
+    --popover-foreground: oklch(0.175 0.01 260);
+    --primary: oklch(0.45 0.18 15);
     --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
+    --secondary: oklch(0.965 0.005 75);
+    --secondary-foreground: oklch(0.3 0.01 260);
+    --muted: oklch(0.965 0.005 75);
+    --muted-foreground: oklch(0.5 0.01 260);
+    --accent: oklch(0.965 0.005 75);
+    --accent-foreground: oklch(0.3 0.01 260);
     --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
-    --chart-1: oklch(0.646 0.222 41.116);
-    --chart-2: oklch(0.6 0.118 184.704);
-    --chart-3: oklch(0.398 0.07 227.392);
-    --chart-4: oklch(0.828 0.189 84.429);
-    --chart-5: oklch(0.769 0.188 70.08);
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
+    --border: oklch(0.915 0.005 75);
+    --input: oklch(0.915 0.005 75);
+    --ring: oklch(0.45 0.18 15);
+    --chart-1: oklch(0.45 0.18 15);
+    --chart-2: oklch(0.6 0.15 250);
+    --chart-3: oklch(0.65 0.18 150);
+    --chart-4: oklch(0.75 0.15 60);
+    --chart-5: oklch(0.55 0.2 300);
+    --sidebar: oklch(0.99 0.001 75);
+    --sidebar-foreground: oklch(0.175 0.01 260);
+    --sidebar-primary: oklch(0.45 0.18 15);
     --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
+    --sidebar-accent: oklch(0.965 0.008 15);
+    --sidebar-accent-foreground: oklch(0.35 0.12 15);
+    --sidebar-border: oklch(0.93 0.003 75);
+    --sidebar-ring: oklch(0.45 0.18 15);
 }
 
 .dark {
@@ -257,75 +129,183 @@
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+    * {
+        @apply border-border outline-ring/50;
     }
-  body {
-    @apply bg-background text-foreground;
+    body {
+        @apply bg-background text-foreground antialiased;
+        font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     }
 }
 
-/* Modal animations */
+/* ════════════════════════════════════════════════════════════
+   Custom Scrollbar
+   ════════════════════════════════════════════════════════════ */
+
+.scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+    background: oklch(0.8 0 0);
+    border-radius: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: oklch(0.65 0 0);
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    width: 0;
+    display: none;
+}
+
+/* ════════════════════════════════════════════════════════════
+   Login — Floating labels
+   ════════════════════════════════════════════════════════════ */
+
+.school {
+    background-image: url(../src/assets/image/school.jpg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.logoDiv {
+    @apply flex h-[20%] lg:w-[50%] gap-2 xl:w-[50%];
+}
+
+.rightLogo {
+    @apply w-[80%] flex flex-col justify-center items-start;
+}
+
+.fullScreen {
+    @apply h-full w-full flex gap-2 justify-center items-center min-h-screen;
+}
+
+.form {
+    @apply w-full h-[70%] flex flex-col justify-end items-center;
+}
+
+.formDiv {
+    @apply w-[60%] flex flex-col relative lg:w-[50%];
+}
+
+.formDiv input {
+    @apply w-full border-b-2 pt-6 pb-2 outline-none duration-200 text-gray-400;
+}
+
+.formDiv label {
+    @apply absolute left-2 top-1/2 transform -translate-y-0 transition-all duration-200 pointer-events-none bg-transparent px-1;
+    transform-origin: left top;
+}
+
+.formDiv input:focus + label,
+.formDiv input:not(:placeholder-shown) + label {
+    transform: translateY(-1.6rem) scale(0.85) translateX(-1rem);
+    color: gray;
+}
+
+/* ════════════════════════════════════════════════════════════
+   Patient Forms — Floating labels
+   ════════════════════════════════════════════════════════════ */
+
+.formInfo {
+    @apply w-[45%] flex flex-col relative flex-wrap mt-7;
+}
+
+.formInfo input {
+    @apply border border-gray-300 p-2 rounded-lg outline-none text-sm transition-colors focus:border-[#b01c34];
+}
+
+.formInfo label {
+    @apply absolute left-2 top-1/4 transform translate-y-0 transition-all duration-200 pointer-events-none bg-transparent px-1 text-gray-500;
+    transform-origin: left top;
+}
+
+.formInfo input:focus + label,
+.formInfo input:not(:placeholder-shown) + label {
+    transform: translateY(-1.8rem) scale(0.85) translateX(-0.8rem);
+    color: #b01c34;
+    background: white;
+}
+
+.formDiagnosis {
+    @apply w-[90%] flex flex-col relative flex-wrap mt-7;
+}
+
+.formDiagnosis input {
+    @apply border border-gray-300 p-2 rounded-lg outline-none text-sm transition-colors focus:border-[#b01c34];
+}
+
+.formDiagnosis label {
+    @apply absolute left-2 top-1/4 transform translate-y-0 transition-all duration-200 pointer-events-none bg-transparent px-1 text-gray-500;
+    transform-origin: left top;
+}
+
+.formDiagnosis input:focus + label,
+.formDiagnosis input:not(:placeholder-shown) + label {
+    transform: translateY(-1.8rem) scale(0.85) translateX(-0.8rem);
+    color: #b01c34;
+    background: white;
+}
+
+/* ════════════════════════════════════════════════════════════
+   Legacy component classes (kept for backward compat)
+   ════════════════════════════════════════════════════════════ */
+
+.studentCss {
+    @apply h-[40px] w-full flex gap-2 mt-2;
+}
+.studentInfoContainer {
+    @apply h-full w-full flex items-center;
+}
+.studentInfoData {
+    @apply text-[0.8rem] tracking-[2px];
+}
+.medicineContainer {
+    @apply h-[70px] w-full gap-2 items-center justify-between bg-[#FFE5E5] flex rounded-[10px] p-2;
+}
+.info {
+    @apply w-[18%] h-full flex flex-col items-center justify-center bg-red-100;
+}
+.infoName {
+    @apply w-full flex items-center justify-center text-[0.8rem] text-[#9f8f8f];
+}
+.medicineInfo {
+    @apply w-full flex items-center justify-center text-[1rem] font-medium;
+}
+
+/* ════════════════════════════════════════════════════════════
+   Modal Animations (Framer Motion replaces most of these,
+   but kept for any legacy modal usage)
+   ════════════════════════════════════════════════════════════ */
+
 @keyframes modalBackdropIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
-
 @keyframes modalBackdropOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
+    from { opacity: 1; }
+    to { opacity: 0; }
 }
-
 @keyframes modalSlideIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95) translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
 }
-
 @keyframes modalSlideOut {
-  from {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: scale(0.95) translateY(10px);
-  }
+    from { opacity: 1; transform: scale(1) translateY(0); }
+    to { opacity: 0; transform: scale(0.95) translateY(10px); }
 }
 
-.modal-backdrop-enter {
-  animation: modalBackdropIn 0.2s ease-out forwards;
-}
+.modal-backdrop-enter { animation: modalBackdropIn 0.2s ease-out forwards; }
+.modal-backdrop-exit { animation: modalBackdropOut 0.15s ease-in forwards; }
+.modal-content-enter { animation: modalSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.modal-content-exit { animation: modalSlideOut 0.15s ease-in forwards; }
 
-.modal-backdrop-exit {
-  animation: modalBackdropOut 0.15s ease-in forwards;
-}
-
-.modal-content-enter {
-  animation: modalSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.modal-content-exit {
-  animation: modalSlideOut 0.15s ease-in forwards;
-}
-
-/* Tab content transition */
-.tab-content-enter {
-  animation: tabFadeIn 0.2s ease-out forwards;
-}
-
+.tab-content-enter { animation: tabFadeIn 0.2s ease-out forwards; }
 @keyframes tabFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
 }

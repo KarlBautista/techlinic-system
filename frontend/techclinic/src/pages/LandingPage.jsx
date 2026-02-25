@@ -1,3 +1,5 @@
+import { motion } from 'framer-motion';
+import { ClipboardList, LogIn } from 'lucide-react';
 import RegistrationInfo from '../components/registrationInfo';
 import Dropdown from '../components/Dropdown'
 import { useNavigate } from 'react-router-dom'
@@ -263,102 +265,79 @@ function LandingPage() {
     }
 
     return (
-        <>
-            <div className='h-screen flex justify-center items-center'>
-                <div className='h-full w-full hidden lg:flex'>
-                    <div className='w-[30%] bg-fuchsia-200 h-full'>
-                        <img src={Doctor} alt="" className='h-full w-full' />
-                    </div>
-                    <div className='w-[70%]  h-full flex items-center justify-center'>
-                        <div className=' flex flex-col w-[80%]  gap-3 '>
-                            <div className='flex flex-col'>
-                                <p className='text-[1.2rem] font-medium'>Fill out your information</p>
-                                <p className='text-[.9rem]'>Kindly provide the necessary details before continuing.</p>
-                            </div>
-
-                            <div className='border border-[#b8b8b8] rounded-[10px]  '>
-                                <div className='flex gap-5 p-5 items-center justify-center'>
-                                    <div className='w-[50%] flex flex-col gap-2'>
-                                        <RegistrationInfo message={'Student Id'} name='studentId' value={formData.studentId} onChange={handleInputChange} onBlur={handleStudentIdBlur} disabled={isStudentConfirmed} />
-                                        <RegistrationInfo message={'Last name'} name='lastName' value={formData.lastName} onChange={handleInputChange} disabled={isStudentConfirmed} />
-                                        <RegistrationInfo message={'First name'} name='firstName' value={formData.firstName} onChange={handleInputChange} disabled={isStudentConfirmed} />
-                                        <RegistrationInfo message={'Contact number'} name='contactNumber' value={formData.contactNumber} onChange={handleInputChange} disabled={isStudentConfirmed} />
-                                        <Dropdown name='yearLevel' options={['1st year', '2nd year', '3rd year', '4th year']} placeholder='Select year' value={formData.yearLevel} onChange={handleInputChange} disabled={isStudentConfirmed} />
-                                    </div>
-                                    <div className='w-[50%] flex flex-col gap-2'>
-                                        <Dropdown name='department' options={["College of Science", "College of Engineering", "College of Industrial Technology", "College of Architecture and Fine Arts", "College of Industrial Education", "College of Liberal Arts"]} placeholder='Select department' value={formData.department} onChange={handleInputChange} disabled={isStudentConfirmed} />
-                                        <Dropdown name='sex' options={['Male', 'Female']} placeholder='Sex' value={formData.sex} onChange={handleInputChange} disabled={isStudentConfirmed} />
-                                        <RegistrationInfo message={'Email'} name='email' value={formData.email} onChange={handleInputChange} disabled={isStudentConfirmed} />
-                                        <RegistrationInfo message={'Address'} name='address' value={formData.address} onChange={handleInputChange} disabled={isStudentConfirmed} />
-                                        <RegistrationInfo type='date' message={'Date of Birth'} name='dateOfBirth' value={formData.dateOfBirth} onChange={handleInputChange} disabled={isStudentConfirmed} labelPosition='right' />
-                                    </div>
-                                </div>
-                                <div className='flex gap-2 justify-end p-3'>
-                                    <p className='text-[.9rem] tracking-[2px]'
-                                        onClick={handleClear}
-                                    >
-                                        Clear all.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className=' flex justify-between p-2 text-[.9rem]'>
-                                <button className='py-2 px-15 tracking-[2px]  bg-[#B22222] text-white'
-                                    onClick={handleFormSubmit}
-                                >
-                                    Submit
-                                </button>
-                                <button className='py-2 px-15 tracking-[2px] border border-[#B22222] text-[#B22222]'
-                                    onClick={handleLog}
-                                >
-                                    Login
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className='h-full w-full sm:w-[80%] lg:hidden flex flex-col items-center justify-center gap-3'>
-                    <div className='h-[15%] w-[85%] flex flex-col items-center justify-center'>
-                        <p className='text-[1rem] font-medium'>Fill out your information</p>
-                        <p className='text-[.6rem]'>Kindly provide the necessary details before continuing.</p>
-                    </div>
-                    <div className='w-[90%] p-5 overflow-auto flex flex-col gap-2 border rounded-[10px]'>
-                        <RegistrationInfo message={'Student Id'} name='studentId' value={formData.studentId} onChange={handleInputChange} onBlur={handleStudentIdBlur} disabled={isStudentConfirmed} />
-                        <RegistrationInfo message={'Last name'} name='lastName' value={formData.lastName} onChange={handleInputChange} disabled={isStudentConfirmed} />
-                        <RegistrationInfo message={'First name'} name='firstName' value={formData.firstName} onChange={handleInputChange} disabled={isStudentConfirmed} />
-                        <RegistrationInfo message={'Contact number'} name='contactNumber' value={formData.contactNumber} onChange={handleInputChange} disabled={isStudentConfirmed} />
-                        <Dropdown name='yearLevel' options={['1st year', '2nd year', '3rd year', '4th year']} placeholder='Select year' value={formData.yearLevel} onChange={handleInputChange} disabled={isStudentConfirmed} />
-                        <Dropdown name='department' options={["College of Science", "College of Engineering", "College of Industrial Technology", "College of Architecture and Fine Arts", "College of Industrial Education", "College of Liberal Arts"]} placeholder='Select department' value={formData.department} onChange={handleInputChange} disabled={isStudentConfirmed} />
-                        <Dropdown name='sex' options={['Male', 'Female']} placeholder='Sex' value={formData.sex} onChange={handleInputChange} disabled={isStudentConfirmed} />
-                        <RegistrationInfo message={'Email'} name='email' value={formData.email} onChange={handleInputChange} disabled={isStudentConfirmed} />
-                        <RegistrationInfo message={'Address'} name='address' value={formData.address} onChange={handleInputChange} disabled={isStudentConfirmed} />
-                        <RegistrationInfo type='date' message={'Date of Birth'} name='dateOfBirth' value={formData.dateOfBirth} onChange={handleInputChange} disabled={isStudentConfirmed} labelPosition='right' />
-
-                        <div className='flex gap-2 justify-end p-3'>
-                            <p className='text-[.9rem] tracking-[2px]'
-                                onClick={handleClear}
-                            >
-                                Clear all.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className='h-[15%] w-[85%] items-center  flex justify-between text-[.9rem]'>
-                        <button className='py-1 px-7 tracking-[2px]  bg-[#B22222] text-white'
-                            onClick={handleFormSubmit}
-                        >
-                            Submit
-                        </button>
-                        <button className='py-1 px-7 tracking-[2px] border border-[#B22222] text-[#B22222]'
-                            onClick={handleLog}
-                        >
-                            Login
-                        </button>
-                    </div>
-                </div>
+        <div className='flex h-screen w-full'>
+            {/* ─── Left: Doctor Image (desktop only) ─── */}
+            <div className='hidden lg:block lg:w-[30%] relative'>
+                <img src={Doctor} alt="Doctor" className='h-full w-full object-cover' />
+                <div className='absolute inset-0 bg-linear-to-r from-transparent to-crimson-900/10' />
             </div>
-        </>
+
+            {/* ─── Right: Registration Form ─── */}
+            <div className='flex-1 flex items-center justify-center p-6 overflow-auto'>
+                <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4 }}
+                    className='w-full max-w-3xl'
+                >
+                    {/* Header */}
+                    <div className='mb-6'>
+                        <h1 className='text-xl font-bold text-gray-800'>Patient Registration</h1>
+                        <p className='text-sm text-gray-500 mt-1'>Kindly provide the necessary details before continuing.</p>
+                    </div>
+
+                    {/* Form Card */}
+                    <div className='bg-white rounded-xl ring-1 ring-gray-100 shadow-sm overflow-hidden'>
+                        <div className='p-5 md:p-6'>
+                            <div className='grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-1'>
+                                {/* Left Column */}
+                                <RegistrationInfo message={'Student Id'} name='studentId' value={formData.studentId} onChange={handleInputChange} onBlur={handleStudentIdBlur} disabled={isStudentConfirmed} />
+                                <Dropdown name='department' options={DEPARTMENT_OPTIONS} placeholder='Select department' value={formData.department} onChange={handleInputChange} disabled={isStudentConfirmed} />
+                                <RegistrationInfo message={'Last name'} name='lastName' value={formData.lastName} onChange={handleInputChange} disabled={isStudentConfirmed} />
+                                <Dropdown name='sex' options={SEX_OPTIONS} placeholder='Sex' value={formData.sex} onChange={handleInputChange} disabled={isStudentConfirmed} />
+                                <RegistrationInfo message={'First name'} name='firstName' value={formData.firstName} onChange={handleInputChange} disabled={isStudentConfirmed} />
+                                <RegistrationInfo message={'Email'} name='email' value={formData.email} onChange={handleInputChange} disabled={isStudentConfirmed} />
+                                <RegistrationInfo message={'Contact number'} name='contactNumber' value={formData.contactNumber} onChange={handleInputChange} disabled={isStudentConfirmed} />
+                                <RegistrationInfo message={'Address'} name='address' value={formData.address} onChange={handleInputChange} disabled={isStudentConfirmed} />
+                                <Dropdown name='yearLevel' options={YEAR_OPTIONS} placeholder='Select year' value={formData.yearLevel} onChange={handleInputChange} disabled={isStudentConfirmed} />
+                                <RegistrationInfo type='date' message={'Date of Birth'} name='dateOfBirth' value={formData.dateOfBirth} onChange={handleInputChange} disabled={isStudentConfirmed} labelPosition='right' />
+                            </div>
+
+                            {/* Clear link */}
+                            <div className='flex justify-end mt-2'>
+                                <button
+                                    type="button"
+                                    onClick={handleClear}
+                                    className='text-sm text-gray-400 hover:text-crimson-600 transition-colors tracking-wide'
+                                >
+                                    Clear all
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className='flex items-center justify-between mt-5'>
+                        <motion.button
+                            whileTap={{ scale: 0.97 }}
+                            onClick={handleFormSubmit}
+                            className='inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-crimson-600 text-white text-sm font-medium tracking-wider hover:bg-crimson-700 transition-colors shadow-sm'
+                        >
+                            <ClipboardList className="w-4 h-4" />
+                            Submit
+                        </motion.button>
+                        <motion.button
+                            whileTap={{ scale: 0.97 }}
+                            onClick={handleLog}
+                            className='inline-flex items-center gap-2 px-6 py-2.5 rounded-xl ring-1 ring-crimson-200 text-crimson-600 text-sm font-medium tracking-wider hover:bg-crimson-50 transition-colors'
+                        >
+                            <LogIn className="w-4 h-4" />
+                            Login
+                        </motion.button>
+                    </div>
+                </motion.div>
+            </div>
+        </div>
     )
 }
 

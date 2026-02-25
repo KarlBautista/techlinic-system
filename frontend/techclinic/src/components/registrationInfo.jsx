@@ -19,7 +19,7 @@ function RegistrationInfo({ message, type = 'text', value = '', onChange, name, 
         }
     };
 
-    const borderColor = showValidation && !value ? 'outline-[#B22222]' : 'outline-[black]';
+    const borderColor = showValidation && !value ? 'ring-crimson-500' : (isFocused ? 'ring-crimson-400 ring-2' : 'ring-gray-200');
 
     const labelPositionClass = labelPosition === 'right'
         ? (isFocused || value ? 'top-[-5px] right-[0] text-[.6rem] text-gray-600' : 'top-5 right-4 text-[.8rem] text-gray-400')
@@ -36,7 +36,7 @@ function RegistrationInfo({ message, type = 'text', value = '', onChange, name, 
                     onFocus={() => setIsFocused(true)}
                     onBlur={handleBlur}
                     disabled={disabled}
-                    className={`w-full flex items-center text-[.9rem] px-4 py-2 outline ${borderColor} rounded-[5px] text-black ${disabled ? 'bg-gray-200 cursor-not-allowed' : ''}`}
+                    className={`w-full flex items-center text-sm px-4 py-2.5 ring-1 ${borderColor} rounded-xl outline-none text-gray-800 transition-all ${disabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'}`}
                 />
                 {value && (
                     <button

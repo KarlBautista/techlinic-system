@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import Navigation from '../components/newNavigation'
 import useAuth from '../store/useAuthStore'
 import useData from '../store/useDataStore'
 import { PageLoader, ButtonLoader } from '../components/PageLoader'
 import Swal from 'sweetalert2'
+import { motion } from 'framer-motion'
+import { Search, Plus, Users, X, Eye, EyeOff } from 'lucide-react'
 
 const PersonnelList = () => {
   const [search, setSearch] = useState("");
@@ -135,27 +136,36 @@ const PersonnelList = () => {
   };
 
   return (
-    <div className='h-screen w-full flex flex-col sm:flex-row'>
-      <div className='h-[8%] w-full order-last sm:order-0 sm:w-[20%] sm:h-full md:w-[16%] lg:w-[14%]'>
-        <Navigation />
-      </div>
-      <div className='h-[92%] min-w-[360px] sm:min-w-0 w-full sm:h-full sm:w-[80%] md:w-[84%] lg:w-[86%] overflow-auto p-6 flex flex-col gap-4'>
+    <>
+      <div className='flex flex-col gap-4'>
         {initialLoading || isLoadingUsers ? (
           <PageLoader message="Loading personnel list..." />
         ) : (
-        <div className='w-full h-full flex flex-col gap-5'>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+          className='w-full h-full flex flex-col gap-5'
+        >
           {/* ─── Page Header ─── */}
-          <div>
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
             <h1 className='text-2xl font-bold text-gray-800'>Personnel List</h1>
             <p className='text-sm text-gray-500 mt-1'>Manage clinic staff and personnel</p>
-          </div>
+          </motion.div>
 
           {/* ─── Search & Filter Bar ─── */}
-          <div className='flex items-center gap-3 flex-wrap'>
-            <div className='flex items-center flex-1 min-w-[200px] max-w-md h-10 px-3 rounded-lg bg-white ring-1 ring-gray-200 focus-within:ring-[#b01c34] transition-all'>
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-              </svg>
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.3 }}
+            className='flex items-center gap-3 flex-wrap'
+          >
+            <div className='flex items-center flex-1 min-w-[200px] max-w-md h-10 px-3 rounded-xl bg-white ring-1 ring-gray-200 focus-within:ring-crimson-400 focus-within:ring-2 transition-all'>
+              <Search className="w-4 h-4 text-gray-400 shrink-0" />
               <input
                 type="text"
                 className='outline-none w-full ml-2 text-sm text-gray-700 placeholder:text-gray-400 bg-transparent'
@@ -166,7 +176,7 @@ const PersonnelList = () => {
             </div>
 
             <select
-              className='h-10 px-3 rounded-lg bg-white ring-1 ring-gray-200 outline-none text-sm text-gray-700 focus:ring-[#b01c34] transition-all cursor-pointer'
+              className='h-10 px-3 rounded-xl bg-white ring-1 ring-gray-200 outline-none text-sm text-gray-700 focus:ring-crimson-400 focus:ring-2 transition-all cursor-pointer'
               value={selectedRole}
               onChange={(e) => setSelectedRole(e.target.value)}
             >
@@ -177,11 +187,9 @@ const PersonnelList = () => {
 
             <button
               onClick={openModal}
-              className='inline-flex items-center gap-2 h-10 px-4 rounded-lg bg-[#b01c34] text-white text-sm font-medium hover:bg-[#8f1629] transition-colors shadow-sm ml-auto'
+              className='inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-crimson-600 text-white text-sm font-medium hover:bg-crimson-700 transition-colors shadow-sm ml-auto'
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-              </svg>
+              <Plus className="w-4 h-4" />
               Add Personnel
             </button>
 
@@ -190,10 +198,15 @@ const PersonnelList = () => {
                 {filteredUsers.length} personnel
               </span>
             )}
-          </div>
+          </motion.div>
 
           {/* ─── Personnel Table ─── */}
-          <div className='bg-white rounded-xl shadow-sm flex-1 flex flex-col overflow-hidden'>
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15, duration: 0.35 }}
+            className='bg-white rounded-xl shadow-sm ring-1 ring-gray-100 flex-1 flex flex-col overflow-hidden'
+          >
             <div className='overflow-auto flex-1'>
               {filteredUsers?.length > 0 ? (
                 <table className='w-full'>
@@ -207,56 +220,59 @@ const PersonnelList = () => {
                     </tr>
                   </thead>
                   <tbody className='divide-y divide-gray-50'>
-                    {filteredUsers.map((user) => (
-                      <tr
+                    {filteredUsers.map((user, idx) => (
+                      <motion.tr
                         key={user.id}
-                        className='hover:bg-gray-50/60 transition-colors group'
+                        initial={{ opacity: 0, x: -8 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.02, duration: 0.25 }}
+                        className='hover:bg-crimson-50/40 transition-colors group'
                       >
                         <td className='px-5 py-3.5'>
                           <div className='flex items-center gap-3'>
-                            <div className='w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-500 shrink-0'>
+                            <div className='w-8 h-8 rounded-full bg-linear-to-br from-crimson-100 to-crimson-50 flex items-center justify-center text-xs font-bold text-crimson-600 shrink-0 ring-1 ring-crimson-100'>
                               {user.first_name?.[0]}{user.last_name?.[0]}
                             </div>
-                            <span className='text-sm font-medium text-gray-900 group-hover:text-[#b01c34] group-hover:underline transition-colors'>
+                            <span className='text-sm font-medium text-gray-900 group-hover:text-crimson-600 transition-colors'>
                               {`${user.first_name} ${user.last_name}`}
                             </span>
                           </div>
                         </td>
                         <td className='px-5 py-3.5'>
-                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
+                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ring-1 ${
                             user.role === 'DOCTOR'
-                              ? 'bg-blue-50 text-blue-700'
-                              : 'bg-emerald-50 text-emerald-700'
+                              ? 'bg-blue-50 text-blue-700 ring-blue-100'
+                              : 'bg-emerald-50 text-emerald-700 ring-emerald-100'
                           }`}>
                             <span className={`w-1.5 h-1.5 rounded-full ${user.role === 'DOCTOR' ? 'bg-blue-500' : 'bg-emerald-500'}`} />
                             {user.role === 'DOCTOR' ? 'Doctor' : 'Nurse'}
                           </span>
                         </td>
                         <td className='px-5 py-3.5 hidden md:table-cell'>
-                          <span className='text-sm text-gray-600 group-hover:underline'>{user.email}</span>
+                          <span className='text-sm text-gray-600'>{user.email}</span>
                         </td>
                         <td className='px-5 py-3.5 hidden lg:table-cell'>
-                          <span className='text-sm text-gray-600 group-hover:underline'>{user.sex}</span>
+                          <span className='text-sm text-gray-600'>{user.sex}</span>
                         </td>
                         <td className='px-5 py-3.5 hidden sm:table-cell'>
-                          <span className='text-sm text-gray-600 group-hover:underline'>{formatDate(user.date_of_birth)}</span>
+                          <span className='text-sm text-gray-600'>{formatDate(user.date_of_birth)}</span>
                         </td>
-                      </tr>
+                      </motion.tr>
                     ))}
                   </tbody>
                 </table>
               ) : (
                 <div className='flex flex-col items-center justify-center py-16 text-gray-400'>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-12 h-12 mb-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
-                  </svg>
+                  <div className='w-16 h-16 mb-3 rounded-2xl bg-gray-50 flex items-center justify-center'>
+                    <Users className="w-7 h-7 text-gray-300" />
+                  </div>
                   <p className='text-sm font-medium text-gray-500'>No personnel found</p>
                   <p className='text-xs text-gray-400 mt-1'>Try a different search or filter</p>
                 </div>
               )}
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
         )}
       </div>
 
@@ -279,11 +295,9 @@ const PersonnelList = () => {
               </div>
               <button
                 onClick={closeModal}
-                className='w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors'
+                className='w-8 h-8 rounded-xl flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors'
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                </svg>
+                <X className="w-4.5 h-4.5" />
               </button>
             </div>
 
@@ -292,92 +306,92 @@ const PersonnelList = () => {
               <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                 {/* First Name */}
                 <div className='flex flex-col gap-1.5'>
-                  <label className='text-xs font-medium text-gray-500 uppercase tracking-wide'>First Name <span className='text-red-500'>*</span></label>
+                  <label className='text-xs font-medium text-gray-500 uppercase tracking-wider'>First Name <span className='text-red-500'>*</span></label>
                   <input
                     type="text" name="first_name" value={personnel.first_name} onChange={handleChange}
                     placeholder="Juan" required
-                    className='px-3 py-2 rounded-lg border border-gray-300 outline-none text-sm focus:border-[#b01c34] transition-colors'
+                    className='px-3 py-2.5 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'
                   />
                 </div>
 
                 {/* Last Name */}
                 <div className='flex flex-col gap-1.5'>
-                  <label className='text-xs font-medium text-gray-500 uppercase tracking-wide'>Last Name <span className='text-red-500'>*</span></label>
+                  <label className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Last Name <span className='text-red-500'>*</span></label>
                   <input
                     type="text" name="last_name" value={personnel.last_name} onChange={handleChange}
                     placeholder="Dela Cruz" required
-                    className='px-3 py-2 rounded-lg border border-gray-300 outline-none text-sm focus:border-[#b01c34] transition-colors'
+                    className='px-3 py-2.5 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'
                   />
                 </div>
 
                 {/* Email */}
                 <div className='flex flex-col gap-1.5 md:col-span-2'>
-                  <label className='text-xs font-medium text-gray-500 uppercase tracking-wide'>Email Address <span className='text-red-500'>*</span></label>
+                  <label className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Email Address <span className='text-red-500'>*</span></label>
                   <input
                     type="email" name="email" value={personnel.email} onChange={handleChange}
                     placeholder="juan.delacruz@tup.edu.ph" required
-                    className='px-3 py-2 rounded-lg border border-gray-300 outline-none text-sm focus:border-[#b01c34] transition-colors'
+                    className='px-3 py-2.5 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'
                   />
                 </div>
 
                 {/* Password */}
                 <div className='flex flex-col gap-1.5'>
-                  <label className='text-xs font-medium text-gray-500 uppercase tracking-wide'>Password <span className='text-red-500'>*</span></label>
+                  <label className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Password <span className='text-red-500'>*</span></label>
                   <div className='relative'>
                     <input
                       type={showPassword ? "text" : "password"} name="password" value={personnel.password} onChange={handleChange}
                       placeholder="Min. 8 characters" required minLength="8"
-                      className='w-full px-3 py-2 pr-10 rounded-lg border border-gray-300 outline-none text-sm focus:border-[#b01c34] transition-colors'
+                      className='w-full px-3 py-2.5 pr-10 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'
                     />
                     <button type="button" onClick={() => setShowPassword(!showPassword)}
                       className='absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600'>
-                      <i className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'} text-sm`}></i>
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
                 </div>
 
                 {/* Confirm Password */}
                 <div className='flex flex-col gap-1.5'>
-                  <label className='text-xs font-medium text-gray-500 uppercase tracking-wide'>Confirm Password <span className='text-red-500'>*</span></label>
+                  <label className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Confirm Password <span className='text-red-500'>*</span></label>
                   <div className='relative'>
                     <input
                       type={showConfirmPassword ? "text" : "password"} name="confirm_password" value={personnel.confirm_password} onChange={handleChange}
                       placeholder="Re-enter password" required minLength="8"
-                      className='w-full px-3 py-2 pr-10 rounded-lg border border-gray-300 outline-none text-sm focus:border-[#b01c34] transition-colors'
+                      className='w-full px-3 py-2.5 pr-10 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'
                     />
                     <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       className='absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600'>
-                      <i className={`fa-solid ${showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'} text-sm`}></i>
+                      {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
                 </div>
 
                 {/* Address */}
                 <div className='flex flex-col gap-1.5 md:col-span-2'>
-                  <label className='text-xs font-medium text-gray-500 uppercase tracking-wide'>Address <span className='text-red-500'>*</span></label>
+                  <label className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Address <span className='text-red-500'>*</span></label>
                   <input
                     type="text" name="address" value={personnel.address} onChange={handleChange}
                     placeholder="123 Main Street, Manila" required
-                    className='px-3 py-2 rounded-lg border border-gray-300 outline-none text-sm focus:border-[#b01c34] transition-colors'
+                    className='px-3 py-2.5 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'
                   />
                 </div>
 
                 {/* Date of Birth */}
                 <div className='flex flex-col gap-1.5'>
-                  <label className='text-xs font-medium text-gray-500 uppercase tracking-wide'>Date of Birth <span className='text-red-500'>*</span></label>
+                  <label className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Date of Birth <span className='text-red-500'>*</span></label>
                   <input
                     type="date" name="date_of_birth" value={personnel.date_of_birth} onChange={handleChange}
                     required
-                    className='px-3 py-2 rounded-lg border border-gray-300 outline-none text-sm focus:border-[#b01c34] transition-colors'
+                    className='px-3 py-2.5 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'
                   />
                 </div>
 
                 {/* Role */}
                 <div className='flex flex-col gap-1.5'>
-                  <label className='text-xs font-medium text-gray-500 uppercase tracking-wide'>Role <span className='text-red-500'>*</span></label>
+                  <label className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Role <span className='text-red-500'>*</span></label>
                   <select
                     name="role" value={personnel.role} onChange={handleChange} required
-                    className='px-3 py-2 rounded-lg border border-gray-300 outline-none text-sm focus:border-[#b01c34] transition-colors bg-white'
+                    className='px-3 py-2.5 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all bg-white'
                   >
                     <option value="">Select Role</option>
                     <option value="NURSE">Nurse</option>
@@ -387,10 +401,10 @@ const PersonnelList = () => {
 
                 {/* Sex */}
                 <div className='flex flex-col gap-1.5'>
-                  <label className='text-xs font-medium text-gray-500 uppercase tracking-wide'>Sex <span className='text-red-500'>*</span></label>
+                  <label className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Sex <span className='text-red-500'>*</span></label>
                   <select
                     name="sex" value={personnel.sex} onChange={handleChange} required
-                    className='px-3 py-2 rounded-lg border border-gray-300 outline-none text-sm focus:border-[#b01c34] transition-colors bg-white'
+                    className='px-3 py-2.5 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all bg-white'
                   >
                     <option value="">Select Sex</option>
                     <option value="Male">Male</option>
@@ -404,14 +418,14 @@ const PersonnelList = () => {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className='px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors'
+                  className='px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors'
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className='px-5 py-2 rounded-lg bg-[#b01c34] text-white text-sm font-medium hover:bg-[#8f1629] transition-colors inline-flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed shadow-sm'
+                  className='px-5 py-2.5 rounded-xl bg-crimson-600 text-white text-sm font-medium hover:bg-crimson-700 transition-colors inline-flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed shadow-sm'
                 >
                   {isSubmitting ? <><ButtonLoader /> Adding...</> : 'Add Personnel'}
                 </button>
@@ -420,7 +434,7 @@ const PersonnelList = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   )
 }
 

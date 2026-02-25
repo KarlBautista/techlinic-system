@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Navigation from '../components/newNavigation';
+import { motion } from 'framer-motion';
+import { User, Shield, Lock, Mail, KeyRound, Pencil, PenTool, PenLine, CheckCircle2, AlertCircle, UserPen, IdCard, Tag } from 'lucide-react';
 import useAuth from '../store/useAuthStore';
 import SignaturePad from '../components/SignaturePad';
 
@@ -199,25 +200,29 @@ const getInitials = () => {
 
   return (  
     <>
-      <div className='h-screen w-full flex flex-col sm:flex-row'>
-      <div className='h-[8%] w-full order-last sm:order-0 sm:w-[20%] sm:h-full md:w-[16%] lg:w-[14%]'>
-        <Navigation />
-      </div>
-
-      <div className='h-[92%] min-w-[360px] sm:min-w-0 w-full sm:h-full sm:w-[80%] md:w-[84%] lg:w-[86%] overflow-auto p-6 flex flex-col gap-4'>
+      <div className='flex flex-col gap-4'>
         {/* Page Header */}
-        <div>
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
           <h1 className='text-2xl font-bold text-gray-800'>Settings</h1>
           <p className='text-sm text-gray-500 mt-1'>Manage your profile and account settings</p>
-        </div>
+        </motion.div>
 
         {/* Profile Banner */}
-        <div className='bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden'>
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05, duration: 0.35 }}
+          className='bg-white rounded-xl shadow-sm ring-1 ring-gray-100 overflow-hidden'
+        >
           {/* Banner top stripe */}
-          <div className='h-28 bg-linear-to-r from-[#b01c34] to-[#d4375a] relative'>
+          <div className='h-28 bg-linear-to-r from-crimson-600 to-crimson-400 relative'>
             <div className='absolute -bottom-10 left-6 md:left-10'>
               <div className='w-20 h-20 md:w-24 md:h-24 rounded-full bg-white border-4 border-white shadow-md flex items-center justify-center'>
-                <div className='w-full h-full rounded-full bg-[#b01c34] flex items-center justify-center'>
+                <div className='w-full h-full rounded-full bg-linear-to-br from-crimson-600 to-crimson-500 flex items-center justify-center'>
                   <p className='text-white text-xl md:text-2xl font-bold'>{getInitials()}</p>
                 </div>
               </div>
@@ -229,31 +234,36 @@ const getInitials = () => {
                 <h2 className='text-xl md:text-2xl font-bold text-gray-800'>{getDisplayName()}</h2>
                 <p className='text-sm text-gray-500 mt-0.5'>
                   <span className='inline-flex items-center gap-1.5'>
-                    <i className='fa-solid fa-id-badge text-gray-400'></i>
+                    <IdCard className="w-3.5 h-3.5 text-gray-400" />
                     {authenticatedUser?.id ? `${authenticatedUser.id.slice(0, 8)}...` : 'N/A'}
                   </span>
                   <span className='mx-2 text-gray-300'>|</span>
                   <span className='inline-flex items-center gap-1.5'>
-                    <i className='fa-solid fa-user-tag text-gray-400'></i>
+                    <Tag className="w-3.5 h-3.5 text-gray-400" />
                     {displayedProfile?.role || 'N/A'}
                   </span>
                 </p>
               </div>
-              <button onClick={handleToggleEdit} className='inline-flex items-center gap-2 px-4 py-2 bg-[#b01c34] hover:bg-[#8f1629] text-white text-sm font-medium rounded-lg transition-colors'>
-                <i className='fa-solid fa-pen-to-square'></i>
+              <button onClick={handleToggleEdit} className='inline-flex items-center gap-2 px-4 py-2.5 bg-crimson-600 hover:bg-crimson-700 text-white text-sm font-medium rounded-xl transition-colors shadow-sm'>
+                <Pencil className="w-3.5 h-3.5" />
                 Edit Profile
               </button>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Info Cards Grid */}
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
           {/* Personal Information Card */}
-          <div className='bg-white rounded-xl shadow-sm border border-gray-100 p-6'>
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.35 }}
+            className='bg-white rounded-xl shadow-sm ring-1 ring-gray-100 p-6'
+          >
             <div className='flex items-center gap-3 mb-5'>
-              <div className='w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center'>
-                <i className='fa-solid fa-user text-[#b01c34] text-sm'></i>
+              <div className='w-9 h-9 rounded-xl bg-crimson-50 flex items-center justify-center ring-1 ring-crimson-100'>
+                <User className="w-4 h-4 text-crimson-600" />
               </div>
               <h3 className='text-base font-semibold text-gray-800'>Personal Information</h3>
             </div>
@@ -294,19 +304,24 @@ const getInitials = () => {
 
               <div>
                 <p className='text-xs font-medium text-gray-400 uppercase tracking-wider'>Role</p>
-                <span className='inline-flex items-center gap-1.5 mt-0.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-red-50 text-[#b01c34]'>
-                  <i className='fa-solid fa-shield-halved text-[10px]'></i>
+                <span className='inline-flex items-center gap-1.5 mt-0.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-crimson-50 text-crimson-600 ring-1 ring-crimson-100'>
+                  <Shield className="w-3 h-3" />
                   {displayedProfile?.role || 'N/A'}
                 </span>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Login & Security Card */}
-          <div className='bg-white rounded-xl shadow-sm border border-gray-100 p-6'>
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15, duration: 0.35 }}
+            className='bg-white rounded-xl shadow-sm ring-1 ring-gray-100 p-6'
+          >
             <div className='flex items-center gap-3 mb-5'>
-              <div className='w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center'>
-                <i className='fa-solid fa-lock text-[#b01c34] text-sm'></i>
+              <div className='w-9 h-9 rounded-xl bg-crimson-50 flex items-center justify-center ring-1 ring-crimson-100'>
+                <Lock className="w-4 h-4 text-crimson-600" />
               </div>
               <h3 className='text-base font-semibold text-gray-800'>Login & Security</h3>
             </div>
@@ -315,7 +330,7 @@ const getInitials = () => {
               <div>
                 <p className='text-xs font-medium text-gray-400 uppercase tracking-wider'>Email Address</p>
                 <div className='flex items-center gap-2 mt-1'>
-                  <i className='fa-solid fa-envelope text-gray-400 text-xs'></i>
+                  <Mail className="w-3.5 h-3.5 text-gray-400" />
                   <p className='text-sm font-medium text-gray-800'>{authenticatedUser?.email || 'N/A'}</p>
                 </div>
               </div>
@@ -326,13 +341,13 @@ const getInitials = () => {
                 <p className='text-xs font-medium text-gray-400 uppercase tracking-wider'>Password</p>
                 <div className='flex items-center justify-between mt-1'>
                   <div className='flex items-center gap-2'>
-                    <i className='fa-solid fa-key text-gray-400 text-xs'></i>
+                    <KeyRound className="w-3.5 h-3.5 text-gray-400" />
                     <p className='text-sm font-medium text-gray-800 tracking-widest'>••••••••</p>
                   </div>
                   <button 
                     onClick={handleEditPassword} 
-                    className='inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#b01c34] bg-red-50 hover:bg-red-100 rounded-lg transition-colors'>
-                    <i className='fa-solid fa-pen text-[10px]'></i>
+                    className='inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-crimson-600 bg-crimson-50 hover:bg-crimson-100 rounded-xl ring-1 ring-crimson-100 transition-colors'>
+                    <Pencil className="w-3 h-3" />
                     Change
                   </button>
                 </div>
@@ -342,7 +357,7 @@ const getInitials = () => {
 
               <div>
                 <p className='text-xs font-medium text-gray-400 uppercase tracking-wider'>Account Status</p>
-                <span className='inline-flex items-center gap-1.5 mt-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-700'>
+                <span className='inline-flex items-center gap-1.5 mt-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-700 ring-1 ring-green-100'>
                   <span className='w-1.5 h-1.5 rounded-full bg-green-500'></span>
                   Active
                 </span>
@@ -360,15 +375,20 @@ const getInitials = () => {
                 </p>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Signature Card - Full Width */}
-        <div className='bg-white rounded-xl shadow-sm border border-gray-100 p-6'>
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.35 }}
+          className='bg-white rounded-xl shadow-sm ring-1 ring-gray-100 p-6'
+        >
           <div className='flex items-center justify-between mb-5'>
             <div className='flex items-center gap-3'>
-              <div className='w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center'>
-                <i className='fa-solid fa-signature text-[#b01c34] text-sm'></i>
+              <div className='w-9 h-9 rounded-xl bg-crimson-50 flex items-center justify-center ring-1 ring-crimson-100'>
+                <PenLine className="w-4 h-4 text-crimson-600" />
               </div>
               <div>
                 <h3 className='text-base font-semibold text-gray-800'>Digital Signature</h3>
@@ -377,15 +397,15 @@ const getInitials = () => {
             </div>
             <button
               onClick={() => { setSignatureMessage(''); setShowSignatureModal(true); }}
-              className='inline-flex items-center gap-2 px-4 py-2 bg-[#b01c34] hover:bg-[#8f1629] text-white text-sm font-medium rounded-lg transition-colors'
+              className='inline-flex items-center gap-2 px-4 py-2.5 bg-crimson-600 hover:bg-crimson-700 text-white text-sm font-medium rounded-xl transition-colors shadow-sm'
             >
-              <i className='fa-solid fa-pen-nib text-xs'></i>
+              <PenTool className="w-3.5 h-3.5" />
               {userProfile?.signature_url ? 'Update Signature' : 'Add Signature'}
             </button>
           </div>
 
           {userProfile?.signature_url ? (
-            <div className='border border-gray-200 rounded-lg p-6 bg-gray-50 flex flex-col items-center gap-3'>
+            <div className='ring-1 ring-gray-200 rounded-xl p-6 bg-gray-50 flex flex-col items-center gap-3'>
               <img
                 src={userProfile.signature_url}
                 alt="Your signature"
@@ -394,9 +414,9 @@ const getInitials = () => {
               <p className='text-xs text-gray-400'>Your current digital signature</p>
             </div>
           ) : (
-            <div className='border-2 border-dashed border-gray-200 rounded-lg p-8 flex flex-col items-center gap-3'>
-              <div className='w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center'>
-                <i className='fa-solid fa-pen-fancy text-2xl text-gray-300'></i>
+            <div className='border-2 border-dashed border-gray-200 rounded-xl p-8 flex flex-col items-center gap-3'>
+              <div className='w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center'>
+                <PenLine className="w-7 h-7 text-gray-300" />
               </div>
               <p className='text-sm font-medium text-gray-500'>No signature added yet</p>
               <p className='text-xs text-gray-400'>Add your signature to appear on prescriptions and certificates</p>
@@ -404,16 +424,15 @@ const getInitials = () => {
           )}
 
           {signatureMessage && (
-            <div className={`mt-3 flex items-center gap-2 p-3 rounded-lg text-sm ${
-              signatureMessage.includes('success') ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600'
+            <div className={`mt-3 flex items-center gap-2 p-3 rounded-xl text-sm ${
+              signatureMessage.includes('success') ? 'bg-green-50 text-green-700 ring-1 ring-green-100' : 'bg-red-50 text-red-600 ring-1 ring-red-100'
             }`}>
-              <i className={`fa-solid ${signatureMessage.includes('success') ? 'fa-check-circle' : 'fa-circle-exclamation'} text-sm`}></i>
+              {signatureMessage.includes('success') ? <CheckCircle2 className="w-4 h-4 shrink-0" /> : <AlertCircle className="w-4 h-4 shrink-0" />}
               {signatureMessage}
             </div>
           )}
-        </div>
+        </motion.div>
       </div>
-    </div>
 
     {/* Change Password Modal */}
     {showModal && (
@@ -421,8 +440,8 @@ const getInitials = () => {
         <div className="absolute inset-0 bg-black/50 modal-backdrop-enter" onClick={handleCloseModal}></div>
         <div className="relative bg-white rounded-xl shadow-xl w-[90%] max-w-md p-6 z-10 modal-content-enter">
           <div className='flex items-center gap-3 mb-5'>
-            <div className='w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center'>
-              <i className='fa-solid fa-lock text-[#b01c34] text-sm'></i>
+            <div className='w-9 h-9 rounded-xl bg-crimson-50 flex items-center justify-center ring-1 ring-crimson-100'>
+              <Lock className="w-4 h-4 text-crimson-600" />
             </div>
             <h3 className="text-lg font-semibold text-gray-800">Change Password</h3>
           </div>
@@ -433,7 +452,7 @@ const getInitials = () => {
                 type="password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#b01c34]/20 focus:border-[#b01c34] outline-none transition-all"
+                className="w-full p-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 focus:border-crimson-400 outline-none transition-all"
                 placeholder="Enter current password"
               />
             </div>
@@ -444,7 +463,7 @@ const getInitials = () => {
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#b01c34]/20 focus:border-[#b01c34] outline-none transition-all"
+                className="w-full p-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 focus:border-crimson-400 outline-none transition-all"
                 placeholder="Enter new password"
               />
             </div>
@@ -455,21 +474,21 @@ const getInitials = () => {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#b01c34]/20 focus:border-[#b01c34] outline-none transition-all"
+                className="w-full p-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 focus:border-crimson-400 outline-none transition-all"
                 placeholder="Confirm new password"
               />
             </div>
 
             {error && (
-              <div className='flex items-center gap-2 p-3 bg-red-50 rounded-lg'>
-                <i className='fa-solid fa-circle-exclamation text-red-500 text-sm'></i>
+              <div className='flex items-center gap-2 p-3 bg-red-50 rounded-xl ring-1 ring-red-100'>
+                <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
                 <p className="text-sm text-red-600">{error}</p>
               </div>
             )}
 
             <div className="flex justify-end gap-2 pt-2">
-              <button type="button" onClick={handleCloseModal} className="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 hover:bg-gray-200 transition-colors">Cancel</button>
-              <button type="submit" className="px-4 py-2 rounded-lg text-sm font-medium bg-[#b01c34] text-white hover:bg-[#8f1629] transition-colors">Update Password</button>
+              <button type="button" onClick={handleCloseModal} className="px-4 py-2.5 rounded-xl text-sm font-medium bg-gray-100 hover:bg-gray-200 transition-colors">Cancel</button>
+              <button type="submit" className="px-4 py-2.5 rounded-xl text-sm font-medium bg-crimson-600 text-white hover:bg-crimson-700 transition-colors shadow-sm">Update Password</button>
             </div>
           </form>
         </div>
@@ -482,33 +501,33 @@ const getInitials = () => {
         <div className="absolute inset-0 bg-black/50 modal-backdrop-enter" onClick={() => setShowProfileModal(false)}></div>
         <div className="relative bg-white rounded-xl shadow-xl w-[90%] max-w-lg p-6 z-10 modal-content-enter max-h-[90vh] overflow-auto">
           <div className='flex items-center gap-3 mb-5'>
-            <div className='w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center'>
-              <i className='fa-solid fa-user-pen text-[#b01c34] text-sm'></i>
+            <div className='w-9 h-9 rounded-xl bg-crimson-50 flex items-center justify-center ring-1 ring-crimson-100'>
+              <UserPen className="w-4 h-4 text-crimson-600" />
             </div>
             <h3 className="text-lg font-semibold text-gray-800">Edit Personal Information</h3>
           </div>
           <form onSubmit={handleSaveProfile} className="space-y-4">
             <div>
               <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Role</label>
-              <input value={role} disabled className="w-full p-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-500 cursor-not-allowed" />
+              <input value={role} disabled className="w-full p-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 text-gray-500 cursor-not-allowed" />
             </div>
 
             <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
               <div>
                 <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">First name</label>
-                <input value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#b01c34]/20 focus:border-[#b01c34] outline-none transition-all" placeholder="First name" />
+                <input value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full p-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 focus:border-crimson-400 outline-none transition-all" placeholder="First name" />
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Last name</label>
-                <input value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#b01c34]/20 focus:border-[#b01c34] outline-none transition-all" placeholder="Last name" />
+                <input value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full p-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 focus:border-crimson-400 outline-none transition-all" placeholder="Last name" />
               </div>
             </div>
 
             <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
               <div>
                 <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Gender</label>
-                <select value={sex} onChange={(e) => setSex(e.target.value)} className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#b01c34]/20 focus:border-[#b01c34] outline-none transition-all">
+                <select value={sex} onChange={(e) => setSex(e.target.value)} className="w-full p-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 focus:border-crimson-400 outline-none transition-all">
                   <option value=''>Select</option>
                   <option value='Male'>Male</option>
                   <option value='Female'>Female</option>
@@ -517,27 +536,27 @@ const getInitials = () => {
 
               <div>
                 <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Date of birth</label>
-                <input type='date' value={dateOfBirth} onChange={(e) => setDateOfBirth(e.target.value)} className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#b01c34]/20 focus:border-[#b01c34] outline-none transition-all" />
+                <input type='date' value={dateOfBirth} onChange={(e) => setDateOfBirth(e.target.value)} className="w-full p-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 focus:border-crimson-400 outline-none transition-all" />
               </div>
             </div>
 
             <div>
               <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Address</label>
-              <input value={address} onChange={(e) => setAddress(e.target.value)} className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#b01c34]/20 focus:border-[#b01c34] outline-none transition-all" placeholder="Full address" />
+              <input value={address} onChange={(e) => setAddress(e.target.value)} className="w-full p-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 focus:border-crimson-400 outline-none transition-all" placeholder="Full address" />
             </div>
 
             {profileMessage && (
-              <div className={`flex items-center gap-2 p-3 rounded-lg text-sm ${
-                profileMessage.includes('success') ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600'
+              <div className={`flex items-center gap-2 p-3 rounded-xl text-sm ${
+                profileMessage.includes('success') ? 'bg-green-50 text-green-700 ring-1 ring-green-100' : 'bg-red-50 text-red-600 ring-1 ring-red-100'
               }`}>
-                <i className={`fa-solid ${profileMessage.includes('success') ? 'fa-check-circle' : 'fa-circle-exclamation'} text-sm`}></i>
+                {profileMessage.includes('success') ? <CheckCircle2 className="w-4 h-4 shrink-0" /> : <AlertCircle className="w-4 h-4 shrink-0" />}
                 {profileMessage}
               </div>
             )}
 
             <div className="flex justify-end gap-2 pt-2">
-              <button type="button" onClick={() => setShowProfileModal(false)} className="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 hover:bg-gray-200 transition-colors">Cancel</button>
-              <button type="submit" disabled={saving} className="px-4 py-2 rounded-lg text-sm font-medium bg-[#b01c34] text-white hover:bg-[#8f1629] transition-colors inline-flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">{saving ? <><span className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin'></span> Saving...</> : 'Save Changes'}</button>
+              <button type="button" onClick={() => setShowProfileModal(false)} className="px-4 py-2.5 rounded-xl text-sm font-medium bg-gray-100 hover:bg-gray-200 transition-colors">Cancel</button>
+              <button type="submit" disabled={saving} className="px-4 py-2.5 rounded-xl text-sm font-medium bg-crimson-600 text-white hover:bg-crimson-700 transition-colors shadow-sm inline-flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">{saving ? <><span className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin'></span> Saving...</> : 'Save Changes'}</button>
             </div>
           </form>
         </div>
@@ -550,8 +569,8 @@ const getInitials = () => {
         <div className="absolute inset-0 bg-black/50 modal-backdrop-enter" onClick={() => setShowSignatureModal(false)}></div>
         <div className="relative bg-white rounded-xl shadow-xl w-[90%] max-w-lg p-6 z-10 modal-content-enter max-h-[90vh] overflow-auto">
           <div className='flex items-center gap-3 mb-5'>
-            <div className='w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center'>
-              <i className='fa-solid fa-signature text-[#b01c34] text-sm'></i>
+            <div className='w-9 h-9 rounded-xl bg-crimson-50 flex items-center justify-center ring-1 ring-crimson-100'>
+              <PenLine className="w-4 h-4 text-crimson-600" />
             </div>
             <h3 className="text-lg font-semibold text-gray-800">
               {userProfile?.signature_url ? 'Update Your Signature' : 'Add Your Signature'}
@@ -560,7 +579,7 @@ const getInitials = () => {
 
           {signatureSaving ? (
             <div className="flex flex-col items-center gap-3 py-8">
-              <span className='w-8 h-8 border-3 border-[#b01c34] border-t-transparent rounded-full animate-spin'></span>
+              <span className='w-8 h-8 border-3 border-crimson-600 border-t-transparent rounded-full animate-spin'></span>
               <p className="text-sm text-gray-500">Saving signature...</p>
             </div>
           ) : (
@@ -575,7 +594,7 @@ const getInitials = () => {
             <button
               type="button"
               onClick={() => setShowSignatureModal(false)}
-              className="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 hover:bg-gray-200 transition-colors"
+              className="px-4 py-2.5 rounded-xl text-sm font-medium bg-gray-100 hover:bg-gray-200 transition-colors"
             >
               Close
             </button>
