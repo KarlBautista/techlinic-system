@@ -266,11 +266,11 @@ const addDiagnosis = async (req, res) => {
         const { data: addDiagnosisData, error: addDiagnosisError } = await supabase.from("diagnoses").insert({
             diagnosis,
             record_id: id,
-            medication: medication.medicine_name,
-            disease_id: diseaseId,
-            quantity,
-            treatment,
-            notes,
+            medication: medication?.medicine_name ?? null,
+            disease_id: diseaseId ? Number(diseaseId) : null,
+            quantity: quantity ? Number(quantity) : null,
+            treatment: treatment || null,
+            notes: notes || null,
         });
 
         if (addDiagnosisError) {
@@ -290,7 +290,7 @@ const addDiagnosis = async (req, res) => {
         res.status(200).json({ success: true, message: "success diagnosis"});
     } catch (err) {
         console.error(`Something went wrong adding diagnosis: ${err.message}`);
-        return;
+        return res.status(500).json({ success: false, error: err.message });
     }
 }
 

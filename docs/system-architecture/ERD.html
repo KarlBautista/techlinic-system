@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechClinic — Entity Relationship Diagram (ERD)</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px;
+        }
+        h1 { font-size: 20px; color: #333; margin-bottom: 4px; }
+        .subtitle { font-size: 13px; color: #666; margin-bottom: 20px; }
+        .diagram-container {
+            position: relative;
+            width: 1200px;
+            height: 900px;
+            border: 1px solid #ddd;
+            background: #fafbfc;
+        }
+        /* ===== TABLE BOX ===== */
+        .table-box {
+            position: absolute;
+            background: #fff;
+            border: 2px solid #2c3e50;
+            border-radius: 0;
+            min-width: 200px;
+            font-size: 12px;
+            z-index: 2;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+        .table-header {
+            background: #2c3e50;
+            color: #fff;
+            padding: 8px 12px;
+            font-weight: 700;
+            font-size: 13px;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+        .table-cols {
+            padding: 0;
+            list-style: none;
+        }
+        .table-cols li {
+            padding: 4px 12px;
+            border-bottom: 1px solid #ecf0f1;
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+        }
+        .table-cols li:last-child { border-bottom: none; }
+        .col-name { font-weight: 500; color: #2c3e50; }
+        .col-type { color: #7f8c8d; font-style: italic; font-size: 11px; }
+        .pk { color: #e74c3c; font-weight: 700; }
+        .fk { color: #2980b9; font-weight: 600; }
+        .uk { color: #8e44ad; font-weight: 600; }
+        .badge {
+            display: inline-block;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 1px 4px;
+            border-radius: 2px;
+            margin-right: 4px;
+            color: #fff;
+        }
+        .badge-pk { background: #e74c3c; }
+        .badge-fk { background: #2980b9; }
+        .badge-uk { background: #8e44ad; }
+
+        /* ===== SVG LINES ===== */
+        svg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+        }
+        svg line, svg path {
+            stroke: #555;
+            stroke-width: 1.8;
+            fill: none;
+        }
+        /* Crow's foot markers */
+        .rel-label {
+            position: absolute;
+            font-size: 10px;
+            color: #555;
+            background: #fafbfc;
+            padding: 1px 4px;
+            z-index: 3;
+            white-space: nowrap;
+            font-style: italic;
+        }
+
+        .legend {
+            display: flex;
+            gap: 24px;
+            margin-top: 14px;
+            font-size: 12px;
+            color: #555;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .legend-sym { font-weight: 700; font-size: 14px; }
+
+        .print-btn {
+            margin-top: 14px;
+            padding: 8px 20px;
+            background: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .print-btn:hover { background: #2980b9; }
+        @media print {
+            .print-btn { display: none; }
+            body { padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<h1>Entity Relationship Diagram (ERD)</h1>
+<p class="subtitle">TechClinic — Clinic Management System for TUP | Derived from Supabase PostgreSQL Schema</p>
+
+<div class="diagram-container">
+
+    <!-- ===== SVG RELATIONSHIP LINES ===== -->
+    <svg xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <!-- One (single line) marker -->
+            <marker id="one" markerWidth="12" markerHeight="12" refX="0" refY="6" orient="auto">
+                <line x1="0" y1="2" x2="0" y2="10" stroke="#555" stroke-width="2"/>
+            </marker>
+            <!-- Many (crow's foot) marker -->
+            <marker id="many" markerWidth="16" markerHeight="14" refX="0" refY="7" orient="auto">
+                <line x1="0" y1="0" x2="12" y2="7" stroke="#555" stroke-width="1.8"/>
+                <line x1="0" y1="14" x2="12" y2="7" stroke="#555" stroke-width="1.8"/>
+                <line x1="0" y1="7" x2="12" y2="7" stroke="#555" stroke-width="1.8"/>
+            </marker>
+        </defs>
+
+        <!-- users (1) ──── (M) records  [attending_physician_id] -->
+        <!-- users right side (410,155) → records left side (480,225) -->
+        <path d="M 405,155 C 440,155 445,225 480,225" marker-start="url(#one)" marker-end="url(#many)" />
+
+        <!-- records (1) ──── (M) diagnoses  [record_id] -->
+        <!-- records right side (710,260) → diagnoses left side (760,490) -->
+        <path d="M 710,260 C 750,260 750,490 780,490" marker-start="url(#one)" marker-end="url(#many)" />
+
+        <!-- diseases (1) ──── (M) diagnoses  [disease_id] -->
+        <!-- diseases bottom (1060,395) → diagnoses top right (1000,455) -->
+        <path d="M 1060,395 C 1060,430 1010,440 1010,455" marker-start="url(#one)" marker-end="url(#many)" />
+
+        <!-- users (1) ──── (M) notifications  [user_id] -->
+        <!-- users bottom (280,220) → notifications top (280,440) -->
+        <line x1="280" y1="220" x2="280" y2="440" marker-start="url(#one)" marker-end="url(#many)" />
+
+        <!-- patients (1) ──── (M) records  [student_id – logical] -->
+        <!-- patients right (230,590) → records bottom (590,345) -->
+        <path d="M 230,590 C 400,590 400,350 500,350" marker-start="url(#one)" marker-end="url(#many)" stroke-dasharray="6,4" />
+
+        <!-- users (1) ──── (1) auth.users  [id] -->
+        <!-- users top (280,50) → auth.users bottom (280,40) — or just a small link above -->
+        <line x1="100" y1="60" x2="160" y2="85" marker-start="url(#one)" marker-end="url(#one)" />
+    </svg>
+
+    <!-- ===== RELATIONSHIP LABELS ===== -->
+    <div class="rel-label" style="top: 160px; left: 428px;">1 : M</div>
+    <div class="rel-label" style="top: 375px; left: 720px;">1 : M</div>
+    <div class="rel-label" style="top: 415px; left: 1065px;">1 : M</div>
+    <div class="rel-label" style="top: 325px; left: 240px;">1 : M</div>
+    <div class="rel-label" style="top: 450px; left: 370px; color:#8e44ad;">1 : M<br><span style="font-size:9px;">(logical)</span></div>
+    <div class="rel-label" style="top: 52px; left: 95px;">1 : 1</div>
+
+    <!-- ========================================= -->
+    <!-- TABLE: auth.users (Supabase Auth) -->
+    <!-- ========================================= -->
+    <div class="table-box" style="top: 20px; left: 20px; min-width: 130px; border-color:#7f8c8d;">
+        <div class="table-header" style="background:#7f8c8d;">auth.users</div>
+        <ul class="table-cols">
+            <li><span class="col-name"><span class="badge badge-pk">PK</span>id</span><span class="col-type">uuid</span></li>
+            <li><span class="col-name">email</span><span class="col-type">varchar</span></li>
+            <li><span class="col-name">...</span><span class="col-type"></span></li>
+        </ul>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- TABLE: users -->
+    <!-- ========================================= -->
+    <div class="table-box" style="top: 85px; left: 160px;">
+        <div class="table-header">users</div>
+        <ul class="table-cols">
+            <li><span class="col-name"><span class="badge badge-pk">PK</span><span class="badge badge-fk">FK</span>id</span><span class="col-type">uuid</span></li>
+            <li><span class="col-name">first_name</span><span class="col-type">varchar</span></li>
+            <li><span class="col-name">last_name</span><span class="col-type">varchar</span></li>
+            <li><span class="col-name">email</span><span class="col-type">varchar</span></li>
+            <li><span class="col-name">role</span><span class="col-type">text</span></li>
+            <li><span class="col-name">sex</span><span class="col-type">text</span></li>
+            <li><span class="col-name">address</span><span class="col-type">text</span></li>
+            <li><span class="col-name">date_of_birth</span><span class="col-type">timestamptz</span></li>
+            <li><span class="col-name">signature_url</span><span class="col-type">text</span></li>
+            <li><span class="col-name">created_at</span><span class="col-type">timestamptz</span></li>
+        </ul>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- TABLE: records -->
+    <!-- ========================================= -->
+    <div class="table-box" style="top: 155px; left: 480px;">
+        <div class="table-header">records</div>
+        <ul class="table-cols">
+            <li><span class="col-name"><span class="badge badge-pk">PK</span>id</span><span class="col-type">uuid</span></li>
+            <li><span class="col-name">student_id</span><span class="col-type">varchar</span></li>
+            <li><span class="col-name">first_name</span><span class="col-type">varchar</span></li>
+            <li><span class="col-name">last_name</span><span class="col-type">varchar</span></li>
+            <li><span class="col-name">contact_number</span><span class="col-type">varchar</span></li>
+            <li><span class="col-name">year_level</span><span class="col-type">varchar</span></li>
+            <li><span class="col-name">department</span><span class="col-type">varchar</span></li>
+            <li><span class="col-name">sex</span><span class="col-type">varchar</span></li>
+            <li><span class="col-name">email</span><span class="col-type">varchar</span></li>
+            <li><span class="col-name">address</span><span class="col-type">text</span></li>
+            <li><span class="col-name">date_of_birth</span><span class="col-type">timestamptz</span></li>
+            <li><span class="col-name">attending_physician</span><span class="col-type">text</span></li>
+            <li><span class="col-name"><span class="badge badge-fk">FK</span>attending_physician_id</span><span class="col-type">uuid</span></li>
+            <li><span class="col-name">status</span><span class="col-type">text</span></li>
+            <li><span class="col-name">created_at</span><span class="col-type">timestamptz</span></li>
+        </ul>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- TABLE: diagnoses -->
+    <!-- ========================================= -->
+    <div class="table-box" style="top: 455px; left: 780px;">
+        <div class="table-header">diagnoses</div>
+        <ul class="table-cols">
+            <li><span class="col-name"><span class="badge badge-pk">PK</span>id</span><span class="col-type">uuid</span></li>
+            <li><span class="col-name"><span class="badge badge-fk">FK</span>record_id</span><span class="col-type">uuid</span></li>
+            <li><span class="col-name"><span class="badge badge-fk">FK</span>disease_id</span><span class="col-type">uuid</span></li>
+            <li><span class="col-name">student_id</span><span class="col-type">text</span></li>
+            <li><span class="col-name">diagnosis</span><span class="col-type">varchar</span></li>
+            <li><span class="col-name">medication</span><span class="col-type">varchar</span></li>
+            <li><span class="col-name">quantity</span><span class="col-type">varchar</span></li>
+            <li><span class="col-name">treatment</span><span class="col-type">text</span></li>
+            <li><span class="col-name">notes</span><span class="col-type">text</span></li>
+            <li><span class="col-name">created_at</span><span class="col-type">timestamptz</span></li>
+        </ul>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- TABLE: diseases -->
+    <!-- ========================================= -->
+    <div class="table-box" style="top: 280px; left: 960px;">
+        <div class="table-header">diseases</div>
+        <ul class="table-cols">
+            <li><span class="col-name"><span class="badge badge-pk">PK</span>id</span><span class="col-type">uuid</span></li>
+            <li><span class="col-name">name</span><span class="col-type">text</span></li>
+            <li><span class="col-name">created_at</span><span class="col-type">timestamptz</span></li>
+        </ul>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- TABLE: patients -->
+    <!-- ========================================= -->
+    <div class="table-box" style="top: 520px; left: 30px;">
+        <div class="table-header">patients</div>
+        <ul class="table-cols">
+            <li><span class="col-name"><span class="badge badge-pk">PK</span>id</span><span class="col-type">uuid</span></li>
+            <li><span class="col-name"><span class="badge badge-uk">UK</span>student_id</span><span class="col-type">varchar</span></li>
+            <li><span class="col-name">first_name</span><span class="col-type">varchar</span></li>
+            <li><span class="col-name">last_name</span><span class="col-type">varchar</span></li>
+            <li><span class="col-name">contact_number</span><span class="col-type">varchar</span></li>
+            <li><span class="col-name">year_level</span><span class="col-type">varchar</span></li>
+            <li><span class="col-name">department</span><span class="col-type">varchar</span></li>
+            <li><span class="col-name">sex</span><span class="col-type">varchar</span></li>
+            <li><span class="col-name">email</span><span class="col-type">varchar</span></li>
+            <li><span class="col-name">address</span><span class="col-type">text</span></li>
+            <li><span class="col-name">date_of_birth</span><span class="col-type">timestamptz</span></li>
+            <li><span class="col-name">created_at</span><span class="col-type">timestamptz</span></li>
+        </ul>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- TABLE: medicines -->
+    <!-- ========================================= -->
+    <div class="table-box" style="top: 590px; left: 480px;">
+        <div class="table-header">medicines</div>
+        <ul class="table-cols">
+            <li><span class="col-name"><span class="badge badge-pk">PK</span>id</span><span class="col-type">bigint</span></li>
+            <li><span class="col-name">medicine_name</span><span class="col-type">text</span></li>
+            <li><span class="col-name">generic_name</span><span class="col-type">text</span></li>
+            <li><span class="col-name">brand</span><span class="col-type">text</span></li>
+            <li><span class="col-name">type</span><span class="col-type">text</span></li>
+            <li><span class="col-name">dosage</span><span class="col-type">text</span></li>
+            <li><span class="col-name">unit_of_measure</span><span class="col-type">text</span></li>
+            <li><span class="col-name">stock_level</span><span class="col-type">numeric</span></li>
+            <li><span class="col-name">batch_number</span><span class="col-type">text</span></li>
+            <li><span class="col-name">expiry_date</span><span class="col-type">timestamptz</span></li>
+            <li><span class="col-name">created_at</span><span class="col-type">timestamptz</span></li>
+        </ul>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- TABLE: notifications -->
+    <!-- ========================================= -->
+    <div class="table-box" style="top: 440px; left: 285px;">
+        <div class="table-header">notifications</div>
+        <ul class="table-cols">
+            <li><span class="col-name"><span class="badge badge-pk">PK</span>id</span><span class="col-type">uuid</span></li>
+            <li><span class="col-name"><span class="badge badge-fk">FK</span>user_id</span><span class="col-type">uuid</span></li>
+            <li><span class="col-name">title</span><span class="col-type">text</span></li>
+            <li><span class="col-name">message</span><span class="col-type">text</span></li>
+            <li><span class="col-name">is_read</span><span class="col-type">boolean</span></li>
+            <li><span class="col-name">created_at</span><span class="col-type">timestamptz</span></li>
+        </ul>
+    </div>
+
+</div>
+
+<div class="legend">
+    <div class="legend-item">
+        <span class="badge badge-pk" style="font-size:11px;">PK</span> Primary Key
+    </div>
+    <div class="legend-item">
+        <span class="badge badge-fk" style="font-size:11px;">FK</span> Foreign Key
+    </div>
+    <div class="legend-item">
+        <span class="badge badge-uk" style="font-size:11px;">UK</span> Unique Key
+    </div>
+    <div class="legend-item">
+        <span class="legend-sym">──</span> Foreign Key Constraint
+    </div>
+    <div class="legend-item">
+        <span class="legend-sym" style="border-bottom:2px dashed #555; width:20px; display:inline-block;">&nbsp;</span> Logical Relationship (no FK)
+    </div>
+    <div class="legend-item">
+        <span class="legend-sym">1</span> One &nbsp;|&nbsp; <span class="legend-sym">M</span> Many
+    </div>
+</div>
+
+<button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
+
+</body>
+</html>

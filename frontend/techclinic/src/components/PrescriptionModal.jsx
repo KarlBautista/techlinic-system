@@ -1,40 +1,55 @@
 import React, { useState } from 'react'
+import emailjs from '@emailjs/browser'
+
+const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID
+const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_PRESCRIPTION_TEMPLATE_ID
+const PUBLIC_KEY  = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
 
 const PrescriptionModal = ({ open = false, onClose = () => {}, patient = {}, prescription = {} }) => {
+  const [showCompose, setShowCompose] = useState(false);
+  const [emailTo, setEmailTo] = useState('');
+  const [sending, setSending] = useState(false);
+  const [emailStatus, setEmailStatus] = useState(null); // 'success' | 'error' | null
+
   if (!open) return null;
 
   const printPrescription = () => {
     window.print();
   }
 
-  const [showCompose, setShowCompose] = useState(false);
-  const [emailTo, setEmailTo] = useState(patient?.email ?? '');
-  const [emailSubject, setEmailSubject] = useState('');
-  const [emailBody, setEmailBody] = useState('');
-
   const openCompose = () => {
-    const subject = `Prescription for ${patient?.first_name ?? ''} ${patient?.last_name ?? ''}`;
-    const lines = [];
-    lines.push(`Date: ${dateStr}`);
-    lines.push(`Patient: ${patient?.first_name ?? ''} ${patient?.last_name ?? ''}`);
-    lines.push(`ID: ${patient?.student_id ?? patient?.id ?? '—'}`);
-    if (med?.medication) lines.push(`Medication: ${med.medication}`);
-    if (med?.dosage) lines.push(`Dosage: ${med.dosage}`);
-    if (med?.quantity) lines.push(`Quantity: ${med.quantity}`);
-    if (med?.notes || med?.additional_notes) lines.push(`Notes: ${med.notes ?? med.additional_notes}`);
-    lines.push('\n--\nThis message contains the prescription from the clinic.');
-
     setEmailTo(patient?.email ?? '');
-    setEmailSubject(subject);
-    setEmailBody(lines.join('\n'));
+    setEmailStatus(null);
     setShowCompose(true);
-  }
+  };
 
-  const sendEmail = () => {
-    const mailto = `mailto:${encodeURIComponent(emailTo)}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
-    window.location.href = mailto;
-    setShowCompose(false);
-  }
+  const sendEmail = async () => {
+    if (!emailTo.trim()) return;
+    setSending(true);
+    setEmailStatus(null);
+
+    const templateParams = {
+      to_email:   emailTo.trim(),
+      to_name:    `${patient?.first_name ?? ''} ${patient?.last_name ?? ''}`.trim(),
+      patient_id: patient?.student_id ?? patient?.id ?? '—',
+      date:       dateStr,
+      medication: med?.medication ?? '—',
+      dosage:     med?.dosage ?? '—',
+      quantity:   med?.quantity ?? '—',
+      notes:      med?.notes ?? med?.additional_notes ?? '—',
+    };
+
+    try {
+      await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY);
+      setEmailStatus('success');
+      setTimeout(() => setShowCompose(false), 2000);
+    } catch (err) {
+      console.error('EmailJS error:', err);
+      setEmailStatus('error');
+    } finally {
+      setSending(false);
+    }
+  };
 
   const now = new Date();
   const dateStr = now.toLocaleDateString('en-US');
@@ -42,8 +57,8 @@ const PrescriptionModal = ({ open = false, onClose = () => {}, patient = {}, pre
   const med = prescription || {};
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+    <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="absolute inset-0 bg-black/50 -z-10" />
 
       <div className="relative z-10 w-[min(900px,95%)] max-h-[90vh] overflow-auto bg-white rounded-lg shadow-lg p-6 print:w-[900px] print:max-h-auto">
         <div className="flex items-start justify-between mb-4 print:hidden">
@@ -143,29 +158,71 @@ const PrescriptionModal = ({ open = false, onClose = () => {}, patient = {}, pre
       </div>
       {/* Email compose sub-modal */}
       {showCompose && (
-        <div className="fixed inset-0 z-60 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setShowCompose(false)} />
-          <div className="relative z-10 w-[min(720px,95%)] bg-white rounded-lg shadow-lg p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-lg font-semibold">Send Prescription via Email</h3>
-              <button onClick={() => setShowCompose(false)} className="text-sm px-2 py-1 bg-gray-200 rounded">Close</button>
+        <div className="fixed inset-0 z-[60] flex items-center justify-center" onClick={(e) => { if (e.target === e.currentTarget && !sending) setShowCompose(false); }}>
+          <div className="absolute inset-0 bg-black/50 -z-10" />
+          <div className="relative z-10 w-[min(480px,95%)] bg-white rounded-xl shadow-xl p-6">
+            
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-base font-semibold text-gray-800">Send Prescription via Email</h3>
+              <button
+                onClick={() => setShowCompose(false)}
+                disabled={sending}
+                className="text-gray-400 hover:text-gray-600 transition disabled:opacity-40"
+              >
+                <i className="fa-solid fa-xmark text-sm" />
+              </button>
             </div>
 
-            <div className="grid gap-2">
-              <label className="text-sm">To</label>
-              <input type="email" value={emailTo} onChange={(e) => setEmailTo(e.target.value)} className="border p-2 rounded" />
+            {/* Summary */}
+            <div className="bg-gray-50 rounded-lg p-3 mb-4 text-sm space-y-1 text-gray-600 border border-gray-200">
+              <p><span className="font-medium text-gray-800">Patient:</span> {patient?.first_name} {patient?.last_name}</p>
+              <p><span className="font-medium text-gray-800">Date:</span> {dateStr}</p>
+              <p><span className="font-medium text-gray-800">Medication:</span> {med?.medication ?? '—'}</p>
+              {med?.dosage && <p><span className="font-medium text-gray-800">Dosage:</span> {med.dosage}</p>}
+            </div>
 
-              <label className="text-sm">Subject</label>
-              <input value={emailSubject} onChange={(e) => setEmailSubject(e.target.value)} className="border p-2 rounded" />
+            <label className="block text-sm font-medium text-gray-700 mb-1">Recipient Email</label>
+            <input
+              type="email"
+              value={emailTo}
+              onChange={(e) => setEmailTo(e.target.value)}
+              placeholder="patient@email.com"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 mb-4"
+            />
 
-              <label className="text-sm">Body</label>
-              <textarea value={emailBody} onChange={(e) => setEmailBody(e.target.value)} rows={8} className="border p-2 rounded" />
-
-              <div className="flex justify-end gap-2 mt-2">
-                <button onClick={() => setShowCompose(false)} className="px-3 py-1 bg-gray-200 rounded">Cancel</button>
-                <button onClick={sendEmail} className="px-3 py-1 bg-blue-600 text-white rounded">Send (opens mail client)</button>
+            {/* Status messages */}
+            {emailStatus === 'success' && (
+              <div className="mb-4 bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm rounded-lg px-3 py-2 flex items-center gap-2">
+                <i className="fa-solid fa-circle-check" /> Email sent successfully!
               </div>
+            )}
+            {emailStatus === 'error' && (
+              <div className="mb-4 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-3 py-2 flex items-center gap-2">
+                <i className="fa-solid fa-circle-exclamation" /> Failed to send. Check your EmailJS configuration.
+              </div>
+            )}
+
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setShowCompose(false)}
+                disabled={sending}
+                className="px-4 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition disabled:opacity-40"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={sendEmail}
+                disabled={sending || !emailTo.trim()}
+                className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 flex items-center gap-2"
+              >
+                {sending ? (
+                  <><i className="fa-solid fa-spinner animate-spin" /> Sending...</>
+                ) : (
+                  <><i className="fa-solid fa-paper-plane" /> Send Email</>
+                )}
+              </button>
             </div>
+
           </div>
         </div>
       )}

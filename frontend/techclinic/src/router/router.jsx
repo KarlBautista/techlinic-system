@@ -12,6 +12,7 @@ import Notifications from "../pages/Notifications";
 import PersonnelList from "../pages/PersonnelList"
 import Settings from "../pages/Settings";
 import AddDiagnosis from "../pages/AddDiagnosis";
+import ActivityLog from "../pages/ActivityLog";
 import LandingPage from "../pages/LandingPage"
 import ProtectedRoute from "../components/ProtectedRoute";
 import AppLayout from "../components/AppLayout";
@@ -31,6 +32,7 @@ const router = createBrowserRouter([
       { path: "/individual-record/:studentId", element: <IndividualRecord /> },
       { path: "/add-medicine", element: <AddMedicine /> },
       { path: "/analytics", element: <Analytics /> },
+      { path: "/activity-log", element: <ActivityLog /> },
       { path: "/notifications", element: <Notifications /> },
       { path: "/settings", element: <Settings /> },
     ],

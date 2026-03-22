@@ -13,6 +13,7 @@ import {
     LogOut,
     ChevronsLeft,
     ChevronsRight,
+    ScrollText,
 } from 'lucide-react'
 import Swal from 'sweetalert2'
 import TUP from '../assets/image/TUP.png'
@@ -43,6 +44,7 @@ const NAV_SECTIONS = {
         {
             title: 'System',
             items: [
+                { label: 'Activity Log', path: '/activity-log', icon: ScrollText },
                 { label: 'Notifications', path: '/notifications', icon: Bell, hasBadge: true },
             ],
         },
@@ -66,6 +68,7 @@ const NAV_SECTIONS = {
         {
             title: 'System',
             items: [
+                { label: 'Activity Log', path: '/activity-log', icon: ScrollText },
                 { label: 'Notifications', path: '/notifications', icon: Bell, hasBadge: true },
             ],
         },

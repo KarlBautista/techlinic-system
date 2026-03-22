@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechClinic — Data Flow Diagrams</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f8f9fa;
+            color: #212529;
+            padding: 40px 20px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 6px;
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 40px;
+        }
+        .diagram-section {
+            max-width: 1200px;
+            margin: 0 auto 60px;
+        }
+        .diagram-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 4px;
+            text-align: center;
+        }
+        .diagram-desc {
+            font-size: 13px;
+            color: #6c757d;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .canvas-wrap {
+            background: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+        }
+        svg text {
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        .legend-wrap {
+            max-width: 800px;
+            margin: 0 auto 50px;
+            background: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 24px 32px;
+        }
+        .legend-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #1a1a2e;
+        }
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .legend-item span {
+            font-size: 13px;
+            color: #495057;
+        }
+        @media print {
+            body { background: #fff; padding: 10px; }
+            .canvas-wrap { border: none; padding: 10px; }
+            .diagram-section { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+<h1>TechClinic — Data Flow Diagrams</h1>
+<p class="subtitle">Health Record Management System &nbsp;|&nbsp; Yourdon–DeMarco Notation &nbsp;|&nbsp; Chapter 3</p>
+
+<!-- ==================== LEGEND ==================== -->
+<div class="legend-wrap">
+    <div class="legend-title">Notation Legend (Yourdon–DeMarco)</div>
+    <div class="legend-grid">
+        <div class="legend-item">
+            <svg width="60" height="36"><rect x="2" y="2" width="56" height="32" rx="0" fill="#E8F4FD" stroke="#2B7A9E" stroke-width="2"/></svg>
+            <span>External Entity</span>
+        </div>
+        <div class="legend-item">
+            <svg width="60" height="44"><circle cx="30" cy="22" r="20" fill="#FCEEE8" stroke="#C0392B" stroke-width="2"/></svg>
+            <span>Process</span>
+        </div>
+        <div class="legend-item">
+            <svg width="60" height="30">
+                <line x1="2" y1="6" x2="58" y2="6" stroke="#27754B" stroke-width="2"/>
+                <line x1="2" y1="26" x2="58" y2="26" stroke="#27754B" stroke-width="2"/>
+                <rect x="2" y="6" width="56" height="20" fill="#E8F5E9" stroke="none"/>
+            </svg>
+            <span>Data Store</span>
+        </div>
+        <div class="legend-item">
+            <svg width="60" height="20">
+                <defs><marker id="lArrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#495057"/></marker></defs>
+                <line x1="2" y1="10" x2="50" y2="10" stroke="#495057" stroke-width="1.5" marker-end="url(#lArrow)"/>
+            </svg>
+            <span>Data Flow</span>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== DFD LEVEL 0 — CONTEXT DIAGRAM ==================== -->
+<div class="diagram-section">
+    <div class="diagram-title">DFD Level 0 — Context Diagram</div>
+    <div class="diagram-desc">Shows TechClinic as a single process and its interactions with external entities</div>
+    <div class="canvas-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 640" width="1100" height="640">
+            <defs>
+                <marker id="ah0" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#495057"/></marker>
+            </defs>
+
+            <!-- External Entity: Student -->
+            <rect x="60" y="40" width="160" height="70" rx="0" fill="#E8F4FD" stroke="#2B7A9E" stroke-width="2.5"/>
+            <text x="140" y="72" text-anchor="middle" font-size="15" font-weight="700" fill="#1a3a4e">Student</text>
+            <text x="140" y="92" text-anchor="middle" font-size="11" fill="#5a7a8e">(Kiosk User)</text>
+
+            <!-- External Entity: Nurse -->
+            <rect x="60" y="460" width="160" height="70" rx="0" fill="#E8F4FD" stroke="#2B7A9E" stroke-width="2.5"/>
+            <text x="140" y="492" text-anchor="middle" font-size="15" font-weight="700" fill="#1a3a4e">Nurse</text>
+            <text x="140" y="512" text-anchor="middle" font-size="11" fill="#5a7a8e">(Clinic Staff)</text>
+
+            <!-- External Entity: Doctor -->
+            <rect x="860" y="40" width="160" height="70" rx="0" fill="#E8F4FD" stroke="#2B7A9E" stroke-width="2.5"/>
+            <text x="940" y="72" text-anchor="middle" font-size="15" font-weight="700" fill="#1a3a4e">Doctor</text>
+            <text x="940" y="92" text-anchor="middle" font-size="11" fill="#5a7a8e">(Physician)</text>
+
+            <!-- External Entity: Patient (recipient) -->
+            <rect x="860" y="460" width="160" height="70" rx="0" fill="#E8F4FD" stroke="#2B7A9E" stroke-width="2.5"/>
+            <text x="940" y="492" text-anchor="middle" font-size="15" font-weight="700" fill="#1a3a4e">Patient</text>
+            <text x="940" y="512" text-anchor="middle" font-size="11" fill="#5a7a8e">(Certificate Recipient)</text>
+
+            <!-- Central Process: TechClinic System -->
+            <circle cx="540" cy="300" r="120" fill="#FCEEE8" stroke="#C0392B" stroke-width="2.5"/>
+            <text x="540" y="280" text-anchor="middle" font-size="11" font-weight="700" fill="#C0392B">0</text>
+            <text x="540" y="300" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a2e">TechClinic</text>
+            <text x="540" y="318" text-anchor="middle" font-size="12" fill="#1a1a2e">Health Record</text>
+            <text x="540" y="334" text-anchor="middle" font-size="12" fill="#1a1a2e">Management System</text>
+
+            <!-- ===== DATA FLOWS ===== -->
+
+            <!-- Student → System: Registration Data -->
+            <line x1="220" y1="80" x2="430" y2="225" stroke="#495057" stroke-width="1.5" marker-end="url(#ah0)"/>
+            <rect x="245" y="118" width="130" height="22" rx="3" fill="#fff" stroke="none"/>
+            <text x="310" y="133" text-anchor="middle" font-size="11" fill="#495057">Registration Data</text>
+
+            <!-- System → Student: Confirmation -->
+            <line x1="430" y1="245" x2="220" y2="100" stroke="#495057" stroke-width="1.5" marker-end="url(#ah0)"/>
+            <rect x="248" y="155" width="135" height="22" rx="3" fill="#fff" stroke="none"/>
+            <text x="315" y="170" text-anchor="middle" font-size="11" fill="#495057">Registration Confirmation</text>
+
+            <!-- Nurse → System: Patient Record / Medicine Data -->
+            <line x1="220" y1="485" x2="440" y2="375" stroke="#495057" stroke-width="1.5" marker-end="url(#ah0)"/>
+            <rect x="228" y="418" width="155" height="22" rx="3" fill="#fff" stroke="none"/>
+            <text x="305" y="433" text-anchor="middle" font-size="11" fill="#495057">Patient &amp; Medicine Data</text>
+
+            <!-- System → Nurse: Records / Alerts / Analytics -->
+            <line x1="435" y1="395" x2="215" y2="465" stroke="#495057" stroke-width="1.5" marker-end="url(#ah0)"/>
+            <rect x="225" y="445" width="175" height="22" rx="3" fill="#fff" stroke="none"/>
+            <text x="312" y="460" text-anchor="middle" font-size="11" fill="#495057">Records, Alerts &amp; Analytics</text>
+
+            <!-- Doctor → System: Diagnosis Data -->
+            <line x1="860" y1="80" x2="650" y2="225" stroke="#495057" stroke-width="1.5" marker-end="url(#ah0)"/>
+            <rect x="700" y="118" width="110" height="22" rx="3" fill="#fff" stroke="none"/>
+            <text x="755" y="133" text-anchor="middle" font-size="11" fill="#495057">Diagnosis Data</text>
+
+            <!-- System → Doctor: Patient Info / Alerts -->
+            <line x1="650" y1="245" x2="860" y2="100" stroke="#495057" stroke-width="1.5" marker-end="url(#ah0)"/>
+            <rect x="695" y="155" width="145" height="22" rx="3" fill="#fff" stroke="none"/>
+            <text x="767" y="170" text-anchor="middle" font-size="11" fill="#495057">Patient Info &amp; Alerts</text>
+
+            <!-- Doctor → System: Personnel Data -->
+            <line x1="860" y1="100" x2="660" y2="280" stroke="#495057" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#ah0)"/>
+            <rect x="728" y="184" width="115" height="22" rx="3" fill="#fff" stroke="none"/>
+            <text x="786" y="199" text-anchor="middle" font-size="11" fill="#888">Personnel Data</text>
+
+            <!-- System → Patient: Certificates & Prescriptions -->
+            <line x1="650" y1="375" x2="860" y2="480" stroke="#495057" stroke-width="1.5" marker-end="url(#ah0)"/>
+            <rect x="680" y="418" width="180" height="22" rx="3" fill="#fff" stroke="none"/>
+            <text x="770" y="433" text-anchor="middle" font-size="11" fill="#495057">Certificates &amp; Prescriptions</text>
+
+            <!-- System → Nurse: Notifications -->
+            <line x1="420" y1="310" x2="220" y2="475" stroke="#495057" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#ah0)"/>
+            <rect x="235" y="382" width="110" height="22" rx="3" fill="#fff" stroke="none"/>
+            <text x="290" y="397" text-anchor="middle" font-size="11" fill="#888">Notifications</text>
+
+            <!-- System → Doctor: Notifications -->
+            <line x1="660" y1="310" x2="860" y2="75" stroke="#495057" stroke-width="1.5" stroke-dasharray="0" opacity="0"/>
+
+        </svg>
+    </div>
+</div>
+
+<!-- ==================== DFD LEVEL 1 ==================== -->
+<div class="diagram-section">
+    <div class="diagram-title">DFD Level 1 — Detailed Data Flow Diagram</div>
+    <div class="diagram-desc">Decomposes the TechClinic system into its major processes and data stores</div>
+    <div class="canvas-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1080" width="1200" height="1080">
+            <defs>
+                <marker id="ah1" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#495057"/></marker>
+            </defs>
+
+            <!-- ======================================================== -->
+            <!--  EXTERNAL ENTITIES  (Blue Rectangles)                    -->
+            <!-- ======================================================== -->
+
+            <!-- Student -->
+            <rect x="30" y="50" width="150" height="64" fill="#E8F4FD" stroke="#2B7A9E" stroke-width="2.5"/>
+            <text x="105" y="78" text-anchor="middle" font-size="14" font-weight="700" fill="#1a3a4e">Student</text>
+            <text x="105" y="98" text-anchor="middle" font-size="10" fill="#5a7a8e">(Kiosk User)</text>
+
+            <!-- Nurse -->
+            <rect x="30" y="500" width="150" height="64" fill="#E8F4FD" stroke="#2B7A9E" stroke-width="2.5"/>
+            <text x="105" y="528" text-anchor="middle" font-size="14" font-weight="700" fill="#1a3a4e">Nurse</text>
+            <text x="105" y="548" text-anchor="middle" font-size="10" fill="#5a7a8e">(Clinic Staff)</text>
+
+            <!-- Doctor -->
+            <rect x="1020" y="50" width="150" height="64" fill="#E8F4FD" stroke="#2B7A9E" stroke-width="2.5"/>
+            <text x="1095" y="78" text-anchor="middle" font-size="14" font-weight="700" fill="#1a3a4e">Doctor</text>
+            <text x="1095" y="98" text-anchor="middle" font-size="10" fill="#5a7a8e">(Physician)</text>
+
+            <!-- Patient -->
+            <rect x="1020" y="500" width="150" height="64" fill="#E8F4FD" stroke="#2B7A9E" stroke-width="2.5"/>
+            <text x="1095" y="528" text-anchor="middle" font-size="14" font-weight="700" fill="#1a3a4e">Patient</text>
+            <text x="1095" y="548" text-anchor="middle" font-size="10" fill="#5a7a8e">(Certificate Recipient)</text>
+
+            <!-- ======================================================== -->
+            <!--  PROCESSES  (Red Circles)                                -->
+            <!-- ======================================================== -->
+
+            <!-- P1: Patient Registration -->
+            <circle cx="340" cy="82" r="60" fill="#FCEEE8" stroke="#C0392B" stroke-width="2"/>
+            <text x="340" y="68" text-anchor="middle" font-size="10" font-weight="700" fill="#C0392B">1.0</text>
+            <text x="340" y="82" text-anchor="middle" font-size="11.5" font-weight="600" fill="#1a1a2e">Patient</text>
+            <text x="340" y="96" text-anchor="middle" font-size="11.5" font-weight="600" fill="#1a1a2e">Registration</text>
+
+            <!-- P2: Record Management -->
+            <circle cx="340" cy="310" r="60" fill="#FCEEE8" stroke="#C0392B" stroke-width="2"/>
+            <text x="340" y="296" text-anchor="middle" font-size="10" font-weight="700" fill="#C0392B">2.0</text>
+            <text x="340" y="310" text-anchor="middle" font-size="11.5" font-weight="600" fill="#1a1a2e">Record</text>
+            <text x="340" y="324" text-anchor="middle" font-size="11.5" font-weight="600" fill="#1a1a2e">Management</text>
+
+            <!-- P3: Diagnosis Processing -->
+            <circle cx="860" cy="82" r="60" fill="#FCEEE8" stroke="#C0392B" stroke-width="2"/>
+            <text x="860" y="68" text-anchor="middle" font-size="10" font-weight="700" fill="#C0392B">3.0</text>
+            <text x="860" y="82" text-anchor="middle" font-size="11.5" font-weight="600" fill="#1a1a2e">Diagnosis</text>
+            <text x="860" y="96" text-anchor="middle" font-size="11.5" font-weight="600" fill="#1a1a2e">Processing</text>
+
+            <!-- P4: Medicine Inventory -->
+            <circle cx="340" cy="532" r="60" fill="#FCEEE8" stroke="#C0392B" stroke-width="2"/>
+            <text x="340" y="518" text-anchor="middle" font-size="10" font-weight="700" fill="#C0392B">4.0</text>
+            <text x="340" y="532" text-anchor="middle" font-size="11.5" font-weight="600" fill="#1a1a2e">Medicine</text>
+            <text x="340" y="546" text-anchor="middle" font-size="11.5" font-weight="600" fill="#1a1a2e">Inventory</text>
+
+            <!-- P5: Analytics & Reporting -->
+            <circle cx="600" cy="680" r="60" fill="#FCEEE8" stroke="#C0392B" stroke-width="2"/>
+            <text x="600" y="666" text-anchor="middle" font-size="10" font-weight="700" fill="#C0392B">5.0</text>
+            <text x="600" y="680" text-anchor="middle" font-size="11.5" font-weight="600" fill="#1a1a2e">Analytics &amp;</text>
+            <text x="600" y="694" text-anchor="middle" font-size="11.5" font-weight="600" fill="#1a1a2e">Reporting</text>
+
+            <!-- P6: Authentication -->
+            <circle cx="600" cy="200" r="52" fill="#FCEEE8" stroke="#C0392B" stroke-width="2"/>
+            <text x="600" y="188" text-anchor="middle" font-size="10" font-weight="700" fill="#C0392B">6.0</text>
+            <text x="600" y="202" text-anchor="middle" font-size="11.5" font-weight="600" fill="#1a1a2e">Authentication</text>
+            <text x="600" y="216" text-anchor="middle" font-size="11.5" font-weight="600" fill="#1a1a2e">&amp; Access</text>
+
+            <!-- P7: Notification & Alerts -->
+            <circle cx="860" cy="370" r="60" fill="#FCEEE8" stroke="#C0392B" stroke-width="2"/>
+            <text x="860" y="356" text-anchor="middle" font-size="10" font-weight="700" fill="#C0392B">7.0</text>
+            <text x="860" y="370" text-anchor="middle" font-size="11.5" font-weight="600" fill="#1a1a2e">Notification</text>
+            <text x="860" y="384" text-anchor="middle" font-size="11.5" font-weight="600" fill="#1a1a2e">&amp; Alerts</text>
+
+            <!-- P8: Certificate Generation -->
+            <circle cx="860" cy="560" r="56" fill="#FCEEE8" stroke="#C0392B" stroke-width="2"/>
+            <text x="860" y="548" text-anchor="middle" font-size="10" font-weight="700" fill="#C0392B">8.0</text>
+            <text x="860" y="562" text-anchor="middle" font-size="11.5" font-weight="600" fill="#1a1a2e">Certificate</text>
+            <text x="860" y="576" text-anchor="middle" font-size="11.5" font-weight="600" fill="#1a1a2e">Generation</text>
+
+            <!-- P9: Personnel Management -->
+            <circle cx="860" cy="200" r="52" fill="#FCEEE8" stroke="#C0392B" stroke-width="2"/>
+            <text x="860" y="188" text-anchor="middle" font-size="10" font-weight="700" fill="#C0392B">9.0</text>
+            <text x="860" y="202" text-anchor="middle" font-size="11.5" font-weight="600" fill="#1a1a2e">Personnel</text>
+            <text x="860" y="216" text-anchor="middle" font-size="11.5" font-weight="600" fill="#1a1a2e">Management</text>
+
+            <!-- ======================================================== -->
+            <!--  DATA STORES  (Green open-ended rectangles)              -->
+            <!-- ======================================================== -->
+
+            <!-- D1: patients -->
+            <line x1="440" y1="870" x2="710" y2="870" stroke="#27754B" stroke-width="2.5"/>
+            <line x1="440" y1="900" x2="710" y2="900" stroke="#27754B" stroke-width="2.5"/>
+            <rect x="440" y="870" width="270" height="30" fill="#E8F5E9" stroke="none"/>
+            <text x="460" y="890" font-size="12" font-weight="700" fill="#27754B">D1</text>
+            <line x1="483" y1="870" x2="483" y2="900" stroke="#27754B" stroke-width="1.5"/>
+            <text x="596" y="890" text-anchor="middle" font-size="12" font-weight="600" fill="#1a3a4e">patients</text>
+
+            <!-- D2: records -->
+            <line x1="440" y1="920" x2="710" y2="920" stroke="#27754B" stroke-width="2.5"/>
+            <line x1="440" y1="950" x2="710" y2="950" stroke="#27754B" stroke-width="2.5"/>
+            <rect x="440" y="920" width="270" height="30" fill="#E8F5E9" stroke="none"/>
+            <text x="460" y="940" font-size="12" font-weight="700" fill="#27754B">D2</text>
+            <line x1="483" y1="920" x2="483" y2="950" stroke="#27754B" stroke-width="1.5"/>
+            <text x="596" y="940" text-anchor="middle" font-size="12" font-weight="600" fill="#1a3a4e">records</text>
+
+            <!-- D3: diagnoses -->
+            <line x1="790" y1="870" x2="1060" y2="870" stroke="#27754B" stroke-width="2.5"/>
+            <line x1="790" y1="900" x2="1060" y2="900" stroke="#27754B" stroke-width="2.5"/>
+            <rect x="790" y="870" width="270" height="30" fill="#E8F5E9" stroke="none"/>
+            <text x="810" y="890" font-size="12" font-weight="700" fill="#27754B">D3</text>
+            <line x1="833" y1="870" x2="833" y2="900" stroke="#27754B" stroke-width="1.5"/>
+            <text x="946" y="890" text-anchor="middle" font-size="12" font-weight="600" fill="#1a3a4e">diagnoses</text>
+
+            <!-- D4: medicines -->
+            <line x1="790" y1="920" x2="1060" y2="920" stroke="#27754B" stroke-width="2.5"/>
+            <line x1="790" y1="950" x2="1060" y2="950" stroke="#27754B" stroke-width="2.5"/>
+            <rect x="790" y="920" width="270" height="30" fill="#E8F5E9" stroke="none"/>
+            <text x="810" y="940" font-size="12" font-weight="700" fill="#27754B">D4</text>
+            <line x1="833" y1="920" x2="833" y2="950" stroke="#27754B" stroke-width="1.5"/>
+            <text x="946" y="940" text-anchor="middle" font-size="12" font-weight="600" fill="#1a3a4e">medicines</text>
+
+            <!-- D5: diseases -->
+            <line x1="90" y1="870" x2="360" y2="870" stroke="#27754B" stroke-width="2.5"/>
+            <line x1="90" y1="900" x2="360" y2="900" stroke="#27754B" stroke-width="2.5"/>
+            <rect x="90" y="870" width="270" height="30" fill="#E8F5E9" stroke="none"/>
+            <text x="110" y="890" font-size="12" font-weight="700" fill="#27754B">D5</text>
+            <line x1="133" y1="870" x2="133" y2="900" stroke="#27754B" stroke-width="1.5"/>
+            <text x="246" y="890" text-anchor="middle" font-size="12" font-weight="600" fill="#1a3a4e">diseases</text>
+
+            <!-- D6: users -->
+            <line x1="90" y1="920" x2="360" y2="920" stroke="#27754B" stroke-width="2.5"/>
+            <line x1="90" y1="950" x2="360" y2="950" stroke="#27754B" stroke-width="2.5"/>
+            <rect x="90" y="920" width="270" height="30" fill="#E8F5E9" stroke="none"/>
+            <text x="110" y="940" font-size="12" font-weight="700" fill="#27754B">D6</text>
+            <line x1="133" y1="920" x2="133" y2="950" stroke="#27754B" stroke-width="1.5"/>
+            <text x="246" y="940" text-anchor="middle" font-size="12" font-weight="600" fill="#1a3a4e">users</text>
+
+            <!-- D7: notifications -->
+            <line x1="90" y1="970" x2="360" y2="970" stroke="#27754B" stroke-width="2.5"/>
+            <line x1="90" y1="1000" x2="360" y2="1000" stroke="#27754B" stroke-width="2.5"/>
+            <rect x="90" y="970" width="270" height="30" fill="#E8F5E9" stroke="none"/>
+            <text x="110" y="990" font-size="12" font-weight="700" fill="#27754B">D7</text>
+            <line x1="133" y1="970" x2="133" y2="1000" stroke="#27754B" stroke-width="1.5"/>
+            <text x="246" y="990" text-anchor="middle" font-size="12" font-weight="600" fill="#1a3a4e">notifications</text>
+
+            <!-- ======================================================== -->
+            <!--  DATA FLOW ARROWS (Level 1)                              -->
+            <!-- ======================================================== -->
+
+            <!-- ---- Student ↔ P1 (Registration) ---- -->
+            <!-- Student → P1 -->
+            <line x1="180" y1="72" x2="278" y2="76" stroke="#495057" stroke-width="1.5" marker-end="url(#ah1)"/>
+            <text x="226" y="62" text-anchor="middle" font-size="10" fill="#495057">Registration Data</text>
+
+            <!-- P1 → Student (confirmation) -->
+            <line x1="278" y1="90" x2="180" y2="92" stroke="#495057" stroke-width="1.5" marker-end="url(#ah1)"/>
+            <text x="228" y="106" text-anchor="middle" font-size="10" fill="#495057">Confirmation</text>
+
+            <!-- ---- Nurse ↔ P2 (Record Mgmt) ---- -->
+            <!-- Nurse → P2 -->
+            <line x1="175" y1="510" x2="284" y2="340" stroke="#495057" stroke-width="1.5" marker-end="url(#ah1)"/>
+            <text x="195" y="410" text-anchor="middle" font-size="10" fill="#495057">Patient Data</text>
+
+            <!-- P2 → Nurse (records) -->
+            <line x1="284" y1="320" x2="180" y2="530" stroke="#495057" stroke-width="1.5" marker-end="url(#ah1)"/>
+            <text x="200" y="445" text-anchor="middle" font-size="10" fill="#495057">Record Status</text>
+
+            <!-- ---- Nurse ↔ P4 (Medicine) ---- -->
+            <!-- Nurse → P4 -->
+            <line x1="180" y1="540" x2="278" y2="538" stroke="#495057" stroke-width="1.5" marker-end="url(#ah1)"/>
+            <text x="229" y="530" text-anchor="middle" font-size="10" fill="#495057">Medicine Data</text>
+
+            <!-- P4 → Nurse -->
+            <line x1="278" y1="520" x2="180" y2="520" stroke="#495057" stroke-width="1.5" marker-end="url(#ah1)"/>
+            <text x="229" y="513" text-anchor="middle" font-size="10" fill="#495057">Stock Info</text>
+
+            <!-- ---- Doctor ↔ P3 (Diagnosis) ---- -->
+            <!-- Doctor → P3 -->
+            <line x1="1020" y1="72" x2="922" y2="76" stroke="#495057" stroke-width="1.5" marker-end="url(#ah1)"/>
+            <text x="972" y="62" text-anchor="middle" font-size="10" fill="#495057">Diagnosis Data</text>
+
+            <!-- P3 → Doctor (patient info) -->
+            <line x1="922" y1="90" x2="1020" y2="92" stroke="#495057" stroke-width="1.5" marker-end="url(#ah1)"/>
+            <text x="972" y="106" text-anchor="middle" font-size="10" fill="#495057">Patient Info</text>
+
+            <!-- ---- Doctor ↔ P9 (Personnel) ---- -->
+            <line x1="1020" y1="90" x2="912" y2="185" stroke="#495057" stroke-width="1.5" marker-end="url(#ah1)"/>
+            <text x="988" y="140" text-anchor="middle" font-size="10" fill="#495057">Personnel Data</text>
+
+            <line x1="912" y1="210" x2="1020" y2="100" stroke="#495057" stroke-width="1.5" marker-end="url(#ah1)"/>
+            <text x="990" y="170" text-anchor="middle" font-size="10" fill="#495057">Staff List</text>
+
+            <!-- ---- P8 → Patient (Certificates) ---- -->
+            <line x1="916" y1="556" x2="1020" y2="530" stroke="#495057" stroke-width="1.5" marker-end="url(#ah1)"/>
+            <text x="970" y="534" text-anchor="middle" font-size="10" fill="#495057">Certificates &amp;</text>
+            <text x="970" y="546" text-anchor="middle" font-size="10" fill="#495057">Prescriptions</text>
+
+            <!-- ---- P1 → D1 (patients) ---- -->
+            <line x1="340" y1="142" x2="340" y2="260" stroke="#888" stroke-width="1" stroke-dasharray="4,3"/>
+            <line x1="360" y1="142" x2="510" y2="870" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="390" y="500" text-anchor="middle" font-size="10" fill="#27754B">Patient Info</text>
+
+            <!-- ---- P1 → D2 (records) ---- -->
+            <line x1="380" y1="132" x2="550" y2="920" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="430" y="520" text-anchor="middle" font-size="10" fill="#27754B">New Record</text>
+
+            <!-- ---- P2 → D2 (records) ---- -->
+            <line x1="370" y1="365" x2="570" y2="920" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="450" y="640" text-anchor="middle" font-size="10" fill="#27754B">Updated Record</text>
+
+            <!-- ---- P2 → D1 (patients) ---- -->
+            <line x1="330" y1="370" x2="490" y2="870" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="370" y="620" text-anchor="middle" font-size="10" fill="#27754B">Patient Data</text>
+
+            <!-- ---- P3 → D3 (diagnoses) ---- -->
+            <line x1="880" y1="140" x2="920" y2="870" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="920" y="500" text-anchor="middle" font-size="10" fill="#27754B">Diagnosis Record</text>
+
+            <!-- ---- D2 → P3 (incomplete records) ---- -->
+            <line x1="650" y1="920" x2="830" y2="140" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="770" y="530" text-anchor="middle" font-size="10" fill="#27754B">Incomplete Record</text>
+
+            <!-- ---- P3 → D2 (update status COMPLETE) ---- -->
+            <line x1="840" y1="140" x2="610" y2="920" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="690" y="530" text-anchor="middle" font-size="10" fill="#27754B">Status → COMPLETE</text>
+
+            <!-- ---- P4 → D4 (medicines) ---- -->
+            <line x1="380" y1="580" x2="880" y2="920" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="600" y="745" text-anchor="middle" font-size="10" fill="#27754B">Medicine CRUD</text>
+
+            <!-- ---- D4 → P4 (stock data) ---- -->
+            <line x1="860" y1="920" x2="390" y2="565" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="640" y="720" text-anchor="middle" font-size="10" fill="#27754B">Stock Levels</text>
+
+            <!-- ---- P3 → D4 (decrement stock) ---- -->
+            <line x1="880" y1="140" x2="940" y2="920" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="938" y="540" text-anchor="middle" font-size="10" fill="#27754B">Decrement Stock</text>
+
+            <!-- ---- P2 → D5 (diseases) ---- -->
+            <line x1="290" y1="350" x2="240" y2="870" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="240" y="610" text-anchor="middle" font-size="10" fill="#27754B">Add Disease</text>
+
+            <!-- ---- D5 → P2 (disease list) ---- -->
+            <line x1="200" y1="870" x2="300" y2="355" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="215" y="610" text-anchor="middle" font-size="10" fill="#27754B">Disease List</text>
+
+            <!-- ---- D5 → P3 (disease list) ---- -->
+            <line x1="280" y1="870" x2="810" y2="120" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="530" y="480" text-anchor="middle" font-size="10" fill="#27754B">Disease Catalog</text>
+
+            <!-- ---- P6 (Auth) ↔ D6 (users) ---- -->
+            <line x1="580" y1="250" x2="240" y2="920" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="370" y="585" text-anchor="middle" font-size="10" fill="#27754B">Credentials</text>
+
+            <line x1="220" y1="920" x2="570" y2="250" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="350" y="570" text-anchor="middle" font-size="10" fill="#27754B">User Profile</text>
+
+            <!-- ---- P9 → D6 (users) ---- -->
+            <line x1="820" y1="230" x2="320" y2="920" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="560" y="590" text-anchor="middle" font-size="10" fill="#27754B">New Staff</text>
+
+            <!-- ---- P7 (Notifications) ↔ D7 ---- -->
+            <line x1="820" y1="410" x2="280" y2="970" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="510" y="700" text-anchor="middle" font-size="10" fill="#27754B">Alert Data</text>
+
+            <line x1="260" y1="970" x2="810" y2="400" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="490" y="680" text-anchor="middle" font-size="10" fill="#27754B">Notifications</text>
+
+            <!-- ---- D3 → P7 (diagnosis stats for alerts) ---- -->
+            <line x1="880" y1="870" x2="870" y2="430" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="904" y="650" text-anchor="middle" font-size="10" fill="#27754B">Disease Stats</text>
+
+            <!-- ---- D4 → P7 (low stock for alerts) ---- -->
+            <line x1="960" y1="920" x2="900" y2="420" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="960" y="670" text-anchor="middle" font-size="10" fill="#27754B">Low Stock</text>
+
+            <!-- ---- P7 → Nurse / Doctor (both get notifications) ---- -->
+            <line x1="800" y1="370" x2="180" y2="520" stroke="#495057" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="490" y="435" text-anchor="middle" font-size="10" fill="#495057">Alerts</text>
+
+            <line x1="860" y1="310" x2="1040" y2="80" stroke="#495057" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="972" y="200" text-anchor="middle" font-size="10" fill="#495057">Alerts</text>
+
+            <!-- ---- P5 (Analytics) ← Data Stores ---- -->
+            <!-- D2 → P5 (record stats) -->
+            <line x1="575" y1="920" x2="590" y2="740" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="560" y="833" text-anchor="middle" font-size="10" fill="#27754B">Record Stats</text>
+
+            <!-- D3 → P5 (diagnosis stats) -->
+            <line x1="850" y1="870" x2="650" y2="710" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="770" y="780" text-anchor="middle" font-size="10" fill="#27754B">Diagnosis Stats</text>
+
+            <!-- D4 → P5 (medicine stock) -->
+            <line x1="870" y1="920" x2="655" y2="710" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="790" y="810" text-anchor="middle" font-size="10" fill="#27754B">Medicine Stock</text>
+
+            <!-- P5 → Nurse / Doctor (analytics data) -->
+            <line x1="540" y1="680" x2="155" y2="560" stroke="#495057" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="330" y="630" text-anchor="middle" font-size="10" fill="#495057">Analytics Data</text>
+
+            <line x1="650" y1="650" x2="1030" y2="540" stroke="#495057" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="860" y="590" text-anchor="middle" font-size="10" fill="#495057">Analytics Data</text>
+
+            <!-- ---- Nurse → P6 (Auth login) ---- -->
+            <line x1="160" y1="500" x2="554" y2="220" stroke="#495057" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="330" y="345" text-anchor="middle" font-size="10" fill="#495057">Login Credentials</text>
+
+            <!-- ---- Doctor → P6 (Auth login) ---- -->
+            <line x1="1020" y1="100" x2="648" y2="195" stroke="#495057" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="850" y="135" text-anchor="middle" font-size="10" fill="#495057">Login Credentials</text>
+
+            <!-- ---- P6 → Nurse/Doctor (auth status) ---- -->
+            <line x1="552" y1="230" x2="170" y2="510" stroke="#495057" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="335" y="385" text-anchor="middle" font-size="10" fill="#495057">Auth Token</text>
+
+            <line x1="648" y1="205" x2="1020" y2="110" stroke="#495057" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="856" y="165" text-anchor="middle" font-size="10" fill="#495057">Auth Token</text>
+
+            <!-- ---- P2 → P3 (incomplete record forwarded) ---- -->
+            <line x1="400" y1="296" x2="800" y2="90" stroke="#C0392B" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#ah1)"/>
+            <text x="600" y="175" text-anchor="middle" font-size="10" fill="#C0392B">Incomplete Record</text>
+
+            <!-- ---- P8 ← D2/D3 (record + diagnosis for certificate) ---- -->
+            <line x1="630" y1="935" x2="830" y2="600" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="700" y="775" text-anchor="middle" font-size="10" fill="#27754B">Record + Diagnosis</text>
+
+            <!-- ---- D1 → P5 (patient counts) ---- -->
+            <line x1="520" y1="870" x2="580" y2="740" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah1)"/>
+            <text x="520" y="805" text-anchor="middle" font-size="10" fill="#27754B">Patient Counts</text>
+
+        </svg>
+    </div>
+</div>
+
+<!-- ==================== DFD LEVEL 2 — Patient Registration ==================== -->
+<div class="diagram-section">
+    <div class="diagram-title">DFD Level 2 — Process 1.0: Patient Registration</div>
+    <div class="diagram-desc">Detailed decomposition of the student self-registration process</div>
+    <div class="canvas-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 480" width="1100" height="480">
+            <defs>
+                <marker id="ah2" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#495057"/></marker>
+            </defs>
+
+            <!-- External: Student -->
+            <rect x="30" y="60" width="140" height="58" fill="#E8F4FD" stroke="#2B7A9E" stroke-width="2.5"/>
+            <text x="100" y="86" text-anchor="middle" font-size="13" font-weight="700" fill="#1a3a4e">Student</text>
+            <text x="100" y="103" text-anchor="middle" font-size="10" fill="#5a7a8e">(Kiosk)</text>
+
+            <!-- P1.1: Validate Input -->
+            <circle cx="300" cy="88" r="48" fill="#FCEEE8" stroke="#C0392B" stroke-width="2"/>
+            <text x="300" y="76" text-anchor="middle" font-size="9" font-weight="700" fill="#C0392B">1.1</text>
+            <text x="300" y="92" text-anchor="middle" font-size="11" font-weight="600" fill="#1a1a2e">Validate</text>
+            <text x="300" y="106" text-anchor="middle" font-size="11" font-weight="600" fill="#1a1a2e">Input</text>
+
+            <!-- P1.2: Check Existing Patient -->
+            <circle cx="520" cy="88" r="48" fill="#FCEEE8" stroke="#C0392B" stroke-width="2"/>
+            <text x="520" y="76" text-anchor="middle" font-size="9" font-weight="700" fill="#C0392B">1.2</text>
+            <text x="520" y="92" text-anchor="middle" font-size="11" font-weight="600" fill="#1a1a2e">Check Existing</text>
+            <text x="520" y="106" text-anchor="middle" font-size="11" font-weight="600" fill="#1a1a2e">Patient</text>
+
+            <!-- P1.3: Create Record -->
+            <circle cx="740" cy="88" r="48" fill="#FCEEE8" stroke="#C0392B" stroke-width="2"/>
+            <text x="740" y="76" text-anchor="middle" font-size="9" font-weight="700" fill="#C0392B">1.3</text>
+            <text x="740" y="92" text-anchor="middle" font-size="11" font-weight="600" fill="#1a1a2e">Create</text>
+            <text x="740" y="106" text-anchor="middle" font-size="11" font-weight="600" fill="#1a1a2e">Record</text>
+
+            <!-- P1.4: Register Patient -->
+            <circle cx="960" cy="88" r="48" fill="#FCEEE8" stroke="#C0392B" stroke-width="2"/>
+            <text x="960" y="76" text-anchor="middle" font-size="9" font-weight="700" fill="#C0392B">1.4</text>
+            <text x="960" y="92" text-anchor="middle" font-size="11" font-weight="600" fill="#1a1a2e">Register</text>
+            <text x="960" y="106" text-anchor="middle" font-size="11" font-weight="600" fill="#1a1a2e">Patient</text>
+
+            <!-- D1: patients -->
+            <line x1="380" y1="350" x2="640" y2="350" stroke="#27754B" stroke-width="2.5"/>
+            <line x1="380" y1="380" x2="640" y2="380" stroke="#27754B" stroke-width="2.5"/>
+            <rect x="380" y="350" width="260" height="30" fill="#E8F5E9" stroke="none"/>
+            <text x="398" y="370" font-size="12" font-weight="700" fill="#27754B">D1</text>
+            <line x1="425" y1="350" x2="425" y2="380" stroke="#27754B" stroke-width="1.5"/>
+            <text x="532" y="370" text-anchor="middle" font-size="12" font-weight="600" fill="#1a3a4e">patients</text>
+
+            <!-- D2: records -->
+            <line x1="380" y1="410" x2="640" y2="410" stroke="#27754B" stroke-width="2.5"/>
+            <line x1="380" y1="440" x2="640" y2="440" stroke="#27754B" stroke-width="2.5"/>
+            <rect x="380" y="410" width="260" height="30" fill="#E8F5E9" stroke="none"/>
+            <text x="398" y="430" font-size="12" font-weight="700" fill="#27754B">D2</text>
+            <line x1="425" y1="410" x2="425" y2="440" stroke="#27754B" stroke-width="1.5"/>
+            <text x="532" y="430" text-anchor="middle" font-size="12" font-weight="600" fill="#1a3a4e">records</text>
+
+            <!-- Arrows -->
+            <!-- Student → P1.1 -->
+            <line x1="170" y1="85" x2="250" y2="85" stroke="#495057" stroke-width="1.5" marker-end="url(#ah2)"/>
+            <text x="210" y="78" text-anchor="middle" font-size="10" fill="#495057">Form Data</text>
+
+            <!-- P1.1 → P1.2 -->
+            <line x1="348" y1="85" x2="470" y2="85" stroke="#495057" stroke-width="1.5" marker-end="url(#ah2)"/>
+            <text x="409" y="78" text-anchor="middle" font-size="10" fill="#495057">Validated Data</text>
+
+            <!-- P1.2 → Student (auto-fill) -->
+            <path d="M 520 136 Q 520 200 100 200 Q 50 200 50 130" fill="none" stroke="#495057" stroke-width="1.3" marker-end="url(#ah2)"/>
+            <text x="300" y="215" text-anchor="middle" font-size="10" fill="#495057">Auto-fill Existing Data</text>
+
+            <!-- D1 → P1.2 (check patient) -->
+            <line x1="510" y1="350" x2="520" y2="136" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah2)"/>
+            <text x="545" y="245" text-anchor="middle" font-size="10" fill="#27754B">Existing Patient?</text>
+
+            <!-- P1.2 → P1.3 -->
+            <line x1="568" y1="85" x2="690" y2="85" stroke="#495057" stroke-width="1.5" marker-end="url(#ah2)"/>
+            <text x="629" y="78" text-anchor="middle" font-size="10" fill="#495057">Patient Data</text>
+
+            <!-- P1.3 → D2 (insert record) -->
+            <line x1="740" y1="136" x2="600" y2="410" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah2)"/>
+            <text x="695" y="275" text-anchor="middle" font-size="10" fill="#27754B">New Record</text>
+            <text x="695" y="288" text-anchor="middle" font-size="9" fill="#888">(Status: INCOMPLETE)</text>
+
+            <!-- P1.3 → P1.4 -->
+            <line x1="788" y1="85" x2="910" y2="85" stroke="#495057" stroke-width="1.5" marker-end="url(#ah2)"/>
+            <text x="849" y="78" text-anchor="middle" font-size="10" fill="#495057">Record Created</text>
+
+            <!-- P1.4 → D1 (register patient) -->
+            <line x1="960" y1="136" x2="600" y2="350" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah2)"/>
+            <text x="810" y="245" text-anchor="middle" font-size="10" fill="#27754B">New Patient</text>
+            <text x="810" y="258" text-anchor="middle" font-size="9" fill="#888">(Dedup: skip if exists)</text>
+
+            <!-- P1.4 → Student (confirmation) -->
+            <path d="M 960 40 Q 960 20 100 20 Q 50 20 60 55" fill="none" stroke="#495057" stroke-width="1.3" marker-end="url(#ah2)"/>
+            <text x="530" y="14" text-anchor="middle" font-size="10" fill="#495057">Registration Confirmation</text>
+
+        </svg>
+    </div>
+</div>
+
+<!-- ==================== DFD LEVEL 2 — Diagnosis Processing ==================== -->
+<div class="diagram-section">
+    <div class="diagram-title">DFD Level 2 — Process 3.0: Diagnosis Processing</div>
+    <div class="diagram-desc">Detailed decomposition of how doctors add diagnoses to incomplete records</div>
+    <div class="canvas-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 500" width="1100" height="500">
+            <defs>
+                <marker id="ah3" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#495057"/></marker>
+            </defs>
+
+            <!-- External: Doctor -->
+            <rect x="30" y="60" width="140" height="58" fill="#E8F4FD" stroke="#2B7A9E" stroke-width="2.5"/>
+            <text x="100" y="86" text-anchor="middle" font-size="13" font-weight="700" fill="#1a3a4e">Doctor</text>
+            <text x="100" y="103" text-anchor="middle" font-size="10" fill="#5a7a8e">(Physician)</text>
+
+            <!-- P3.1: Retrieve Incomplete Record -->
+            <circle cx="310" cy="88" r="50" fill="#FCEEE8" stroke="#C0392B" stroke-width="2"/>
+            <text x="310" y="74" text-anchor="middle" font-size="9" font-weight="700" fill="#C0392B">3.1</text>
+            <text x="310" y="90" text-anchor="middle" font-size="10.5" font-weight="600" fill="#1a1a2e">Retrieve</text>
+            <text x="310" y="104" text-anchor="middle" font-size="10.5" font-weight="600" fill="#1a1a2e">Incomplete Record</text>
+
+            <!-- P3.2: Enter Diagnosis -->
+            <circle cx="560" cy="88" r="50" fill="#FCEEE8" stroke="#C0392B" stroke-width="2"/>
+            <text x="560" y="74" text-anchor="middle" font-size="9" font-weight="700" fill="#C0392B">3.2</text>
+            <text x="560" y="90" text-anchor="middle" font-size="10.5" font-weight="600" fill="#1a1a2e">Enter</text>
+            <text x="560" y="104" text-anchor="middle" font-size="10.5" font-weight="600" fill="#1a1a2e">Diagnosis</text>
+
+            <!-- P3.3: Update Record Status -->
+            <circle cx="810" cy="88" r="50" fill="#FCEEE8" stroke="#C0392B" stroke-width="2"/>
+            <text x="810" y="74" text-anchor="middle" font-size="9" font-weight="700" fill="#C0392B">3.3</text>
+            <text x="810" y="90" text-anchor="middle" font-size="10.5" font-weight="600" fill="#1a1a2e">Update Record</text>
+            <text x="810" y="104" text-anchor="middle" font-size="10.5" font-weight="600" fill="#1a1a2e">&amp; Dispense</text>
+
+            <!-- D2: records -->
+            <line x1="170" y1="330" x2="430" y2="330" stroke="#27754B" stroke-width="2.5"/>
+            <line x1="170" y1="360" x2="430" y2="360" stroke="#27754B" stroke-width="2.5"/>
+            <rect x="170" y="330" width="260" height="30" fill="#E8F5E9" stroke="none"/>
+            <text x="190" y="350" font-size="12" font-weight="700" fill="#27754B">D2</text>
+            <line x1="218" y1="330" x2="218" y2="360" stroke="#27754B" stroke-width="1.5"/>
+            <text x="324" y="350" text-anchor="middle" font-size="12" font-weight="600" fill="#1a3a4e">records</text>
+
+            <!-- D3: diagnoses -->
+            <line x1="470" y1="330" x2="730" y2="330" stroke="#27754B" stroke-width="2.5"/>
+            <line x1="470" y1="360" x2="730" y2="360" stroke="#27754B" stroke-width="2.5"/>
+            <rect x="470" y="330" width="260" height="30" fill="#E8F5E9" stroke="none"/>
+            <text x="490" y="350" font-size="12" font-weight="700" fill="#27754B">D3</text>
+            <line x1="518" y1="330" x2="518" y2="360" stroke="#27754B" stroke-width="1.5"/>
+            <text x="624" y="350" text-anchor="middle" font-size="12" font-weight="600" fill="#1a3a4e">diagnoses</text>
+
+            <!-- D4: medicines -->
+            <line x1="770" y1="330" x2="1030" y2="330" stroke="#27754B" stroke-width="2.5"/>
+            <line x1="770" y1="360" x2="1030" y2="360" stroke="#27754B" stroke-width="2.5"/>
+            <rect x="770" y="330" width="260" height="30" fill="#E8F5E9" stroke="none"/>
+            <text x="790" y="350" font-size="12" font-weight="700" fill="#27754B">D4</text>
+            <line x1="818" y1="330" x2="818" y2="360" stroke="#27754B" stroke-width="1.5"/>
+            <text x="924" y="350" text-anchor="middle" font-size="12" font-weight="600" fill="#1a3a4e">medicines</text>
+
+            <!-- D5: diseases -->
+            <line x1="470" y1="420" x2="730" y2="420" stroke="#27754B" stroke-width="2.5"/>
+            <line x1="470" y1="450" x2="730" y2="450" stroke="#27754B" stroke-width="2.5"/>
+            <rect x="470" y="420" width="260" height="30" fill="#E8F5E9" stroke="none"/>
+            <text x="490" y="440" font-size="12" font-weight="700" fill="#27754B">D5</text>
+            <line x1="518" y1="420" x2="518" y2="450" stroke="#27754B" stroke-width="1.5"/>
+            <text x="624" y="440" text-anchor="middle" font-size="12" font-weight="600" fill="#1a3a4e">diseases</text>
+
+            <!-- Doctor → P3.1 -->
+            <line x1="170" y1="85" x2="258" y2="85" stroke="#495057" stroke-width="1.5" marker-end="url(#ah3)"/>
+            <text x="214" y="78" text-anchor="middle" font-size="10" fill="#495057">View Record</text>
+
+            <!-- P3.1 → Doctor (patient info) -->
+            <path d="M 310 38 Q 310 20 100 20 Q 50 20 65 55" fill="none" stroke="#495057" stroke-width="1.3" marker-end="url(#ah3)"/>
+            <text x="200" y="14" text-anchor="middle" font-size="10" fill="#495057">Patient Information</text>
+
+            <!-- D2 → P3.1 (read incomplete) -->
+            <line x1="300" y1="330" x2="308" y2="138" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah3)"/>
+            <text x="275" y="235" text-anchor="middle" font-size="10" fill="#27754B">Incomplete</text>
+            <text x="275" y="248" text-anchor="middle" font-size="10" fill="#27754B">Record</text>
+
+            <!-- P3.1 → P3.2 -->
+            <line x1="360" y1="85" x2="508" y2="85" stroke="#495057" stroke-width="1.5" marker-end="url(#ah3)"/>
+            <text x="434" y="78" text-anchor="middle" font-size="10" fill="#495057">Record Data</text>
+
+            <!-- D5 → P3.2 (disease catalog) -->
+            <line x1="560" y1="420" x2="560" y2="138" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah3)"/>
+            <text x="595" y="280" text-anchor="middle" font-size="10" fill="#27754B">Disease Catalog</text>
+
+            <!-- D4 → P3.2 (medicine list) -->
+            <line x1="850" y1="330" x2="600" y2="130" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah3)"/>
+            <text x="750" y="220" text-anchor="middle" font-size="10" fill="#27754B">Medicine List</text>
+
+            <!-- P3.2 → P3.3 -->
+            <line x1="610" y1="85" x2="758" y2="85" stroke="#495057" stroke-width="1.5" marker-end="url(#ah3)"/>
+            <text x="684" y="78" text-anchor="middle" font-size="10" fill="#495057">Diagnosis Data</text>
+
+            <!-- P3.3 → D3 (insert diagnosis) -->
+            <line x1="780" y1="132" x2="640" y2="330" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah3)"/>
+            <text x="680" y="230" text-anchor="middle" font-size="10" fill="#27754B">New Diagnosis</text>
+
+            <!-- P3.3 → D2 (update status) -->
+            <line x1="770" y1="130" x2="400" y2="330" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah3)"/>
+            <text x="555" y="235" text-anchor="middle" font-size="10" fill="#27754B">Status → COMPLETE</text>
+
+            <!-- P3.3 → D4 (decrement stock) -->
+            <line x1="840" y1="136" x2="890" y2="330" stroke="#27754B" stroke-width="1.3" marker-end="url(#ah3)"/>
+            <text x="895" y="235" text-anchor="middle" font-size="10" fill="#27754B">Decrement</text>
+            <text x="895" y="248" text-anchor="middle" font-size="10" fill="#27754B">Stock</text>
+
+        </svg>
+    </div>
+</div>
+
+<div style="text-align:center; margin-top:30px; padding:20px; color:#888; font-size:12px;">
+    TechClinic — Health Record Management System &nbsp;|&nbsp; Data Flow Diagrams &nbsp;|&nbsp; Yourdon–DeMarco Notation<br/>
+    Generated for Chapter 3 Documentation
+</div>
+
+</body>
+</html>

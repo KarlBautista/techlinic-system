@@ -1,7 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react'
+import emailjs from '@emailjs/browser'
 import supabase from '../config/supabaseClient'
 import useAuth from '../store/useAuthStore'
 import tupLogo from '../assets/image/TUP.png'
+
+const SERVICE_ID   = import.meta.env.VITE_EMAILJS_SERVICE_ID
+const PUBLIC_KEY   = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+const PRESC_TMPL   = import.meta.env.VITE_EMAILJS_PRESCRIPTION_TEMPLATE_ID
+const CERT_TMPL    = import.meta.env.VITE_EMAILJS_CERTIFICATE_TEMPLATE_ID
 
 const DiagnosisModal = ({ open = false, onClose = () => {}, patient = {}, record = {}, diagnoses = [] }) => {
   const { userProfile } = useAuth();
@@ -11,6 +17,12 @@ const DiagnosisModal = ({ open = false, onClose = () => {}, patient = {}, record
   const [physicianData, setPhysicianData] = useState(null);
   const [showSignature, setShowSignature] = useState(true);
   const prevTabRef = useRef(activeTab);
+
+  // Email compose state
+  const [showCompose, setShowCompose] = useState(false);
+  const [emailTo, setEmailTo] = useState('');
+  const [sending, setSending] = useState(false);
+  const [emailStatus, setEmailStatus] = useState(null); // 'success' | 'error' | null
 
   // Handle open/close transitions
   useEffect(() => {
@@ -99,6 +111,51 @@ const DiagnosisModal = ({ open = false, onClose = () => {}, patient = {}, record
 
   const handlePrint = () => window.print();
 
+  const openCompose = () => {
+    setEmailTo(patient?.email ?? '');
+    setEmailStatus(null);
+    setShowCompose(true);
+  };
+
+  const sendEmail = async () => {
+    if (!emailTo.trim()) return;
+    setSending(true);
+    setEmailStatus(null);
+
+    const templateId = activeTab === 'prescription' ? PRESC_TMPL : CERT_TMPL;
+    const physicianName = effectivePhysician
+      ? `${effectivePhysician.first_name ?? ''} ${effectivePhysician.last_name ?? ''}`.trim()
+      : record?.attending_physician ?? '';
+    const templateParams = {
+      to_email:          emailTo.trim(),
+      to_name:           `${patient?.first_name ?? ''} ${patient?.last_name ?? ''}`.trim(),
+      patient_id:        patient?.student_id ?? patient?.id ?? '—',
+      date:              visitDate,
+      physician_name:    physicianName,
+      physician_role:    effectivePhysician?.role === 'DOCTOR' ? 'Attending Physician' : 'Attending Personnel',
+      physician_signature: effectivePhysician?.signature_url ?? '',
+      ...(activeTab === 'prescription' ? {
+        medication: primaryDiagnosis?.medication ?? '—',
+        dosage:     primaryDiagnosis?.dosage ?? '—',
+        quantity:   primaryDiagnosis?.quantity ?? '—',
+        notes:      primaryDiagnosis?.notes ?? primaryDiagnosis?.additional_notes ?? '—',
+      } : {}),
+    };
+
+    console.log('[EmailJS] Sending with params:', { SERVICE_ID, templateId, PUBLIC_KEY: PUBLIC_KEY?.slice(0,6)+'...', templateParams });
+
+    try {
+      await emailjs.send(SERVICE_ID, templateId, templateParams, PUBLIC_KEY);
+      setEmailStatus('success');
+      setTimeout(() => setShowCompose(false), 2000);
+    } catch (err) {
+      console.error('EmailJS error:', err);
+      setEmailStatus('error');
+    } finally {
+      setSending(false);
+    }
+  };
+
   // Get the first diagnosis for prescription/certificate (usually one per visit)
   const primaryDiagnosis = diagnoses[0] || {};
 
@@ -148,7 +205,7 @@ const DiagnosisModal = ({ open = false, onClose = () => {}, patient = {}, record
                   <i className="fa-solid fa-print"></i>
                   <span>Print</span>
                 </button>
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-sm flex items-center gap-1.5 transition-colors opacity-50 cursor-not-allowed" disabled title="Email feature coming soon">
+                <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-sm flex items-center gap-1.5 transition-colors" onClick={openCompose}>
                   <i className="fa-solid fa-envelope"></i>
                   <span>Email</span>
                 </button>
@@ -193,6 +250,83 @@ const DiagnosisModal = ({ open = false, onClose = () => {}, patient = {}, record
           </div>
         </div>
       </div>
+
+      {/* Email compose sub-modal */}
+      {showCompose && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center"
+          onClick={(e) => { if (e.target === e.currentTarget && !sending) setShowCompose(false); }}
+        >
+          <div className="absolute inset-0 bg-black/50 -z-10" />
+          <div className="relative z-10 w-[min(480px,95%)] bg-white rounded-xl shadow-xl p-6">
+
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-base font-semibold text-gray-800">
+                {activeTab === 'prescription' ? 'Send Prescription via Email' : 'Send Certificate via Email'}
+              </h3>
+              <button
+                onClick={() => setShowCompose(false)}
+                disabled={sending}
+                className="text-gray-400 hover:text-gray-600 transition disabled:opacity-40"
+              >
+                <i className="fa-solid fa-xmark text-sm" />
+              </button>
+            </div>
+
+            {/* Summary */}
+            <div className="bg-gray-50 rounded-lg p-3 mb-4 text-sm space-y-1 text-gray-600 border border-gray-200">
+              <p><span className="font-medium text-gray-800">Patient:</span> {patient?.first_name} {patient?.last_name}</p>
+              <p><span className="font-medium text-gray-800">ID:</span> {patient?.student_id ?? patient?.id ?? '—'}</p>
+              <p><span className="font-medium text-gray-800">Date:</span> {visitDate}</p>
+              {activeTab === 'prescription' && primaryDiagnosis?.medication && (
+                <p><span className="font-medium text-gray-800">Medication:</span> {primaryDiagnosis.medication}</p>
+              )}
+            </div>
+
+            <label className="block text-sm font-medium text-gray-700 mb-1">Recipient Email</label>
+            <input
+              type="email"
+              value={emailTo}
+              onChange={(e) => setEmailTo(e.target.value)}
+              placeholder="patient@email.com"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 mb-4"
+            />
+
+            {emailStatus === 'success' && (
+              <div className="mb-4 bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm rounded-lg px-3 py-2 flex items-center gap-2">
+                <i className="fa-solid fa-circle-check" /> Email sent successfully!
+              </div>
+            )}
+            {emailStatus === 'error' && (
+              <div className="mb-4 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-3 py-2 flex items-center gap-2">
+                <i className="fa-solid fa-circle-exclamation" /> Failed to send. Check your EmailJS configuration.
+              </div>
+            )}
+
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setShowCompose(false)}
+                disabled={sending}
+                className="px-4 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition disabled:opacity-40"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={sendEmail}
+                disabled={sending || !emailTo.trim()}
+                className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 flex items-center gap-2"
+              >
+                {sending ? (
+                  <><i className="fa-solid fa-spinner animate-spin" /> Sending...</>
+                ) : (
+                  <><i className="fa-solid fa-paper-plane" /> Send Email</>
+                )}
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
     </div>
   );
 };
