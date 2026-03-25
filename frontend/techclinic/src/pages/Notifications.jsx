@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import Swal from 'sweetalert2'
+import React, { useEffect, useState } from 'react'
+import { showToast } from '../components/Toast'
 import useAuth from '../store/useAuthStore'
 import useNotificationStore, { requestNotificationPermission } from '../store/useNotificationStore'
 import { motion } from 'framer-motion'
@@ -50,18 +50,16 @@ const Notifications = () => {
     const handleDeleteNotification = async (notificationId) => {
         const result = await deleteNotification(notificationId);
         if (result?.success) {
-            Swal.fire({
-                title: 'Deleted',
-                text: 'Notification has been removed.',
-                icon: 'success',
-                timer: 1500,
-                showConfirmButton: false
+            showToast({
+                title: 'Notification deleted',
+                message: 'The notification has been removed.',
+                type: 'success',
             });
         } else {
-            Swal.fire({
-                title: 'Error',
-                text: 'Failed to delete notification',
-                icon: 'error'
+            showToast({
+                title: 'Failed to delete',
+                message: 'Something went wrong. Please try again.',
+                type: 'error',
             });
         }
     };
@@ -69,45 +67,38 @@ const Notifications = () => {
     const handleMarkAllAsRead = async () => {
         const result = await markAllAsRead(authenticatedUser.id);
         if (result?.success) {
-            Swal.fire({
-                title: 'Done',
-                text: 'All notifications marked as read.',
-                icon: 'success',
-                timer: 1500,
-                showConfirmButton: false
+            showToast({
+                title: 'All caught up!',
+                message: 'All notifications have been marked as read.',
+                type: 'success',
             });
         }
     };
 
-    const handleClearAllNotifications = () => {
-        Swal.fire({
-            title: 'Clear all notifications?',
-            text: 'This action cannot be undone.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#b01c34',
-            cancelButtonColor: '#6b7280',
-            confirmButtonText: 'Yes, clear all'
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                const response = await deleteAllNotifications(authenticatedUser.id);
-                if (response?.success) {
-                    Swal.fire({
-                        title: 'Cleared',
-                        text: 'All notifications have been removed.',
-                        icon: 'success',
-                        timer: 1500,
-                        showConfirmButton: false
-                    });
-                } else {
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Failed to clear notifications',
-                        icon: 'error'
-                    });
-                }
-            }
-        });
+    const [confirmClear, setConfirmClear] = useState(false);
+
+    const handleClearAllNotifications = async () => {
+        if (!confirmClear) {
+            setConfirmClear(true);
+            // Auto-reset after 3 seconds
+            setTimeout(() => setConfirmClear(false), 3000);
+            return;
+        }
+        setConfirmClear(false);
+        const response = await deleteAllNotifications(authenticatedUser.id);
+        if (response?.success) {
+            showToast({
+                title: 'Notifications cleared',
+                message: 'All notifications have been removed.',
+                type: 'success',
+            });
+        } else {
+            showToast({
+                title: 'Failed to clear',
+                message: 'Something went wrong. Please try again.',
+                type: 'error',
+            });
+        }
     };
 
     const formatDate = (dateString) => {
@@ -173,9 +164,13 @@ const Notifications = () => {
                         {notifications.length > 0 && (
                             <button
                                 onClick={handleClearAllNotifications}
-                                className="px-3 py-1.5 text-sm font-medium text-gray-600 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors ring-1 ring-gray-100"
+                                className={`px-3 py-1.5 text-sm font-medium rounded-xl transition-colors ring-1 ${
+                                    confirmClear
+                                        ? 'text-red-700 bg-red-50 hover:bg-red-100 ring-red-200'
+                                        : 'text-gray-600 bg-gray-50 hover:bg-gray-100 ring-gray-100'
+                                }`}
                             >
-                                Clear all
+                                {confirmClear ? 'Confirm clear all?' : 'Clear all'}
                             </button>
                         )}
                     </div>
@@ -189,9 +184,17 @@ const Notifications = () => {
                     className="bg-white rounded-xl shadow-sm ring-1 ring-gray-100 flex-1 overflow-hidden flex flex-col"
                 >
                     {isLoading ? (
-                        <div className="flex-1 flex flex-col items-center justify-center gap-3 py-16">
-                            <div className="w-8 h-8 border-3 border-crimson-200 border-t-crimson-600 rounded-full animate-spin"></div>
-                            <p className="text-sm text-gray-400">Loading notifications...</p>
+                        <div className="animate-pulse divide-y divide-gray-50">
+                            {Array.from({ length: 6 }).map((_, i) => (
+                                <div key={i} className="px-5 py-4 flex items-start gap-4">
+                                    <div className="w-10 h-10 rounded-xl bg-gray-200 shrink-0" />
+                                    <div className="flex-1">
+                                        <div className="h-4 w-40 bg-gray-200 rounded" />
+                                        <div className="h-3 w-64 bg-gray-100 rounded mt-2" />
+                                        <div className="h-3 w-20 bg-gray-100 rounded mt-2" />
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     ) : notifications.length === 0 ? (
                         <div className="flex-1 flex flex-col items-center justify-center gap-3 py-16">

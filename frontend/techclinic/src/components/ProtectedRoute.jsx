@@ -1,6 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import useAuth from '../store/useAuthStore';
-import { PageLoader } from './PageLoader';
+import { SessionSkeleton } from './PageLoader';
 
 /**
  * ProtectedRoute - Wraps routes that require authentication and optionally specific roles.
@@ -21,11 +21,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     
     // Still verifying session (App.jsx is running getUser) — show loader
     if (isLoading || !isSessionVerified) {
-        return (
-            <div className='w-full h-screen flex items-center justify-center bg-gray-50'>
-                <PageLoader message="Verifying session..." />
-            </div>
-        );
+        return <SessionSkeleton />;
     }
     
     // Session verified but no user — redirect to login
@@ -39,11 +35,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
         
         // If profile hasn't loaded yet, show loader briefly
         if (!userProfile) {
-            return (
-                <div className='w-full h-screen flex items-center justify-center bg-gray-50'>
-                    <PageLoader message="Loading profile..." />
-                </div>
-            );
+            return <SessionSkeleton />;
         }
         
         // If user's role is not in the allowed list, redirect to dashboard with a message

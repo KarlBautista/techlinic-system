@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import Swal from 'sweetalert2';
+import { showToast } from './Toast'
+import { showModal } from './Modal'
 const MedicineForm = ({ medicine, onUpdate, onDelete, onClose }) => {
   const [form, setForm] = useState({})
   const [isClosing, setIsClosing] = useState(false)
@@ -24,43 +25,25 @@ const MedicineForm = ({ medicine, onUpdate, onDelete, onClose }) => {
   const handleUpdate = async (e) => {
     e.preventDefault()
     if (onUpdate) onUpdate(form)
-    const response = await Swal.fire({ 
-        title: "Medicine update successfully",
-        text: "the updated medicine version will be display in the table",
-        icon: "success",
-        showConfirmButton: true,
-    });
-    handleClose();
-    if(response.isConfirmed){
-        handleClose();
-        window.location.reload();
-    }
+    showToast({ title: "Medicine updated successfully", message: "The updated medicine version will be displayed in the table", type: "success" })
+    handleClose()
+    window.location.reload()
   }
 
   const handleDelete = async () => {
-    const response = await Swal.fire({ 
-        title: `Are you sure you want to delete this medicine (${form.id} - ${form.medicine_name})?`,
-        text: "deleting this will be permanently removed from table.",
-        showConfirmButton: true,
-        showCancelButton: true,
-        icon: "info",
-    });
-    if(response.isConfirmed) {
-        if (onDelete) onDelete(form.id);
-        const deleteRes = await Swal.fire({
-            title: "Medicine deleted successfully",
-            text: "The table will be updated",
-            icon: "success",
-            showConfirmButton: true,
-
-        });
-
-        if(deleteRes.isConfirmed) {
-            onClose();
-            window.location.reload();
-        }
-       
-    } 
+    const confirmed = await showModal({
+      type: "delete",
+      title: "Delete Medicine?",
+      message: `Are you sure you want to delete this medicine (${form.id} - ${form.medicine_name})? This action cannot be undone.`,
+      confirmLabel: "Delete",
+      cancelLabel: "Cancel",
+    })
+    if (confirmed) {
+      if (onDelete) onDelete(form.id)
+      showToast({ title: "Medicine deleted successfully", message: "The table will be updated", type: "success" })
+      onClose()
+      window.location.reload()
+    }
   }
   
   

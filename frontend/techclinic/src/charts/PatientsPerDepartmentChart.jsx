@@ -179,7 +179,13 @@ const PatientsPerDepartmentChart = () => {
 
             {/* Chart */}
             <div className='flex-1 min-h-0'>
-              {totalPatients === 0 ? (
+              {!periodInfo && patientData.length === 0 ? (
+                <div className='w-full h-full flex items-center justify-center animate-pulse'>
+                  <div className='w-40 h-40 rounded-full bg-gray-200 flex items-center justify-center'>
+                    <div className='w-24 h-24 rounded-full bg-white' />
+                  </div>
+                </div>
+              ) : totalPatients === 0 ? (
                 <div className='w-full h-full flex items-center justify-center'>
                   <p className='text-sm text-gray-400'>No patient records for this period</p>
                 </div>

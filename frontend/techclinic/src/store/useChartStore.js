@@ -1,6 +1,14 @@
 import { create } from "zustand";
 import api from "../lib/api";
-const useChart = create((set) => ({
+
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+const isCacheValid = (timestamp) => {
+    if (!timestamp) return false;
+    return Date.now() - timestamp < CACHE_TTL;
+};
+
+const useChart = create((set, get) => ({
     weeklyPatientCount: null,
     monthlyPatientCount: null,
     quarterlyPatientCount: null,
@@ -14,11 +22,15 @@ const useChart = create((set) => ({
     quarterlyTopDiagnoses: null,
     yearlyTopDiagnoses: null,
 
-    getWeeklyPatientCount: async () => {
+    // Cache timestamps
+    _ts: {},
+
+    getWeeklyPatientCount: async (force = false) => {
+        if (!force && isCacheValid(get()._ts.weeklyPatientCount) && get().weeklyPatientCount !== null) return;
         try {
             const response = await api.get("/get-weekly-patients");
             if(response.status === 200) {
-                set({ weeklyPatientCount: response.data });
+                set(s => ({ weeklyPatientCount: response.data, _ts: { ...s._ts, weeklyPatientCount: Date.now() } }));
             } else {
                 console.error(`Error getting weekly patient count: ${response.data.error}`)
             }
@@ -27,11 +39,12 @@ const useChart = create((set) => ({
             return;
         }
     },
-    getMonthlyPatientsCount: async () => {
+    getMonthlyPatientsCount: async (force = false) => {
+        if (!force && isCacheValid(get()._ts.monthlyPatientCount) && get().monthlyPatientCount !== null) return;
         try {
             const response = await api.get("/get-monthly-patients");
             if(response.status === 200) {
-                set({ monthlyPatientCount: response.data.data });
+                set(s => ({ monthlyPatientCount: response.data.data, _ts: { ...s._ts, monthlyPatientCount: Date.now() } }));
             } else {
                 console.error(`Error getting monthly patients: ${response.data.erorr }`)
             }
@@ -40,11 +53,12 @@ const useChart = create((set) => ({
             return;
         }
     },
-    getQuarterlyPatientsCount: async () => {
+    getQuarterlyPatientsCount: async (force = false) => {
+        if (!force && isCacheValid(get()._ts.quarterlyPatientCount) && get().quarterlyPatientCount !== null) return;
         try {
             const response = await api.get("/get-quarterly-patients");
             if(response.status === 200) {
-                set({ quarterlyPatientCount: response.data });
+                set(s => ({ quarterlyPatientCount: response.data, _ts: { ...s._ts, quarterlyPatientCount: Date.now() } }));
             } else {
                 console.error(`Error getting quarterly patients: ${response.data.error }`);
                 return;
@@ -54,11 +68,12 @@ const useChart = create((set) => ({
                 return;
         }
     },
-    getYearlyPatientCount: async () => {
+    getYearlyPatientCount: async (force = false) => {
+        if (!force && isCacheValid(get()._ts.yearlyPatientCount) && get().yearlyPatientCount !== null) return;
         try {
             const response = await api.get("/get-yearly-patients");
             if(response.status === 200) {
-                set({ yearlyPatientCount: response.data });
+                set(s => ({ yearlyPatientCount: response.data, _ts: { ...s._ts, yearlyPatientCount: Date.now() } }));
             } else {
                 console.error(`Error getting quarterly patients: ${response.data.error}`);
                 return;
@@ -69,11 +84,12 @@ const useChart = create((set) => ({
         }
     },
 
-    getWeeklyPatientPerDepartmentCount: async () => {
+    getWeeklyPatientPerDepartmentCount: async (force = false) => {
+        if (!force && isCacheValid(get()._ts.weeklyPatientPerDepartment) && get().weeklyPatientPerDepartment !== null) return;
         try {
             const response = await api.get("/get-weekly-patients-per-department");
             if(response.status === 200) {
-                set({ weeklyPatientPerDepartment: response.data });
+                set(s => ({ weeklyPatientPerDepartment: response.data, _ts: { ...s._ts, weeklyPatientPerDepartment: Date.now() } }));
             } else {
                 console.error(`Error getting quarterly patients: ${response.data.error}`);
                 return;
@@ -84,11 +100,12 @@ const useChart = create((set) => ({
         }
     },
 
-     getMonthlyPatientPerDepartmentCount: async () => {
+     getMonthlyPatientPerDepartmentCount: async (force = false) => {
+        if (!force && isCacheValid(get()._ts.monthlyPatientPerDepartment) && get().monthlyPatientPerDepartment !== null) return;
         try {
             const response = await api.get("/get-monthly-patients-per-department");
             if(response.status === 200) {
-                set({ monthlyPatientPerDepartment: response.data });
+                set(s => ({ monthlyPatientPerDepartment: response.data, _ts: { ...s._ts, monthlyPatientPerDepartment: Date.now() } }));
             } else {
                 console.error(`Error getting monthly patients per department: ${response.data.error}`);
                 return;
@@ -99,11 +116,12 @@ const useChart = create((set) => ({
         }
     },
 
-     getQuarterlyPatientPerDepartmentCount: async () => {
+     getQuarterlyPatientPerDepartmentCount: async (force = false) => {
+        if (!force && isCacheValid(get()._ts.quarterlyPatientPerDepartment) && get().quarterlyPatientPerDepartment !== null) return;
         try {
             const response = await api.get("/get-quarterly-patients-per-department");
             if(response.status === 200) {
-                set({ quarterlyPatientPerDepartment: response.data });
+                set(s => ({ quarterlyPatientPerDepartment: response.data, _ts: { ...s._ts, quarterlyPatientPerDepartment: Date.now() } }));
             } else {
                 console.error(`Error getting quarterly patients per department: ${response.data.error}`);
                 return;
@@ -114,11 +132,12 @@ const useChart = create((set) => ({
         }
     },
 
-     getYearlyPatientPerDepartmentCount: async () => {
+     getYearlyPatientPerDepartmentCount: async (force = false) => {
+        if (!force && isCacheValid(get()._ts.yearlyPatientPerDepartment) && get().yearlyPatientPerDepartment !== null) return;
         try {
             const response = await api.get("/get-yearly-patients-per-department");
             if(response.status === 200) {
-                set({ yearlyPatientPerDepartment: response.data });
+                set(s => ({ yearlyPatientPerDepartment: response.data, _ts: { ...s._ts, yearlyPatientPerDepartment: Date.now() } }));
             } else {
                 console.error(`Error getting yearly patients per department: ${response.data.error}`);
                 return;
@@ -129,11 +148,12 @@ const useChart = create((set) => ({
         }
     },
 
-    getWeeklyTopDiagnoses: async () => {
+    getWeeklyTopDiagnoses: async (force = false) => {
+        if (!force && isCacheValid(get()._ts.weeklyTopDiagnoses) && get().weeklyTopDiagnoses !== null) return;
         try {
             const response = await api.get("/get-weekly-top-diagnoses");
             if(response.status === 200) {
-                set({ weeklyTopDiagnoses: response.data.data });
+                set(s => ({ weeklyTopDiagnoses: response.data.data, _ts: { ...s._ts, weeklyTopDiagnoses: Date.now() } }));
             } else {
                 console.error(`Error getting weekly top diagnoses: ${response.data.error}`);
             }
@@ -143,11 +163,12 @@ const useChart = create((set) => ({
         }
     },
 
-    getMonthlyTopDiagnoses: async () => {
+    getMonthlyTopDiagnoses: async (force = false) => {
+        if (!force && isCacheValid(get()._ts.monthlyTopDiagnoses) && get().monthlyTopDiagnoses !== null) return;
         try {
             const response = await api.get("/get-monthly-top-diagnoses");
             if(response.status === 200) {
-                set({ monthlyTopDiagnoses: response.data.data });
+                set(s => ({ monthlyTopDiagnoses: response.data.data, _ts: { ...s._ts, monthlyTopDiagnoses: Date.now() } }));
             } else {
                 console.error(`Error getting monthly top diagnoses: ${response.data.error}`);
             }
@@ -157,11 +178,12 @@ const useChart = create((set) => ({
         }
     },
 
-    getQuarterlyTopDiagnoses: async () => {
+    getQuarterlyTopDiagnoses: async (force = false) => {
+        if (!force && isCacheValid(get()._ts.quarterlyTopDiagnoses) && get().quarterlyTopDiagnoses !== null) return;
         try {
             const response = await api.get("/get-quarterly-top-diagnoses");
             if(response.status === 200) {
-                set({ quarterlyTopDiagnoses: response.data.data });
+                set(s => ({ quarterlyTopDiagnoses: response.data.data, _ts: { ...s._ts, quarterlyTopDiagnoses: Date.now() } }));
             } else {
                 console.error(`Error getting quarterly top diagnoses: ${response.data.error}`);
                 return;
@@ -172,11 +194,12 @@ const useChart = create((set) => ({
         }
     },
 
-    getYearlyTopDiagnoses: async () => {
+    getYearlyTopDiagnoses: async (force = false) => {
+        if (!force && isCacheValid(get()._ts.yearlyTopDiagnoses) && get().yearlyTopDiagnoses !== null) return;
         try {
             const response = await api.get("/get-yearly-top-diagnoses");
             if(response.status === 200) {
-                set({ yearlyTopDiagnoses: response.data.data });
+                set(s => ({ yearlyTopDiagnoses: response.data.data, _ts: { ...s._ts, yearlyTopDiagnoses: Date.now() } }));
             } else {
                 console.error(`Error getting yearly top diagnoses: ${response.data.error}`);
                 return;

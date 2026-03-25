@@ -2,6 +2,10 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import api from "../lib/api";
 
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+const isCacheValid = (timestamp) => timestamp && (Date.now() - timestamp) < CACHE_TTL;
+
 const useData = create(
     persist(
         (set, get) => ({
@@ -9,17 +13,8 @@ const useData = create(
             patientsData: null,
             isLoadingRecords: false,
             isLoadingPatients: false,
-
-            insertDiagnose: async (recordId) => {
-                try {
-                    const response = await api.post("/insert-diagnose", {
-                        
-                    })
-                } catch (err) {
-                    console.error(`Something went wrong inserting diagnosis: ${err.message}`);
-                    return;
-                }
-            },
+            _lastFetchedRecords: null,
+            _lastFetchedPatients: null,
 
             insertPersonnel: async (personnelData) => {
         try {
@@ -64,7 +59,7 @@ const useData = create(
                     }
 
                     console.log('✅ Record inserted successfully');
-                    await get().getRecords();
+                    await get().getRecords(true);
 
                     return { success: true, data: payload.data };
 
@@ -75,10 +70,14 @@ const useData = create(
                 }
             },
             
-            getRecords: async () => {
+            getRecords: async (force = false) => {
                 if (get().isLoadingRecords) {
                     console.log("⏳ Already loading records, skipping...");
                     return { success: false, error: "Already loading" };
+                }
+
+                if (!force && isCacheValid(get()._lastFetchedRecords) && get().patientRecords) {
+                    return { success: true, cached: true };
                 }
 
                 try {
@@ -97,7 +96,8 @@ const useData = create(
                         console.log(`✅ Loaded ${response.data.data?.length || 0} records`);
                         set({ 
                             patientRecords: response.data,
-                            isLoadingRecords: false 
+                            isLoadingRecords: false,
+                            _lastFetchedRecords: Date.now()
                         });
                         return { success: true };
                     }
@@ -112,10 +112,14 @@ const useData = create(
                 }
             },
 
-            getPatients: async () => {
+            getPatients: async (force = false) => {
                 if (get().isLoadingPatients) {
                     console.log("⏳ Already loading patients, skipping...");
                     return { success: false, error: "Already loading" };
+                }
+
+                if (!force && isCacheValid(get()._lastFetchedPatients) && get().patientsData) {
+                    return { success: true, cached: true };
                 }
 
                 try {
@@ -133,7 +137,8 @@ const useData = create(
                     console.log(`✅ Loaded ${response.data.data?.length || 0} patients`);
                     set({ 
                         patientsData: response.data.data,
-                        isLoadingPatients: false 
+                        isLoadingPatients: false,
+                        _lastFetchedPatients: Date.now()
                     });
                     return { success: true };
                     
@@ -168,7 +173,9 @@ const useData = create(
                     patientRecords: null, 
                     patientsData: null,
                     isLoadingRecords: false,
-                    isLoadingPatients: false
+                    isLoadingPatients: false,
+                    _lastFetchedRecords: null,
+                    _lastFetchedPatients: null
                 });
             }
         }),

@@ -12,13 +12,18 @@ const useAuth = create(
     isSessionVerified: false,
     allUsers: null,
     isLoadingUsers: false,
+    _lastFetchedUsers: null,
 
-    getAllUsers: async () => {
+    getAllUsers: async (force = false) => {
+        const state = get();
+        if (!force && state._lastFetchedUsers && (Date.now() - state._lastFetchedUsers < 5 * 60 * 1000) && state.allUsers !== null) {
+            return;
+        }
         try {
             set({ isLoadingUsers: true });
             const response = await api.get("/get-all-users");
             if(response.status === 200) {
-                set({ allUsers: response.data.data, isLoadingUsers: false });
+                set({ allUsers: response.data.data, isLoadingUsers: false, _lastFetchedUsers: Date.now() });
             } else {
                 console.error(`Error getting all users: ${response}`);
                 set({ isLoadingUsers: false });
@@ -344,34 +349,11 @@ const useAuth = create(
                 return result;
             }
 
-            console.log("✅ Signature uploaded and saved:", signatureUrl);
+            console.log("Signature uploaded and saved:", signatureUrl);
             return { success: true, url: signatureUrl };
         } catch (err) {
             console.error("Error uploading signature:", err);
             return { success: false, error: err.message };
-        }
-    },
-
-    // Fetch a specific user's signature URL by their user ID
-    fetchUserSignature: async (userId) => {
-        try {
-            if (!userId) return null;
-
-            const { data, error } = await supabase
-                .from("users")
-                .select("signature_url, first_name, last_name, role")
-                .eq("id", userId)
-                .single();
-
-            if (error) {
-                console.error("Error fetching user signature:", error.message);
-                return null;
-            }
-
-            return data;
-        } catch (err) {
-            console.error("Error fetching user signature:", err);
-            return null;
         }
     },
 

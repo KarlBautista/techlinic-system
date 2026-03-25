@@ -165,8 +165,7 @@ const PatientCountsChart = () => {
       </div>  
       
       <div className='h-[90%] w-full'>
-          
-          {patientData.length > 0 && (
+          {patientData.length > 0 ? (
           <Chart
             key={`${selectedCategory}-${patientData.length}`}
             options={patientOptions}
@@ -174,6 +173,12 @@ const PatientCountsChart = () => {
             type="area"
             height="100%"
           />
+        ) : (
+          <div className='w-full h-full animate-pulse flex items-end gap-3 px-4 pb-6 pt-4'>
+            {[35, 55, 45, 70, 50, 60, 40].map((h, i) => (
+              <div key={i} className='flex-1 bg-gray-200 rounded-t' style={{ height: `${h}%` }} />
+            ))}
+          </div>
         )}
       </div>
     </div>

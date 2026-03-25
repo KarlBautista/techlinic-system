@@ -5,7 +5,6 @@ import { Phone, Mail, Building2, MapPin, ArrowLeft, ChevronRight, Stethoscope, P
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion'
 import DiagnosisModal from '../components/DiagnosisModal'
-import { PageLoader } from '../components/PageLoader'
 
 const IndividualRecord = () => {
   const { studentId } = useParams();
@@ -68,7 +67,46 @@ const IndividualRecord = () => {
       <div className='flex flex-col gap-4'>
 
         {isLoading ? (
-          <PageLoader message="Loading patient record..." />
+          <div className='flex flex-col gap-5 animate-pulse'>
+            {/* Skeleton Header */}
+            <div className='flex items-center gap-3'>
+              <div className='w-9 h-9 rounded-xl bg-gray-200' />
+              <div>
+                <div className='h-6 w-40 bg-gray-200 rounded-lg' />
+                <div className='h-4 w-56 bg-gray-100 rounded-lg mt-2' />
+              </div>
+            </div>
+            {/* Skeleton Profile Banner */}
+            <div className='w-full rounded-2xl bg-gray-200 h-44' />
+            {/* Skeleton Contact Cards */}
+            <div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className='bg-white rounded-xl ring-1 ring-gray-100 p-4'>
+                  <div className='h-3 w-16 bg-gray-200 rounded mb-3' />
+                  <div className='h-4 w-32 bg-gray-100 rounded' />
+                </div>
+              ))}
+            </div>
+            {/* Skeleton Visit Records */}
+            <div className='bg-white rounded-xl ring-1 ring-gray-100 overflow-hidden'>
+              <div className='px-5 py-4 border-b border-gray-100 flex items-center justify-between'>
+                <div className='h-5 w-28 bg-gray-200 rounded' />
+                <div className='h-9 w-28 bg-gray-200 rounded-xl' />
+              </div>
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className='px-5 py-4 flex items-center justify-between border-b border-gray-50'>
+                  <div className='flex items-center gap-3'>
+                    <div className='w-10 h-10 rounded-xl bg-gray-200' />
+                    <div>
+                      <div className='h-4 w-36 bg-gray-100 rounded' />
+                      <div className='h-3 w-24 bg-gray-100 rounded mt-2' />
+                    </div>
+                  </div>
+                  <div className='h-6 w-16 bg-gray-100 rounded-full' />
+                </div>
+              ))}
+            </div>
+          </div>
         ) : (
         <motion.div
           initial={{ opacity: 0 }}

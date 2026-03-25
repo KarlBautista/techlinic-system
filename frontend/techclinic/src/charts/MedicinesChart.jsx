@@ -6,7 +6,19 @@ const MedicinesChart = () => {
   const { medicines } = useMedicine();
 
   if (!medicines || medicines.length === 0) {
-    return <p>Loading medicines...</p>; 
+    return (
+      <div className='w-full h-full flex flex-col min-h-0 animate-pulse'>
+        <div className='shrink-0'>
+          <div className='h-4 w-24 bg-gray-200 rounded' />
+          <div className='h-3 w-40 bg-gray-100 rounded mt-2' />
+        </div>
+        <div className='flex-1 min-h-0 mt-4 flex items-end gap-3 px-4 pb-4'>
+          {[40, 65, 30, 80, 50].map((h, i) => (
+            <div key={i} className='flex-1 bg-gray-200 rounded-t' style={{ height: `${h}%` }} />
+          ))}
+        </div>
+      </div>
+    );
   }
 
   const sortedMedicines = [...medicines].sort((a, b) => a.stock_level - b.stock_level);

@@ -1,6 +1,14 @@
 const supabase = require("../config/supabaseAdmin");
 const supabaseAdmin = require("../config/supabaseAdmin")
+
+const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const isValidStudentId = (id) => /^[A-Z0-9-]+$/i.test(id) && id.length <= 20;
+
 const insertRecord = async (req, res) => {
+    if (!req.body.formData || typeof req.body.formData !== 'object') {
+        return res.status(400).json({ success: false, error: "Invalid request body." });
+    }
+
     const {
         firstName,
         lastName,
@@ -21,27 +29,34 @@ const insertRecord = async (req, res) => {
         attendingPhysician,
         attendingPhysicianId
     } = req.body.formData;
-    
-    // Enhanced logging
-    console.log('=== INSERT RECORD DEBUG ===');
-    console.log(`diseaseId: "${diseaseId}" (type: ${typeof diseaseId})`);
-    console.log(`diagnosis: "${diagnosis}" (type: ${typeof diagnosis})`);
-    console.log(`medication:`, medication);
-    console.log(`quantity: "${quantity}"`);
+
+    // Validate required patient fields
+    if (!firstName || !lastName || !studentId || !contactNumber || !yearLevel || !department || !sex || !email || !address || !dateOfBirth) {
+        return res.status(400).json({ success: false, error: "All patient information fields are required." });
+    }
+
+    if (!isValidStudentId(studentId)) {
+        return res.status(400).json({ success: false, error: "Invalid Student ID format." });
+    }
+    if (!isValidEmail(email)) {
+        return res.status(400).json({ success: false, error: "Invalid email address." });
+    }
+
+    const clean = (str) => str ? String(str).trim() : str;
     
     try{
         const { data: recordData, error: recordError } = await supabase.from("records").insert({
-            first_name: firstName,
-            last_name: lastName,
-            student_id: studentId,
-            contact_number: contactNumber,
+            first_name: clean(firstName),
+            last_name: clean(lastName),
+            student_id: clean(studentId),
+            contact_number: clean(contactNumber),
             year_level: yearLevel,
             department,
             sex,
-            email,
-            address,
+            email: clean(email),
+            address: clean(address),
             date_of_birth: dateOfBirth,
-            attending_physician: attendingPhysician,
+            attending_physician: attendingPhysician ? clean(attendingPhysician) : null,
             attending_physician_id: attendingPhysicianId || null,
             status: (diagnosis === "" || !medication || quantity === "" || treatment === "" || notes === "") ? "INCOMPLETE" : "COMPLETE"
         }).select();
@@ -57,18 +72,16 @@ const insertRecord = async (req, res) => {
             return res.status(500).json({ success: false, error: 'Failed to retrieve patient id after insert' });
         }
 
-        console.log(`Record created with ID: ${recordId}`);
-
         const { error: patientError } = await supabase.from("patients").insert({
-            first_name: firstName,
-            last_name: lastName,
-            student_id: studentId,
-            contact_number: contactNumber,
+            first_name: clean(firstName),
+            last_name: clean(lastName),
+            student_id: clean(studentId),
+            contact_number: clean(contactNumber),
             year_level: yearLevel,
             department,
             sex,
-            email,
-            address,
+            email: clean(email),
+            address: clean(address),
             date_of_birth: dateOfBirth
         });
         
@@ -82,10 +95,7 @@ const insertRecord = async (req, res) => {
         const hasDiseaseId = diseaseId && String(diseaseId).trim() !== "";
         const hasDiagnosis = diagnosis && String(diagnosis).trim() !== "";
         
-        console.log(`hasDiseaseId: ${hasDiseaseId}, hasDiagnosis: ${hasDiagnosis}`);
-        
         if (hasDiseaseId && hasDiagnosis) {
-            console.log('✓ Attempting to insert diagnosis...');
             
             const diagnosisPayload = {
                 record_id: recordId,
@@ -98,30 +108,22 @@ const insertRecord = async (req, res) => {
                 notes: notes || null
             };
             
-            console.log('Diagnosis payload:', diagnosisPayload);
-            
             const { data, error: diagnosisError } = await supabase
                 .from("diagnoses")
                 .insert(diagnosisPayload)
                 .select();
             
             if(diagnosisError){
-                console.error(`✗ Error inserting diagnosis: ${diagnosisError.message}`);
-                console.error('Diagnosis error details:', diagnosisError);
+                console.error(`Error inserting diagnosis: ${diagnosisError.message}`);
                 return res.status(500).json({ success: false, error: diagnosisError.message });
             }
             
             diagnosisData = data;
-            console.log('✓ Diagnosis inserted successfully:', diagnosisData);
         } else {
-            console.log('⊘ Skipping diagnosis insert - missing required data');
-            console.log(`  - diseaseId present: ${hasDiseaseId}`);
-            console.log(`  - diagnosis present: ${hasDiagnosis}`);
         }
 
         // Update medication stock only if we have valid data
         if(hasDiagnosis && medication && medication.id && quantity && Number(quantity) > 0) {
-            console.log(`Updating medication stock for medicine ID: ${medication.id}`);
             const newStockLevel = Number(medication.stock_level) - Number(quantity);
             
             const { error: decreaseMedicationStockQuantityError } = await supabase
@@ -131,12 +133,9 @@ const insertRecord = async (req, res) => {
 
             if(decreaseMedicationStockQuantityError) {
                 console.error(`Error updating stock level: ${decreaseMedicationStockQuantityError.message}`);
-            } else {
-                console.log(`✓ Stock updated: ${medication.stock_level} -> ${newStockLevel}`);
             }
         }
 
-        console.log('=== INSERT COMPLETE ===');
         return res.status(200).json({ 
             success: true, 
             data: { 
@@ -156,13 +155,12 @@ const getRecords = async (req, res) => {
     try {
         const { data: patientsRecordData, error:patientsRecordError } = await supabase.from("records").select("*, diagnoses (*)");
         if(patientsRecordError){
-            console.error(`Error getting records: ${patientsInformationError.message}`);
-            return res.status(500).json({ success: false, error: patientsInformationError.message });
+            console.error(`Error getting records: ${patientsRecordError.message}`);
+            return res.status(500).json({ success: false, error: patientsRecordError.message });
         }
 
         if(patientsRecordData){
-            console.log("successfully got the patient records");
-             res.status(200).json({ success: true, data: patientsRecordData });
+            return res.status(200).json({ success: true, data: patientsRecordData });
         }
 
     } catch (err) {
@@ -172,19 +170,18 @@ const getRecords = async (req, res) => {
 }
 const getRecord = async (req, res) => {
     const { studentId } = req.params;
-    console.log(req.params);
     try {
         const { data: patientRecordData, error: patientRecordError } = await supabase.from("records").select("*, diagnoses (*)")
         .eq("student_id", studentId);
         
         if(patientRecordError) {
             console.error(`Error getting record: ${patientRecordError.message}`);
-            res.status(500).json({ success: false, error: patientRecordError.message });
+            return res.status(500).json({ success: false, error: patientRecordError.message });
         }
-        res.status(200).json({ success: true, data: patientRecordData });
+        return res.status(200).json({ success: true, data: patientRecordData });
     } catch (err) {
         console.error(`Something went wrong getting record :${err.message}`);
-        res.status(500).json({ success: false, error: err.message });
+        return res.status(500).json({ success: false, error: err.message });
      }
 }
 
@@ -196,43 +193,39 @@ const getRecordToDiagnose = async (req, res) => {
 
         if (patientRecordError) {
             console.error(`Error getting patient record: ${patientRecordError.message}`);
-            res.status(500).json({ success: false, data: patientRecordData });
-            return;
+            return res.status(500).json({ success: false, error: patientRecordError.message });
         }
-        res.status(200).json({ success: true, data: patientRecordData });
+        return res.status(200).json({ success: true, data: patientRecordData });
     }  catch (err) {
         console.error(`Something went wrong getting patient record: ${err.message}`);
-        res.status(500).json({ success: false, error: err.message });
+        return res.status(500).json({ success: false, error: err.message });
     }
 }
 const getRecordsFromExisitingPatients = async (req, res) => {
     const studentId = req.params.studentId;
-    console.log(studentId)
     try {
         const { data: patientInformationData, error: patientInformationError } = await supabase.from("patients").select("*")
         .eq("student_id", studentId);
 
         if(patientInformationError) {
             console.error(`Error getting patient information :${patientInformationError.message}`);
-            res.status(500).json({ success: false, error: patientInformationError.message });
+            return res.status(500).json({ success: false, error: patientInformationError.message });
         }
-        res.status(200).json({ success: true, data: patientInformationData });
+        return res.status(200).json({ success: true, data: patientInformationData });
     } catch (err) {
-        console.error(`Something went wrong getting patient information`);
-        res.status(500).json({ success: false, error: err.message });
+        console.error(`Something went wrong getting patient information: ${err.message}`);
+        return res.status(500).json({ success: false, error: err.message });
     }
 }
 
 const getPatients = async (req, res) => {
-    console.log("gumaganaaa akooo")
     try {
         const { data: patientsData, error: patientsError } = await supabase.from("patients").select("*");
         if(patientsError) {
             console.error(`Error getting patients: ${patientsError.message}`);
             return res.status(500).json({ success: false, error: patientsError.message });
         }
-        console.log("nakuha ko naaaa", patientsData)
-        res.status(200).json({ success: true, data: patientsData })
+        return res.status(200).json({ success: true, data: patientsData })
     } catch (err) {
         console.error(`Something went wrong getting patients: ${err.message}`);
         return res.status(500).json({ success: false, error: err.message });
@@ -261,7 +254,11 @@ const addDiagnosis = async (req, res) => {
         attendingPhysician,
         attendingPhysicianId
     } = req.body.patientInput;
-    console.log(`ito diagnosis: ${diagnosis}, ito naman diseaseId: ${diseaseId}`)
+
+    if (!id || !diagnosis) {
+        return res.status(400).json({ success: false, error: "Record ID and diagnosis are required." });
+    }
+
     try {
         const { data: addDiagnosisData, error: addDiagnosisError } = await supabase.from("diagnoses").insert({
             diagnosis,
@@ -287,7 +284,7 @@ const addDiagnosis = async (req, res) => {
             console.error(`Error update status: ${updateCompleteStatusError}`);
             return res.status(500).json({ success: false, error: updateCompleteStatusError.message });
         }
-        res.status(200).json({ success: true, message: "success diagnosis"});
+        return res.status(200).json({ success: true, message: "success diagnosis"});
     } catch (err) {
         console.error(`Something went wrong adding diagnosis: ${err.message}`);
         return res.status(500).json({ success: false, error: err.message });
@@ -298,20 +295,40 @@ const getAllUsers = async (req, res) => {
     try {
         const { data: allUsersData, error: allUsersError } = await supabase.from("users").select("*");
         if (allUsersError) {
-            console.error(`Error getting all users: ${allUsersError.message}}`);
-            res.status(500).json({ success: false, error: allUsersError.message });
-            return;
+            console.error(`Error getting all users: ${allUsersError.message}`);
+            return res.status(500).json({ success: false, error: allUsersError.message });
         }
-        res.status(200).json({ success: true, data: allUsersData });
+        return res.status(200).json({ success: true, data: allUsersData });
     } catch (err) {
         console.error(`Error getting all users: ${err.message}`);
-        return;
+        return res.status(500).json({ success: false, error: err.message });
     }
 }
 
 const insertPersonnel = async (req, res) => {
+    if (!req.body.personnel || typeof req.body.personnel !== 'object') {
+        return res.status(400).json({ success: false, error: "Invalid request body." });
+    }
+
     const { first_name, last_name, email, password, address, date_of_birth, role, sex } = req.body.personnel;
-    console.log("ito mga data", req.body.personnel)
+
+    if (!first_name || !last_name || !email || !password || !role || !sex) {
+        return res.status(400).json({ success: false, error: "All required personnel fields must be provided." });
+    }
+
+    const validRoles = ['DOCTOR', 'NURSE'];
+    if (!validRoles.includes(role)) {
+        return res.status(400).json({ success: false, error: "Invalid role. Must be DOCTOR or NURSE." });
+    }
+
+    if (!isValidEmail(email)) {
+        return res.status(400).json({ success: false, error: "Invalid email address." });
+    }
+
+    if (password.length < 6) {
+        return res.status(400).json({ success: false, error: "Password must be at least 6 characters." });
+    }
+
     try {
        
         const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({

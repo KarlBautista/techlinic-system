@@ -3,11 +3,11 @@ import {useState} from 'react'
 import useData from '../store/useDataStore'
 import useAuth from '../store/useAuthStore'
 import { useLocation } from 'react-router-dom'
-import Swal from 'sweetalert2'
+import { showToast } from '../components/Toast'
 import { useEffect } from 'react'
 import useMedicine from "../store/useMedicineStore";
 import api from '../lib/api'
-import { PageLoader, ButtonLoader } from '../components/PageLoader'
+import { FormSkeleton, ButtonLoader } from '../components/PageLoader'
 import { motion } from 'framer-motion'
 import { UserPlus, ClipboardList, Plus, X, FileText, StickyNote } from 'lucide-react'
 
@@ -110,12 +110,10 @@ const NewPatient = () => {
           dateOfBirth: existing.date_of_birth ? formatDateForInput(existing.date_of_birth) : (existing.dob ? formatDateForInput(existing.dob) : ''),
           address: existing.address ?? ''
         }));
-        Swal.fire({ 
+        showToast({ 
           title: `Student: ${patientInput.studentId} Information Found.`,
-          text: "The inputs have the existing data of the student now",
-          icon: "success",
-          timer: 1500,
-          showConfirmButton: false,
+          message: "The inputs have the existing data of the student now",
+          type: "success",
         })
       } catch (err) {
         console.error('Error fetching existing student info', err);
@@ -198,15 +196,13 @@ const NewPatient = () => {
         }));
         setNewDiseaseName("");
         setShowAddDisease(false);
-        Swal.fire({
+        showToast({
           title: "Disease Added",
-          text: `"${added.name}" has been added and selected.`,
-          icon: "success",
-          timer: 1500,
-          showConfirmButton: false,
+          message: `"${added.name}" has been added and selected.`,
+          type: "success",
         });
       } else {
-        Swal.fire({ title: "Error", text: response.data.error, icon: "error" });
+        showToast({ title: "Error", message: response.data.error, type: "error" });
       }
     } catch (err) {
       const msg = err.response?.data?.error || err.message;
@@ -221,16 +217,14 @@ const NewPatient = () => {
           }));
           setNewDiseaseName("");
           setShowAddDisease(false);
-          Swal.fire({
+          showToast({
             title: "Already Exists",
-            text: `"${existing.name}" is already in the list and has been selected.`,
-            icon: "info",
-            timer: 1500,
-            showConfirmButton: false,
+            message: `"${existing.name}" is already in the list and has been selected.`,
+            type: "info",
           });
         }
       } else {
-        Swal.fire({ title: "Error", text: msg, icon: "error" });
+        showToast({ title: "Error", message: msg, type: "error" });
       }
     } finally {
       setIsAddingDisease(false);
@@ -240,6 +234,41 @@ const NewPatient = () => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     if (isSubmitting) return;
+
+    // Validate required patient fields
+    if (!patientInput.studentId || !patientInput.firstName || !patientInput.lastName || 
+        !patientInput.contactNumber || !patientInput.yearLevel || !patientInput.department || 
+        !patientInput.sex || !patientInput.email || !patientInput.address || !patientInput.dateOfBirth) {
+      showToast({
+        title: "Incomplete Form",
+        message: "Please fill out all required student information fields.",
+        type: "warning"
+      });
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(patientInput.email)) {
+      showToast({
+        title: "Invalid Email",
+        message: "Please enter a valid email address.",
+        type: "warning"
+      });
+      return;
+    }
+
+    // Validate contact number
+    const contactRegex = /^[0-9+\-() ]{7,15}$/;
+    if (!contactRegex.test(patientInput.contactNumber)) {
+      showToast({
+        title: "Invalid Contact Number",
+        message: "Please enter a valid contact number (7-15 digits).",
+        type: "warning"
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     
     // Log what's being sent for debugging
@@ -257,25 +286,23 @@ const NewPatient = () => {
         const msg = response.error || 'Failed inserting record';
         const lower = String(msg).toLowerCase();
         if (lower.includes('unique') || lower.includes('duplicate') || lower.includes('already exists') || lower.includes('student_id') || lower.includes('student id')) {
-          Swal.fire({ 
+          showToast({ 
             title: "Student Already Exist",
-            text: "A patient with this Student ID already exists. Please check the Student ID.",
-            showConfirmButton: true,
-            icon: "warning"
+            message: "A patient with this Student ID already exists. Please check the Student ID.",
+            type: "warning"
           })
         } else {
-          Swal.fire({
+          showToast({
             title: "Something went wrong",
-            text: msg,
-            icon: "error"
+            message: msg,
+            type: "error"
           })
         }
         return;
       } else {
-        Swal.fire({ 
+        showToast({ 
           title: "Record Inserted Successfully",
-          icon: "success",
-          timer: 2000,
+          type: "success",
         })
         setPatientInput({
           firstName: "",
@@ -309,7 +336,7 @@ const NewPatient = () => {
   return (
       <div className='flex flex-col gap-4'>
         {isLoading ? (
-          <PageLoader message="Loading patient form..." />
+          <FormSkeleton />
         ) : (
         <motion.div
           initial={{ opacity: 0 }}

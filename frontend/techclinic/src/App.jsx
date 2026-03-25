@@ -5,6 +5,8 @@ import router from "./router/router"
 import useAuth from './store/useAuthStore'
 import useData from './store/useDataStore'
 import useMedicine from './store/useMedicineStore'
+import ToastContainer from './components/Toast'
+import ModalContainer from './components/Modal'
 
 function App() {
     const { authListener, getUser, getAllUsers } = useAuth();
@@ -44,6 +46,8 @@ function App() {
     return (
         <div className='w-full h-screen'>
             <RouterProvider router={router}/>
+            <ToastContainer />
+            <ModalContainer />
         </div>
     );
 }

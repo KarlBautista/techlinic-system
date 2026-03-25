@@ -2,13 +2,14 @@ import React from 'react'
 import { useState } from 'react'
 import useData from '../store/useDataStore'
 import useAuth from '../store/useAuthStore'
-import Swal from 'sweetalert2'
+import { showToast } from '../components/Toast'
+import { showModal } from '../components/Modal'
 import { useEffect } from 'react'
 import useMedicine from "../store/useMedicineStore";
 import { useParams } from 'react-router-dom'
 import api from '../lib/api'
 import { useNavigate } from 'react-router-dom'
-import { PageLoader, ButtonLoader } from '../components/PageLoader'
+import { FormSkeleton, ButtonLoader } from '../components/PageLoader'
 import { motion } from 'framer-motion'
 import { UserPlus, ClipboardList, Plus, X, FileText, StickyNote } from 'lucide-react'
 const AddDiagnosis = () => {
@@ -133,11 +134,10 @@ const AddDiagnosis = () => {
 
       // Check if medicine is out of stock
       if (medjObj && medjObj.stock_level === 0) {
-        Swal.fire({
+        showToast({
           title: "Medicine Out of Stock",
-          text: `${medjObj.medicine_name} is currently out of stock. Please select another medicine.`,
-          icon: "warning",
-          confirmButtonColor: "#CB2727"
+          message: `${medjObj.medicine_name} is currently out of stock. Please select another medicine.`,
+          type: "warning",
         });
         // Clear the medication selection
         setPatientInput((prev) => ({ ...prev, medication: {}, quantity: "" }));
@@ -178,15 +178,13 @@ const AddDiagnosis = () => {
         }));
         setNewDiseaseName("");
         setShowAddDisease(false);
-        Swal.fire({
+        showToast({
           title: "Disease Added",
-          text: `"${added.name}" has been added and selected.`,
-          icon: "success",
-          timer: 1500,
-          showConfirmButton: false,
+          message: `"${added.name}" has been added and selected.`,
+          type: "success",
         });
       } else {
-        Swal.fire({ title: "Error", text: response.data.error, icon: "error" });
+        showToast({ title: "Error", message: response.data.error, type: "error" });
       }
     } catch (err) {
       const msg = err.response?.data?.error || err.message;
@@ -200,16 +198,14 @@ const AddDiagnosis = () => {
           }));
           setNewDiseaseName("");
           setShowAddDisease(false);
-          Swal.fire({
+          showToast({
             title: "Already Exists",
-            text: `"${existing.name}" is already in the list and has been selected.`,
-            icon: "info",
-            timer: 1500,
-            showConfirmButton: false,
+            message: `"${existing.name}" is already in the list and has been selected.`,
+            type: "info",
           });
         }
       } else {
-        Swal.fire({ title: "Error", text: msg, icon: "error" });
+        showToast({ title: "Error", message: msg, type: "error" });
       }
     } finally {
       setIsAddingDisease(false);
@@ -225,11 +221,10 @@ const AddDiagnosis = () => {
     // Validate if trying to prescribe out-of-stock medicine
     if (patientInput.medication && patientInput.medication.id && patientInput.quantity) {
       if (patientInput.medication.stock_level === 0) {
-        Swal.fire({
+        showToast({
           title: "Medicine Out of Stock",
-          text: `${patientInput.medication.medicine_name} is out of stock. Cannot prescribe this medicine.`,
-          icon: "error",
-          confirmButtonColor: "#CB2727"
+          message: `${patientInput.medication.medicine_name} is out of stock. Cannot prescribe this medicine.`,
+          type: "error",
         });
         return;
       }
@@ -237,11 +232,10 @@ const AddDiagnosis = () => {
       // Check if quantity exceeds available stock
       const quantityRequested = parseInt(patientInput.quantity, 10);
       if (quantityRequested > patientInput.medication.stock_level) {
-        Swal.fire({
+        showToast({
           title: "Insufficient Stock",
-          text: `Only ${patientInput.medication.stock_level} units of ${patientInput.medication.medicine_name} available. You requested ${quantityRequested} units.`,
-          icon: "warning",
-          confirmButtonColor: "#CB2727"
+          message: `Only ${patientInput.medication.stock_level} units of ${patientInput.medication.medicine_name} available. You requested ${quantityRequested} units.`,
+          type: "warning",
         });
         return;
       }
@@ -281,18 +275,18 @@ const AddDiagnosis = () => {
           }
         }
 
-        Swal.fire({
+        showToast({
           title: "Diagnosis Successfully Inserted",
-          icon: 'success',
+          type: "success",
         });
         navigate(`/individual-record/${patientInput.studentId}`);
 
 
 
       } else {
-        Swal.fire({
+        showToast({
           title: "Something went wrong inserting diagnosis",
-          icon: "error",
+          type: "error",
         })
       }
       getRecords();
@@ -308,7 +302,7 @@ const AddDiagnosis = () => {
   return (
       <div className='flex flex-col gap-4'>
         {isLoading ? (
-          <PageLoader message="Loading diagnosis form..." />
+          <FormSkeleton />
         ) : (
         <motion.div
           initial={{ opacity: 0 }}

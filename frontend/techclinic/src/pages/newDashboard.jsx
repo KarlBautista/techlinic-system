@@ -2,10 +2,9 @@ import React, { useEffect, useRef, useState, useMemo } from 'react'
 import useAuth from '../store/useAuthStore';
 import useData from '../store/useDataStore';
 import useMedicine from '../store/useMedicineStore';
-import { PageLoader } from '../components/PageLoader';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import Swal from "sweetalert2";
+import { showToast } from '../components/Toast';
 import { Link, useNavigate } from 'react-router-dom'
 
 import AnimateNumber from "../components/AnimateNumber"
@@ -127,10 +126,10 @@ const NewDashboard = () => {
     };
 
     const handleWaitingForDiagnosis = () => {
-        Swal.fire({
+        showToast({
             title: "Awaiting Physician Assessment",
-            text: "This patient is awaiting physician assessment; a formal diagnosis has not yet been provided.",
-            icon: "info",
+            message: "This patient is awaiting physician assessment; a formal diagnosis has not yet been provided.",
+            type: "info",
         });
     };
 
@@ -197,7 +196,54 @@ const NewDashboard = () => {
     return (
         <div className='flex flex-col gap-5'>
               {initialLoading ? (
-                  <PageLoader message="Loading dashboard..." />
+                  <div className='flex flex-col gap-5 animate-pulse'>
+                    {/* Skeleton Welcome Banner */}
+                    <div className='w-full rounded-2xl bg-gray-200 p-6 sm:p-8 h-36' />
+                    {/* Skeleton Quick Actions */}
+                    <div className='flex flex-wrap gap-3'>
+                      <div className='h-10 w-32 bg-gray-200 rounded-xl' />
+                      <div className='h-10 w-32 bg-gray-200 rounded-xl' />
+                      <div className='h-10 w-28 bg-gray-200 rounded-xl' />
+                    </div>
+                    {/* Skeleton Stat Cards */}
+                    <div className='w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
+                      {Array.from({ length: 4 }).map((_, i) => (
+                        <div key={i} className='bg-white rounded-xl ring-1 ring-gray-100 p-5 flex items-start gap-4'>
+                          <div className='w-11 h-11 rounded-xl bg-gray-200 shrink-0' />
+                          <div className='flex-1'>
+                            <div className='h-3 w-20 bg-gray-200 rounded' />
+                            <div className='h-7 w-16 bg-gray-200 rounded mt-2' />
+                            <div className='h-3 w-28 bg-gray-100 rounded mt-2' />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    {/* Skeleton Table */}
+                    <div className='bg-white rounded-xl ring-1 ring-gray-100 overflow-hidden'>
+                      <div className='px-5 py-4 border-b border-gray-100 flex items-center gap-3'>
+                        <div className='h-5 w-32 bg-gray-200 rounded' />
+                        <div className='h-6 w-8 bg-gray-200 rounded-full' />
+                      </div>
+                      <div className='px-5 py-3 flex gap-4 border-b border-gray-100'>
+                        {[80, 120, 130, 100, 60, 70].map((w, i) => (
+                          <div key={i} className='h-4 bg-gray-200 rounded' style={{ width: w }} />
+                        ))}
+                      </div>
+                      {Array.from({ length: 6 }).map((_, i) => (
+                        <div key={i} className='px-5 py-4 flex items-center gap-4 border-b border-gray-50'>
+                          <div className='h-4 w-20 bg-gray-100 rounded' />
+                          <div className='flex items-center gap-3'>
+                            <div className='w-8 h-8 rounded-full bg-gray-200' />
+                            <div className='h-4 w-28 bg-gray-100 rounded' />
+                          </div>
+                          <div className='h-4 w-32 bg-gray-100 rounded hidden md:block' />
+                          <div className='h-4 w-24 bg-gray-100 rounded hidden lg:block' />
+                          <div className='h-4 w-16 bg-gray-100 rounded hidden sm:block' />
+                          <div className='h-6 w-16 bg-gray-100 rounded-full' />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
               ) : (
               <motion.div
                   variants={containerVariants}

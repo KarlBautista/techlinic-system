@@ -15,10 +15,12 @@ import {
     ChevronsRight,
     ScrollText,
 } from 'lucide-react'
-import Swal from 'sweetalert2'
+import { showToast } from './Toast'
+import { showModal } from './Modal'
 import TUP from '../assets/image/TUP.png'
 import useAuth from '../store/useAuthStore'
 import useNotificationStore, { requestNotificationPermission } from '../store/useNotificationStore'
+import NotificationModal from './NotificationModal'
 
 // ════════════════════════════════════════════════════════
 // ── Nav Items Config ──
@@ -123,6 +125,7 @@ export default function Sidebar() {
     const location = useLocation()
     const navigate = useNavigate()
     const [showProfileMenu, setShowProfileMenu] = useState(false)
+    const [showNotifications, setShowNotifications] = useState(false)
     const profileRef = useRef(null)
 
     // ── Collapse state (persisted) ──
@@ -191,30 +194,21 @@ export default function Sidebar() {
     }
 
     const handleSignOut = async () => {
-        const result = await Swal.fire({
+        const confirmed = await showModal({
+            type: 'warning',
             title: 'Sign Out?',
-            text: 'Are you sure you want to sign out?',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#b01c34',
-            cancelButtonColor: '#6b7280',
-            confirmButtonText: 'Yes, sign out',
-            cancelButtonText: 'Cancel',
+            message: 'Are you sure you want to sign out?',
+            confirmLabel: 'Yes, sign out',
+            cancelLabel: 'Cancel',
         })
-        if (!result.isConfirmed) return
+        if (!confirmed) return
 
         const response = await signOut()
         if (response?.error) {
-            Swal.fire({ title: 'Error', text: "Can't sign out. Please try again.", icon: 'error' })
+            showToast({ title: 'Error', message: "Can't sign out. Please try again.", type: 'error' })
             return
         }
-        await Swal.fire({
-            title: 'Signed Out',
-            text: 'Thank you for choosing TechClinic.',
-            icon: 'success',
-            timer: 1500,
-            showConfirmButton: false,
-        })
+        showToast({ title: 'Signed Out', message: 'Thank you for choosing TechClinic.', type: 'success' })
         navigate('/', { replace: true })
         setTimeout(() => { window.location.href = '/' }, 100)
     }
@@ -276,14 +270,19 @@ export default function Sidebar() {
                                 {section.items.map((item) => {
                                     const active = isActive(item)
                                     const Icon = item.icon
+                                    const isNotification = item.hasBadge && item.label === 'Notifications'
+                                    const Wrapper = isNotification ? 'button' : Link
+                                    const wrapperProps = isNotification
+                                        ? { onClick: () => setShowNotifications(true) }
+                                        : { to: item.path }
                                     return (
                                         <NavTooltip key={item.path} label={item.label} show={collapsed}>
-                                            <Link
-                                                to={item.path}
+                                            <Wrapper
+                                                {...wrapperProps}
                                                 className={`
                                                     relative flex items-center gap-3 rounded-xl transition-all duration-200 group
                                                     ${collapsed ? 'justify-center h-10 w-10 mx-auto' : 'px-3 py-2.5'}
-                                                    ${active
+                                                    ${active && !isNotification
                                                         ? 'bg-crimson-50 text-crimson-600'
                                                         : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'
                                                     }
@@ -323,7 +322,7 @@ export default function Sidebar() {
                                                         </motion.span>
                                                     )}
                                                 </AnimatePresence>
-                                            </Link>
+                                            </Wrapper>
                                         </NavTooltip>
                                     )
                                 })}
@@ -436,16 +435,21 @@ export default function Sidebar() {
                     {mobileItems.map((item) => {
                         const active = isActive(item)
                         const Icon = item.icon
+                        const isMobileNotif = item.hasBadge && item.label === 'More'
+                        const MobileWrapper = isMobileNotif ? 'button' : Link
+                        const mobileWrapperProps = isMobileNotif
+                            ? { onClick: () => setShowNotifications(true) }
+                            : { to: item.path }
                         return (
-                            <Link
+                            <MobileWrapper
                                 key={item.path}
-                                to={item.path}
+                                {...mobileWrapperProps}
                                 className={`
                                     relative flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors
-                                    ${active ? 'text-crimson-600' : 'text-gray-400'}
+                                    ${active && !isMobileNotif ? 'text-crimson-600' : 'text-gray-400'}
                                 `}
                             >
-                                {active && (
+                                {active && !isMobileNotif && (
                                     <motion.div
                                         layoutId="mobile-active"
                                         className="absolute top-0 left-1/4 right-1/4 h-[2px] bg-crimson-600 rounded-b-full"
@@ -453,21 +457,24 @@ export default function Sidebar() {
                                     />
                                 )}
                                 <div className="relative">
-                                    <Icon size={20} strokeWidth={active ? 2.2 : 1.6} />
+                                    <Icon size={20} strokeWidth={active && !isMobileNotif ? 2.2 : 1.6} />
                                     {item.hasBadge && unreadCount > 0 && (
                                         <span className="absolute -top-1 -right-1.5 bg-crimson-600 text-white text-[0.5rem] font-bold rounded-full h-3.5 w-3.5 flex items-center justify-center ring-2 ring-white">
                                             {unreadCount > 9 ? '9+' : unreadCount}
                                         </span>
                                     )}
                                 </div>
-                                <span className={`text-[0.6rem] font-medium ${active ? 'font-semibold' : ''}`}>
+                                <span className={`text-[0.6rem] font-medium ${active && !isMobileNotif ? 'font-semibold' : ''}`}>
                                     {item.label}
                                 </span>
-                            </Link>
+                            </MobileWrapper>
                         )
                     })}
                 </div>
             </nav>
+
+            {/* Notification Modal */}
+            <NotificationModal isOpen={showNotifications} onClose={() => setShowNotifications(false)} />
         </>
     )
 }

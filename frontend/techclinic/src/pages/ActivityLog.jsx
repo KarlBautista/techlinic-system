@@ -136,9 +136,24 @@ const ActivityLog = () => {
         className="bg-white rounded-xl shadow-sm ring-1 ring-gray-100 flex-1 flex flex-col overflow-hidden"
       >
         {isLoading ? (
-          <div className="flex items-center justify-center py-16">
-            <div className="w-6 h-6 border-2 border-[#b01c34] border-t-transparent rounded-full animate-spin" />
-            <span className="ml-3 text-sm text-gray-500">Loading activity log...</span>
+          <div className="animate-pulse">
+            <div className="px-5 py-3 flex gap-4 border-b border-gray-100">
+              {[80, 100, 60, 80, 160].map((w, i) => (
+                <div key={i} className="h-4 bg-gray-200 rounded" style={{ width: w }} />
+              ))}
+            </div>
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="px-5 py-4 flex items-center gap-4 border-b border-gray-50">
+                <div className="h-4 w-24 bg-gray-100 rounded" />
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-gray-200" />
+                  <div className="h-4 w-20 bg-gray-100 rounded" />
+                </div>
+                <div className="h-6 w-14 bg-gray-100 rounded-full" />
+                <div className="h-6 w-16 bg-gray-100 rounded-full" />
+                <div className="h-4 w-40 bg-gray-100 rounded" />
+              </div>
+            ))}
           </div>
         ) : (
           <div className="overflow-auto flex-1">

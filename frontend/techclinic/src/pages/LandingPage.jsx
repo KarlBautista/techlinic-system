@@ -1,12 +1,13 @@
-import { motion } from 'framer-motion';
-import { ClipboardList, LogIn } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { LogIn, Check } from 'lucide-react';
 import RegistrationInfo from '../components/registrationInfo';
 import Dropdown from '../components/Dropdown'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
-import CrimsonAbstract from '../components/CrimsonAbstract'
-import useData from '../store/useDataStore'
-import Swal from 'sweetalert2'
+import axios from 'axios'
+import { showToast } from '../components/Toast'
+import { showModal } from '../components/Modal'
+import TUP from '../assets/image/TUP.png'
 
 // Constants
 const INITIAL_FORM_DATA = {
@@ -35,12 +36,20 @@ const SEX_OPTIONS = ['Male', 'Female'];
 const PRIMARY_COLOR = "#B22222";
 const REQUIRED_FIELDS = ['studentId', 'firstName', 'lastName', 'contactNumber', 'yearLevel', 'department', 'sex', 'email', 'address', 'dateOfBirth'];
 
+const STEPS = [
+    { number: 1, label: 'Personal Details' },
+    { number: 2, label: 'Contact & Academic' },
+    { number: 3, label: 'Review & Submit' }
+];
+
 function LandingPage() {
     const navigate = useNavigate();
-    const { insertRecord, getRecords, getRecordsFromExistingPatient } = useData();
+    const API_BASE = 'http://localhost:3500/api';
 
     const [formData, setFormData] = useState(INITIAL_FORM_DATA);
     const [isStudentConfirmed, setIsStudentConfirmed] = useState(false);
+    const [currentStep, setCurrentStep] = useState(1);
+    const [errors, setErrors] = useState({});
 
     // Format date from various formats to MM/DD/YY
     const formatDateToMMDDYY = (dateString) => {
@@ -97,47 +106,46 @@ function LandingPage() {
         }
 
         try {
-            const response = await getRecordsFromExistingPatient(formData.studentId);
+            const res = await axios.get(`${API_BASE}/public/check-student/${formData.studentId}`);
+            const response = res.data;
 
             if (response.success && response.data && response.data.length > 0) {
                 const studentData = response.data[0];
 
-                Swal.fire({
+                const confirmed = await showModal({
                     title: "Confirm Identity",
-                    text: `Are you ${studentData.first_name} ${studentData.last_name}?`,
-                    icon: "question",
-                    showCancelButton: true,
-                    confirmButtonText: "Yes, that's me",
-                    cancelButtonText: "No, enter manually",
-                    confirmButtonColor: "#CB2727"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        const formattedDate = formatDateToMMDDYY(studentData.date_of_birth);
-                        const inputDate = convertToInputFormat(formattedDate);
-
-                        setFormData((prev) => ({
-                            ...prev,
-                            firstName: studentData.first_name || prev.firstName,
-                            lastName: studentData.last_name || prev.lastName,
-                            contactNumber: studentData.contact_number || prev.contactNumber,
-                            yearLevel: studentData.year_level || prev.yearLevel,
-                            department: studentData.department || prev.department,
-                            sex: studentData.sex || prev.sex,
-                            email: studentData.email || prev.email,
-                            address: studentData.address || prev.address,
-                            dateOfBirth: inputDate || prev.dateOfBirth,
-                        }));
-
-                        setIsStudentConfirmed(true);
-
-                        Swal.fire({
-                            title: "Success",
-                            text: `Information for ${studentData.first_name} ${studentData.last_name} loaded successfully`,
-                            icon: "success",
-                            timer: 2000,
-                        });
-                    }
+                    message: `Are you ${studentData.first_name} ${studentData.last_name}?`,
+                    type: "info",
+                    confirmLabel: "Yes, that's me",
+                    cancelLabel: "No, enter manually",
+                    showCancel: true,
                 });
+
+                if (confirmed) {
+                    const formattedDate = formatDateToMMDDYY(studentData.date_of_birth);
+                    const inputDate = convertToInputFormat(formattedDate);
+
+                    setFormData((prev) => ({
+                        ...prev,
+                        firstName: studentData.first_name || prev.firstName,
+                        lastName: studentData.last_name || prev.lastName,
+                        contactNumber: studentData.contact_number || prev.contactNumber,
+                        yearLevel: studentData.year_level || prev.yearLevel,
+                        department: studentData.department || prev.department,
+                        sex: studentData.sex || prev.sex,
+                        email: studentData.email || prev.email,
+                        address: studentData.address || prev.address,
+                        dateOfBirth: inputDate || prev.dateOfBirth,
+                    }));
+
+                    setIsStudentConfirmed(true);
+
+                    showToast({
+                        title: "Success",
+                        message: `Information for ${studentData.first_name} ${studentData.last_name} loaded successfully`,
+                        type: "success",
+                    });
+                }
             }
         } catch (err) {
             console.error("Error searching for student:", err);
@@ -150,102 +158,114 @@ function LandingPage() {
         if (!formData.studentId || !formData.firstName || !formData.lastName || !formData.contactNumber ||
             !formData.yearLevel || !formData.department || !formData.sex || !formData.email ||
             !formData.address || !formData.dateOfBirth) {
-            Swal.fire({
+            showToast({
                 title: "Incomplete Form",
-                text: "Please fill out all required fields before submitting.",
-                icon: "warning"
+                message: "Please fill out all required fields before submitting.",
+                type: "warning"
             });
             return;
         }
 
-        const displayDate = formatDateToMMDDYY(formData.dateOfBirth);
-        const confirmationHTML = `
-            <div style="text-align: left; font-size: 0.9rem; ">
-                <p><strong>Student ID:</strong> ${formData.studentId}</p>
-                <p><strong>First Name:</strong> ${formData.firstName}</p>
-                <p><strong>Last Name:</strong> ${formData.lastName}</p>
-                <p><strong>Contact Number:</strong> ${formData.contactNumber}</p>
-                <p><strong>Year Level:</strong> ${formData.yearLevel}</p>
-                <p><strong>Department:</strong> ${formData.department}</p>
-                <p><strong>Sex:</strong> ${formData.sex}</p>
-                <p><strong>Email:</strong> ${formData.email}</p>
-                <p><strong>Address:</strong> ${formData.address}</p>
-                <p><strong>Date of Birth:</strong> ${displayDate}</p>
-            </div>
-        `;
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            showToast({
+                title: "Invalid Email",
+                message: "Please enter a valid email address.",
+                type: "warning"
+            });
+            return;
+        }
 
-        Swal.fire({
-            title: "Confirm Patient Information",
-            html: confirmationHTML,
-            icon: "info",
-            showCancelButton: true,
-            confirmButtonText: "Submit",
-            cancelButtonText: "Cancel",
-            confirmButtonColor: "#CB2727"
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                try {
-                    const dataToSubmit = {
-                        ...formData,
-                        dateOfBirth: formatDateToMMDDYY(formData.dateOfBirth)
-                    };
-                    const response = await insertRecord(dataToSubmit);
-                    if (!response.success) {
-                        const msg = response.error || 'Failed inserting record';
-                        const lower = String(msg).toLowerCase();
-                        if (lower.includes('unique') || lower.includes('duplicate') || lower.includes('already exists') || lower.includes('student_id') || lower.includes('student id')) {
-                            Swal.fire({
-                                title: "Student Already Exist",
-                                text: "A patient with this Student ID already exists. Please check the Student ID.",
-                                showConfirmButton: true,
-                                icon: "warning"
-                            })
-                        } else {
-                            Swal.fire({
-                                title: "Something went wrong",
-                                text: msg,
-                                icon: "error"
-                            })
-                        }
-                        return;
-                    } else {
-                        setFormData(INITIAL_FORM_DATA);
-                        setIsStudentConfirmed(false);
+        // Validate contact number
+        const contactRegex = /^[0-9+\-() ]{7,11}$/;
+        if (!contactRegex.test(formData.contactNumber)) {
+            showToast({
+                title: "Invalid Contact Number",
+                message: "Please enter a valid contact number (7-11 digits).",
+                type: "warning"
+            });
+            return;
+        }
 
-                        Swal.fire({
-                            title: "Record Inserted Successfully",
-                            icon: "success",
-                            timer: 2000,
+        const confirmed = await showModal({
+            title: "Submit Registration?",
+            message: "Are you sure you want to submit your registration?",
+            type: "info",
+            confirmLabel: "Confirm",
+            cancelLabel: "Cancel",
+            showCancel: true,
+        });
+
+        if (confirmed) {
+            try {
+                const dataToSubmit = {
+                    ...formData,
+                    dateOfBirth: formatDateToMMDDYY(formData.dateOfBirth)
+                };
+                const res = await axios.post(`${API_BASE}/public/register-patient`, { formData: dataToSubmit });
+                const response = res.data;
+                if (!response.success) {
+                    const msg = response.error || 'Failed inserting record';
+                    const lower = String(msg).toLowerCase();
+                    if (lower.includes('unique') || lower.includes('duplicate') || lower.includes('already exists') || lower.includes('student_id') || lower.includes('student id')) {
+                        showToast({
+                            title: "Student Already Exists",
+                            message: "A patient with this Student ID already exists. Please check the Student ID.",
+                            type: "warning"
                         });
-
-                        getRecords();
+                    } else {
+                        showToast({
+                            title: "Something went wrong",
+                            message: msg,
+                            type: "error"
+                        });
                     }
-                } catch (err) {
-                    console.error(err);
-                    Swal.fire({
+                    return;
+                } else {
+                    setFormData(INITIAL_FORM_DATA);
+                    setIsStudentConfirmed(false);
+                    setCurrentStep(1);
+                    setErrors({});
+
+                    showToast({
+                        title: "Record Inserted Successfully",
+                        type: "success",
+                    });
+                }
+            } catch (err) {
+                console.error(err);
+                const msg = err?.response?.data?.error || "An error occurred while submitting the form";
+                const lower = String(msg).toLowerCase();
+                if (lower.includes('unique') || lower.includes('duplicate') || lower.includes('already exists') || lower.includes('student_id') || lower.includes('student id')) {
+                    showToast({
+                        title: "Student Already Exists",
+                        message: "A patient with this Student ID already exists. Please check the Student ID.",
+                        type: "warning"
+                    });
+                } else {
+                    showToast({
                         title: "Error",
-                        text: "An error occurred while submitting the form",
-                        icon: "error"
-                    })
+                        message: msg,
+                        type: "error"
+                    });
                 }
             }
-        });
+        }
     };
 
-    const handleLog = () => {
-        Swal.fire({
+    const handleLog = async () => {
+        const confirmed = await showModal({
             title: "Clinic Personnel Confirmation",
-            text: "This page is for clinic personnel only. Are you a clinic personnel?",
-            icon: "question",
-            showCancelButton: true,
-            confirmButtonText: "Yes",
-            cancelButtonText: "No",
-            confirmButtonColor: "#CB2727"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                navigate('/login')
-            }
+            message: "This page is for clinic personnel only. Are you a clinic personnel?",
+            type: "info",
+            confirmLabel: "Yes",
+            cancelLabel: "No",
+            showCancel: true,
         });
+        if (confirmed) {
+            navigate('/login');
+        }
     }
 
     const handleClear = () => {
@@ -262,79 +282,260 @@ function LandingPage() {
             dateOfBirth: ''
         });
         setIsStudentConfirmed(false);
+        setCurrentStep(1);
+        setErrors({});
     }
 
+    const validateStep = (step) => {
+        const newErrors = {};
+        if (step === 1) {
+            if (!formData.studentId.trim()) newErrors.studentId = 'Student ID is required';
+            if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
+            if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
+            if (!formData.sex) newErrors.sex = 'Please select sex';
+            if (!formData.dateOfBirth) newErrors.dateOfBirth = 'Please enter date of birth';
+        }
+        if (step === 2) {
+            if (!formData.email.trim()) newErrors.email = 'Email is required';
+            else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Please enter a valid email';
+            if (!formData.contactNumber.trim()) newErrors.contactNumber = 'Contact number is required';
+            else if (!/^[0-9+\-() ]{7,15}$/.test(formData.contactNumber)) newErrors.contactNumber = 'Please enter a valid contact number';
+            if (!formData.address.trim()) newErrors.address = 'Address is required';
+            if (!formData.department) newErrors.department = 'Please select a department';
+            if (!formData.yearLevel) newErrors.yearLevel = 'Please select a year level';
+        }
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleNext = () => {
+        if (validateStep(currentStep)) {
+            setCurrentStep(prev => prev + 1);
+            setErrors({});
+        }
+    };
+
+    const handleBack = () => {
+        setCurrentStep(prev => prev - 1);
+        setErrors({});
+    };
+
+    const ReviewField = ({ label, value }) => (
+        <div className="bg-gray-50 rounded-xl px-4 py-3">
+            <p className="text-xs text-gray-400 font-medium">{label}</p>
+            <p className="text-sm text-gray-800 font-medium mt-0.5">{value || '—'}</p>
+        </div>
+    );
+
     return (
-        <div className='flex h-screen w-full bg-[#ffffff]'>
-            {/* ─── Left: Crimson Abstract Panel (desktop only) ─── */}
-            <div className='hidden lg:block lg:w-[30%] relative overflow-hidden bg-white'>
-                <CrimsonAbstract className='absolute inset-0 w-full h-full' flip />
-                {/* Smooth fade into content area (right edge) */}
-                <div className='absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-white via-white/50 to-transparent' />
+        <div className="h-screen flex flex-col bg-linear-to-br from-rose-50/30 via-white to-amber-50/20">
+            {/* ─── Top Bar ─── */}
+            <div className="flex items-center justify-between px-6 md:px-10 py-4">
+                <div className="flex items-center gap-3">
+                    <img src={TUP} alt="TUP" className="w-9 h-9" />
+                    <span className="text-lg font-bold text-gray-800">TechClinic</span>
+                </div>
+                <button
+                    onClick={handleLog}
+                    className="text-sm text-gray-500 hover:text-crimson-600 transition-colors cursor-pointer"
+                >
+                    Clinic Personnel?&nbsp;
+                    <span className="font-semibold text-crimson-600 hover:underline">Login</span>
+                </button>
             </div>
 
-            {/* ─── Right: Registration Form ─── */}
-            <div className='flex-1 flex items-center justify-center p-6 overflow-auto'>
+            {/* ─── Content ─── */}
+            <div className="flex-1 flex flex-col items-center justify-center px-6">
+                {/* Title */}
+                <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4 }}
+                    className="text-center mb-6"
+                >
+                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Patient Registration</h1>
+                    <p className="text-gray-500 mt-2 text-sm">Kindly provide the necessary details before continuing.</p>
+                </motion.div>
+
+                {/* ─── Stepper ─── */}
+                <div className="flex items-center justify-center mb-8">
+                    {STEPS.map((step, index) => (
+                        <div key={step.number} className="flex items-center">
+                            <div className="flex flex-col items-center">
+                                <div
+                                    className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold border-2 transition-all duration-300
+                                        ${currentStep > step.number
+                                            ? 'bg-crimson-600 border-crimson-600 text-white'
+                                            : currentStep === step.number
+                                                ? 'border-crimson-600 text-crimson-600 bg-white'
+                                                : 'border-gray-300 text-gray-400 bg-white'}`}
+                                >
+                                    {currentStep > step.number ? <Check className="w-4 h-4" /> : step.number}
+                                </div>
+                                <span
+                                    className={`text-xs mt-2 font-medium whitespace-nowrap transition-colors
+                                        ${currentStep >= step.number ? 'text-crimson-600' : 'text-gray-400'}`}
+                                >
+                                    {step.label}
+                                </span>
+                            </div>
+                            {index < STEPS.length - 1 && (
+                                <div
+                                    className={`w-16 md:w-28 h-0.5 mx-3 mb-5 transition-all duration-300
+                                        ${currentStep > step.number ? 'bg-crimson-600' : 'bg-gray-200'}`}
+                                />
+                            )}
+                        </div>
+                    ))}
+                </div>
+
+                {/* ─── Form Card ─── */}
                 <motion.div
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4 }}
-                    className='w-full max-w-3xl'
+                    transition={{ duration: 0.4, delay: 0.1 }}
+                    className="w-full max-w-2xl"
                 >
-                    {/* Header */}
-                    <div className='mb-6'>
-                        <h1 className='text-xl font-bold text-gray-800'>Patient Registration</h1>
-                        <p className='text-sm text-gray-500 mt-1'>Kindly provide the necessary details before continuing.</p>
-                    </div>
-
-                    {/* Form Card */}
-                    <div className='bg-white rounded-xl ring-1 ring-gray-100 shadow-sm'>
-                        <div className='p-5 md:p-6'>
-                            <div className='grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4'>
-                                {/* Left Column */}
-                                <RegistrationInfo message={'Student Id'} name='studentId' value={formData.studentId} onChange={handleInputChange} onBlur={handleStudentIdBlur} disabled={isStudentConfirmed} />
-                                <Dropdown name='department' options={DEPARTMENT_OPTIONS} placeholder='Select department' value={formData.department} onChange={handleInputChange} disabled={isStudentConfirmed} />
-                                <RegistrationInfo message={'Last name'} name='lastName' value={formData.lastName} onChange={handleInputChange} disabled={isStudentConfirmed} />
-                                <Dropdown name='sex' options={SEX_OPTIONS} placeholder='Sex' value={formData.sex} onChange={handleInputChange} disabled={isStudentConfirmed} />
-                                <RegistrationInfo message={'First name'} name='firstName' value={formData.firstName} onChange={handleInputChange} disabled={isStudentConfirmed} />
-                                <RegistrationInfo message={'Email'} name='email' value={formData.email} onChange={handleInputChange} disabled={isStudentConfirmed} />
-                                <RegistrationInfo message={'Contact number'} name='contactNumber' value={formData.contactNumber} onChange={handleInputChange} disabled={isStudentConfirmed} />
-                                <RegistrationInfo message={'Address'} name='address' value={formData.address} onChange={handleInputChange} disabled={isStudentConfirmed} />
-                                <Dropdown name='yearLevel' options={YEAR_OPTIONS} placeholder='Select year' value={formData.yearLevel} onChange={handleInputChange} disabled={isStudentConfirmed} />
-                                <RegistrationInfo type='date' message={'Date of Birth'} name='dateOfBirth' value={formData.dateOfBirth} onChange={handleInputChange} disabled={isStudentConfirmed} />
-                            </div>
-
-                            {/* Clear link */}
-                            <div className='flex justify-end mt-2'>
-                                <button
-                                    type="button"
-                                    onClick={handleClear}
-                                    className='text-sm text-gray-400 hover:text-crimson-600 transition-colors tracking-wide'
+                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm ring-1 ring-gray-100 p-6 md:p-8">
+                        <AnimatePresence mode="wait">
+                            {/* ══ Step 1: Personal Details ══ */}
+                            {currentStep === 1 && (
+                                <motion.div
+                                    key="step1"
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -20 }}
+                                    transition={{ duration: 0.25 }}
+                                    className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5"
                                 >
-                                    Clear all
-                                </button>
-                            </div>
-                        </div>
+                                    <div className="md:col-span-2">
+                                        <RegistrationInfo message="Student ID*" name="studentId" value={formData.studentId} onChange={handleInputChange} onBlur={handleStudentIdBlur} showValidation={!!errors.studentId} disabled={isStudentConfirmed} />
+                                        {errors.studentId && <p className="text-xs text-red-500 mt-1 pl-1">{errors.studentId}</p>}
+                                    </div>
+                                    <div>
+                                        <RegistrationInfo message="First Name*" name="firstName" value={formData.firstName} onChange={handleInputChange} showValidation={!!errors.firstName} disabled={isStudentConfirmed} />
+                                        {errors.firstName && <p className="text-xs text-red-500 mt-1 pl-1">{errors.firstName}</p>}
+                                    </div>
+                                    <div>
+                                        <RegistrationInfo message="Last Name*" name="lastName" value={formData.lastName} onChange={handleInputChange} showValidation={!!errors.lastName} disabled={isStudentConfirmed} />
+                                        {errors.lastName && <p className="text-xs text-red-500 mt-1 pl-1">{errors.lastName}</p>}
+                                    </div>
+                                    <div>
+                                        <Dropdown name="sex" options={SEX_OPTIONS} placeholder="Sex*" value={formData.sex} onChange={handleInputChange} showValidation={!!errors.sex} disabled={isStudentConfirmed} />
+                                        {errors.sex && <p className="text-xs text-red-500 mt-1 pl-1">{errors.sex}</p>}
+                                    </div>
+                                    <div>
+                                        <RegistrationInfo type="date" message="Date of Birth*" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleInputChange} showValidation={!!errors.dateOfBirth} disabled={isStudentConfirmed} />
+                                        {errors.dateOfBirth && <p className="text-xs text-red-500 mt-1 pl-1">{errors.dateOfBirth}</p>}
+                                    </div>
+                                </motion.div>
+                            )}
+
+                            {/* ══ Step 2: Contact & Academic ══ */}
+                            {currentStep === 2 && (
+                                <motion.div
+                                    key="step2"
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -20 }}
+                                    transition={{ duration: 0.25 }}
+                                    className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5"
+                                >
+                                    <div>
+                                        <RegistrationInfo message="Email Address*" name="email" value={formData.email} onChange={handleInputChange} showValidation={!!errors.email} disabled={isStudentConfirmed} />
+                                        {errors.email && <p className="text-xs text-red-500 mt-1 pl-1">{errors.email}</p>}
+                                    </div>
+                                    <div>
+                                        <RegistrationInfo message="Contact Number*" name="contactNumber" value={formData.contactNumber} onChange={handleInputChange} showValidation={!!errors.contactNumber} disabled={isStudentConfirmed} />
+                                        {errors.contactNumber && <p className="text-xs text-red-500 mt-1 pl-1">{errors.contactNumber}</p>}
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <RegistrationInfo message="Address*" name="address" value={formData.address} onChange={handleInputChange} showValidation={!!errors.address} disabled={isStudentConfirmed} />
+                                        {errors.address && <p className="text-xs text-red-500 mt-1 pl-1">{errors.address}</p>}
+                                    </div>
+                                    <div>
+                                        <Dropdown name="department" options={DEPARTMENT_OPTIONS} placeholder="Department*" value={formData.department} onChange={handleInputChange} showValidation={!!errors.department} disabled={isStudentConfirmed} />
+                                        {errors.department && <p className="text-xs text-red-500 mt-1 pl-1">{errors.department}</p>}
+                                    </div>
+                                    <div>
+                                        <Dropdown name="yearLevel" options={YEAR_OPTIONS} placeholder="Year Level*" value={formData.yearLevel} onChange={handleInputChange} showValidation={!!errors.yearLevel} disabled={isStudentConfirmed} />
+                                        {errors.yearLevel && <p className="text-xs text-red-500 mt-1 pl-1">{errors.yearLevel}</p>}
+                                    </div>
+                                </motion.div>
+                            )}
+
+                            {/* ══ Step 3: Review & Submit ══ */}
+                            {currentStep === 3 && (
+                                <motion.div
+                                    key="step3"
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -20 }}
+                                    transition={{ duration: 0.25 }}
+                                    className="space-y-6"
+                                >
+                                    <div>
+                                        <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Personal Details</h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            <ReviewField label="Student ID" value={formData.studentId} />
+                                            <ReviewField label="First Name" value={formData.firstName} />
+                                            <ReviewField label="Last Name" value={formData.lastName} />
+                                            <ReviewField label="Sex" value={formData.sex} />
+                                            <ReviewField label="Date of Birth" value={formatDateToMMDDYY(formData.dateOfBirth)} />
+                                        </div>
+                                    </div>
+                                    <div className="border-t border-gray-100 pt-5">
+                                        <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Contact & Academic</h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            <ReviewField label="Email" value={formData.email} />
+                                            <ReviewField label="Contact Number" value={formData.contactNumber} />
+                                            <ReviewField label="Address" value={formData.address} />
+                                            <ReviewField label="Department" value={formData.department} />
+                                            <ReviewField label="Year Level" value={formData.yearLevel} />
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </div>
 
-                    {/* Action Buttons */}
-                    <div className='flex items-center justify-between mt-5'>
-                        <motion.button
-                            whileTap={{ scale: 0.97 }}
-                            onClick={handleFormSubmit}
-                            className='inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-crimson-600 text-white text-sm font-medium tracking-wider hover:bg-crimson-700 transition-colors shadow-sm'
-                        >
-                            <ClipboardList className="w-4 h-4" />
-                            Submit
-                        </motion.button>
-                        <motion.button
-                            whileTap={{ scale: 0.97 }}
-                            onClick={handleLog}
-                            className='inline-flex items-center gap-2 px-6 py-2.5 rounded-xl ring-1 ring-crimson-200 text-crimson-600 text-sm font-medium tracking-wider hover:bg-crimson-50 transition-colors'
-                        >
-                            <LogIn className="w-4 h-4" />
-                            Login
-                        </motion.button>
+                    {/* ─── Navigation Buttons ─── */}
+                    <div className="flex items-center justify-between mt-6">
+                        {currentStep > 1 ? (
+                            <motion.button
+                                whileTap={{ scale: 0.97 }}
+                                onClick={handleBack}
+                                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer"
+                            >
+                                Back
+                            </motion.button>
+                        ) : (
+                            <button
+                                type="button"
+                                onClick={handleClear}
+                                className="text-sm text-gray-400 hover:text-crimson-600 transition-colors cursor-pointer"
+                            >
+                                Clear all
+                            </button>
+                        )}
+
+                        {currentStep < 3 ? (
+                            <motion.button
+                                whileTap={{ scale: 0.97 }}
+                                onClick={handleNext}
+                                className="inline-flex items-center gap-2 px-8 py-2.5 rounded-xl bg-crimson-600 text-white text-sm font-medium tracking-wider hover:bg-crimson-700 transition-colors shadow-sm cursor-pointer"
+                            >
+                                Next
+                            </motion.button>
+                        ) : (
+                            <motion.button
+                                whileTap={{ scale: 0.97 }}
+                                onClick={handleFormSubmit}
+                                className="inline-flex items-center gap-2 px-8 py-2.5 rounded-xl bg-crimson-600 text-white text-sm font-medium tracking-wider hover:bg-crimson-700 transition-colors shadow-sm cursor-pointer"
+                            >
+                                Submit
+                            </motion.button>
+                        )}
                     </div>
                 </motion.div>
             </div>

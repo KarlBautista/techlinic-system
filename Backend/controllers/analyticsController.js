@@ -1,6 +1,15 @@
 const supabase = require("../config/supabaseAdmin");
 const moment = require("moment");
 
+const DEPARTMENTS = [
+    "College of Architecture and Fine Arts",
+    "College of Science",
+    "College of Liberal Arts",
+    "College of Industrial Education",
+    "College of Engineering",
+    "College of Industrial Technology"
+];
+
 const getWeeklyPatients = async (req, res) => {
     const timezoneOffset = 8; 
     const startOfWeek = moment().utcOffset(timezoneOffset).startOf("isoWeek").utc().format("YYYY-MM-DD 00:00:00");
@@ -30,7 +39,7 @@ const getWeeklyPatients = async (req, res) => {
         res.status(200).json({ success: true, data: result, start_of_week: startOfWeek, end_of_week: endOfWeek });
     } catch (err) {
         console.error(`Something went wrong getting weekly patients`);
-        return res.status(500).json({ success: false, erorr: err.message });
+        return res.status(500).json({ success: false, error: err.message });
     }
    
 }   
@@ -211,17 +220,8 @@ const getWeeklyPatientsPerDepartment = async (req, res) => {
             return res.status(500).json({ success: false, error: weeklyPatientsPerDepartmentError.message });
         }
 
-        const departments = [
-            "College of Architecture and Fine Arts",
-            "College of Science",
-            "College of Liberal Arts",
-            "College of Industrial Education",
-            "College of Engineering",
-            "College of Industrial Technology"
-        ];
-
         let data = {};
-        departments.forEach(dept => {
+        DEPARTMENTS.forEach(dept => {
             data[dept] = 0;
         });
 
@@ -271,17 +271,8 @@ const getMonthlyPatientsPerDepartment = async (req, res) => {
             return res.status(500).json({ success: false, error: monthlyPatientsPerDepartmentError.message });
         }
 
-        const departments = [
-            "College of Architecture and Fine Arts",
-            "College of Science",
-            "College of Liberal Arts",
-            "College of Industrial Education",
-            "College of Engineering",
-            "College of Industrial Technology"
-        ];
-
         let data = {};
-        departments.forEach(dept => {
+        DEPARTMENTS.forEach(dept => {
             data[dept] = 0;
         });
 
@@ -330,17 +321,8 @@ const getQuarterlyPatientsPerDepartment = async (req, res) => {
             return res.status(500).json({ success: false, error: quarterlyPatientsPerDepartmentError.message });
         }
 
-        const departments = [
-            "College of Architecture and Fine Arts",
-            "College of Science",
-            "College of Liberal Arts",
-            "College of Industrial Education",
-            "College of Engineering",
-            "College of Industrial Technology"
-        ];
-
         let data = {};
-        departments.forEach(dept => {
+        DEPARTMENTS.forEach(dept => {
             data[dept] = 0;
         });
 
@@ -402,17 +384,8 @@ const getYearlyPatientsPerDepartment = async (req, res) => {
             return res.status(500).json({ success: false, error: yearlyPatientsPerDepartmentError.message });
         }
 
-        const departments = [
-            "College of Architecture and Fine Arts",
-            "College of Science",
-            "College of Liberal Arts",
-            "College of Industrial Education",
-            "College of Engineering",
-            "College of Industrial Technology"
-        ];
-
         let data = {};
-        departments.forEach(dept => {
+        DEPARTMENTS.forEach(dept => {
             data[dept] = 0;
         });
 

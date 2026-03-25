@@ -2,17 +2,19 @@ const supabase = require("../config/supabaseAdmin");
 const { logActivity } = require("./auditTrailController");
 
 const insertMedicine = async (req, res) => {
-    const { name,
-            generic,
-            brand,
-            type,
-            dosage,
-            unit,
-            stock,
-            batch,
-            expiry
-     } = req.body.medicine;
-     console.log(req.body);
+    if (!req.body.medicine || typeof req.body.medicine !== 'object') {
+        return res.status(400).json({ success: false, error: "Invalid request body." });
+    }
+
+    const { name, generic, brand, type, dosage, unit, stock, batch, expiry } = req.body.medicine;
+
+    if (!name || !generic || !dosage || !unit || stock === undefined || !batch || !expiry) {
+        return res.status(400).json({ success: false, error: "All required medicine fields must be provided." });
+    }
+
+    if (isNaN(Number(stock)) || Number(stock) < 0) {
+        return res.status(400).json({ success: false, error: "Stock level must be a valid non-negative number." });
+    }
 
      try {
         const { error: medicineError }= await supabase.from("medicines").insert({
@@ -29,9 +31,7 @@ const insertMedicine = async (req, res) => {
         if(medicineError) {
            return res.status(500).json({ success: false, error: medicineError.message });
         }
-        res.status(200).json({ success: true });
-
-        // Audit trail
+        // Audit trail (fire-and-forget)
         const profile = req.userProfile;
         logActivity({
             actor_id: profile.id,
@@ -43,6 +43,8 @@ const insertMedicine = async (req, res) => {
             description: `Added medicine: ${name} (${generic || 'N/A'})`,
             metadata: { medicine_name: name, generic_name: generic, brand, stock },
         });
+
+        return res.status(200).json({ success: true });
      } catch (err) {
         console.error(`Something went wrong inserting medicine: ${err.message}`);
         return res.status(500).json({ success: false, error: err.message });
@@ -67,17 +69,18 @@ const getMedicines = async (req, res) => {
 }
 
 const updateMedicine = async (req, res) => {
-    const { id,
-            medicine_name,
-            generic_name,
-            brand,
-            type,
-            dosage,
-            unit_of_measure,
-            stock_level,
-            batch_number,
-            expiry_date
-     } = req.body.medicine;
+    if (!req.body.medicine || typeof req.body.medicine !== 'object') {
+        return res.status(400).json({ success: false, error: "Invalid request body." });
+    }
+
+    const { id, medicine_name, generic_name, brand, type, dosage, unit_of_measure, stock_level, batch_number, expiry_date } = req.body.medicine;
+
+    if (!id) {
+        return res.status(400).json({ success: false, error: "Medicine ID is required." });
+    }
+    if (!medicine_name || !generic_name || !dosage || !unit_of_measure || stock_level === undefined || !batch_number || !expiry_date) {
+        return res.status(400).json({ success: false, error: "All required medicine fields must be provided." });
+    }
 
      try {
         const { error: updateMedicineError } = await supabase.from("medicines").update({
@@ -96,9 +99,7 @@ const updateMedicine = async (req, res) => {
             console.error(`Error updating medicine: ${updateMedicineError.message}`);
             return res.status(500).json({ success: false, error: updateMedicineError.message });
         }
-        res.status(200).json({ success: true, message: "update medicine success"});
-
-        // Audit trail
+        // Audit trail (fire-and-forget)
         const profile = req.userProfile;
         logActivity({
             actor_id: profile.id,
@@ -110,6 +111,8 @@ const updateMedicine = async (req, res) => {
             description: `Updated medicine: ${medicine_name}`,
             metadata: { medicine_name, stock_level, dosage },
         });
+
+        return res.status(200).json({ success: true, message: "update medicine success"});
     } catch (err) {
         console.error(`Something went wrong updating medicine: ${err.message}`);
         return res.status(500).json({ success: false, error: err.message });
@@ -118,6 +121,11 @@ const updateMedicine = async (req, res) => {
 
 const deleteMedicine = async (req, res) => {
     const { medicineId } = req.params;
+
+    if (!medicineId) {
+        return res.status(400).json({ success: false, error: "Medicine ID is required." });
+    }
+
     try {
         const { error: deleteMedicineError } = await supabase.from("medicines").delete().eq("id", medicineId);
         
@@ -125,9 +133,7 @@ const deleteMedicine = async (req, res) => {
             console.error(`Error deleting medicine: ${deleteMedicineError.message}`);
             return res.status(500).json({ success: false, error: deleteMedicineError.message });
         }
-        res.status(200).json({ success: true, message: "delete medicine success" });
-
-        // Audit trail
+        // Audit trail (fire-and-forget)
         const profile = req.userProfile;
         logActivity({
             actor_id: profile.id,
@@ -139,6 +145,8 @@ const deleteMedicine = async (req, res) => {
             description: `Deleted medicine (ID: ${medicineId})`,
             metadata: { medicine_id: medicineId },
         });
+
+        return res.status(200).json({ success: true, message: "delete medicine success" });
     } catch (err) {
         console.error(`Somethinng went wrong deleting medicine :${err.message}`);
         return res.status(500).json({ success: false, error: err.message });

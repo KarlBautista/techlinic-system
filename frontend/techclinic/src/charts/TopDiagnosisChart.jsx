@@ -18,110 +18,57 @@ const TopDiagnosisChart = () => {
   const [chartData, setChartData] = useState(null);
   const [periodInfo, setPeriodInfo] = useState(null);
   
-  const [paretoOptions, setParetoOptions] = useState({
+  const [chartOptions, setChartOptions] = useState({
     chart: {
-      id: "top-diagnosis-pareto",
-      toolbar: { show: true,
-        
-       },
-      stacked: false,
+      id: "top-diagnosis",
+      toolbar: { show: true },
     },
-    colors: ["#3b82f6", "#ef4444"],
-    stroke: {
-      width: [0, 3],
-      curve: "smooth"
-    },
+    colors: ["#3b82f6"],
     plotOptions: {
       bar: {
-        columnWidth: "50%"
+        horizontal: true,
+        borderRadius: 4,
+        barHeight: '60%',
       }
-    },
-    title: {
-      text: "Top Diagnoses (Pareto Chart)",
-      align: "left",
-      style: { fontSize: "12px", fontWeight: "normal" }
     },
     xaxis: {
       categories: [],
-      title: { text: "Diagnosis" }
-    },
-    yaxis: [
-      {
-        title: { text: "Number of Patients" },
-        labels: {
-          formatter: function(val) {
-            return Math.round(val);
-          }
-        }
-      },
-      {
-        opposite: true,
-        title: { text: "Cumulative %" },
-        min: 0,
-        max: 100,
-        labels: {
-          formatter: function(val) {
-            return val.toFixed(0) + "%";
-          }
-        }
-      }
-    ],
-    dataLabels: {
-      enabled: true,
-      enabledOnSeries: [0],
-      formatter: function(val) {
-        return Math.round(val);
-      }
-    },
-    legend: {
-      position: 'top'
-    },
-    tooltip: {
-      shared: true,
-      intersect: false,
-      y: {
-        formatter: function(val, opts) {
-          if (opts.seriesIndex === 1) {
-            return val.toFixed(1) + "%";
-          }
-          return val + " patients";
-        }
-      }
-    }
-  });
-
-  const [trendOptions, setTrendOptions] = useState({
-    chart: {
-      id: "diagnosis-trend",
-        toolbar: { show: true },
-      type: 'line'
-    },
-    stroke: {
-      width: 3,
-      curve: 'smooth'
-    },
-    title: {
-      text: "Top Diagnoses Trend",
-      align: "left",
-      style: { fontSize: "12px", fontWeight: "normal" }
-    },
-    xaxis: {
-      categories: [],
-    },
-    yaxis: {
-      title: { text: "Number of Cases" },
+      title: { text: "Number of Patients" },
       labels: {
         formatter: function(val) {
           return Math.round(val);
         }
       }
     },
-    legend: {
-      position: 'top'
+    yaxis: {
+      labels: {
+        style: {
+          fontSize: '12px'
+        },
+        maxWidth: 180
+      }
+    },
+    dataLabels: {
+      enabled: true,
+      formatter: function(val) {
+        return Math.round(val);
+      },
+      style: {
+        fontSize: '12px',
+        fontWeight: 600,
+      },
+    },
+    grid: {
+      borderColor: '#e5e7eb',
+      xaxis: { lines: { show: true } },
+      yaxis: { lines: { show: false } }
     },
     tooltip: {
-      shared: true,
-      intersect: false
+      y: {
+        formatter: function(val) {
+          return val + " patients";
+        }
+      }
     }
   });
 
@@ -153,21 +100,11 @@ const TopDiagnosisChart = () => {
       setChartData(currentData);
       setPeriodInfo(currentData.period);
 
-      // Update Pareto chart options
-      setParetoOptions(prev => ({
+      setChartOptions(prev => ({
         ...prev,
         xaxis: {
           ...prev.xaxis,
           categories: currentData.topDiagnosesNames || []
-        }
-      }));
-
-      // Update Trend chart options
-      setTrendOptions(prev => ({
-        ...prev,
-        xaxis: {
-          ...prev.xaxis,
-          categories: currentData.labels || []
         }
       }));
     }
@@ -212,79 +149,66 @@ const TopDiagnosisChart = () => {
     }
   };
 
-  const paretoSeries = chartData ? [
+  const series = chartData ? [
     {
-      name: "Patient Count",
-      type: "column",
+      name: "Patients",
       data: chartData.topDiagnosesCount || []
-    },
-    {
-      name: "Cumulative %",
-      type: "line",
-      data: chartData.cumulativePercent || []
     }
   ] : [];
-
-  const trendSeries = chartData?.series || [];
 
   const hasData = chartData && chartData.topDiagnosesCount && chartData.topDiagnosesCount.length > 0;
 
   return (
-    <div className='w-full h-full'>
+    <div className='w-full h-full flex flex-col min-h-0'>
+      {/* Header */}
+      <div className='shrink-0 flex items-start justify-between gap-2 pb-2'>
+        <div className='text-sm font-semibold text-gray-800'>Top Diagnoses</div>
+        <select
+          id='diagnoses-timeframe'
+          name='diagnoses-timeframe'
+          aria-label='Diagnoses timeframe'
+          value={selectedCategory}
+          className='shrink-0 text-xs font-medium px-2 py-1 rounded-lg ring-1 ring-gray-200 outline-none bg-white text-gray-600 focus:ring-crimson-400'
+          onChange={handleCategoryChange}
+        >
+          <option value='week'>This week</option>
+          <option value='month'>This month</option>
+          <option value='quarter'>This quarter</option>
+          <option value='year'>This year</option>
+        </select>
+      </div>
 
-           <div className='h-[4%] w-full flex justify-between items-center'>
-              <div className='text-[.9rem] h-full w-[80%] font-semibold items-center'>Top diagnosis</div>
-              <div className='text-[.9rem] w-[20%] '>
-                  <select
-                    id='diagnoses-timeframe'
-                    name='diagnoses-timeframe'
-                    aria-label='Diagnoses timeframe'
-                    value={selectedCategory}
-                    className='h-[95%] w-[98%] text-[.7rem] font-medium' 
-                    onChange={handleCategoryChange}>
-                    <option value='week'>This week</option>
-                    <option value='month'>This month</option>
-                    <option value='quarter'>This quarter</option>
-                    <option value='year'>This year</option>
-                  </select>
+      {/* Period info */}
+      {periodInfo && (
+        <div className='shrink-0 text-xs font-medium text-gray-400 pb-2'>
+          <p>{getPeriodDisplay()}</p>
+        </div>
+      )}
+
+      {/* Chart */}
+      <div className='flex-1 min-h-0'>
+        {!chartData ? (
+          <div className='w-full h-full animate-pulse flex flex-col gap-3 justify-center px-4'>
+            {[75, 60, 45, 35, 25].map((w, i) => (
+              <div key={i} className='flex items-center gap-3'>
+                <div className='h-3 w-20 bg-gray-100 rounded shrink-0' />
+                <div className='h-6 bg-gray-200 rounded' style={{ width: `${w}%` }} />
               </div>
-            </div>  
-
-            <div className='h-[4%] w-full  text-[.7rem] font-medium'>
-              {periodInfo && (
-                <div className='w-full'>
-                  <p>{getPeriodDisplay()}</p>
-                </div>
-              )}
-            </div>
-
-            <div > 
-               {!hasData ? (
-                  <div className='w-full h-full flex items-center justify-center'>
-                    <p className='text-gray-500'>No diagnosis data available for this period</p>
-                  </div>
-                ) : (
-                  <div>
-                    <div className='w-full'>
-                      <Chart
-                        options={paretoOptions}
-                        series={paretoSeries}
-                        height={380}
-                        type="line"
-                      />
-                    </div>
-
-                    <div className='w-full'>
-                      <Chart
-                        options={trendOptions}
-                        series={trendSeries}
-                        height={250}
-                        type="line"
-                      />
-                    </div>
-                  </div>
-                )}
-            </div>
+            ))}
+          </div>
+        ) : !hasData ? (
+          <div className='w-full h-full flex items-center justify-center'>
+            <p className='text-sm text-gray-400'>No diagnosis data available for this period</p>
+          </div>
+        ) : (
+          <Chart
+            options={chartOptions}
+            series={series}
+            type="bar"
+            height="100%"
+          />
+        )}
+      </div>
     </div>
   );
 };

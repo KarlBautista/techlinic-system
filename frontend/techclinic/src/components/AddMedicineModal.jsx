@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import Swal from 'sweetalert2'
+import { showToast } from './Toast'
 import useMedicine from '../store/useMedicineStore'
 
 const AddMedicineModal = ({ onClose }) => {
@@ -39,24 +39,12 @@ const AddMedicineModal = ({ onClose }) => {
     try {
       const response = await insertMedicine(form)
       if (!response.success) {
-        Swal.fire({
-          title: 'Something went wrong',
-          text: 'Could not add medicine, please retry',
-          icon: 'error',
-          showConfirmButton: true
-        })
+        showToast({ title: 'Something went wrong', message: 'Could not add medicine, please retry', type: 'error' })
         return
       }
-      const result = await Swal.fire({
-        title: 'Medicine Added Successfully',
-        text: 'The new medicine has been added to inventory',
-        icon: 'success',
-        showConfirmButton: true
-      })
-      if (result.isConfirmed) {
-        handleClose()
-        window.location.reload()
-      }
+      showToast({ title: 'Medicine Added Successfully', message: 'The new medicine has been added to inventory', type: 'success' })
+      handleClose()
+      window.location.reload()
     } catch (err) {
       console.error(`Something went wrong adding medicine: ${err.message}`)
     } finally {

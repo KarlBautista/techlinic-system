@@ -25,7 +25,9 @@ const analyticsRoutes = require("./routes/analyticsRoutes");
 const diseasesRoutes = require("./routes/diseasesRoute");
 const notificationRoutes = require('./routes/notificationRoutes');
 const auditTrailRoutes = require('./routes/auditTrailRoutes');
+const publicRoutes = require('./routes/publicRoutes');
 
+app.use("/api", publicRoutes);
 app.use("/api", authRoutes);
 app.use("/api", dataRoutes);
 app.use("/api", medicineRoutes);

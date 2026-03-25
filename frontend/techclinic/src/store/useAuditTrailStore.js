@@ -1,10 +1,23 @@
 import { create } from "zustand";
 import api from "../lib/api";
 
-const useAuditTrail = create((set) => ({
+const CACHE_TTL = 3 * 60 * 1000; // 3 minutes
+
+const useAuditTrail = create((set, get) => ({
     logs: null,
     isLoading: false,
-    getAuditTrail: async (filters = {}) => {
+    _lastFetched: null,
+    _lastFilters: null,
+
+    getAuditTrail: async (filters = {}, force = false) => {
+        const state = get();
+        const filterKey = JSON.stringify(filters);
+        const filtersChanged = filterKey !== JSON.stringify(state._lastFilters);
+
+        if (!force && !filtersChanged && state._lastFetched && (Date.now() - state._lastFetched < CACHE_TTL) && state.logs !== null) {
+            return { success: true };
+        }
+
         try {
             set({ isLoading: true });
             const params = new URLSearchParams();
@@ -16,7 +29,7 @@ const useAuditTrail = create((set) => ({
             const response = await api.get(url);
 
             if (response.status === 200) {
-                set({ logs: response.data.data, isLoading: false });
+                set({ logs: response.data.data, isLoading: false, _lastFetched: Date.now(), _lastFilters: filters });
                 return { success: true };
             } else {
                 console.error("Error fetching audit trail:", response.data.error);

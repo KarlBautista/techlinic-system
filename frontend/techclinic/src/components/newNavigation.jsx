@@ -11,7 +11,9 @@ import Analytics from '../assets/componentImage/analytics.svg'
 import Notification from '../assets/componentImage/notification.svg'
 import useAuth from '../store/useAuthStore'
 import useNotificationStore, { requestNotificationPermission } from '../store/useNotificationStore'
-import Swal from 'sweetalert2'
+import NotificationModal from './NotificationModal'
+import { showToast } from './Toast'
+import { showModal } from './Modal'
 import { useEffect, useState, useRef } from 'react'
 
 import { useLocation, Link, useNavigate } from 'react-router-dom'
@@ -23,6 +25,7 @@ const NewNavigation = () => {
     const currentPath = location.pathname;
     const navigate = useNavigate();
     const [showProfileMenu, setShowProfileMenu] = useState(false);
+    const [showNotifications, setShowNotifications] = useState(false);
     const profileMenuRef = useRef(null);
 
     // Close popover when clicking outside
@@ -57,18 +60,15 @@ const NewNavigation = () => {
     const handleSignOut = async () => {
         try {
             // Show confirmation dialog first
-            const result = await Swal.fire({
+            const confirmed = await showModal({
+                type: 'warning',
                 title: 'Sign Out?',
-                text: 'Are you sure you want to sign out?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#B22222',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Yes, sign out',
-                cancelButtonText: 'Cancel'
-            });
+                message: 'Are you sure you want to sign out?',
+                confirmLabel: 'Yes, sign out',
+                cancelLabel: 'Cancel',
+            })
 
-            if (!result.isConfirmed) {
+            if (!confirmed) {
                 return; // User cancelled
             }
 
@@ -79,30 +79,14 @@ const NewNavigation = () => {
             
             if (response?.error) {
                 console.error("Sign out error:", response.error);
-                Swal.fire({
-                    title: "Something went wrong",
-                    imageUrl: TUP,
-                    imageHeight: "150px",
-                    imageWidth: "150px",
-                    text: "Can't sign out. Please try again.",
-                    icon: 'error'
-                });
+                showToast({ title: 'Something went wrong', message: "Can't sign out. Please try again.", type: 'error' })
                 return;
             }
 
             console.log("✅ Sign out successful");
             
             // Show success message
-            await Swal.fire({
-                title: 'Signed Out',
-                imageUrl: TUP,
-                imageHeight: '150px',
-                imageWidth: '150px',
-                text: 'Thank you for choosing Techclinic.',
-                icon: 'success',
-                timer: 1500,
-                showConfirmButton: false
-            });
+            showToast({ title: 'Signed Out', message: 'Thank you for choosing Techclinic.', type: 'success' })
             
             // Navigate AFTER showing message
             navigate('/', { replace: true });
@@ -114,11 +98,7 @@ const NewNavigation = () => {
             
         } catch (err) {
             console.error("Sign out error:", err);
-            Swal.fire({
-                title: "Error",
-                text: "Failed to sign out. Please try again.",
-                icon: 'error'
-            });
+            showToast({ title: 'Error', message: 'Failed to sign out. Please try again.', type: 'error' })
         }
     }
 
@@ -242,8 +222,8 @@ const getInitials = () => {
                         <p>MEDICINE INVENTORY</p>
                     </Link>
 
-                    <Link 
-                        to={'/notifications'}
+                    <button 
+                        onClick={() => setShowNotifications(true)}
                         className={`${currentPath === '/notifications' ? 'inPage' : 'notPage'} mainNavigation relative`}
                     >
                         <div className="relative">
@@ -255,7 +235,7 @@ const getInitials = () => {
                             )}
                         </div>
                         <p>NOTIFICATION</p>
-                    </Link>
+                    </button>
                 </div>
             ) : (
                 <div className='newNavigationContainer gap-2 flex-col justify-center h-[70%] w-full'>
@@ -299,9 +279,9 @@ const getInitials = () => {
                         <p>MEDICINE INVENTORY</p>
                     </Link>
 
-                    <Link 
-                        to={'/notifications'}
-                        className={`${currentPath === '/notifications' ? 'inPage' : 'notPage'} mainNavigation relative`}
+                    <button 
+                        onClick={() => setShowNotifications(true)}
+                        className="notPage mainNavigation relative"
                     >
                         <div className="relative">
                             <img src={Notification} alt="Notifications" />
@@ -312,7 +292,7 @@ const getInitials = () => {
                             )}
                         </div>
                         <p>NOTIFICATION</p>
-                    </Link>
+                    </button>
                 </div>
             )}
            
@@ -359,6 +339,9 @@ const getInitials = () => {
                     </div>
                 )}
             </div>
+
+            {/* Notification Modal */}
+            <NotificationModal isOpen={showNotifications} onClose={() => setShowNotifications(false)} />
         </div>
     )
 }

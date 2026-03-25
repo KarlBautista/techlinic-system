@@ -1,8 +1,12 @@
 import { create } from "zustand";
 import api from "../lib/api";
-const useMedicine = create((set) => ({
+
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+const useMedicine = create((set, get) => ({
     medicines: null,
     isLoading: false,
+    _lastFetched: null,
     insertMedicine: async (medicine) => {
         try {
             const response = await api.post("/insert-medicine", {
@@ -10,7 +14,7 @@ const useMedicine = create((set) => ({
             });
            if(response.status === 200) {
             console.log('Success getting medicines');
-            set({ medicines: response.data.data });
+            set({ medicines: response.data.data, _lastFetched: Date.now() });
             return { success: true };
            } else {
             console.error(`error getting medicine: ${response.data.error}`);
@@ -21,12 +25,15 @@ const useMedicine = create((set) => ({
             return { success: false };
         }
     },
-    getMedicines: async () => {
+    getMedicines: async (force = false) => {
+        if (!force && get()._lastFetched && (Date.now() - get()._lastFetched) < CACHE_TTL && get().medicines) {
+            return;
+        }
         try {
             set({ isLoading: true });
             const response = await api.get("/get-medicines");
             if(response.status === 200) {
-                set({ medicines: response.data.data, isLoading: false });
+                set({ medicines: response.data.data, isLoading: false, _lastFetched: Date.now() });
                 return;
             } else {
                 console.error(`Error getting medicines: ${response.data.error}`);
@@ -45,6 +52,7 @@ const useMedicine = create((set) => ({
                 medicine
             });
             if(response.status === 200) {
+                set({ _lastFetched: null }); // Invalidate cache
                 return { success: true };
             } else {
                 return { success: false, error: response.data.error }
@@ -58,6 +66,7 @@ const useMedicine = create((set) => ({
         try {
             const response = await api.delete(`/delete-medicine/${medicineId}`);
             if(response.status === 200) {
+                set({ _lastFetched: null }); // Invalidate cache
                 return { success: true };
             } else {
                 console.error(`Error Deleting Medicine: ${response.data.error}`);

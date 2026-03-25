@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Swal from 'sweetalert2';
+import { showToast } from '../components/Toast';
 import useMedicine from '../store/useMedicineStore';
 import { ButtonLoader } from '../components/PageLoader';
 import { motion } from 'framer-motion';
@@ -32,20 +32,18 @@ const AddMedicine = () => {
     try {
       const response = await insertMedicine(medicine);
       if(!response.success) {
-        Swal.fire({
+        showToast({
           title: "Something went wrong",
-          text: "Could not add medicine, please retry",
-          icon: "error",
-          showConfirmButton: true
+          message: "Could not add medicine, please retry",
+          type: "error",
         });
       
         return;
       }
-      Swal.fire({
+      showToast({
         title: "Medicine Successfully Inserted",
-        text: "The medicine you added will be display in the table",
-        icon: "success",
-        showConfirmButton: true
+        message: "The medicine you added will be displayed in the table",
+        type: "success",
       });
         setMedicine({
             name: '',

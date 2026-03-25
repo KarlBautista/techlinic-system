@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import useAuth from '../store/useAuthStore'
 import useData from '../store/useDataStore'
-import { PageLoader, ButtonLoader } from '../components/PageLoader'
-import Swal from 'sweetalert2'
+import { ButtonLoader } from '../components/PageLoader'
+import { showToast } from '../components/Toast'
 import { motion } from 'framer-motion'
 import { Search, Plus, Users, X, Eye, EyeOff } from 'lucide-react'
 
@@ -101,19 +101,19 @@ const PersonnelList = () => {
     if (!personnel.first_name || !personnel.last_name || !personnel.email ||
       !personnel.password || !personnel.confirm_password ||
       !personnel.address || !personnel.date_of_birth || !personnel.role || !personnel.sex) {
-      Swal.fire({ title: "Missing Information", text: "Please fill in all required fields", icon: "warning" });
+      showToast({ title: "Missing Information", message: "Please fill in all required fields", type: "warning" });
       setIsSubmitting(false);
       return;
     }
 
     if (personnel.password.length < 8) {
-      Swal.fire({ title: "Weak Password", text: "Password must be at least 8 characters long", icon: "warning" });
+      showToast({ title: "Weak Password", message: "Password must be at least 8 characters long", type: "warning" });
       setIsSubmitting(false);
       return;
     }
 
     if (personnel.password !== personnel.confirm_password) {
-      Swal.fire({ title: "Password Mismatch", text: "Password and Confirm Password do not match", icon: "error" });
+      showToast({ title: "Password Mismatch", message: "Password and Confirm Password do not match", type: "error" });
       setIsSubmitting(false);
       return;
     }
@@ -121,15 +121,15 @@ const PersonnelList = () => {
     try {
       const response = await insertPersonnel(personnel);
       if (!response.success) {
-        Swal.fire({ title: "Something went wrong", text: "Could not add personnel, please retry", icon: "error" });
+        showToast({ title: "Something went wrong", message: "Could not add personnel, please retry", type: "error" });
         return;
       }
-      Swal.fire({ title: "Personnel Successfully Added", text: "The personnel record has been created", icon: "success", timer: 1500, showConfirmButton: false });
+      showToast({ title: "Personnel Successfully Added", message: "The personnel record has been created", type: "success" });
       closeModal();
       await getAllUsers();
     } catch (err) {
       console.error(`Something went wrong adding personnel: ${err.message}`);
-      Swal.fire({ title: "Error", text: "An unexpected error occurred", icon: "error" });
+      showToast({ title: "Error", message: "An unexpected error occurred", type: "error" });
     } finally {
       setIsSubmitting(false);
     }
@@ -139,7 +139,39 @@ const PersonnelList = () => {
     <>
       <div className='flex flex-col gap-4'>
         {initialLoading || isLoadingUsers ? (
-          <PageLoader message="Loading personnel list..." />
+          <div className='w-full h-full flex flex-col gap-5 animate-pulse'>
+            {/* Skeleton Header */}
+            <div>
+              <div className='h-6 w-36 bg-gray-200 rounded-lg' />
+              <div className='h-4 w-52 bg-gray-100 rounded-lg mt-2' />
+            </div>
+            {/* Skeleton Search & Filter Bar */}
+            <div className='flex items-center gap-3 flex-wrap'>
+              <div className='h-10 w-64 bg-gray-200 rounded-xl' />
+              <div className='h-10 w-28 bg-gray-200 rounded-xl' />
+              <div className='h-10 w-36 bg-gray-200 rounded-xl ml-auto' />
+            </div>
+            {/* Skeleton Table */}
+            <div className='bg-white rounded-xl ring-1 ring-gray-100 overflow-hidden'>
+              <div className='px-5 py-3 flex gap-4 border-b border-gray-100'>
+                {[100, 60, 140, 60, 80].map((w, i) => (
+                  <div key={i} className='h-4 bg-gray-200 rounded' style={{ width: w }} />
+                ))}
+              </div>
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className='px-5 py-4 flex items-center gap-4 border-b border-gray-50'>
+                  <div className='flex items-center gap-3'>
+                    <div className='w-9 h-9 rounded-full bg-gray-200' />
+                    <div className='h-4 w-28 bg-gray-100 rounded' />
+                  </div>
+                  <div className='h-6 w-16 bg-gray-100 rounded-full' />
+                  <div className='h-4 w-36 bg-gray-100 rounded' />
+                  <div className='h-4 w-14 bg-gray-100 rounded' />
+                  <div className='h-4 w-24 bg-gray-100 rounded' />
+                </div>
+              ))}
+            </div>
+          </div>
         ) : (
         <motion.div
           initial={{ opacity: 0 }}

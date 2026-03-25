@@ -4,6 +4,8 @@ import api from '../lib/api';
 // API_BASE is empty because api.js already has baseURL = "http://localhost:3000/api"
 const API_BASE = '';
 
+const CACHE_TTL = 60 * 1000; // 1 minute
+
 // Request browser notification permission
 export const requestNotificationPermission = async () => {
     if (!('Notification' in window)) {
@@ -59,9 +61,15 @@ const useNotificationStore = create((set, get) => ({
     _isFetching: false,
 
     // Fetch notifications for a user
-    fetchNotifications: async (userId) => {
+    fetchNotifications: async (userId, force = false) => {
         if (!userId) return;
         if (get()._isFetching) return; // Prevent concurrent fetches
+
+        // Cache check — skip fetch if data is fresh
+        const state = get();
+        if (!force && state.lastChecked && (Date.now() - new Date(state.lastChecked).getTime() < CACHE_TTL) && state.notifications.length > 0) {
+            return;
+        }
         
         set({ _isFetching: true, isLoading: !get().notifications.length, error: null });
         

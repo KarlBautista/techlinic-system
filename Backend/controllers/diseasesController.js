@@ -2,7 +2,6 @@ const supabase = require("../config/supabaseAdmin");
 
 
 const getAllDiseases = async (req, res) => {
-    console.log('gumagana ako diseases')
     try {
         const { data: diseasesData, error: diseasesError } = await supabase.from("diseases").select("*").order("name", { ascending: true });
 
@@ -10,7 +9,7 @@ const getAllDiseases = async (req, res) => {
             console.error("Error getting all diseases");
             return res.status(500).json({ success: false, error: diseasesError.message });
         }
-        res.status(200).json({ success: true, data: diseasesData });
+        return res.status(200).json({ success: true, data: diseasesData });
         
     } catch (err) {
         console.error(`Something went wrong getting all diseases: ${err.message}`);
