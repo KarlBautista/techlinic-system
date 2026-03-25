@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechClinic — System Architecture Diagrams</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            padding: 40px 60px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 40px;
+        }
+        .diagram-section {
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 30px 40px;
+            margin-bottom: 50px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .diagram-section h2 {
+            font-size: 20px;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .diagram-section h2.green-header {
+            border-bottom-color: #27ae60;
+        }
+        .diagram-section h2.amber-header {
+            border-bottom-color: #f39c12;
+        }
+        .diagram-label {
+            font-size: 13px;
+            color: #888;
+            text-align: center;
+            margin-top: 12px;
+            font-style: italic;
+        }
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            padding: 20px 0;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+            padding: 12px 20px;
+            background: #f7f9fc;
+            border-radius: 8px;
+            border: 1px solid #e8ecf0;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #555;
+        }
+        .legend-color {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            border: 2px solid;
+        }
+        .print-btn {
+            display: block;
+            margin: 0 auto 30px;
+            padding: 10px 24px;
+            background: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .print-btn:hover { background: #2980b9; }
+        @media print {
+            .print-btn { display: none; }
+            .diagram-section { break-inside: avoid; page-break-inside: avoid; }
+            body { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>TechClinic — System Architecture Diagrams</h1>
+    <p class="subtitle">Chapter 3: System Architecture | Technological University of the Philippines — Clinic Management System</p>
+    <button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
+
+    <!-- ============================================================ -->
+    <!-- DIAGRAM 1: HIGH-LEVEL ARCHITECTURE -->
+    <!-- ============================================================ -->
+    <div class="diagram-section">
+        <h2>Figure 1: System Architecture — High-Level Overview</h2>
+        <div class="mermaid">
+graph TD
+    subgraph PL["PRESENTATION LAYER"]
+        direction LR
+        subgraph Users["Users"]
+            Student["Student\n(Kiosk / Tablet)"]
+            Nurse["Nurse"]
+            Doctor["Doctor"]
+        end
+        subgraph FE["Frontend Application"]
+            ReactApp["React 19 + Vite\nSingle Page Application\nPort: 5173"]
+            StateM["Zustand\nState Management"]
+            Router["React Router\nClient-Side Routing"]
+        end
+    end
+
+    subgraph AL["APPLICATION LAYER"]
+        direction LR
+        subgraph API["Express.js REST API Server Port: 3500"]
+            Routes["API Routes\n/api/*"]
+            Controllers["Controllers\nBusiness Logic"]
+            MW["Middleware\nAuth + RBAC"]
+        end
+    end
+
+    subgraph DL["DATA LAYER"]
+        direction LR
+        subgraph SB["Supabase Cloud"]
+            PG["PostgreSQL\nDatabase"]
+            Auth["Supabase\nAuth Service"]
+            RLS["Row Level\nSecurity RLS"]
+            Storage["Supabase\nStorage"]
+        end
+    end
+
+    Student -->|"Self-Registration\nPublic Page"| ReactApp
+    Nurse -->|"Staff Portal"| ReactApp
+    Doctor -->|"Staff Portal"| ReactApp
+
+    ReactApp --- StateM
+    ReactApp --- Router
+
+    ReactApp -->|"HTTP REST\nAxios"| Routes
+    Routes --> MW
+    MW --> Controllers
+
+    Controllers -->|"Supabase JS SDK\nQueries"| PG
+    Controllers -->|"Admin SDK\nUser Creation"| Auth
+
+    ReactApp -.->|"Direct Auth\nLogin Logout"| Auth
+
+    PG --- RLS
+    Auth -.-> Storage
+
+    classDef presLayer fill:#EBF5FB,stroke:#2980B9,stroke-width:3px,color:#1B4F72
+    classDef appLayer fill:#EAFAF1,stroke:#27AE60,stroke-width:3px,color:#1E8449
+    classDef dataLayer fill:#FEF9E7,stroke:#F39C12,stroke-width:3px,color:#7D6608
+
+    classDef userNode fill:#D6EAF8,stroke:#2E86C1,stroke-width:2px,color:#1B4F72
+    classDef feNode fill:#AED6F1,stroke:#2980B9,stroke-width:2px,color:#1A5276
+    classDef apiNode fill:#A9DFBF,stroke:#27AE60,stroke-width:2px,color:#186A3B
+    classDef dbNode fill:#F9E79F,stroke:#F39C12,stroke-width:2px,color:#7D6608
+
+    class PL presLayer
+    class AL appLayer
+    class DL dataLayer
+    class Student,Nurse,Doctor userNode
+    class ReactApp,StateM,Router feNode
+    class Routes,Controllers,MW apiNode
+    class PG,Auth,RLS,Storage dbNode
+        </div>
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background:#EBF5FB; border-color:#2980B9;"></div>
+                Presentation Layer (Client-Side)
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background:#EAFAF1; border-color:#27AE60;"></div>
+                Application Layer (Server-Side)
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background:#FEF9E7; border-color:#F39C12;"></div>
+                Data Layer (Database &amp; Cloud)
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background:#fff; border-color:#999; border-style:dashed;"></div>
+                Direct Auth Connection
+            </div>
+        </div>
+        <p class="diagram-label">Figure 1 — Three-tier layered architecture showing the flow from users through the frontend, backend API, and cloud database.</p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- DIAGRAM 2: CONTEXT DIAGRAM (DFD Level 0) -->
+    <!-- ============================================================ -->
+    <div class="diagram-section">
+        <h2 class="amber-header">Figure 2: Context Diagram (DFD Level 0)</h2>
+        <div class="mermaid">
+graph TD
+    Student["Student"]
+    Nurse["Nurse"]
+    Doctor["Doctor"]
+    SupaAuth["Supabase Auth\nService"]
+    SupaDB["Supabase\nCloud Database"]
+    Browser["Browser\nNotification API"]
+
+    SYS(("TechClinic\nClinic Management\nSystem"))
+
+    Student -->|"Personal Information"| SYS
+    SYS -->|"Registration Confirmation"| Student
+
+    Nurse -->|"Patient Records\nand Medicine Data"| SYS
+    SYS -->|"Records, Inventory,\nAnalytics, Notifications"| Nurse
+
+    Doctor -->|"Diagnosis Data\nand Personnel Data"| SYS
+    SYS -->|"Records, Certificates,\nAnalytics, Notifications"| Doctor
+
+    SYS -->|"Authentication\nRequests"| SupaAuth
+    SupaAuth -->|"JWT Tokens"| SYS
+
+    SYS -->|"Data Queries"| SupaDB
+    SupaDB -->|"Query Results"| SYS
+
+    SYS -->|"Alert Notifications"| Browser
+
+    classDef entity fill:#D6EAF8,stroke:#2E86C1,stroke-width:2.5px,color:#1B4F72
+    classDef extService fill:#FCF3CF,stroke:#D4AC0D,stroke-width:2.5px,color:#7D6608
+    classDef system fill:#D5F5E3,stroke:#27AE60,stroke-width:3px,color:#1E8449
+
+    class Student,Nurse,Doctor entity
+    class SupaAuth,SupaDB,Browser extService
+    class SYS system
+        </div>
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background:#D6EAF8; border-color:#2E86C1;"></div>
+                External Entity (User)
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background:#FCF3CF; border-color:#D4AC0D;"></div>
+                External Service
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background:#D5F5E3; border-color:#27AE60; border-radius:50%;"></div>
+                System Process (TechClinic)
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background:#fff; border-color:#999;"></div>
+                → Data Flow (labeled arrows)
+            </div>
+        </div>
+        <p class="diagram-label">Figure 2 — High-level context diagram showing external entities and their summarized data flows with the TechClinic system.</p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- DIAGRAM 3: DETAILED ARCHITECTURE -->
+    <!-- ============================================================ -->
+    <div class="diagram-section">
+        <h2 class="green-header">Figure 3: Detailed System Architecture</h2>
+        <div class="mermaid">
+graph TD
+    subgraph PL["PRESENTATION LAYER"]
+        direction TB
+
+        subgraph USERS["System Users"]
+            direction LR
+            STU["Student\nSelf-Registration Kiosk"]
+            NUR["Nurse\nPatient Management"]
+            DOC["Doctor\nDiagnosis and Personnel"]
+        end
+
+        subgraph FRONTEND["React 19 + Vite Frontend Port: 5173"]
+            direction TB
+
+            subgraph PAGES["Pages / Views"]
+                direction LR
+                Landing["Landing Page\nPublic Registration"]
+                Login["Login Page"]
+                Dash["Dashboard"]
+                PatRec["Patient Records"]
+                IndRec["Individual Record"]
+                NewPat["New Patient\nNurse"]
+                AddDx["Add Diagnosis\nDoctor"]
+                MedInv["Medicine Inventory"]
+                Analyt["Analytics"]
+                Notif["Notifications"]
+                Pers["Personnel List"]
+                Sett["Settings"]
+            end
+
+            subgraph STORES["Zustand State Stores"]
+                direction LR
+                AuthSt["useAuthStore\nAuth + User Profile\nlocalStorage"]
+                DataSt["useDataStore\nRecords + Patients\nlocalStorage"]
+                MedSt["useMedicineStore\nMedicine CRUD"]
+                ChartSt["useChartStore\nAnalytics Data"]
+                NotifSt["useNotificationStore\nAlerts + Polling"]
+            end
+
+            subgraph SHARED["Shared Components"]
+                direction LR
+                Nav["Sidebar Navigation\n+ Notification Badge"]
+                DxModal["Diagnosis Modal"]
+                CertModal["Certificate Modal"]
+                RxModal["Prescription Modal"]
+                MedForm["Medicine Form\nModal"]
+                SigPad["Signature Pad"]
+                ProtRoute["Protected Route\nRBAC Guard"]
+            end
+
+            subgraph CHARTS["Chart Components ApexCharts"]
+                direction LR
+                C1["Patient Counts\nArea Chart"]
+                C2["Dept. Distribution\nDonut Chart"]
+                C3["Top Diagnoses\nPareto Chart"]
+                C4["Low Stock Meds\nBar Chart"]
+            end
+        end
+    end
+
+    subgraph AL["APPLICATION LAYER Express.js REST API Port: 3500"]
+        direction TB
+
+        subgraph SECURITY["Security Middleware"]
+            direction LR
+            CORS2["CORS\nMiddleware"]
+            AuthMW["authenticate\nJWT Verification"]
+            AuthzMW["authorize role\nRBAC Enforcement"]
+        end
+
+        subgraph ROUTES["API Route Modules"]
+            direction LR
+            R1["authRoutes\n/api/auth"]
+            R2["dataRoutes\n/api/records patients\npersonnel"]
+            R3["medicineRoutes\n/api/medicines"]
+            R4["analyticsRoutes\n/api/analytics"]
+            R5["diseasesRoute\n/api/diseases"]
+            R6["notificationRoutes\n/api/notifications"]
+        end
+
+        subgraph CTRL["Controllers Business Logic"]
+            direction LR
+            DC["dataController\ninsertRecord\ngetRecords\ninsertDiagnosis\ninsertPersonnel"]
+            MC["medicineController\nCRUD Operations\nStock Management"]
+            AC["analyticsController\nTime Aggregation\nDept. Aggregation"]
+            DiC["diseasesController\nDisease Catalog\nOutbreak Stats"]
+            NC["notificationController\nAlert Threshold\nLow Stock Alerts\nCRUD Notifications"]
+        end
+    end
+
+    subgraph DL["DATA LAYER Supabase Cloud Platform"]
+        direction TB
+
+        subgraph SBAUTH["Authentication Service"]
+            SupAuth["Supabase Auth\nEmail/Password\nJWT Token Issuance"]
+        end
+
+        subgraph SBDB["PostgreSQL Database"]
+            direction LR
+            T1["records\nVisit Records"]
+            T2["patients\nUnique Directory"]
+            T3["diagnoses\nMedical Diagnoses"]
+            T4["diseases\nDisease Catalog"]
+            T5["medicines\nInventory"]
+            T6["users\nClinic Staff"]
+            T7["notifications\nAlert System"]
+        end
+
+        subgraph SBSEC["Database Security"]
+            RLS2["Row Level Security\nRLS Policies"]
+        end
+
+        subgraph SBSTORE["Storage"]
+            SigBucket["Signatures Bucket\nDigital Signatures"]
+        end
+    end
+
+    STU -->|"Self-Registration"| Landing
+    NUR -->|"Staff Access"| Login
+    DOC -->|"Staff Access"| Login
+
+    PAGES --> STORES
+    PAGES --> SHARED
+    Analyt --> CHARTS
+    STORES -->|"HTTP Requests\nAxios"| ROUTES
+
+    AuthSt -.->|"Direct Auth\nsignIn signOut\ngetUser"| SupAuth
+
+    ROUTES --> SECURITY
+    SECURITY --> CTRL
+
+    DC --> T1
+    DC --> T2
+    DC --> T3
+    DC -->|"Admin SDK"| T6
+    MC --> T5
+    AC --> T1
+    AC --> T3
+    DiC --> T4
+    NC --> T3
+    NC --> T5
+    NC --> T7
+    NC --> T6
+
+    T1 ---|"student_id"| T2
+    T3 ---|"record_id"| T1
+    T3 ---|"disease_id"| T4
+    T7 ---|"user_id"| T6
+
+    SBDB --> RLS2
+    T6 -.-> SupAuth
+    SigPad -.->|"Upload"| SigBucket
+
+    classDef presLayer fill:#EBF5FB,stroke:#2980B9,stroke-width:3px,color:#154360
+    classDef appLayer fill:#EAFAF1,stroke:#27AE60,stroke-width:3px,color:#1E8449
+    classDef dataLayer fill:#FEF9E7,stroke:#F39C12,stroke-width:3px,color:#7D6608
+
+    classDef userBox fill:#D4E6F1,stroke:#2E86C1,stroke-width:2px,color:#1B4F72
+    classDef pageBox fill:#AED6F1,stroke:#2980B9,stroke-width:2px,color:#1A5276
+    classDef storeBox fill:#85C1E9,stroke:#2471A3,stroke-width:2px,color:#154360
+    classDef compBox fill:#A9CCE3,stroke:#2980B9,stroke-width:1.5px,color:#1A5276
+    classDef chartBox fill:#7FB3D8,stroke:#2471A3,stroke-width:1.5px,color:#154360
+
+    classDef secBox fill:#82E0AA,stroke:#1E8449,stroke-width:2px,color:#145A32
+    classDef routeBox fill:#A9DFBF,stroke:#27AE60,stroke-width:2px,color:#186A3B
+    classDef ctrlBox fill:#7DCEA0,stroke:#229954,stroke-width:2px,color:#1E8449
+
+    classDef authBox fill:#F9E79F,stroke:#D4AC0D,stroke-width:2px,color:#7D6608
+    classDef tableBox fill:#FAD7A0,stroke:#E67E22,stroke-width:2px,color:#784212
+    classDef rlsBox fill:#F5CBA7,stroke:#CA6F1E,stroke-width:2px,color:#6E2C00
+    classDef storageBox fill:#FDEBD0,stroke:#E67E22,stroke-width:1.5px,color:#784212
+
+    class PL presLayer
+    class AL appLayer
+    class DL dataLayer
+    class STU,NUR,DOC userBox
+    class Landing,Login,Dash,PatRec,IndRec,NewPat,AddDx,MedInv,Analyt,Notif,Pers,Sett pageBox
+    class AuthSt,DataSt,MedSt,ChartSt,NotifSt storeBox
+    class Nav,DxModal,CertModal,RxModal,MedForm,SigPad,ProtRoute compBox
+    class C1,C2,C3,C4 chartBox
+    class CORS2,AuthMW,AuthzMW secBox
+    class R1,R2,R3,R4,R5,R6 routeBox
+    class DC,MC,AC,DiC,NC ctrlBox
+    class SupAuth authBox
+    class T1,T2,T3,T4,T5,T6,T7 tableBox
+    class RLS2 rlsBox
+    class SigBucket storageBox
+        </div>
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background:#D4E6F1; border-color:#2E86C1;"></div>
+                Users
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background:#AED6F1; border-color:#2980B9;"></div>
+                Pages
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background:#85C1E9; border-color:#2471A3;"></div>
+                State Stores
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background:#A9DFBF; border-color:#27AE60;"></div>
+                Routes
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background:#82E0AA; border-color:#1E8449;"></div>
+                Security
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background:#7DCEA0; border-color:#229954;"></div>
+                Controllers
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background:#FAD7A0; border-color:#E67E22;"></div>
+                Database Tables
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background:#F9E79F; border-color:#D4AC0D;"></div>
+                Auth Service
+            </div>
+        </div>
+        <p class="diagram-label">Figure 3 — Detailed component-level architecture showing all pages, stores, routes, controllers, and database tables.</p>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis',
+                padding: 20,
+                nodeSpacing: 30,
+                rankSpacing: 50
+            },
+            securityLevel: 'loose'
+        });
+    </script>
+</body>
+</html>

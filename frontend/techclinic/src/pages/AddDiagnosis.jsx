@@ -62,7 +62,8 @@ const AddDiagnosis = () => {
   console.log("ito patient data", patientData)
 
   useEffect(() => {
-    setPatientInput({
+    setPatientInput((prev) => ({
+      ...prev,
       id: patientData[0]?.id,
       firstName: patientData[0]?.first_name,
       lastName: patientData[0]?.last_name,
@@ -74,8 +75,7 @@ const AddDiagnosis = () => {
       email: patientData[0]?.email,
       dateOfBirth: formatDateForInput(patientData[0]?.date_of_birth),
       address: patientData[0]?.address,
-
-    })
+    }))
   }, [patientData])
 
   useEffect(() => {

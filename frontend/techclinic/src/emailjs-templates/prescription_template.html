@@ -1,0 +1,180 @@
+<!-- EMAILJS TEMPLATE VARIABLES USED:
+     {{to_name}}    - Patient full name
+     {{to_email}}   - Patient email (set this as "To Email" field in EmailJS dashboard)
+     {{patient_id}} - Student/Patient ID
+     {{date}}       - Date of visit
+     {{medication}} - Medication name
+     {{dosage}}     - Dosage instructions
+     {{quantity}}   - Quantity dispensed
+     {{notes}}      - Remarks / additional notes
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TUP Clinic Pass / Medical Prescription</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f4f4f5;font-family:'Segoe UI',Arial,sans-serif;">
+
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f5;padding:32px 0;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+
+          <!-- Header Banner -->
+          <tr>
+            <td style="background:linear-gradient(135deg,#8B0000 0%,#B22222 50%,#DC143C 100%);padding:28px 36px;text-align:center;">
+              <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:700;letter-spacing:0.5px;">
+                TECHNOLOGICAL UNIVERSITY OF THE PHILIPPINES
+              </h1>
+              <p style="margin:6px 0 0;color:rgba(255,255,255,0.8);font-size:12px;">
+                Ayala Blvd, Ermita, Manila, 1000, Philippines &nbsp;|&nbsp; clinic@tup.edu.ph
+              </p>
+              <div style="display:inline-block;margin-top:14px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:20px;padding:4px 16px;">
+                <span style="color:#ffffff;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;">Medical Prescription</span>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Greeting -->
+          <tr>
+            <td style="padding:28px 36px 16px;">
+              <p style="margin:0;font-size:15px;color:#374151;">
+                Dear <strong>{{to_name}}</strong>,
+              </p>
+              <p style="margin:10px 0 0;font-size:14px;color:#6b7280;line-height:1.6;">
+                Please find your medical prescription from the TUP Clinic below. 
+                Kindly follow the instructions carefully and consult a licensed physician if your condition worsens.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Divider -->
+          <tr>
+            <td style="padding:0 36px;">
+              <div style="height:1px;background:linear-gradient(90deg,transparent,#fca5a5,transparent);"></div>
+            </td>
+          </tr>
+
+          <!-- Patient Info Block -->
+          <tr>
+            <td style="padding:20px 36px 10px;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#fff5f5;border:1px solid #fecaca;border-radius:8px;overflow:hidden;">
+                <tr>
+                  <td style="background-color:#B22222;padding:8px 18px;">
+                    <p style="margin:0;font-size:11px;font-weight:700;color:#ffffff;letter-spacing:0.8px;text-transform:uppercase;">Patient Information</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:14px 18px;">
+                    <table width="100%" cellpadding="4" cellspacing="0">
+                      <tr>
+                        <td style="font-size:13px;color:#374151;width:40%;font-weight:600;">Full Name</td>
+                        <td style="font-size:13px;color:#111827;">{{to_name}}</td>
+                      </tr>
+                      <tr>
+                        <td style="font-size:13px;color:#374151;width:40%;font-weight:600;">ID Number</td>
+                        <td style="font-size:13px;color:#111827;">{{patient_id}}</td>
+                      </tr>
+                      <tr>
+                        <td style="font-size:13px;color:#374151;width:40%;font-weight:600;">Date Issued</td>
+                        <td style="font-size:13px;color:#111827;">{{date}}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Prescription Block -->
+          <tr>
+            <td style="padding:10px 36px 20px;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">
+                <tr>
+                  <td style="background:linear-gradient(90deg,#8B0000,#B22222);padding:10px 18px;">
+                    <p style="margin:0;font-size:11px;font-weight:700;color:#ffffff;letter-spacing:0.8px;text-transform:uppercase;">&#9654; Prescription Details</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:14px 18px;">
+                    <table width="100%" cellpadding="6" cellspacing="0">
+                      <tr style="border-bottom:1px solid #f3f4f6;">
+                        <td style="font-size:13px;color:#6b7280;width:35%;font-weight:600;">Medication</td>
+                        <td style="font-size:14px;color:#111827;font-weight:600;">{{medication}}</td>
+                      </tr>
+                      <tr style="border-bottom:1px solid #f3f4f6;">
+                        <td style="font-size:13px;color:#6b7280;width:35%;font-weight:600;">Dosage</td>
+                        <td style="font-size:13px;color:#374151;">{{dosage}}</td>
+                      </tr>
+                      <tr style="border-bottom:1px solid #f3f4f6;">
+                        <td style="font-size:13px;color:#6b7280;width:35%;font-weight:600;">Quantity</td>
+                        <td style="font-size:13px;color:#374151;">{{quantity}}</td>
+                      </tr>
+                      <tr>
+                        <td style="font-size:13px;color:#6b7280;width:35%;font-weight:600;vertical-align:top;padding-top:10px;">Instructions / Notes</td>
+                        <td style="font-size:13px;color:#374151;line-height:1.6;padding-top:10px;">{{notes}}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Notice -->
+          <tr>
+            <td style="padding:0 36px 24px;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#fff7ed;border:1px solid #fed7aa;border-radius:8px;">
+                <tr>
+                  <td style="padding:12px 16px;">
+                    <p style="margin:0;font-size:12px;color:#92400e;line-height:1.6;">
+                      &#9888;&nbsp;<strong>Important:</strong> This prescription is issued by the TUP Clinic and is valid for authorized use only.
+                      Please present this at the university clinic or a licensed pharmacy. If symptoms persist, consult a physician immediately.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Physician Signature -->
+          <tr>
+            <td style="padding:4px 36px 28px;text-align:right;">
+              <table cellpadding="0" cellspacing="0" style="display:inline-table;text-align:center;">
+                <tr>
+                  <td style="padding-bottom:4px;text-align:center;">
+                    <img src="{{physician_signature}}" alt="Signature" style="max-height:70px;max-width:180px;object-fit:contain;display:block;margin:0 auto;" />
+                  </td>
+                </tr>
+                <tr>
+                  <td style="border-top:1px solid #111827;padding-top:6px;text-align:center;">
+                    <p style="margin:0;font-size:13px;color:#111827;font-weight:600;">{{physician_name}}</p>
+                    <p style="margin:2px 0 0;font-size:12px;color:#6b7280;">{{physician_role}}</p>
+                    <p style="margin:2px 0 0;font-size:11px;color:#9ca3af;">TUP Medical-Dental Clinic</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background:linear-gradient(135deg,#8B0000,#B22222);padding:20px 36px;text-align:center;">
+              <p style="margin:0;font-size:12px;color:rgba(255,255,255,0.9);">
+                TUP Medical-Dental Clinic &nbsp;&bull;&nbsp; Tel: +632-5301-3001 loc 607 &nbsp;&bull;&nbsp; clinic@tup.edu.ph
+              </p>
+              <p style="margin:6px 0 0;font-size:11px;color:rgba(255,255,255,0.55);">
+                This email is confidential and intended solely for the named recipient. Do not forward without consent.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>

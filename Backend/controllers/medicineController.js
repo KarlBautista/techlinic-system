@@ -1,4 +1,5 @@
 const supabase = require("../config/supabaseAdmin");
+const { logActivity } = require("./auditTrailController");
 
 const insertMedicine = async (req, res) => {
     const { name,
@@ -28,7 +29,20 @@ const insertMedicine = async (req, res) => {
         if(medicineError) {
            return res.status(500).json({ success: false, error: medicineError.message });
         }
-        res.status(200).json({ success: true })
+        res.status(200).json({ success: true });
+
+        // Audit trail
+        const profile = req.userProfile;
+        logActivity({
+            actor_id: profile.id,
+            actor_name: `${profile.first_name} ${profile.last_name}`,
+            actor_role: profile.role,
+            action: "medicine_added",
+            entity_type: "medicine",
+            entity_id: null,
+            description: `Added medicine: ${name} (${generic || 'N/A'})`,
+            metadata: { medicine_name: name, generic_name: generic, brand, stock },
+        });
      } catch (err) {
         console.error(`Something went wrong inserting medicine: ${err.message}`);
         return res.status(500).json({ success: false, error: err.message });
@@ -83,6 +97,19 @@ const updateMedicine = async (req, res) => {
             return res.status(500).json({ success: false, error: updateMedicineError.message });
         }
         res.status(200).json({ success: true, message: "update medicine success"});
+
+        // Audit trail
+        const profile = req.userProfile;
+        logActivity({
+            actor_id: profile.id,
+            actor_name: `${profile.first_name} ${profile.last_name}`,
+            actor_role: profile.role,
+            action: "medicine_updated",
+            entity_type: "medicine",
+            entity_id: String(id),
+            description: `Updated medicine: ${medicine_name}`,
+            metadata: { medicine_name, stock_level, dosage },
+        });
     } catch (err) {
         console.error(`Something went wrong updating medicine: ${err.message}`);
         return res.status(500).json({ success: false, error: err.message });
@@ -99,6 +126,19 @@ const deleteMedicine = async (req, res) => {
             return res.status(500).json({ success: false, error: deleteMedicineError.message });
         }
         res.status(200).json({ success: true, message: "delete medicine success" });
+
+        // Audit trail
+        const profile = req.userProfile;
+        logActivity({
+            actor_id: profile.id,
+            actor_name: `${profile.first_name} ${profile.last_name}`,
+            actor_role: profile.role,
+            action: "medicine_deleted",
+            entity_type: "medicine",
+            entity_id: String(medicineId),
+            description: `Deleted medicine (ID: ${medicineId})`,
+            metadata: { medicine_id: medicineId },
+        });
     } catch (err) {
         console.error(`Somethinng went wrong deleting medicine :${err.message}`);
         return res.status(500).json({ success: false, error: err.message });
