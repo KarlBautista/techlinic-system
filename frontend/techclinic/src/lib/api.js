@@ -16,7 +16,7 @@ import supabase from "../config/supabaseClient";
  *   const response = await api.post("/insert-record", { formData });
  */
 const api = axios.create({
-    baseURL: "http://localhost:3500/api",
+    baseURL: "https://qsrfknp8-3500.asse.devtunnels.ms/api",
     headers: {
         "Content-Type": "application/json",
     },
