@@ -210,8 +210,8 @@ function LandingPage() {
                     const lower = String(msg).toLowerCase();
                     if (lower.includes('unique') || lower.includes('duplicate') || lower.includes('already exists') || lower.includes('student_id') || lower.includes('student id')) {
                         showToast({
-                            title: "Student Already Exists",
-                            message: "A patient with this Student ID already exists. Please check the Student ID.",
+                            title: "Patient Already Exists",
+                            message: "A patient with this Patient ID already exists. Please check the Patient ID.",
                             type: "warning"
                         });
                     } else {
@@ -239,8 +239,8 @@ function LandingPage() {
                 const lower = String(msg).toLowerCase();
                 if (lower.includes('unique') || lower.includes('duplicate') || lower.includes('already exists') || lower.includes('student_id') || lower.includes('student id')) {
                     showToast({
-                        title: "Student Already Exists",
-                        message: "A patient with this Student ID already exists. Please check the Student ID.",
+                        title: "Patient Already Exists",
+                        message: "A patient with this Patient ID already exists. Please check the Patient ID.",
                         type: "warning"
                     });
                 } else {
@@ -289,7 +289,7 @@ function LandingPage() {
     const validateStep = (step) => {
         const newErrors = {};
         if (step === 1) {
-            if (!formData.studentId.trim()) newErrors.studentId = 'Student ID is required';
+            if (!formData.studentId.trim()) newErrors.studentId = 'Patient ID is required';
             if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
             if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
             if (!formData.sex) newErrors.sex = 'Please select sex';
@@ -409,7 +409,7 @@ function LandingPage() {
                                     className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5"
                                 >
                                     <div className="md:col-span-2">
-                                        <RegistrationInfo message="Student ID*" name="studentId" value={formData.studentId} onChange={handleInputChange} onBlur={handleStudentIdBlur} showValidation={!!errors.studentId} disabled={isStudentConfirmed} />
+                                        <RegistrationInfo message="Patient ID*" name="studentId" value={formData.studentId} onChange={handleInputChange} onBlur={handleStudentIdBlur} showValidation={!!errors.studentId} disabled={isStudentConfirmed} />
                                         {errors.studentId && <p className="text-xs text-red-500 mt-1 pl-1">{errors.studentId}</p>}
                                     </div>
                                     <div>
@@ -477,7 +477,7 @@ function LandingPage() {
                                     <div>
                                         <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Personal Details</h3>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                            <ReviewField label="Student ID" value={formData.studentId} />
+                                            <ReviewField label="Patient ID" value={formData.studentId} />
                                             <ReviewField label="First Name" value={formData.firstName} />
                                             <ReviewField label="Last Name" value={formData.lastName} />
                                             <ReviewField label="Sex" value={formData.sex} />

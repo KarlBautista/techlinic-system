@@ -31,6 +31,13 @@ const VARIANTS = {
         confirmBg: 'bg-crimson-600 hover:bg-crimson-700',
         confirmText: 'text-white',
     },
+    confirm: {
+        Icon: CheckCircle2,
+        iconBg: 'bg-crimson-50',
+        iconColor: 'text-crimson-600',
+        confirmBg: 'bg-crimson-600 hover:bg-crimson-700',
+        confirmText: 'text-white',
+    },
 }
 
 let showModalGlobal = null

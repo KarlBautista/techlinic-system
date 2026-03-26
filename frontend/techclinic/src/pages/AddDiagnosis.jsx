@@ -300,10 +300,10 @@ const AddDiagnosis = () => {
 
 
   return (
-      <div className='flex flex-col gap-4'>
-        {isLoading ? (
-          <FormSkeleton />
-        ) : (
+    <div className='flex flex-col gap-4'>
+      {isLoading ? (
+        <FormSkeleton />
+      ) : (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -315,9 +315,15 @@ const AddDiagnosis = () => {
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
+            className='flex items-center gap-4'
           >
-            <h1 className='text-2xl font-bold text-gray-800'>Add Patient Diagnosis</h1>
-            <p className='text-sm text-gray-500 mt-1'>Patient clinical documentation</p>
+            <div className='w-12 h-12 rounded-xl bg-crimson-50 flex items-center justify-center ring-1 ring-crimson-100'>
+              <ClipboardList className="w-6 h-6 text-crimson-600" />
+            </div>
+            <div>
+              <h1 className='text-2xl font-bold text-gray-800'>Add Patient Diagnosis</h1>
+              <p className='text-sm text-gray-400 mt-0.5'>Patient clinical documentation</p>
+            </div>
           </motion.div>
 
           <form onSubmit={handleFormSubmit} className='flex flex-col gap-6'>
@@ -338,21 +344,38 @@ const AddDiagnosis = () => {
 
               <div className='flex flex-wrap gap-x-[5%] gap-y-0'>
                 <div className='formInfo'>
-                  <input type="text" name="studentId" placeholder=" " id='studentID' value={patientInput.studentId} onChange={handleSetPatientInput} />
-                  <label htmlFor="studentID" className='text-[.8rem]'>Student ID</label>
-                </div>
-                <div className='formInfo'>
                   <input type="text" name="firstName" placeholder=" " id='firstName' value={patientInput.firstName} onChange={handleSetPatientInput} />
                   <label htmlFor="firstName" className='text-[.8rem]'>First name</label>
                 </div>
+
                 <div className='formInfo'>
                   <input type="text" name="lastName" placeholder=" " id='lastName' value={patientInput.lastName} onChange={handleSetPatientInput} />
                   <label htmlFor="lastName" className='text-[.8rem]'>Last name</label>
                 </div>
+
+                <div className='formInfo'>
+                  <input type="text" name="studentId" placeholder=" " id='studentID' value={patientInput.studentId} onChange={handleSetPatientInput} />
+                  <label htmlFor="studentID" className='text-[.8rem]'>Patient ID</label>
+                </div>
+
                 <div className='formInfo'>
                   <input type="tel" inputMode="numeric" name="contactNumber" placeholder=" " id='contactNum' value={patientInput.contactNumber} onChange={handleSetPatientInput} />
                   <label htmlFor="contactNum" className='text-[.8rem]'>Contact Number</label>
                 </div>
+
+                <div className='formInfo'>
+                  <select id="sex" name="sex" value={patientInput.sex} onChange={handleSetPatientInput} className='w-full p-2 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'>
+                    <option value="" disabled>Sex</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                  </select>
+                </div>
+
+                <div className='formInfo'>
+                  <input type="date" name='dateOfBirth' placeholder='' id='dateOfBirth' value={patientInput.dateOfBirth} onChange={handleSetPatientInput} />
+                  <label htmlFor="dateOfBirth" className='text-[.8rem]'>Date of Birth</label>
+                </div>
+
                 <div className='formInfo'>
                   <select id="year" name="yearLevel" value={patientInput.yearLevel} onChange={handleSetPatientInput} className='w-full p-2 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'>
                     <option value="" disabled>Select Year</option>
@@ -362,6 +385,7 @@ const AddDiagnosis = () => {
                     <option value="4">4th year</option>
                   </select>
                 </div>
+
                 <div className='formInfo'>
                   <select id="department" name="department" value={patientInput.department} onChange={handleSetPatientInput} className='w-full p-2 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'>
                     <option value="" disabled>Select Department</option>
@@ -373,24 +397,15 @@ const AddDiagnosis = () => {
                     <option value="College of Liberal Arts">College of Liberal Arts</option>
                   </select>
                 </div>
-                <div className='formInfo'>
-                  <select id="sex" name="sex" value={patientInput.sex} onChange={handleSetPatientInput} className='w-full p-2 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'>
-                    <option value="" disabled>Sex</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                  </select>
-                </div>
+
                 <div className='formInfo'>
                   <input type="text" name="email" placeholder=" " id='email' value={patientInput.email} onChange={handleSetPatientInput} />
                   <label htmlFor="email" className='text-[.8rem]'>Email</label>
                 </div>
+
                 <div className='formInfo'>
                   <input type="text" name='address' placeholder=' ' id='address' value={patientInput.address} onChange={handleSetPatientInput} />
                   <label htmlFor="address" className='text-[.8rem]'>Address</label>
-                </div>
-                <div className='formInfo'>
-                  <input type="date" name='dateOfBirth' placeholder='' id='dateOfBirth' value={patientInput.dateOfBirth} onChange={handleSetPatientInput} />
-                  <label htmlFor="dateOfBirth" className='text-[.8rem]'>Date of Birth</label>
                 </div>
               </div>
             </motion.div>
@@ -425,11 +440,10 @@ const AddDiagnosis = () => {
                         <button
                           type="button"
                           onClick={() => setShowAddDisease(!showAddDisease)}
-                          className={`shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-sm transition-all ${
-                            showAddDisease 
-                              ? 'bg-gray-100 text-gray-600 ring-1 ring-gray-200' 
-                              : 'bg-crimson-600 text-white hover:bg-crimson-700 shadow-sm'
-                          }`}
+                          className={`shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-sm transition-all ${showAddDisease
+                            ? 'bg-gray-100 text-gray-600 ring-1 ring-gray-200'
+                            : 'bg-crimson-600 text-white hover:bg-crimson-700 shadow-sm'
+                            }`}
                           title={showAddDisease ? 'Cancel' : 'Add new disease'}
                         >
                           {showAddDisease ? <X className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
@@ -466,7 +480,7 @@ const AddDiagnosis = () => {
 
                   <div className='formDiagnosis'>
                     <select id="medication" name="medication" value={patientInput.medication?.id || ""} onChange={handleSetPatientInput} className='w-full p-2 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'>
-                      <option value="" disabled>Medication</option>
+                      <option value="" disabled>Select Medication</option>
                       {medicines?.map((medicine) => (
                         <option key={medicine.id} value={medicine.id}>{`${medicine.medicine_name}, ${medicine.generic_name} - ${medicine.stock_level} in stock`}</option>
                       ))}
@@ -513,8 +527,8 @@ const AddDiagnosis = () => {
 
               {/* Submit Button */}
               <div className='flex justify-end mt-6 pt-4 border-t border-gray-100'>
-                <button 
-                  disabled={isSubmitting} 
+                <button
+                  disabled={isSubmitting}
                   className='text-white px-6 py-2.5 rounded-xl bg-crimson-600 hover:bg-crimson-700 transition-colors text-sm font-medium inline-flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed shadow-sm'
                 >
                   {isSubmitting ? <><ButtonLoader /> Submitting...</> : 'Insert Diagnosis'}
@@ -523,8 +537,8 @@ const AddDiagnosis = () => {
             </motion.div>
           </form>
         </motion.div>
-        )}
-      </div>
+      )}
+    </div>
   )
 }
 

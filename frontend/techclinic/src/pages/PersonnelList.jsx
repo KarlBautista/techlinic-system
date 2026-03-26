@@ -1,10 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo, useRef } from 'react'
 import useAuth from '../store/useAuthStore'
 import useData from '../store/useDataStore'
 import { ButtonLoader } from '../components/PageLoader'
 import { showToast } from '../components/Toast'
 import { motion } from 'framer-motion'
-import { Search, Plus, Users, X, Eye, EyeOff } from 'lucide-react'
+import { Search, Plus, Users, X, Eye, EyeOff, ChevronRight, ChevronLeft, ChevronDown } from 'lucide-react'
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.05 } }
+};
+const itemVariants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] } }
+};
+
+const ROWS_OPTIONS = [5, 10, 20, 50];
 
 const PersonnelList = () => {
   const [search, setSearch] = useState("");
@@ -18,6 +29,10 @@ const PersonnelList = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [roleOpen, setRoleOpen] = useState(false);
+  const roleRef = useRef(null);
 
   const [personnel, setPersonnel] = useState({
     first_name: '',
@@ -30,6 +45,14 @@ const PersonnelList = () => {
     role: '',
     sex: ''
   });
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (roleRef.current && !roleRef.current.contains(e.target)) setRoleOpen(false);
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const getAllUsersData = async () => {
@@ -54,14 +77,28 @@ const PersonnelList = () => {
     });
   }
 
-  const filteredUsers = allUsers?.filter((user) => {
-    const fullname = `${user.first_name} ${user.last_name}`.toLowerCase();
-    const matchesSearch =
-      fullname.includes(search.toLowerCase()) ||
-      user.email?.toLowerCase().includes(search.toLowerCase());
-    const matchesRole = selectedRole === "All Roles" || user.role === selectedRole;
-    return matchesSearch && matchesRole;
-  });
+  const filteredUsers = useMemo(() => {
+    if (!allUsers) return [];
+    return allUsers.filter((user) => {
+      const fullname = `${user.first_name} ${user.last_name}`.toLowerCase();
+      const matchesSearch =
+        fullname.includes(search.toLowerCase()) ||
+        user.email?.toLowerCase().includes(search.toLowerCase());
+      const matchesRole = selectedRole === "All Roles" || user.role === selectedRole;
+      return matchesSearch && matchesRole;
+    });
+  }, [allUsers, search, selectedRole]);
+
+  const totalPages = Math.ceil((filteredUsers?.length || 0) / rowsPerPage);
+  const paginatedUsers = useMemo(() => {
+    const start = (currentPage - 1) * rowsPerPage;
+    return filteredUsers.slice(start, start + rowsPerPage);
+  }, [filteredUsers, currentPage, rowsPerPage]);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, selectedRole, rowsPerPage]);
 
   const handleChange = (e) => {
     setPersonnel({ ...personnel, [e.target.name]: e.target.value });
@@ -135,176 +172,265 @@ const PersonnelList = () => {
     }
   };
 
+  const getPageNumbers = () => {
+    const pages = [];
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      if (currentPage > 3) pages.push('...');
+      for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) pages.push(i);
+      if (currentPage < totalPages - 2) pages.push('...');
+      pages.push(totalPages);
+    }
+    return pages;
+  };
+
   return (
     <>
-      <div className='flex flex-col gap-4'>
+      <div className='flex flex-col gap-4 h-full'>
         {initialLoading || isLoadingUsers ? (
           <div className='w-full h-full flex flex-col gap-5 animate-pulse'>
             {/* Skeleton Header */}
-            <div>
-              <div className='h-6 w-36 bg-gray-200 rounded-lg' />
-              <div className='h-4 w-52 bg-gray-100 rounded-lg mt-2' />
+            <div className='flex items-center justify-between'>
+              <div className='flex items-center gap-4'>
+                <div className='w-12 h-12 rounded-xl bg-gray-200' />
+                <div>
+                  <div className='h-6 w-44 bg-gray-200 rounded-lg' />
+                  <div className='h-4 w-24 bg-gray-100 rounded-lg mt-2' />
+                </div>
+              </div>
+              <div className='h-9 w-32 bg-gray-200 rounded-lg' />
             </div>
-            {/* Skeleton Search & Filter Bar */}
-            <div className='flex items-center gap-3 flex-wrap'>
-              <div className='h-10 w-64 bg-gray-200 rounded-xl' />
-              <div className='h-10 w-28 bg-gray-200 rounded-xl' />
-              <div className='h-10 w-36 bg-gray-200 rounded-xl ml-auto' />
+            {/* Skeleton Filters */}
+            <div className='flex items-center justify-between'>
+              <div className='flex items-center gap-2'>
+                <div className='h-10 w-28 bg-gray-200 rounded-full' />
+              </div>
+              <div className='flex items-center gap-2'>
+                <div className='h-10 w-56 bg-gray-200 rounded-full' />
+              </div>
             </div>
             {/* Skeleton Table */}
-            <div className='bg-white rounded-xl ring-1 ring-gray-100 overflow-hidden'>
+            <div className='bg-white rounded-xl ring-1 ring-gray-100 flex-1 flex flex-col overflow-hidden'>
               <div className='px-5 py-3 flex gap-4 border-b border-gray-100'>
                 {[100, 60, 140, 60, 80].map((w, i) => (
                   <div key={i} className='h-4 bg-gray-200 rounded' style={{ width: w }} />
                 ))}
               </div>
-              {Array.from({ length: 6 }).map((_, i) => (
+              {Array.from({ length: 8 }).map((_, i) => (
                 <div key={i} className='px-5 py-4 flex items-center gap-4 border-b border-gray-50'>
                   <div className='flex items-center gap-3'>
-                    <div className='w-9 h-9 rounded-full bg-gray-200' />
+                    <div className='w-8 h-8 rounded-full bg-gray-200' />
                     <div className='h-4 w-28 bg-gray-100 rounded' />
                   </div>
                   <div className='h-6 w-16 bg-gray-100 rounded-full' />
-                  <div className='h-4 w-36 bg-gray-100 rounded' />
-                  <div className='h-4 w-14 bg-gray-100 rounded' />
-                  <div className='h-4 w-24 bg-gray-100 rounded' />
+                  <div className='h-4 w-36 bg-gray-100 rounded hidden md:block' />
+                  <div className='h-4 w-14 bg-gray-100 rounded hidden lg:block' />
+                  <div className='h-4 w-24 bg-gray-100 rounded hidden sm:block' />
                 </div>
               ))}
             </div>
           </div>
         ) : (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-          className='w-full h-full flex flex-col gap-5'
-        >
-          {/* ─── Page Header ─── */}
           <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className='w-full h-full flex flex-col gap-5'
           >
-            <h1 className='text-2xl font-bold text-gray-800'>Personnel List</h1>
-            <p className='text-sm text-gray-500 mt-1'>Manage clinic staff and personnel</p>
-          </motion.div>
+            {/* ─── Page Header ─── */}
+            <motion.div variants={itemVariants} className="flex items-center justify-between">
+              <div className='flex items-center gap-4'>
+                <div className='w-12 h-12 rounded-xl bg-crimson-50 flex items-center justify-center ring-1 ring-crimson-100'>
+                  <Users className="w-6 h-6 text-crimson-600" />
+                </div>
+                <div>
+                  <h1 className='text-2xl font-bold text-gray-800'>Personnel List</h1>
+                  <p className='text-sm text-gray-400 mt-0.5'>
+                    Manage clinic staff and personnel
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={openModal}
+                className='inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-crimson-600 text-white text-xs font-medium hover:bg-crimson-700 transition-colors shadow-sm cursor-pointer'
+              >
+                <Plus className="w-4 h-4" />
+                Add Personnel
+              </button>
+            </motion.div>
 
-          {/* ─── Search & Filter Bar ─── */}
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.3 }}
-            className='flex items-center gap-3 flex-wrap'
-          >
-            <div className='flex items-center flex-1 min-w-[200px] max-w-md h-10 px-3 rounded-xl bg-white ring-1 ring-gray-200 focus-within:ring-crimson-400 focus-within:ring-2 transition-all'>
-              <Search className="w-4 h-4 text-gray-400 shrink-0" />
-              <input
-                type="text"
-                className='outline-none w-full ml-2 text-sm text-gray-700 placeholder:text-gray-400 bg-transparent'
-                placeholder='Search by name or email...'
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </div>
-
-            <select
-              className='h-10 px-3 rounded-xl bg-white ring-1 ring-gray-200 outline-none text-sm text-gray-700 focus:ring-crimson-400 focus:ring-2 transition-all cursor-pointer'
-              value={selectedRole}
-              onChange={(e) => setSelectedRole(e.target.value)}
-            >
-              <option value="All Roles">All Roles</option>
-              <option value="DOCTOR">Doctor</option>
-              <option value="NURSE">Nurse</option>
-            </select>
-
-            <button
-              onClick={openModal}
-              className='inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-crimson-600 text-white text-sm font-medium hover:bg-crimson-700 transition-colors shadow-sm ml-auto'
-            >
-              <Plus className="w-4 h-4" />
-              Add Personnel
-            </button>
-
-            {filteredUsers && (
-              <span className='text-xs text-gray-400 font-medium'>
-                {filteredUsers.length} personnel
-              </span>
-            )}
-          </motion.div>
-
-          {/* ─── Personnel Table ─── */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15, duration: 0.35 }}
-            className='bg-white rounded-xl shadow-sm ring-1 ring-gray-100 flex-1 flex flex-col overflow-hidden'
-          >
-            <div className='overflow-auto flex-1'>
-              {filteredUsers?.length > 0 ? (
-                <table className='w-full'>
-                  <thead className='sticky top-0 bg-gray-50/90 backdrop-blur-sm'>
-                    <tr>
-                      <th className='text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3'>Name</th>
-                      <th className='text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3'>Role</th>
-                      <th className='text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell'>Email</th>
-                      <th className='text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3 hidden lg:table-cell'>Sex</th>
-                      <th className='text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3 hidden sm:table-cell'>Date of Birth</th>
-                    </tr>
-                  </thead>
-                  <tbody className='divide-y divide-gray-50'>
-                    {filteredUsers.map((user, idx) => (
-                      <motion.tr
-                        key={user.id}
-                        initial={{ opacity: 0, x: -8 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: idx * 0.02, duration: 0.25 }}
-                        className='hover:bg-crimson-50/40 transition-colors group'
-                      >
-                        <td className='px-5 py-3.5'>
+            {/* ─── Filters & Search ─── */}
+            <motion.div variants={itemVariants} className='flex items-center justify-between gap-3 flex-wrap'>
+              {/* Left: Filters */}
+              <div className='flex items-center gap-2 flex-wrap'>
+                {/* Role Dropdown */}
+                <div ref={roleRef} className='relative'>
+                  <button
+                    onClick={() => setRoleOpen(!roleOpen)}
+                    className='inline-flex items-center gap-2 h-10 px-4 rounded-full bg-white ring-1 ring-gray-200 text-xs font-medium text-gray-600 hover:ring-gray-300 transition-all cursor-pointer'
+                  >
+                    <Users className="w-4 h-4 text-gray-400" />
+                    <span>{selectedRole}</span>
+                    <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${roleOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  {roleOpen && (
+                    <div className='absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-xl ring-1 ring-gray-100 py-2 z-20'>
+                      {[
+                        { value: "All Roles", label: "All Roles" },
+                        { value: "DOCTOR", label: "Doctor" },
+                        { value: "NURSE", label: "Nurse" },
+                      ].map(opt => (
+                        <button
+                          key={opt.value}
+                          onClick={() => { setSelectedRole(opt.value); setRoleOpen(false); }}
+                          className='w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 transition-colors cursor-pointer'
+                        >
                           <div className='flex items-center gap-3'>
-                            <div className='w-8 h-8 rounded-full bg-linear-to-br from-crimson-100 to-crimson-50 flex items-center justify-center text-xs font-bold text-crimson-600 shrink-0 ring-1 ring-crimson-100'>
-                              {user.first_name?.[0]}{user.last_name?.[0]}
-                            </div>
-                            <span className='text-sm font-medium text-gray-900 group-hover:text-crimson-600 transition-colors'>
-                              {`${user.first_name} ${user.last_name}`}
-                            </span>
+                            <Users className="w-4 h-4 text-gray-400" />
+                            <span className={`text-sm font-medium ${selectedRole === opt.value ? 'text-crimson-600' : 'text-gray-700'}`}>{opt.label}</span>
                           </div>
-                        </td>
-                        <td className='px-5 py-3.5'>
-                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ring-1 ${
-                            user.role === 'DOCTOR'
+                          <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedRole === opt.value ? 'border-crimson-600 bg-crimson-600' : 'border-gray-300'}`}>
+                            {selectedRole === opt.value && (
+                              <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                            )}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Right: Search */}
+              <div className='flex items-center gap-2'>
+                <div className='flex items-center h-10 w-56 px-3 rounded-full bg-white ring-1 ring-gray-200 focus-within:ring-crimson-400 transition-all'>
+                  <Search className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                  <input
+                    type="text"
+                    className='outline-none w-full ml-2 text-xs text-gray-700 placeholder:text-gray-400 bg-transparent'
+                    placeholder='Search by name or email...'
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                </div>
+              </div>
+            </motion.div>
+
+            {/* ─── Personnel Table ─── */}
+            <motion.div
+              variants={itemVariants}
+              className='bg-white rounded-xl shadow-sm ring-1 ring-gray-100 flex-1 flex flex-col overflow-hidden'
+            >
+              <div className='overflow-auto flex-1'>
+                {filteredUsers?.length > 0 ? (
+                  <table className='w-full'>
+                    <thead className='sticky top-0 bg-gray-50/95 backdrop-blur-sm'>
+                      <tr>
+                        <th className='text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3'>Name</th>
+                        <th className='text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3'>Role</th>
+                        <th className='text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell'>Email</th>
+                        <th className='text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3 hidden lg:table-cell'>Sex</th>
+                        <th className='text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3 hidden sm:table-cell'>Date of Birth</th>
+                      </tr>
+                    </thead>
+                    <tbody className='divide-y divide-gray-50'>
+                      {paginatedUsers.map((user) => (
+                        <tr
+                          key={user.id}
+                          className='hover:bg-crimson-50/40 transition-colors group'
+                        >
+                          <td className='px-5 py-3.5'>
+                            <div className='flex items-center gap-3'>
+                              <div className='w-8 h-8 rounded-full bg-linear-to-br from-crimson-100 to-crimson-50 flex items-center justify-center text-xs font-bold text-crimson-600 shrink-0 ring-1 ring-crimson-100'>
+                                {user.first_name?.[0]}{user.last_name?.[0]}
+                              </div>
+                              <span className='text-sm font-medium text-gray-900 group-hover:text-crimson-600 transition-colors'>
+                                {`${user.first_name} ${user.last_name}`}
+                              </span>
+                            </div>
+                          </td>
+                          <td className='px-5 py-3.5'>
+                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ring-1 ${user.role === 'DOCTOR'
                               ? 'bg-blue-50 text-blue-700 ring-blue-100'
                               : 'bg-emerald-50 text-emerald-700 ring-emerald-100'
-                          }`}>
-                            <span className={`w-1.5 h-1.5 rounded-full ${user.role === 'DOCTOR' ? 'bg-blue-500' : 'bg-emerald-500'}`} />
-                            {user.role === 'DOCTOR' ? 'Doctor' : 'Nurse'}
-                          </span>
-                        </td>
-                        <td className='px-5 py-3.5 hidden md:table-cell'>
-                          <span className='text-sm text-gray-600'>{user.email}</span>
-                        </td>
-                        <td className='px-5 py-3.5 hidden lg:table-cell'>
-                          <span className='text-sm text-gray-600'>{user.sex}</span>
-                        </td>
-                        <td className='px-5 py-3.5 hidden sm:table-cell'>
-                          <span className='text-sm text-gray-600'>{formatDate(user.date_of_birth)}</span>
-                        </td>
-                      </motion.tr>
-                    ))}
-                  </tbody>
-                </table>
-              ) : (
-                <div className='flex flex-col items-center justify-center py-16 text-gray-400'>
-                  <div className='w-16 h-16 mb-3 rounded-2xl bg-gray-50 flex items-center justify-center'>
-                    <Users className="w-7 h-7 text-gray-300" />
+                              }`}>
+                              <span className={`w-1.5 h-1.5 rounded-full ${user.role === 'DOCTOR' ? 'bg-blue-500' : 'bg-emerald-500'}`} />
+                              {user.role === 'DOCTOR' ? 'Doctor' : 'Nurse'}
+                            </span>
+                          </td>
+                          <td className='px-5 py-3.5 hidden md:table-cell'>
+                            <span className='text-sm text-gray-600'>{user.email}</span>
+                          </td>
+                          <td className='px-5 py-3.5 hidden lg:table-cell'>
+                            <span className='text-sm text-gray-600'>{user.sex}</span>
+                          </td>
+                          <td className='px-5 py-3.5 hidden sm:table-cell'>
+                            <span className='text-sm text-gray-600'>{formatDate(user.date_of_birth)}</span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <div className='flex flex-col items-center justify-center py-16 text-gray-400'>
+                    <div className='w-16 h-16 mb-3 rounded-2xl bg-gray-50 flex items-center justify-center'>
+                      <Users className="w-7 h-7 text-gray-300" />
+                    </div>
+                    <p className='text-sm font-medium text-gray-500'>No personnel found</p>
+                    <p className='text-xs text-gray-400 mt-1'>Try a different search or filter</p>
                   </div>
-                  <p className='text-sm font-medium text-gray-500'>No personnel found</p>
-                  <p className='text-xs text-gray-400 mt-1'>Try a different search or filter</p>
+                )}
+              </div>
+
+              {/* ─── Pagination Footer ─── */}
+              {filteredUsers?.length > 0 && (
+                <div className='px-5 py-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500'>
+                  <span>{filteredUsers.length} total personnel</span>
+                  <div className='flex items-center gap-1'>
+                    <button
+                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                      className='w-8 h-8 rounded-lg flex items-center justify-center hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer'
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                    {getPageNumbers().map((p, i) =>
+                      p === '...' ? (
+                        <span key={`dot-${i}`} className='w-8 h-8 flex items-center justify-center text-gray-400'>...</span>
+                      ) : (
+                        <button
+                          key={p}
+                          onClick={() => setCurrentPage(p)}
+                          className={`w-8 h-8 rounded-lg flex items-center justify-center font-medium transition-colors cursor-pointer ${currentPage === p ? 'bg-crimson-600 text-white' : 'hover:bg-gray-100 text-gray-600'}`}
+                        >
+                          {p}
+                        </button>
+                      )
+                    )}
+                    <button
+                      onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                      disabled={currentPage === totalPages}
+                      className='w-8 h-8 rounded-lg flex items-center justify-center hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer'
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                    <span className='mx-2 text-gray-300'>|</span>
+                    <select
+                      value={rowsPerPage}
+                      onChange={(e) => { setRowsPerPage(Number(e.target.value)); setCurrentPage(1); }}
+                      className='h-8 px-2 rounded-lg bg-white ring-1 ring-gray-200 outline-none text-xs cursor-pointer'
+                    >
+                      {ROWS_OPTIONS.map(n => (
+                        <option key={n} value={n}>{n} rows</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               )}
-            </div>
+            </motion.div>
           </motion.div>
-        </motion.div>
         )}
       </div>
 

@@ -1,15 +1,23 @@
 import React from 'react'
-import {useState} from 'react'
+import { useState } from 'react'
 import useData from '../store/useDataStore'
 import useAuth from '../store/useAuthStore'
 import { useLocation } from 'react-router-dom'
 import { showToast } from '../components/Toast'
+import { showModal } from '../components/Modal'
 import { useEffect } from 'react'
 import useMedicine from "../store/useMedicineStore";
 import api from '../lib/api'
 import { FormSkeleton, ButtonLoader } from '../components/PageLoader'
-import { motion } from 'framer-motion'
-import { UserPlus, ClipboardList, Plus, X, FileText, StickyNote } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { UserPlus, ClipboardList, Plus, X, FileText, StickyNote, Check } from 'lucide-react'
+import Dropdown from '../components/Dropdown'
+
+const STEPS = [
+  { number: 1, label: 'Personal Information' },
+  { number: 2, label: 'Diagnosis & Treatment' },
+  { number: 3, label: 'Medication & Notes' },
+];
 
 const NewPatient = () => {
   const { insertRecord, getRecords, getRecordsFromExistingPatient } = useData();
@@ -23,6 +31,7 @@ const NewPatient = () => {
   const [showAddDisease, setShowAddDisease] = useState(false);
   const [newDiseaseName, setNewDiseaseName] = useState("");
   const [isAddingDisease, setIsAddingDisease] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
   const [patientInput, setPatientInput] = useState({
     firstName: "",
     lastName: "",
@@ -76,60 +85,63 @@ const NewPatient = () => {
     }
   }
 
-  useEffect(() => {
-    const fetchIfExists = async () => {
-      const id = String(patientInput.studentId || "").trim();
-      if (id.length !== 11) {
+  const handleStudentIdBlur = async () => {
+    const id = String(patientInput.studentId || "").trim();
+    if (!id) {
+      setStudentInformation(null);
+      return;
+    }
+
+    try {
+      const response = await getRecordsFromExistingPatient(id);
+      if (!response || !response.success) {
         setStudentInformation(null);
         return;
       }
 
-      try {
-        const response = await getRecordsFromExistingPatient(id);
-        if (!response || !response.success) {
-          setStudentInformation(null);
-          return;
-        }
+      const payload = response.data;
+      const existing = Array.isArray(payload) ? payload[0] : payload;
+      if (!existing) {
+        setStudentInformation(null);
+        return;
+      }
 
-        const payload = response.data;
-        const existing = Array.isArray(payload) ? payload[0] : payload;
-        if (!existing) {
-          setStudentInformation(null);
-          return;
-        }
+      const confirmed = await showModal({
+        title: "Patient Found",
+        message: `Is this ${existing.first_name} ${existing.last_name}?`,
+        type: "confirm",
+        confirmLabel: "Confirm",
+        cancelLabel: "No",
+        showCancel: true,
+      });
+
+      if (confirmed) {
         setStudentInformation(existing);
         setPatientInput((prev) => ({
           ...prev,
-          firstName: existing.first_name,
-          lastName: existing.last_name,
-          email: existing.email,
-          contactNumber: existing.contact_number,
-          yearLevel: existing.year_level,
-          department: existing.department,
-          sex: existing.sex,
-          dateOfBirth: existing.date_of_birth ? formatDateForInput(existing.date_of_birth) : (existing.dob ? formatDateForInput(existing.dob) : ''),
-          address: existing.address ?? ''
+          firstName: existing.first_name || prev.firstName,
+          lastName: existing.last_name || prev.lastName,
+          email: existing.email || prev.email,
+          contactNumber: existing.contact_number || prev.contactNumber,
+          yearLevel: existing.year_level || prev.yearLevel,
+          department: existing.department || prev.department,
+          sex: existing.sex || prev.sex,
+          dateOfBirth: existing.date_of_birth ? formatDateForInput(existing.date_of_birth) : (existing.dob ? formatDateForInput(existing.dob) : prev.dateOfBirth),
+          address: existing.address ?? prev.address
         }));
-        showToast({ 
-          title: `Student: ${patientInput.studentId} Information Found.`,
-          message: "The inputs have the existing data of the student now",
-          type: "success",
-        })
-      } catch (err) {
-        console.error('Error fetching existing student info', err);
-        setStudentInformation(null);
       }
-    };
-
-    fetchIfExists();
-  }, [patientInput.studentId, getRecordsFromExistingPatient]);
+    } catch (err) {
+      console.error('Error fetching existing student info', err);
+      setStudentInformation(null);
+    }
+  };
 
   useEffect(() => {
     const getAllDiseases = async () => {
       try {
         const response = await api.get("/get-all-diseases");
 
-        if(response.data.success) {
+        if (response.data.success) {
           setDiseases(response.data.data);
         } else {
           throw new Error(`Error getting diseases: ${response.data.error}`);
@@ -146,15 +158,25 @@ const NewPatient = () => {
   const handleSetPatientInput = (e) => {
     const { name, value } = e.target;
 
-    if(name === "medication") {
+    if (name === "medication") {
       // If empty value, set to null instead of undefined or empty object
       if (!value || value === "") {
-        setPatientInput((prev) => ({...prev, medication: null}));
+        setPatientInput((prev) => ({ ...prev, medication: null }));
         return;
       }
       const medjObj = medicines.find((m) => m.id === Number(value));
-      setPatientInput((prev) => ({...prev, medication: medjObj || null}));
-      return; 
+      // Check if medicine is out of stock
+      if (medjObj && medjObj.stock_level === 0) {
+        showToast({
+          title: "Medicine Out of Stock",
+          message: `${medjObj.medicine_name} is currently out of stock. Please select another medicine.`,
+          type: "warning"
+        });
+        setPatientInput((prev) => ({ ...prev, medication: null }));
+        return;
+      }
+      setPatientInput((prev) => ({ ...prev, medication: medjObj || null }));
+      return;
     }
 
     // Diagnosis select sends the disease id; we store id in `diseaseId` and name in `diagnosis`
@@ -231,46 +253,64 @@ const NewPatient = () => {
     }
   };
 
+  const handleNext = () => {
+    if (currentStep === 1) {
+      if (!patientInput.studentId || !patientInput.firstName || !patientInput.lastName ||
+        !patientInput.contactNumber || !patientInput.yearLevel || !patientInput.department ||
+        !patientInput.sex || !patientInput.email || !patientInput.address || !patientInput.dateOfBirth) {
+        showToast({ title: "Incomplete", message: "Please fill out all personal information fields.", type: "warning" });
+        return;
+      }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(patientInput.email)) {
+        showToast({ title: "Invalid Email", message: "Please enter a valid email address.", type: "warning" });
+        return;
+      }
+      const contactRegex = /^[0-9+\-() ]{7,15}$/;
+      if (!contactRegex.test(patientInput.contactNumber)) {
+        showToast({ title: "Invalid Contact", message: "Please enter a valid contact number.", type: "warning" });
+        return;
+      }
+    }
+    if (currentStep === 2) {
+      if (!patientInput.treatment || !patientInput.treatment.trim()) {
+        showToast({ title: "Incomplete", message: "Please fill out the treatment field before proceeding.", type: "warning" });
+        return;
+      }
+    }
+    setCurrentStep((prev) => Math.min(prev + 1, 3));
+  };
+
+  const handleBack = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    if (currentStep < 3) return;
     if (isSubmitting) return;
 
-    // Validate required patient fields
-    if (!patientInput.studentId || !patientInput.firstName || !patientInput.lastName || 
-        !patientInput.contactNumber || !patientInput.yearLevel || !patientInput.department || 
-        !patientInput.sex || !patientInput.email || !patientInput.address || !patientInput.dateOfBirth) {
-      showToast({
-        title: "Incomplete Form",
-        message: "Please fill out all required student information fields.",
-        type: "warning"
-      });
-      return;
-    }
-
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(patientInput.email)) {
-      showToast({
-        title: "Invalid Email",
-        message: "Please enter a valid email address.",
-        type: "warning"
-      });
-      return;
-    }
-
-    // Validate contact number
-    const contactRegex = /^[0-9+\-() ]{7,15}$/;
-    if (!contactRegex.test(patientInput.contactNumber)) {
-      showToast({
-        title: "Invalid Contact Number",
-        message: "Please enter a valid contact number (7-15 digits).",
-        type: "warning"
-      });
-      return;
+    // Validate medication stock
+    if (patientInput.medication && patientInput.quantity) {
+      if (patientInput.medication.stock_level === 0) {
+        showToast({
+          title: "Medicine Out of Stock",
+          message: `${patientInput.medication.medicine_name} is currently out of stock. Please select another medicine.`,
+          type: "warning"
+        });
+        return;
+      }
+      const quantityRequested = Number(patientInput.quantity);
+      if (quantityRequested > patientInput.medication.stock_level) {
+        showToast({
+          title: "Insufficient Stock",
+          message: `Only ${patientInput.medication.stock_level} units of ${patientInput.medication.medicine_name} available. You requested ${quantityRequested} units.`,
+          type: "warning"
+        });
+        return;
+      }
     }
 
     setIsSubmitting(true);
-    
+
     // Log what's being sent for debugging
     console.log('Submitting patientInput:', {
       ...patientInput,
@@ -279,16 +319,16 @@ const NewPatient = () => {
       medicationType: typeof patientInput.medication,
       medicationValue: patientInput.medication
     });
-    
-    try{
+
+    try {
       const response = await insertRecord(patientInput);
-      if(!response.success){
+      if (!response.success) {
         const msg = response.error || 'Failed inserting record';
         const lower = String(msg).toLowerCase();
         if (lower.includes('unique') || lower.includes('duplicate') || lower.includes('already exists') || lower.includes('student_id') || lower.includes('student id')) {
-          showToast({ 
+          showToast({
             title: "Student Already Exist",
-            message: "A patient with this Student ID already exists. Please check the Student ID.",
+            message: "A patient with this Patient ID already exists. Please check the Patient ID.",
             type: "warning"
           })
         } else {
@@ -300,7 +340,7 @@ const NewPatient = () => {
         }
         return;
       } else {
-        showToast({ 
+        showToast({
           title: "Record Inserted Successfully",
           type: "success",
         })
@@ -324,6 +364,7 @@ const NewPatient = () => {
           attendingPhysician: userProfile ? `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim() : authenticatedUser?.user_metadata?.full_name,
           attendingPhysicianId: authenticatedUser?.id || null,
         });
+        setCurrentStep(1);
         getRecords();
       }
     } catch (err) {
@@ -333,257 +374,382 @@ const NewPatient = () => {
     }
   }
 
+  const handleClearForm = () => {
+    setPatientInput({
+      firstName: "",
+      lastName: "",
+      studentId: "",
+      contactNumber: "",
+      yearLevel: "",
+      department: "",
+      sex: "",
+      email: "",
+      dateOfBirth: "",
+      address: "",
+      diseaseId: "",
+      diagnosis: "",
+      medication: null,
+      quantity: "",
+      treatment: "",
+      notes: "",
+      attendingPhysician: userProfile ? `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim() : authenticatedUser?.user_metadata?.full_name,
+      attendingPhysicianId: authenticatedUser?.id || null,
+    });
+    setStudentInformation(null);
+    setCurrentStep(1);
+  };
+
   return (
-      <div className='flex flex-col gap-4'>
-        {isLoading ? (
-          <FormSkeleton />
-        ) : (
+    <div className='h-full flex flex-col'>
+      {isLoading ? (
+        <FormSkeleton />
+      ) : (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
-          className='w-full overflow-y-auto h-full flex flex-col gap-5 scrollbar'
+          className='w-full h-full flex flex-col'
         >
           {/* ─── Page Header ─── */}
           <motion.div
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
+            className='flex items-center gap-4 mb-4'
           >
-            <h1 className='text-2xl font-bold text-gray-800'>Add Patient Record</h1>
-            <p className='text-sm text-gray-500 mt-1'>Register a new patient or add a visit for an existing student</p>
+            <div className='w-12 h-12 rounded-xl bg-crimson-50 flex items-center justify-center ring-1 ring-crimson-100'>
+              <UserPlus className="w-6 h-6 text-crimson-600" />
+            </div>
+            <div className='flex-1'>
+              <h1 className='text-2xl font-bold text-gray-800'>Add Patient Record</h1>
+              <p className='text-sm text-gray-400 mt-0.5'>Register a new patient or add a visit for an existing student</p>
+            </div>
           </motion.div>
 
-          <form onSubmit={handleFormSubmit} className='flex flex-col gap-6'>
-            {/* ─── Student Information Card ─── */}
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1, duration: 0.35 }}
-              className='bg-white rounded-xl shadow-sm ring-1 ring-gray-100 p-6'
-            >
-              <div className='flex items-center gap-2.5 mb-2'>
-                <div className='w-8 h-8 rounded-lg bg-crimson-50 flex items-center justify-center'>
-                  <UserPlus className="w-4 h-4 text-crimson-600" />
+          {/* ─── Stepper ─── */}
+          <div className="flex items-center justify-center mb-6">
+            {STEPS.map((step, index) => (
+              <div key={step.number} className="flex items-center">
+                <div className="flex flex-col items-center">
+                  <div
+                    className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold border-2 transition-all duration-300
+                      ${currentStep > step.number
+                        ? 'bg-crimson-600 border-crimson-600 text-white'
+                        : currentStep === step.number
+                          ? 'border-crimson-600 text-crimson-600 bg-white'
+                          : 'border-gray-300 text-gray-400 bg-white'}`}
+                  >
+                    {currentStep > step.number ? <Check className="w-4 h-4" /> : step.number}
+                  </div>
+                  <span
+                    className={`text-xs mt-2 font-medium whitespace-nowrap transition-colors
+                      ${currentStep >= step.number ? 'text-crimson-600' : 'text-gray-400'}`}
+                  >
+                    {step.label}
+                  </span>
                 </div>
-                <h2 className='text-base font-semibold text-gray-800'>Student Information</h2>
+                {index < STEPS.length - 1 && (
+                  <div
+                    className={`w-16 md:w-28 h-0.5 mx-3 mb-5 transition-all duration-300
+                      ${currentStep > step.number ? 'bg-crimson-600' : 'bg-gray-200'}`}
+                  />
+                )}
               </div>
-              <p className='text-xs text-gray-400 mb-5 ml-[42px]'>Enter the student ID (11 digits) to auto-fill existing records</p>
+            ))}
+          </div>
 
-              <div className='flex flex-wrap gap-x-[5%] gap-y-0'>
-                <div className='formInfo'>
-                  <input type="text" name="studentId" placeholder=" " id='studentID' value={patientInput.studentId} onChange={handleSetPatientInput} />
-                  <label htmlFor="studentID" className='text-[.8rem]'>Student ID</label>
-                </div>
-                
-                <div className='formInfo'>
-                  <input type="text" name="firstName" placeholder=" " id='firstName' value={patientInput.firstName} onChange={handleSetPatientInput} />
-                  <label htmlFor="firstName" className='text-[.8rem]'>First name</label>
-                </div>
-
-                <div className='formInfo'>
-                  <input type="text" name="lastName" placeholder=" " id='lastName' value={patientInput.lastName} onChange={handleSetPatientInput} />
-                  <label htmlFor="lastName" className='text-[.8rem]'>Last name</label>
-                </div>
-
-                <div className='formInfo'>
-                  <input type="tel" inputMode="numeric" name="contactNumber" placeholder=" " id='contactNum' value={patientInput.contactNumber} onChange={handleSetPatientInput} />
-                  <label htmlFor="contactNum" className='text-[.8rem]'>Contact Number</label>
-                </div>
-
-                <div className='formInfo'>
-                  <select id="year" name="yearLevel" value={patientInput.yearLevel} onChange={handleSetPatientInput} className='w-full p-2 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'>
-                    <option value="" disabled>Select Year</option>
-                    <option value="1">1st year</option>
-                    <option value="2">2nd year</option>
-                    <option value="3">3rd year</option>
-                    <option value="4">4th year</option>
-                  </select>
-                </div>
-
-                <div className='formInfo'>
-                  <select id="department" name="department" value={patientInput.department} onChange={handleSetPatientInput} className='w-full p-2 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'>
-                    <option value="" disabled>Select Department</option>
-                    <option value="College of Science">College of Science</option>
-                    <option value="College of Engineering">College of Engineering</option>
-                    <option value="College of Industrial Technology">College of Industrial Technology</option>
-                    <option value="College of Architecture and Fine Arts">College of Architecture and Fine Arts</option>
-                    <option value="College of Industrial Education">College of Industrial Education</option>
-                    <option value="College of Liberal Arts">College of Liberal Arts</option>
-                  </select>
-                </div>
-                
-                <div className='formInfo'>
-                  <select id="sex" name="sex" value={patientInput.sex} onChange={handleSetPatientInput} className='w-full p-2 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'>
-                    <option value="" disabled>Sex</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                  </select>
-                </div>
-                
-                <div className='formInfo'>
-                  <input type="text" name="email" placeholder=" " id='email' value={patientInput.email} onChange={handleSetPatientInput} />
-                  <label htmlFor="email" className='text-[.8rem]'>Email</label>
-                </div>
-
-                <div className='formInfo'>
-                  <input type="text" name='address' placeholder=' ' id='address' value={patientInput.address} onChange={handleSetPatientInput} />
-                  <label htmlFor="address" className='text-[.8rem]'>Address</label>
-                </div>
-
-                <div className='formInfo'>
-                  <input type="date" name='dateOfBirth' placeholder='' id='dateOfBirth' value={patientInput.dateOfBirth} onChange={handleSetPatientInput} />
-                  <label htmlFor="dateOfBirth" className='text-[.8rem]'>Date of Birth</label>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* ─── Medical Information Card ─── */}
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.35 }}
-              className='bg-white rounded-xl shadow-sm ring-1 ring-gray-100 p-6'
-            >
-              <div className='flex items-center gap-2.5 mb-2'>
-                <div className='w-8 h-8 rounded-lg bg-crimson-50 flex items-center justify-center'>
-                  <ClipboardList className="w-4 h-4 text-crimson-600" />
-                </div>
-                <h2 className='text-base font-semibold text-gray-800'>Medical Information</h2>
-              </div>
-              <p className='text-xs text-gray-400 mb-5 ml-[42px]'>Diagnosis, medication, and treatment details</p>
-
-              <div className='flex flex-col lg:flex-row gap-6'>
-                {/* Left Column — Dropdowns & Quantity */}
-                <div className='w-full lg:w-1/2 flex flex-col gap-0'>
-                  <div className='formDiagnosis'>
-                    <div className='flex flex-col gap-2'>
-                      <div className='flex items-center gap-2'>
-                        <select 
-                          id="diseaseId" name="diseaseId" 
-                          value={patientInput.diseaseId} onChange={handleSetPatientInput} 
-                          className='flex-1 p-2 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'
-                        >
-                          <option value="">Select Diagnosis</option>
-                          {diseases && diseases.length > 0 ? (
-                            diseases.map((disease) => (
-                              <option key={disease.id} value={disease.id}>{disease.name}</option>
-                            ))
-                          ) : null}
-                        </select>
-                        <button
-                          type="button"
-                          onClick={() => setShowAddDisease(!showAddDisease)}
-                          className={`shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-sm transition-all ${
-                            showAddDisease 
-                              ? 'bg-gray-100 text-gray-600 ring-1 ring-gray-200' 
-                              : 'bg-crimson-600 text-white hover:bg-crimson-700 shadow-sm'
-                          }`}
-                          title={showAddDisease ? 'Cancel' : 'Add new disease'}
-                        >
-                          {showAddDisease ? <X className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
-                        </button>
-                      </div>
-                      {showAddDisease && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
-                          transition={{ duration: 0.2 }}
-                          className='flex items-center gap-2'
-                        >
-                          <input
-                            type="text"
-                            value={newDiseaseName}
-                            onChange={(e) => setNewDiseaseName(e.target.value)}
-                            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddDisease(); } }}
-                            placeholder="Enter disease name..."
-                            className='flex-1 p-2 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'
-                            autoFocus
+          {/* ─── Form Card ─── */}
+          <div className='flex-1 min-h-0 flex flex-col'>
+            <div className="bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 p-6 md:p-8 flex-1 min-h-0 flex flex-col">
+              <form onSubmit={handleFormSubmit} className='flex-1 flex flex-col'>
+                <AnimatePresence mode="wait">
+                  {/* ══ Step 1: Personal Information ══ */}
+                  {currentStep === 1 && (
+                    <motion.div
+                      key="step1"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.25 }}
+                      className='flex-1 flex flex-col'
+                    >
+                      <p className='text-xs text-gray-400 mb-4'>Enter the patient ID to auto-fill existing records</p>
+                      <div className='grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4'>
+                        <div className='space-y-1.5'>
+                          <label htmlFor="studentID" className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Patient ID</label>
+                          <input type="text" name="studentId" placeholder="Enter patient ID" id='studentID' value={patientInput.studentId} onChange={handleSetPatientInput} onBlur={handleStudentIdBlur}
+                            className='w-full py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all' />
+                        </div>
+                        <div className='space-y-1.5'>
+                          <label htmlFor="firstName" className='text-xs font-medium text-gray-500 uppercase tracking-wider'>First Name</label>
+                          <input type="text" name="firstName" placeholder="Enter first name" id='firstName' value={patientInput.firstName} onChange={handleSetPatientInput}
+                            className='w-full py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all' />
+                        </div>
+                        <div className='space-y-1.5'>
+                          <label htmlFor="lastName" className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Last Name</label>
+                          <input type="text" name="lastName" placeholder="Enter last name" id='lastName' value={patientInput.lastName} onChange={handleSetPatientInput}
+                            className='w-full py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all' />
+                        </div>
+                        <div className='space-y-1.5'>
+                          <label htmlFor="contactNum" className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Contact Number</label>
+                          <input type="tel" inputMode="numeric" name="contactNumber" placeholder="Enter contact number" id='contactNum' value={patientInput.contactNumber} onChange={handleSetPatientInput}
+                            className='w-full py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all' />
+                        </div>
+                        <div className='space-y-1.5'>
+                          <Dropdown
+                            name="yearLevel"
+                            label="Year Level"
+                            placeholder="Select Year"
+                            options={[
+                              { label: '1st year', value: '1' },
+                              { label: '2nd year', value: '2' },
+                              { label: '3rd year', value: '3' },
+                              { label: '4th year', value: '4' },
+                            ]}
+                            value={patientInput.yearLevel}
+                            onChange={handleSetPatientInput}
                           />
+                        </div>
+                        <div className='space-y-1.5'>
+                          <Dropdown
+                            name="department"
+                            label="Department"
+                            placeholder="Select Department"
+                            options={[
+                              { label: 'College of Science', value: 'College of Science' },
+                              { label: 'College of Engineering', value: 'College of Engineering' },
+                              { label: 'College of Industrial Technology', value: 'College of Industrial Technology' },
+                              { label: 'College of Architecture and Fine Arts', value: 'College of Architecture and Fine Arts' },
+                              { label: 'College of Industrial Education', value: 'College of Industrial Education' },
+                              { label: 'College of Liberal Arts', value: 'College of Liberal Arts' },
+                            ]}
+                            value={patientInput.department}
+                            onChange={handleSetPatientInput}
+                          />
+                        </div>
+                        <div className='space-y-1.5'>
+                          <Dropdown
+                            name="sex"
+                            label="Sex"
+                            placeholder="Select Sex"
+                            options={[
+                              { label: 'Male', value: 'Male' },
+                              { label: 'Female', value: 'Female' },
+                            ]}
+                            value={patientInput.sex}
+                            onChange={handleSetPatientInput}
+                          />
+                        </div>
+                        <div className='space-y-1.5'>
+                          <label htmlFor="email" className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Email</label>
+                          <input type="text" name="email" placeholder="Enter email address" id='email' value={patientInput.email} onChange={handleSetPatientInput}
+                            className='w-full py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all' />
+                        </div>
+                        <div className='space-y-1.5'>
+                          <label htmlFor="address" className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Address</label>
+                          <input type="text" name='address' placeholder='Enter address' id='address' value={patientInput.address} onChange={handleSetPatientInput}
+                            className='w-full py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all' />
+                        </div>
+                        <div className='space-y-1.5'>
+                          <label htmlFor="dateOfBirth" className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Date of Birth</label>
+                          <input type="date" name='dateOfBirth' id='dateOfBirth' value={patientInput.dateOfBirth} onChange={handleSetPatientInput}
+                            className='w-full py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all' />
+                        </div>
+                      </div>
+
+                      {/* Step 1 Navigation */}
+                      <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
+                        <motion.button
+                          whileTap={{ scale: 0.97 }}
+                          type="button"
+                          onClick={handleClearForm}
+                          className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer"
+                        >
+                          Clear
+                        </motion.button>
+                        <motion.button
+                          whileTap={{ scale: 0.97 }}
+                          type="button"
+                          onClick={handleNext}
+                          className="inline-flex items-center gap-2 px-8 py-2.5 rounded-xl bg-crimson-600 text-white text-sm font-medium tracking-wider hover:bg-crimson-700 transition-colors shadow-sm cursor-pointer"
+                        >
+                          Next
+                        </motion.button>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* ══ Step 2: Diagnosis & Treatment ══ */}
+                  {currentStep === 2 && (
+                    <motion.div
+                      key="step2"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.25 }}
+                      className='flex-1 flex flex-col gap-5'
+                    >
+                      <div>
+                        <div className='flex items-end gap-2'>
+                          <div className='flex-1'>
+                            <Dropdown
+                              name="diseaseId"
+                              label="Diagnosis"
+                              placeholder="Select Diagnosis"
+                              options={diseases && diseases.length > 0 ? diseases.map((d) => ({ label: d.name, value: String(d.id) })) : []}
+                              value={patientInput.diseaseId}
+                              onChange={handleSetPatientInput}
+                            />
+                          </div>
                           <button
                             type="button"
-                            onClick={handleAddDisease}
-                            disabled={!newDiseaseName.trim() || isAddingDisease}
-                            className='shrink-0 px-3 py-2 rounded-xl bg-crimson-600 text-white text-sm font-medium hover:bg-crimson-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm'
+                            onClick={() => setShowAddDisease(!showAddDisease)}
+                            className={`shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-sm transition-all ${showAddDisease
+                              ? 'bg-gray-100 text-gray-600 ring-1 ring-gray-200'
+                              : 'bg-crimson-600 text-white hover:bg-crimson-700 shadow-sm'
+                              }`}
+                            title={showAddDisease ? 'Cancel' : 'Add new disease'}
                           >
-                            {isAddingDisease ? 'Adding...' : 'Add'}
+                            {showAddDisease ? <X className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
                           </button>
-                        </motion.div>
-                      )}
-                    </div>
-                  </div>
+                        </div>
+                        {showAddDisease && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            transition={{ duration: 0.2 }}
+                            className='flex items-center gap-2 mt-2'
+                          >
+                            <input
+                              type="text"
+                              value={newDiseaseName}
+                              onChange={(e) => setNewDiseaseName(e.target.value)}
+                              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddDisease(); } }}
+                              placeholder="Enter disease name..."
+                              className='flex-1 py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'
+                              autoFocus
+                            />
+                            <button
+                              type="button"
+                              onClick={handleAddDisease}
+                              disabled={!newDiseaseName.trim() || isAddingDisease}
+                              className='shrink-0 px-3 py-2 rounded-xl bg-crimson-600 text-white text-sm font-medium hover:bg-crimson-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm'
+                            >
+                              {isAddingDisease ? 'Adding...' : 'Add'}
+                            </button>
+                          </motion.div>
+                        )}
+                      </div>
 
-                  <div className='formDiagnosis'>
-                    <select 
-                      id="medication" name="medication" 
-                      value={patientInput.medication?.id || ""} onChange={handleSetPatientInput} 
-                      className='w-full p-2 rounded-xl border border-gray-200 outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'
-                    >
-                      <option value="">Medication</option>
-                      {medicines?.map((medicine) => (
-                        <option key={medicine.id} value={medicine.id}>
-                          {`${medicine.medicine_name}, ${medicine.generic_name} - ${medicine.stock_level} in stock`}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                      <div className='flex-1 flex flex-col'>
+                        <label className='text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5'>
+                          <FileText className="w-3 h-3 text-gray-400" />
+                          Treatment
+                        </label>
+                        <textarea
+                          name='treatment'
+                          value={patientInput.treatment}
+                          onChange={handleSetPatientInput}
+                          className='w-full flex-1 min-h-[120px] p-3 resize-none outline-none rounded-xl border border-gray-200 text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all placeholder:text-gray-400'
+                          placeholder='Describe the treatment plan...'
+                        />
+                      </div>
 
-                  <div className='formDiagnosis'>
-                    <input type="number" name="quantity" placeholder=" " id='quantity' value={patientInput.quantity} onChange={handleSetPatientInput} />
-                    <label htmlFor="quantity" className='text-[.8rem]'>Quantity</label>
-                  </div>
-                </div>
-                
-                {/* Right Column — Textareas */}
-                <div className='w-full lg:w-1/2 flex flex-col gap-4'>
-                  <div>
-                    <label className='text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5'>
-                      <FileText className="w-3 h-3 text-gray-400" />
-                      Treatment
-                    </label>
-                    <textarea
-                      name='treatment'
-                      value={patientInput.treatment}
-                      onChange={handleSetPatientInput}
-                      className='w-full h-28 p-3 resize-none outline-none rounded-xl border border-gray-200 text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all placeholder:text-gray-400'
-                      placeholder='Describe the treatment plan...'
-                    />
-                  </div>
-
-                  <div>
-                    <label className='text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5'>
-                      <StickyNote className="w-3 h-3 text-gray-400" />
-                      Additional Notes
-                    </label>
-                    <textarea
-                      name='notes'
-                      value={patientInput.notes}
-                      onChange={handleSetPatientInput}
-                      className='w-full h-28 p-3 resize-none outline-none rounded-xl border border-gray-200 text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all placeholder:text-gray-400'
-                      placeholder='Any additional observations or notes...'
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Submit Button */}
-              <div className='flex justify-end mt-6 pt-4 border-t border-gray-100'>
-                <button 
-                  disabled={isSubmitting} 
-                  className='text-white px-6 py-2.5 rounded-xl bg-crimson-600 hover:bg-crimson-700 transition-colors text-sm font-medium inline-flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed shadow-sm'
-                >
-                  {isSubmitting ? <><ButtonLoader /> Submitting...</> : (
-                    patientInput && patientInput.diagnosis && patientInput.diagnosis.length > 0
-                      ? "Insert Record"
-                      : "Send for Diagnosis"
+                      {/* Step 2 Navigation */}
+                      <div className="flex items-center justify-between mt-2 pt-4 border-t border-gray-100">
+                        <motion.button
+                          whileTap={{ scale: 0.97 }}
+                          type="button"
+                          onClick={handleBack}
+                          className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer"
+                        >
+                          Back
+                        </motion.button>
+                        <motion.button
+                          whileTap={{ scale: 0.97 }}
+                          type="button"
+                          onClick={handleNext}
+                          className="inline-flex items-center gap-2 px-8 py-2.5 rounded-xl bg-crimson-600 text-white text-sm font-medium tracking-wider hover:bg-crimson-700 transition-colors shadow-sm cursor-pointer"
+                        >
+                          Next
+                        </motion.button>
+                      </div>
+                    </motion.div>
                   )}
-                </button>
-              </div>
-            </motion.div>
-          </form>
+
+                  {/* ══ Step 3: Medication, Quantity & Additional Notes ══ */}
+                  {currentStep === 3 && (
+                    <motion.div
+                      key="step3"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.25 }}
+                      className='flex-1 flex flex-col gap-5'
+                    >
+                      <div className='grid grid-cols-1 md:grid-cols-2 gap-5'>
+                        <Dropdown
+                          name="medication"
+                          label="Medication"
+                          placeholder="Select Medication"
+                          options={medicines?.map((m) => ({ label: `${m.medicine_name}, ${m.generic_name} - ${m.stock_level} in stock`, value: String(m.id) })) || []}
+                          value={String(patientInput.medication?.id || "")}
+                          onChange={handleSetPatientInput}
+                        />
+                        <div className='space-y-1.5'>
+                          <label htmlFor="quantity" className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Quantity</label>
+                          <input type="number" name="quantity" placeholder="Enter quantity" id='quantity' value={patientInput.quantity} onChange={handleSetPatientInput}
+                            className='w-full py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all' />
+                        </div>
+                      </div>
+
+                      <div className='flex-1 flex flex-col'>
+                        <label className='text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5'>
+                          <StickyNote className="w-3 h-3 text-gray-400" />
+                          Additional Notes
+                        </label>
+                        <textarea
+                          name='notes'
+                          value={patientInput.notes}
+                          onChange={handleSetPatientInput}
+                          className='w-full flex-1 min-h-[120px] p-3 resize-none outline-none rounded-xl border border-gray-200 text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all placeholder:text-gray-400'
+                          placeholder='Any additional observations or notes...'
+                        />
+                      </div>
+
+                      {/* Step 3 Navigation */}
+                      <div className="flex items-center justify-between mt-2 pt-4 border-t border-gray-100">
+                        <motion.button
+                          whileTap={{ scale: 0.97 }}
+                          type="button"
+                          onClick={handleBack}
+                          className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer"
+                        >
+                          Back
+                        </motion.button>
+                        <motion.button
+                          whileTap={{ scale: 0.97 }}
+                          type="submit"
+                          disabled={isSubmitting}
+                          className="inline-flex items-center gap-2 px-8 py-2.5 rounded-xl bg-crimson-600 text-white text-sm font-medium tracking-wider hover:bg-crimson-700 transition-colors shadow-sm cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                        >
+                          {isSubmitting ? <><ButtonLoader /> Submitting...</> : (
+                            patientInput && patientInput.diagnosis && patientInput.diagnosis.length > 0
+                              ? "Insert Record"
+                              : "Send for Diagnosis"
+                          )}
+                        </motion.button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </form>
+            </div>
+          </div>
         </motion.div>
-        )}
-      </div>
+      )
+      }
+    </div >
   )
 }
 

@@ -104,50 +104,50 @@ const PatientRecord = () => {
   };
 
   return (
-      <div className='flex flex-col gap-4 h-full'>
-        {initialLoading || isLoadingRecords ? (
-          <div className='w-full h-full flex flex-col gap-5 animate-pulse'>
-            {/* Skeleton Header */}
-            <div className='flex items-center justify-between'>
-              <div className='flex items-center gap-4'>
-                <div className='w-12 h-12 rounded-xl bg-gray-200' />
-                <div>
-                  <div className='h-6 w-44 bg-gray-200 rounded-lg' />
-                  <div className='h-4 w-24 bg-gray-100 rounded-lg mt-2' />
-                </div>
+    <div className='flex flex-col gap-4 h-full'>
+      {initialLoading || isLoadingRecords ? (
+        <div className='w-full h-full flex flex-col gap-5 animate-pulse'>
+          {/* Skeleton Header */}
+          <div className='flex items-center justify-between'>
+            <div className='flex items-center gap-4'>
+              <div className='w-12 h-12 rounded-xl bg-gray-200' />
+              <div>
+                <div className='h-6 w-44 bg-gray-200 rounded-lg' />
+                <div className='h-4 w-24 bg-gray-100 rounded-lg mt-2' />
               </div>
-            </div>
-            {/* Skeleton Filters */}
-            <div className='flex items-center justify-between'>
-              <div className='flex items-center gap-2'>
-                <div className='h-10 w-36 bg-gray-200 rounded-full' />
-                <div className='h-10 w-28 bg-gray-200 rounded-full' />
-              </div>
-              <div className='h-10 w-56 bg-gray-200 rounded-full' />
-            </div>
-            {/* Skeleton Table */}
-            <div className='bg-white rounded-xl ring-1 ring-gray-100 flex-1 flex flex-col overflow-hidden'>
-              <div className='px-5 py-3 flex gap-4 border-b border-gray-100'>
-                {[80, 120, 140, 80, 100, 70].map((w, i) => (
-                  <div key={i} className='h-4 bg-gray-200 rounded' style={{ width: w }} />
-                ))}
-              </div>
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className='px-5 py-4 flex items-center gap-4 border-b border-gray-50'>
-                  <div className='h-4 w-20 bg-gray-100 rounded' />
-                  <div className='flex items-center gap-3'>
-                    <div className='w-8 h-8 rounded-full bg-gray-200' />
-                    <div className='h-4 w-28 bg-gray-100 rounded' />
-                  </div>
-                  <div className='h-4 w-32 bg-gray-100 rounded hidden lg:block' />
-                  <div className='h-4 w-20 bg-gray-100 rounded hidden md:block' />
-                  <div className='h-4 w-24 bg-gray-100 rounded hidden sm:block' />
-                  <div className='h-6 w-16 bg-gray-100 rounded-full' />
-                </div>
-              ))}
             </div>
           </div>
-        ) : (
+          {/* Skeleton Filters */}
+          <div className='flex items-center justify-between'>
+            <div className='flex items-center gap-2'>
+              <div className='h-10 w-36 bg-gray-200 rounded-full' />
+              <div className='h-10 w-28 bg-gray-200 rounded-full' />
+            </div>
+            <div className='h-10 w-56 bg-gray-200 rounded-full' />
+          </div>
+          {/* Skeleton Table */}
+          <div className='bg-white rounded-xl ring-1 ring-gray-100 flex-1 flex flex-col overflow-hidden'>
+            <div className='px-5 py-3 flex gap-4 border-b border-gray-100'>
+              {[80, 120, 140, 80, 100, 70].map((w, i) => (
+                <div key={i} className='h-4 bg-gray-200 rounded' style={{ width: w }} />
+              ))}
+            </div>
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className='px-5 py-4 flex items-center gap-4 border-b border-gray-50'>
+                <div className='h-4 w-20 bg-gray-100 rounded' />
+                <div className='flex items-center gap-3'>
+                  <div className='w-8 h-8 rounded-full bg-gray-200' />
+                  <div className='h-4 w-28 bg-gray-100 rounded' />
+                </div>
+                <div className='h-4 w-32 bg-gray-100 rounded hidden lg:block' />
+                <div className='h-4 w-20 bg-gray-100 rounded hidden md:block' />
+                <div className='h-4 w-24 bg-gray-100 rounded hidden sm:block' />
+                <div className='h-6 w-16 bg-gray-100 rounded-full' />
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -274,7 +274,7 @@ const PatientRecord = () => {
                 <table className='w-full'>
                   <thead className='sticky top-0 bg-gray-50/95 backdrop-blur-sm'>
                     <tr>
-                      <th className='text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3'>Student ID</th>
+                      <th className='text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3'>Patient ID</th>
                       <th className='text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3'>Name</th>
                       <th className='text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3 hidden lg:table-cell'>Department</th>
                       <th className='text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell'>Date</th>
@@ -399,8 +399,8 @@ const PatientRecord = () => {
             )}
           </motion.div>
         </motion.div>
-        )}
-      </div>
+      )}
+    </div>
   )
 }
 

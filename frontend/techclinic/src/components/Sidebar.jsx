@@ -396,9 +396,8 @@ export default function Sidebar() {
                                 animate={{ opacity: 1, y: 0, scale: 1 }}
                                 exit={{ opacity: 0, y: 8, scale: 0.95 }}
                                 transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                                className={`absolute bottom-full mb-2 bg-white rounded-xl shadow-lg ring-1 ring-gray-200/80 py-1 z-50 ${
-                                    collapsed ? 'left-2 w-48' : 'left-2 right-2'
-                                }`}
+                                className={`absolute bottom-full mb-2 bg-white rounded-xl shadow-lg ring-1 ring-gray-200/80 py-1 z-50 ${collapsed ? 'left-2 w-48' : 'left-2 right-2'
+                                    }`}
                             >
                                 {/* User info in popover */}
                                 <div className="px-3 py-2.5 border-b border-gray-100">
@@ -473,7 +472,6 @@ export default function Sidebar() {
                 </div>
             </nav>
 
-            {/* Notification Modal */}
             <NotificationModal isOpen={showNotifications} onClose={() => setShowNotifications(false)} />
         </>
     )

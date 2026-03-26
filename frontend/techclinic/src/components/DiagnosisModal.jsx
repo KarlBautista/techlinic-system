@@ -4,12 +4,12 @@ import supabase from '../config/supabaseClient'
 import useAuth from '../store/useAuthStore'
 import tupLogo from '../assets/image/TUP.png'
 
-const SERVICE_ID   = import.meta.env.VITE_EMAILJS_SERVICE_ID
-const PUBLIC_KEY   = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
-const PRESC_TMPL   = import.meta.env.VITE_EMAILJS_PRESCRIPTION_TEMPLATE_ID
-const CERT_TMPL    = import.meta.env.VITE_EMAILJS_CERTIFICATE_TEMPLATE_ID
+const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID
+const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+const PRESC_TMPL = import.meta.env.VITE_EMAILJS_PRESCRIPTION_TEMPLATE_ID
+const CERT_TMPL = import.meta.env.VITE_EMAILJS_CERTIFICATE_TEMPLATE_ID
 
-const DiagnosisModal = ({ open = false, onClose = () => {}, patient = {}, record = {}, diagnoses = [] }) => {
+const DiagnosisModal = ({ open = false, onClose = () => { }, patient = {}, record = {}, diagnoses = [] }) => {
   const { userProfile } = useAuth();
   const [activeTab, setActiveTab] = useState('record');
   const [isVisible, setIsVisible] = useState(false);
@@ -127,22 +127,22 @@ const DiagnosisModal = ({ open = false, onClose = () => {}, patient = {}, record
       ? `${effectivePhysician.first_name ?? ''} ${effectivePhysician.last_name ?? ''}`.trim()
       : record?.attending_physician ?? '';
     const templateParams = {
-      to_email:          emailTo.trim(),
-      to_name:           `${patient?.first_name ?? ''} ${patient?.last_name ?? ''}`.trim(),
-      patient_id:        patient?.student_id ?? patient?.id ?? '—',
-      date:              visitDate,
-      physician_name:    physicianName,
-      physician_role:    effectivePhysician?.role === 'DOCTOR' ? 'Attending Physician' : 'Attending Personnel',
+      to_email: emailTo.trim(),
+      to_name: `${patient?.first_name ?? ''} ${patient?.last_name ?? ''}`.trim(),
+      patient_id: patient?.student_id ?? patient?.id ?? '—',
+      date: visitDate,
+      physician_name: physicianName,
+      physician_role: effectivePhysician?.role === 'DOCTOR' ? 'Attending Physician' : 'Attending Personnel',
       physician_signature: effectivePhysician?.signature_url ?? '',
       ...(activeTab === 'prescription' ? {
         medication: primaryDiagnosis?.medication ?? '—',
-        dosage:     primaryDiagnosis?.dosage ?? '—',
-        quantity:   primaryDiagnosis?.quantity ?? '—',
-        notes:      primaryDiagnosis?.notes ?? primaryDiagnosis?.additional_notes ?? '—',
+        dosage: primaryDiagnosis?.dosage ?? '—',
+        quantity: primaryDiagnosis?.quantity ?? '—',
+        notes: primaryDiagnosis?.notes ?? primaryDiagnosis?.additional_notes ?? '—',
       } : {}),
     };
 
-    console.log('[EmailJS] Sending with params:', { SERVICE_ID, templateId, PUBLIC_KEY: PUBLIC_KEY?.slice(0,6)+'...', templateParams });
+    console.log('[EmailJS] Sending with params:', { SERVICE_ID, templateId, PUBLIC_KEY: PUBLIC_KEY?.slice(0, 6) + '...', templateParams });
 
     try {
       await emailjs.send(SERVICE_ID, templateId, templateParams, PUBLIC_KEY);
@@ -223,11 +223,10 @@ const DiagnosisModal = ({ open = false, onClose = () => {}, patient = {}, record
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
-                activeTab === tab.key
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
+              className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.key
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
             >
               <i className={tab.icon}></i>
               <span>{tab.label}</span>
@@ -333,80 +332,141 @@ const DiagnosisModal = ({ open = false, onClose = () => {}, patient = {}, record
 
 /* ────────────────────────── Record Details Tab ────────────────────────── */
 const RecordTab = ({ patient, record, diagnoses, visitDate }) => {
+  const primaryDiag = diagnoses[0] || {};
+
   return (
-    <div className="space-y-6">
-      {/* Patient Summary */}
-      <div className="bg-gray-50 rounded-lg p-4">
-        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Patient</h4>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-          <div>
-            <span className="text-gray-400">Name:</span>{' '}
-            <span className="font-medium text-gray-800">{patient?.first_name ?? ''} {patient?.last_name ?? ''}</span>
+    <div className="flex flex-col lg:flex-row gap-5">
+      {/* ═══ Left Column ═══ */}
+      <div className="w-full lg:w-[60%] flex flex-col gap-5">
+        {/* ─── Student Information ─── */}
+        <div className="bg-white rounded-xl ring-1 ring-gray-100 shadow-sm p-5">
+          <div className="flex items-center gap-2.5 mb-4">
+            <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
+              <i className="fa-solid fa-user text-blue-600 text-sm"></i>
+            </div>
+            <h4 className="text-sm font-semibold text-gray-800">Student Information</h4>
           </div>
-          <div>
-            <span className="text-gray-400">Student ID:</span>{' '}
-            <span className="font-medium text-gray-800">{patient?.student_id ?? record?.student_id ?? '—'}</span>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
+            <div>
+              <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Name</span>
+              <p className="font-medium text-gray-800 mt-0.5">{patient?.first_name ?? ''} {patient?.last_name ?? ''}</p>
+            </div>
+            <div>
+              <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Patient ID</span>
+              <p className="font-medium text-gray-800 mt-0.5">{patient?.student_id ?? record?.student_id ?? '—'}</p>
+            </div>
           </div>
-          <div>
-            <span className="text-gray-400">Department:</span>{' '}
-            <span className="font-medium text-gray-800">{patient?.department ?? record?.department ?? '—'}</span>
+          <div className="h-px bg-gray-100 my-3" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
+            <div>
+              <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Department</span>
+              <p className="font-medium text-gray-800 mt-0.5">{patient?.department ?? record?.department ?? '—'}</p>
+            </div>
+            <div>
+              <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Year Level</span>
+              <p className="font-medium text-gray-800 mt-0.5">{patient?.year_level ?? record?.year_level ?? '—'}</p>
+            </div>
           </div>
-          <div>
-            <span className="text-gray-400">Year Level:</span>{' '}
-            <span className="font-medium text-gray-800">{patient?.year_level ?? record?.year_level ?? '—'}</span>
+          <div className="h-px bg-gray-100 my-3" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
+            <div>
+              <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Sex</span>
+              <p className="font-medium text-gray-800 mt-0.5">{patient?.sex ?? '—'}</p>
+            </div>
+            <div>
+              <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Contact</span>
+              <p className="font-medium text-gray-800 mt-0.5">{patient?.contact_number ?? '—'}</p>
+            </div>
           </div>
-          <div>
-            <span className="text-gray-400">Date of Visit:</span>{' '}
-            <span className="font-medium text-gray-800">{visitDate}</span>
+          <div className="h-px bg-gray-100 my-3" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
+            <div>
+              <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Date of Visit</span>
+              <p className="font-medium text-gray-800 mt-0.5">{visitDate}</p>
+            </div>
+            <div>
+              <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Status</span>
+              <div className="mt-0.5">
+                <span className={`inline-block px-2.5 py-0.5 rounded-lg text-xs font-semibold ${record?.status === 'COMPLETE' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                  }`}>
+                  {record?.status ?? '—'}
+                </span>
+              </div>
+            </div>
           </div>
-          <div>
-            <span className="text-gray-400">Status:</span>{' '}
-            <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
-              record?.status === 'COMPLETE' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
-            }`}>
-              {record?.status ?? '—'}
-            </span>
+        </div>
+
+        {/* ─── Medical Details ─── */}
+        <div className="bg-white rounded-xl ring-1 ring-gray-100 shadow-sm p-5">
+          <div className="flex items-center gap-2.5 mb-4">
+            <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center">
+              <i className="fa-solid fa-stethoscope text-red-600 text-sm"></i>
+            </div>
+            <h4 className="text-sm font-semibold text-gray-800">Medical Details</h4>
           </div>
+
+          {diagnoses.length > 0 ? (
+            <div className="space-y-3">
+              {diagnoses.map((d, idx) => (
+                <div key={d?.id ?? idx} className={`text-sm ${idx > 0 ? 'pt-3 border-t border-gray-100' : ''}`}>
+                  <div className="flex items-start justify-between mb-2">
+                    <span className="font-semibold text-gray-800">{d?.diagnosis || 'Untitled Diagnosis'}</span>
+                    <span className="text-xs text-gray-400">
+                      {d?.created_at ? new Date(d.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : ''}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
+                    <div>
+                      <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Medication</span>
+                      <p className="font-medium text-gray-800 mt-0.5">{d?.medication ?? '—'}</p>
+                    </div>
+                    <div>
+                      <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Quantity</span>
+                      <p className="font-medium text-gray-800 mt-0.5">{d?.quantity ?? '—'}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-400 text-sm">No diagnoses recorded for this visit.</p>
+          )}
         </div>
       </div>
 
-      {/* Diagnoses */}
-      <div>
-        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-          Diagnosis / Diagnoses ({diagnoses.length})
-        </h4>
-        <div className="space-y-3">
-          {diagnoses.map((d, idx) => (
-            <div key={d?.id ?? idx} className="border rounded-lg p-4">
-              <div className="flex items-start justify-between mb-3">
-                <h5 className="font-semibold text-gray-800">{d?.diagnosis || 'Untitled Diagnosis'}</h5>
-                <span className="text-xs text-gray-400">
-                  {d?.created_at ? new Date(d.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : ''}
-                </span>
-              </div>
-              <dl className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                <div>
-                  <dt className="text-gray-400">Treatment</dt>
-                  <dd className="text-gray-800 font-medium">{d?.treatment ?? '—'}</dd>
-                </div>
-                <div>
-                  <dt className="text-gray-400">Medication</dt>
-                  <dd className="text-gray-800 font-medium">{d?.medication ?? '—'}</dd>
-                </div>
-                <div>
-                  <dt className="text-gray-400">Quantity</dt>
-                  <dd className="text-gray-800 font-medium">{d?.quantity ?? '—'}</dd>
-                </div>
-                <div className="sm:col-span-2">
-                  <dt className="text-gray-400">Notes</dt>
-                  <dd className="text-gray-800 font-medium">{d?.notes ?? '—'}</dd>
-                </div>
-              </dl>
+      {/* ═══ Right Column — Treatment & Notes ═══ */}
+      <div className="w-full lg:w-[40%] bg-white rounded-xl ring-1 ring-gray-100 shadow-sm p-5 flex flex-col">
+        <div className="flex items-center gap-2.5 mb-4">
+          <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
+            <i className="fa-solid fa-file-medical text-emerald-600 text-sm"></i>
+          </div>
+          <h4 className="text-sm font-semibold text-gray-800">Treatment & Notes</h4>
+        </div>
+
+        <div className="flex flex-col gap-4 flex-1 text-sm">
+          <div>
+            <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Attending Physician</span>
+            <p className="font-medium text-gray-800 mt-0.5">{record?.attending_physician ?? '—'}</p>
+          </div>
+
+          <div className="h-px bg-gray-100" />
+
+          <div className="flex-1">
+            <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Treatment</span>
+            <div className="mt-1.5 bg-gray-50 rounded-xl border border-gray-100 p-3 min-h-[80px]">
+              <p className="text-gray-800 whitespace-pre-wrap">{primaryDiag?.treatment ?? '—'}</p>
             </div>
-          ))}
-          {diagnoses.length === 0 && (
-            <p className="text-gray-400 text-sm">No diagnoses recorded for this visit.</p>
-          )}
+          </div>
+
+          <div className="h-px bg-gray-100" />
+
+          <div className="flex-1">
+            <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Additional Notes</span>
+            <div className="mt-1.5 bg-gray-50 rounded-xl border border-gray-100 p-3 min-h-[80px]">
+              <p className="text-gray-800 whitespace-pre-wrap">{primaryDiag?.notes ?? '—'}</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
