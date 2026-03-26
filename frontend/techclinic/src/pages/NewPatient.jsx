@@ -59,6 +59,7 @@ const NewPatient = () => {
     notes: "",
     attendingPhysician: userProfile ? `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim() : authenticatedUser?.user_metadata?.full_name,
     attendingPhysicianId: authenticatedUser?.id || null,
+    physicianSignatureUrl: userProfile?.signature_url || null,
   });
 
   // Pre-fill patient data from navigation state (e.g., from "New Visit" button)
@@ -366,6 +367,7 @@ const NewPatient = () => {
           notes: "",
           attendingPhysician: userProfile ? `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim() : authenticatedUser?.user_metadata?.full_name,
           attendingPhysicianId: authenticatedUser?.id || null,
+          physicianSignatureUrl: userProfile?.signature_url || null,
         });
         setCurrentStep(1);
         getRecords();
@@ -397,6 +399,7 @@ const NewPatient = () => {
       notes: "",
       attendingPhysician: userProfile ? `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim() : authenticatedUser?.user_metadata?.full_name,
       attendingPhysicianId: authenticatedUser?.id || null,
+      physicianSignatureUrl: userProfile?.signature_url || null,
     });
     setStudentInformation(null);
     setCurrentStep(1);
@@ -820,6 +823,7 @@ const NewPatient = () => {
                                     medication: null, quantity: "", treatment: "", notes: "",
                                     attendingPhysician: userProfile ? `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim() : authenticatedUser?.user_metadata?.full_name,
                                     attendingPhysicianId: authenticatedUser?.id || null,
+                                    physicianSignatureUrl: userProfile?.signature_url || null,
                                   });
                                   setCurrentStep(1);
                                   getRecords();

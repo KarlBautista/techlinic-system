@@ -27,7 +27,8 @@ const insertRecord = async (req, res) => {
         treatment,
         notes,
         attendingPhysician,
-        attendingPhysicianId
+        attendingPhysicianId,
+        physicianSignatureUrl
     } = req.body.formData;
 
     // Validate required patient fields
@@ -105,7 +106,8 @@ const insertRecord = async (req, res) => {
                 medication: medication?.medicine_name || null,
                 quantity: quantity ? Number(quantity) : null,
                 treatment: treatment || null,
-                notes: notes || null
+                notes: notes || null,
+                physician_signature_url: physicianSignatureUrl || null
             };
             
             const { data, error: diagnosisError } = await supabase
@@ -252,7 +254,8 @@ const addDiagnosis = async (req, res) => {
         treatment,
         notes,
         attendingPhysician,
-        attendingPhysicianId
+        attendingPhysicianId,
+        physicianSignatureUrl
     } = req.body.patientInput;
 
     if (!id || !diagnosis) {
@@ -268,6 +271,7 @@ const addDiagnosis = async (req, res) => {
             quantity: quantity ? Number(quantity) : null,
             treatment: treatment || null,
             notes: notes || null,
+            physician_signature_url: physicianSignatureUrl || null,
         });
 
         if (addDiagnosisError) {

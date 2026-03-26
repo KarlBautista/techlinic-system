@@ -15,7 +15,6 @@ const DiagnosisModal = ({ open = false, onClose = () => { }, patient = {}, recor
   const [isVisible, setIsVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [physicianData, setPhysicianData] = useState(null);
-  const [showSignature, setShowSignature] = useState(true);
   const prevTabRef = useRef(activeTab);
 
   // Email compose state
@@ -186,21 +185,6 @@ const DiagnosisModal = ({ open = false, onClose = () => { }, patient = {}, recor
           <div className="flex items-center gap-3">
             {(activeTab === 'prescription' || activeTab === 'certificate') && (
               <>
-                {/* Signature Toggle */}
-                {effectivePhysician?.signature_url && (
-                  <label className="inline-flex items-center gap-2 cursor-pointer select-none">
-                    <span className="text-xs text-gray-500 font-medium">Signature</span>
-                    <button
-                      type="button"
-                      role="switch"
-                      aria-checked={showSignature}
-                      onClick={() => setShowSignature(prev => !prev)}
-                      className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors duration-200 ${showSignature ? 'bg-[#b01c34]' : 'bg-gray-300'}`}
-                    >
-                      <span className={`inline-block h-3.5 w-3.5 rounded-full bg-white shadow-sm transform transition-transform duration-200 ${showSignature ? 'translate-x-4' : 'translate-x-0.5'}`} />
-                    </button>
-                  </label>
-                )}
                 <button onClick={handlePrint} className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-sm flex items-center gap-1.5 transition-colors">
                   <i className="fa-solid fa-print"></i>
                   <span>Print</span>
@@ -241,10 +225,10 @@ const DiagnosisModal = ({ open = false, onClose = () => { }, patient = {}, recor
               <RecordTab patient={patient} record={record} diagnoses={diagnoses} visitDate={visitDate} />
             )}
             {activeTab === 'prescription' && (
-              <PrescriptionTab patient={patient} diagnosis={primaryDiagnosis} visitDate={visitDate} visitTime={visitTime} physicianData={effectivePhysician} attendingPhysician={record?.attending_physician} showSignature={showSignature} />
+              <PrescriptionTab patient={patient} diagnosis={primaryDiagnosis} visitDate={visitDate} visitTime={visitTime} physicianData={effectivePhysician} attendingPhysician={record?.attending_physician} />
             )}
             {activeTab === 'certificate' && (
-              <CertificateTab patient={patient} diagnosis={primaryDiagnosis} visitDate={visitDate} physicianData={effectivePhysician} attendingPhysician={record?.attending_physician} showSignature={showSignature} />
+              <CertificateTab patient={patient} diagnosis={primaryDiagnosis} visitDate={visitDate} physicianData={effectivePhysician} attendingPhysician={record?.attending_physician} />
             )}
           </div>
         </div>
@@ -474,125 +458,148 @@ const RecordTab = ({ patient, record, diagnoses, visitDate }) => {
 };
 
 /* ────────────────────────── Prescription Tab ────────────────────────── */
-const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime, physicianData, attendingPhysician, showSignature }) => {
+const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime, physicianData, attendingPhysician }) => {
+  const physicianName = physicianData
+    ? `${physicianData.first_name || ''} ${physicianData.last_name || ''}`.trim()
+    : attendingPhysician || '';
+
   return (
-    <div className="border border-gray-900 print:border-black">
-      {/* TUP Header */}
-      <div className="grid grid-cols-[140px_1fr] grid-rows-[84px_46px] border-b border-gray-900">
-        <div className="row-span-2 border-r border-gray-900 flex items-center justify-center p-2">
-          <img src={tupLogo} alt="TUP Logo" className="w-[100px] h-[100px] object-contain" />
-        </div>
-        <div className="border-b border-gray-900 flex flex-col items-center justify-center p-2">
-          <div className="font-extrabold text-sm tracking-wide text-center">
-            TECHNOLOGICAL UNIVERSITY OF THE PHILIPPINES
+    <div className="bg-white max-w-2xl w-full mx-auto rounded-lg border border-gray-300">
+      {/* Prescription Header */}
+      <div className="p-6 pb-4">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-3">
+            <img src={tupLogo} alt="TUP Logo" className="w-12 h-12 object-contain" />
+            <span className="text-5xl font-serif font-bold text-gray-800 leading-none">R<sub className="text-3xl">x</sub></span>
           </div>
-          <div className="text-[11px] text-center mt-1 text-gray-700">
-            Ayala Blvd, Ermita, Manila, 1000, Philippines | Tel No. +632-5301-3001 local 607
-            <br />
-            Flex No. +632-8521-4063 | Email: clinic@tup.edu.ph | Website: www.tup.edu.ph
+          <div className="text-right text-sm text-gray-600 space-y-0.5">
+            <p className="font-semibold text-gray-800">{physicianName || 'N/A'}</p>
+            <p>TechClinic Health Services</p>
+            <p>Technological University of the Philippines</p>
           </div>
-        </div>
-        <div className="flex items-center justify-center p-2">
-          <div className="font-extrabold tracking-wide">CLINIC PASS</div>
         </div>
       </div>
 
-      {/* Date / time row */}
-      <div className="px-4 py-3 text-sm border-b border-gray-300">
-        <div className="flex gap-8">
-          <span>Date: <span className="font-medium underline">{visitDate}</span></span>
-          <span>Time Entered: <span className="font-medium underline">{visitTime || '__________'}</span></span>
-          <span>Time Discharged: __________</span>
+      <div className="border-t border-gray-200 mx-6" />
+
+      {/* Patient Info */}
+      <div className="px-6 py-4 space-y-2">
+        <div className="flex items-center gap-4">
+          <div className="flex-1">
+            <span className="text-xs text-gray-400 uppercase tracking-wider">Name of Patient</span>
+            <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+              {patient?.first_name ?? ''} {patient?.last_name ?? ''}
+            </p>
+          </div>
+          <div className="w-28">
+            <span className="text-xs text-gray-400 uppercase tracking-wider">Age/Sex</span>
+            <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+              {patient?.sex || 'N/A'}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="flex-1">
+            <span className="text-xs text-gray-400 uppercase tracking-wider">Address</span>
+            <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+              {patient?.address || 'N/A'}
+            </p>
+          </div>
+          <div className="w-28">
+            <span className="text-xs text-gray-400 uppercase tracking-wider">Date</span>
+            <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+              {visitDate}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="flex-1">
+            <span className="text-xs text-gray-400 uppercase tracking-wider">Patient ID</span>
+            <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+              {patient?.student_id || 'N/A'}
+            </p>
+          </div>
+          <div className="w-28">
+            <span className="text-xs text-gray-400 uppercase tracking-wider">Department</span>
+            <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1 truncate" title={patient?.department}>
+              {patient?.department || 'N/A'}
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Patient info */}
-      <div className="px-4 py-4 text-sm space-y-2 border-b border-gray-300">
+      <div className="border-t border-gray-200 mx-6" />
+
+      {/* Diagnosis & Treatment */}
+      <div className="px-6 py-4 space-y-3">
         <div>
-          Name of Patient: <span className="font-medium underline">{patient?.first_name ?? ''} {patient?.last_name ?? ''}</span>
-          &nbsp;&nbsp;&nbsp;&nbsp;Age/Sex: <span className="font-medium underline">{patient?.sex ?? '______'}</span>
+          <span className="text-xs text-gray-400 uppercase tracking-wider">Diagnosis</span>
+          <p className="text-sm font-medium text-gray-800">
+            {diagnosis?.diagnosis || <span className="italic text-gray-400">N/A</span>}
+          </p>
         </div>
         <div>
-          Course, Year, Section/Department/Office:{' '}
-          <span className="font-medium underline">
-            {patient?.department ?? ''}{patient?.year_level ? ` — ${patient.year_level}` : ''}
-          </span>
+          <span className="text-xs text-gray-400 uppercase tracking-wider">Treatment</span>
+          <p className="text-sm text-gray-800 whitespace-pre-wrap">{diagnosis?.treatment || 'N/A'}</p>
         </div>
       </div>
 
-      {/* Rx Symbol */}
-      <div className="px-4 pt-4 pb-1">
-        <span className="text-3xl font-bold italic text-gray-800" style={{ fontFamily: 'serif' }}>&#8478;</span>
+      <div className="border-t border-gray-200 mx-6" />
+
+      {/* Drug Prescription Table */}
+      <div className="px-6 py-4">
+        <h3 className="text-sm font-bold text-gray-800 mb-3">Drug Prescription</h3>
+        {diagnosis?.medication ? (
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-gray-200">
+                <th className="text-left py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Medicine Name</th>
+                <th className="text-left py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Dosage</th>
+                <th className="text-left py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Qty</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="py-2 text-gray-800 font-medium">{diagnosis.medication}</td>
+                <td className="py-2 text-gray-600">{diagnosis.dosage || 'N/A'}</td>
+                <td className="py-2 text-gray-600">{diagnosis.quantity || 'N/A'}</td>
+              </tr>
+            </tbody>
+          </table>
+        ) : (
+          <p className="text-sm text-gray-400 italic">No medication prescribed</p>
+        )}
       </div>
 
-      {/* Diagnosis / reason */}
-      <div className="px-4 py-4 text-sm space-y-1 border-b border-gray-300">
-        <p>This is to inform you that the above came to the clinic due to:</p>
-        <p className="font-medium mt-1 min-h-6 underline">{diagnosis?.diagnosis ?? ''}</p>
-      </div>
-
-      {/* Medication & treatment */}
-      <div className="px-4 py-4 text-sm space-y-2 border-b border-gray-300">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <span className="text-gray-500">Medication:</span>{' '}
-            <span className="font-medium">{diagnosis?.medication ?? '—'}</span>
+      {/* Notes */}
+      {diagnosis?.notes && (
+        <>
+          <div className="border-t border-gray-200 mx-6" />
+          <div className="px-6 py-4">
+            <span className="text-xs text-gray-400 uppercase tracking-wider">Additional Notes</span>
+            <p className="text-sm text-gray-800 whitespace-pre-wrap mt-1">{diagnosis.notes}</p>
           </div>
-          <div>
-            <span className="text-gray-500">Quantity:</span>{' '}
-            <span className="font-medium">{diagnosis?.quantity ?? '—'}</span>
-          </div>
-        </div>
-        <div>
-          <span className="text-gray-500">Treatment:</span>{' '}
-          <span className="font-medium">{diagnosis?.treatment ?? '—'}</span>
-        </div>
-      </div>
+        </>
+      )}
 
-      {/* Remarks */}
-      <div className="px-4 py-4 text-sm space-y-1 border-b border-gray-300">
-        <p>Remarks:</p>
-        <p className="font-medium min-h-6">{diagnosis?.notes ?? ''}</p>
-      </div>
-
-      {/* Checkboxes */}
-      <div className="flex justify-between items-center px-4 py-3 text-sm border-b border-gray-300">
-        <label className="flex items-center gap-2">
-          <input type="checkbox" /> Medical Certificate / Clinic Pass
-        </label>
-        <label className="flex items-center gap-2">
-          <input type="checkbox" /> Referral for Counselling
-        </label>
-        <label className="flex items-center gap-2">
-          <input type="checkbox" /> For Quarantine
-        </label>
-      </div>
-
-      {/* Footer */}
-      <div className="px-4 py-6 text-center text-sm text-gray-600">
-        If you have any questions; please feel free to call us at Medical-Dental Clinic.
-      </div>
-
-      <div className="px-4 pb-6 text-right text-sm text-gray-900">
-        <div className="inline-block text-center">
-          {showSignature && physicianData?.signature_url ? (
+      {/* Signature Area */}
+      <div className="border-t border-gray-200 mx-6" />
+      <div className="px-6 py-5 flex justify-end">
+        <div className="text-center">
+          {(diagnosis?.physician_signature_url || physicianData?.signature_url) ? (
             <img
-              src={physicianData.signature_url}
+              src={diagnosis?.physician_signature_url || physicianData?.signature_url}
               alt="Physician signature"
-              className="max-h-[80px] max-w-[200px] object-contain mx-auto mb-1"
+              className="max-h-20 max-w-[200px] object-contain mx-auto mb-1"
             />
           ) : (
-            <div className="h-[60px]"></div>
+            <div className="w-48 border-b border-gray-300 mb-1" />
           )}
-          <div className="border-t border-gray-900 pt-1 px-4">
-            <div className="font-medium">
-              {physicianData
-                ? `${physicianData.first_name || ''} ${physicianData.last_name || ''}`.trim()
-                : attendingPhysician || ''}
-            </div>
-            <div className="text-gray-600">
+          <div className="border-t border-gray-300 pt-1 px-4">
+            <p className="text-xs font-medium text-gray-700">{physicianName || 'N/A'}</p>
+            <p className="text-xs text-gray-500">
               {physicianData?.role === 'DOCTOR' ? 'Attending Physician' : 'Attending Personnel'}
-            </div>
+            </p>
           </div>
         </div>
       </div>
@@ -601,7 +608,7 @@ const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime, physicianDa
 };
 
 /* ────────────────────────── Certificate Tab ────────────────────────── */
-const CertificateTab = ({ patient, diagnosis, visitDate, physicianData, attendingPhysician, showSignature }) => {
+const CertificateTab = ({ patient, diagnosis, visitDate, physicianData, attendingPhysician }) => {
   return (
     <div className="border border-gray-900 print:border-black">
       {/* TUP Header */}
@@ -668,9 +675,9 @@ const CertificateTab = ({ patient, diagnosis, visitDate, physicianData, attendin
 
         <div className="mt-12 text-right">
           <div className="inline-block text-center">
-            {showSignature && physicianData?.signature_url ? (
+            {(diagnosis?.physician_signature_url || physicianData?.signature_url) ? (
               <img
-                src={physicianData.signature_url}
+                src={diagnosis?.physician_signature_url || physicianData?.signature_url}
                 alt="Physician signature"
                 className="max-h-[80px] max-w-[200px] object-contain mx-auto mb-1"
               />

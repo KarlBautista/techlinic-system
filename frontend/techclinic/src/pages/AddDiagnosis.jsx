@@ -60,6 +60,7 @@ const AddDiagnosis = () => {
     notes: "",
     attendingPhysician: userProfile ? `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim() : authenticatedUser?.user_metadata?.full_name,
     attendingPhysicianId: authenticatedUser?.id || null,
+    physicianSignatureUrl: userProfile?.signature_url || null,
   });
 
   const formatDateForInput = (val) => {
