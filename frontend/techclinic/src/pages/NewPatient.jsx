@@ -8,15 +8,22 @@ import { showModal } from '../components/Modal'
 import { useEffect } from 'react'
 import useMedicine from "../store/useMedicineStore";
 import api from '../lib/api'
+import emailjs from '@emailjs/browser'
 import { FormSkeleton, ButtonLoader } from '../components/PageLoader'
 import { motion, AnimatePresence } from 'framer-motion'
-import { UserPlus, ClipboardList, Plus, X, FileText, StickyNote, Check } from 'lucide-react'
+import { UserPlus, ClipboardList, Plus, X, FileText, StickyNote, Check, Send } from 'lucide-react'
 import Dropdown from '../components/Dropdown'
+import tupLogo from '../assets/image/TUP.png'
+
+const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID
+const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+const PRESC_TMPL = import.meta.env.VITE_EMAILJS_PRESCRIPTION_TEMPLATE_ID
 
 const STEPS = [
   { number: 1, label: 'Personal Information' },
   { number: 2, label: 'Diagnosis & Treatment' },
   { number: 3, label: 'Medication & Notes' },
+  { number: 4, label: 'Confirmation' },
 ];
 
 const NewPatient = () => {
@@ -28,6 +35,7 @@ const NewPatient = () => {
   const [diseases, setDiseases] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
   const [showAddDisease, setShowAddDisease] = useState(false);
   const [newDiseaseName, setNewDiseaseName] = useState("");
   const [isAddingDisease, setIsAddingDisease] = useState(false);
@@ -278,14 +286,14 @@ const NewPatient = () => {
         return;
       }
     }
-    setCurrentStep((prev) => Math.min(prev + 1, 3));
+    setCurrentStep((prev) => Math.min(prev + 1, 4));
   };
 
   const handleBack = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    if (currentStep < 3) return;
+    if (currentStep < 4) return;
     if (isSubmitting) return;
 
     // Validate medication stock
@@ -400,7 +408,7 @@ const NewPatient = () => {
   };
 
   return (
-    <div className='h-full flex flex-col'>
+    <div className='h-full flex flex-col overflow-hidden'>
       {isLoading ? (
         <FormSkeleton />
       ) : (
@@ -461,7 +469,7 @@ const NewPatient = () => {
           {/* ─── Form Card ─── */}
           <div className='flex-1 min-h-0 flex flex-col'>
             <div className="bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 p-6 md:p-8 flex-1 min-h-0 flex flex-col">
-              <form onSubmit={handleFormSubmit} className='flex-1 flex flex-col'>
+              <form onSubmit={handleFormSubmit} className='flex-1 min-h-0 flex flex-col overflow-hidden'>
                 <AnimatePresence mode="wait">
                   {/* ══ Step 1: Personal Information ══ */}
                   {currentStep === 1 && (
@@ -729,16 +737,256 @@ const NewPatient = () => {
                         </motion.button>
                         <motion.button
                           whileTap={{ scale: 0.97 }}
-                          type="submit"
-                          disabled={isSubmitting}
-                          className="inline-flex items-center gap-2 px-8 py-2.5 rounded-xl bg-crimson-600 text-white text-sm font-medium tracking-wider hover:bg-crimson-700 transition-colors shadow-sm cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                          type="button"
+                          onClick={handleNext}
+                          className="inline-flex items-center gap-2 px-8 py-2.5 rounded-xl bg-crimson-600 text-white text-sm font-medium tracking-wider hover:bg-crimson-700 transition-colors shadow-sm cursor-pointer"
                         >
-                          {isSubmitting ? <><ButtonLoader /> Submitting...</> : (
-                            patientInput && patientInput.diagnosis && patientInput.diagnosis.length > 0
-                              ? "Insert Record"
-                              : "Send for Diagnosis"
-                          )}
+                          Next
                         </motion.button>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* ══ Step 4: Prescription Confirmation ══ */}
+                  {currentStep === 4 && (
+                    <motion.div
+                      key="step4"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.25 }}
+                      className='flex-1 flex flex-col min-h-0'
+                    >
+                      {/* Step 4 Navigation — on top */}
+                      <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-100 shrink-0">
+                        <motion.button
+                          whileTap={{ scale: 0.97 }}
+                          type="button"
+                          onClick={handleBack}
+                          className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer"
+                        >
+                          Back
+                        </motion.button>
+                        <div className="flex items-center gap-3">
+                          <motion.button
+                            whileTap={{ scale: 0.97 }}
+                            type="submit"
+                            disabled={isSubmitting || isSendingEmail}
+                            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-crimson-600 text-white text-sm font-medium tracking-wider hover:bg-crimson-700 transition-colors shadow-sm cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                          >
+                            {isSubmitting ? <><ButtonLoader /> Submitting...</> : (
+                              patientInput && patientInput.diagnosis && patientInput.diagnosis.length > 0
+                                ? "Insert Record"
+                                : "Send for Diagnosis"
+                            )}
+                          </motion.button>
+                          {patientInput.email && (
+                            <motion.button
+                              whileTap={{ scale: 0.97 }}
+                              type="button"
+                              disabled={isSubmitting || isSendingEmail}
+                              onClick={async () => {
+                                setIsSendingEmail(true);
+                                try {
+                                  const response = await insertRecord(patientInput);
+                                  if (!response.success) {
+                                    const msg = response.error || 'Failed inserting record';
+                                    showToast({ title: "Something went wrong", message: msg, type: "error" });
+                                    return;
+                                  }
+
+                                  const physicianName = patientInput.attendingPhysician || 'N/A';
+                                  const templateParams = {
+                                    to_email: patientInput.email.trim(),
+                                    to_name: `${patientInput.firstName} ${patientInput.lastName}`.trim(),
+                                    patient_id: patientInput.studentId || '\u2014',
+                                    date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+                                    physician_name: physicianName,
+                                    physician_role: userProfile?.role === 'DOCTOR' ? 'Attending Physician' : 'Attending Personnel',
+                                    physician_signature: userProfile?.signature_url ?? '',
+                                    medication: patientInput.medication?.medicine_name ?? '\u2014',
+                                    dosage: patientInput.medication?.dosage ?? '\u2014',
+                                    quantity: patientInput.quantity ?? '\u2014',
+                                    notes: patientInput.notes ?? '\u2014',
+                                  };
+
+                                  await emailjs.send(SERVICE_ID, PRESC_TMPL, templateParams, PUBLIC_KEY);
+
+                                  showToast({
+                                    title: "Record Inserted & Email Sent",
+                                    message: `Prescription sent to ${patientInput.email}`,
+                                    type: "success",
+                                  });
+
+                                  setPatientInput({
+                                    firstName: "", lastName: "", studentId: "", contactNumber: "",
+                                    yearLevel: "", department: "", sex: "", email: "",
+                                    dateOfBirth: "", address: "", diseaseId: "", diagnosis: "",
+                                    medication: null, quantity: "", treatment: "", notes: "",
+                                    attendingPhysician: userProfile ? `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim() : authenticatedUser?.user_metadata?.full_name,
+                                    attendingPhysicianId: authenticatedUser?.id || null,
+                                  });
+                                  setCurrentStep(1);
+                                  getRecords();
+                                } catch (err) {
+                                  console.error('Send & Insert error:', err);
+                                  showToast({ title: "Email Failed", message: "Record may have been inserted but email failed to send.", type: "warning" });
+                                } finally {
+                                  setIsSendingEmail(false);
+                                }
+                              }}
+                              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-crimson-600 text-white text-sm font-medium tracking-wider hover:bg-crimson-700 transition-colors shadow-sm cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                            >
+                              {isSendingEmail ? <><ButtonLoader /> Sending...</> : <><Send className="w-4 h-4" /> Send & Insert Record</>}
+                            </motion.button>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Prescription Card — scrollable */}
+                      <div className="flex-1 min-h-0 overflow-y-auto rounded-lg border border-gray-300">
+                        <div className="bg-white max-w-2xl w-full mx-auto">
+                        {/* Prescription Header */}
+                        <div className="p-6 pb-4">
+                          <div className="flex items-start justify-between">
+                            <div className="flex items-center gap-3">
+                              <img src={tupLogo} alt="TUP Logo" className="w-12 h-12 object-contain" />
+                              <span className="text-5xl font-serif font-bold text-gray-800 leading-none">R<sub className="text-3xl">x</sub></span>
+                            </div>
+                            <div className="text-right text-sm text-gray-600 space-y-0.5">
+                              <p className="font-semibold text-gray-800">{patientInput.attendingPhysician || 'N/A'}</p>
+                              <p>TechClinic Health Services</p>
+                              <p>Technological University of the Philippines</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="border-t border-gray-200 mx-6" />
+
+                        {/* Patient Info */}
+                        <div className="px-6 py-4 space-y-2">
+                          <div className="flex items-center gap-4">
+                            <div className="flex-1">
+                              <span className="text-xs text-gray-400 uppercase tracking-wider">Name of Patient</span>
+                              <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+                                {patientInput.firstName} {patientInput.lastName}
+                              </p>
+                            </div>
+                            <div className="w-28">
+                              <span className="text-xs text-gray-400 uppercase tracking-wider">Age/Sex</span>
+                              <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+                                {patientInput.sex || 'N/A'}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <div className="flex-1">
+                              <span className="text-xs text-gray-400 uppercase tracking-wider">Address</span>
+                              <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+                                {patientInput.address || 'N/A'}
+                              </p>
+                            </div>
+                            <div className="w-28">
+                              <span className="text-xs text-gray-400 uppercase tracking-wider">Date</span>
+                              <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+                                {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <div className="flex-1">
+                              <span className="text-xs text-gray-400 uppercase tracking-wider">Patient ID</span>
+                              <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+                                {patientInput.studentId || 'N/A'}
+                              </p>
+                            </div>
+                            <div className="w-28">
+                              <span className="text-xs text-gray-400 uppercase tracking-wider">Department</span>
+                              <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1 truncate" title={patientInput.department}>
+                                {patientInput.department || 'N/A'}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="border-t border-gray-200 mx-6" />
+
+                        {/* Diagnosis & Treatment */}
+                        <div className="px-6 py-4 space-y-3">
+                          <div>
+                            <span className="text-xs text-gray-400 uppercase tracking-wider">Diagnosis</span>
+                            <p className="text-sm font-medium text-gray-800">
+                              {patientInput.diagnosis || <span className="italic text-gray-400">Pending diagnosis</span>}
+                            </p>
+                          </div>
+                          <div>
+                            <span className="text-xs text-gray-400 uppercase tracking-wider">Treatment</span>
+                            <p className="text-sm text-gray-800 whitespace-pre-wrap">{patientInput.treatment || 'N/A'}</p>
+                          </div>
+                        </div>
+
+                        <div className="border-t border-gray-200 mx-6" />
+
+                        {/* Drug Prescription Table */}
+                        <div className="px-6 py-4">
+                          <h3 className="text-sm font-bold text-gray-800 mb-3">Drug Prescription</h3>
+                          {patientInput.medication ? (
+                            <table className="w-full text-sm">
+                              <thead>
+                                <tr className="border-b border-gray-200">
+                                  <th className="text-left py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Medicine Name</th>
+                                  <th className="text-left py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Generic Name</th>
+                                  <th className="text-left py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Dosage</th>
+                                  <th className="text-left py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Qty</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td className="py-2 text-gray-800 font-medium">{patientInput.medication.medicine_name}</td>
+                                  <td className="py-2 text-gray-600">{patientInput.medication.generic_name || 'N/A'}</td>
+                                  <td className="py-2 text-gray-600">{patientInput.medication.dosage || 'N/A'}</td>
+                                  <td className="py-2 text-gray-600">{patientInput.quantity || 'N/A'}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          ) : (
+                            <p className="text-sm text-gray-400 italic">No medication prescribed</p>
+                          )}
+                        </div>
+
+                        {/* Notes */}
+                        {patientInput.notes && (
+                          <>
+                            <div className="border-t border-gray-200 mx-6" />
+                            <div className="px-6 py-4">
+                              <span className="text-xs text-gray-400 uppercase tracking-wider">Additional Notes</span>
+                              <p className="text-sm text-gray-800 whitespace-pre-wrap mt-1">{patientInput.notes}</p>
+                            </div>
+                          </>
+                        )}
+
+                        {/* Signature Area */}
+                        <div className="border-t border-gray-200 mx-6" />
+                        <div className="px-6 py-5 flex justify-end">
+                          <div className="text-center">
+                            {userProfile?.signature_url ? (
+                              <img
+                                src={userProfile.signature_url}
+                                alt="Physician signature"
+                                className="max-h-[80px] max-w-[200px] object-contain mx-auto mb-1"
+                              />
+                            ) : (
+                              <div className="w-48 border-b border-gray-300 mb-1" />
+                            )}
+                            <div className="border-t border-gray-300 pt-1 px-4">
+                              <p className="text-xs font-medium text-gray-700">{patientInput.attendingPhysician || 'N/A'}</p>
+                              <p className="text-xs text-gray-500">
+                                {userProfile?.role === 'DOCTOR' ? 'Attending Physician' : 'Attending Personnel'}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        </div>
                       </div>
                     </motion.div>
                   )}
