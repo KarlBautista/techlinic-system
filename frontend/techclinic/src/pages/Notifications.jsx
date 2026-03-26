@@ -8,10 +8,10 @@ import { Bell, BellOff, AlertTriangle, Pill, Info, Trash2 } from 'lucide-react'
 // Determine icon + accent color based on notification title
 const getNotifStyle = (title = '') => {
     const t = title.toLowerCase();
-    if (t.includes('disease') || t.includes('alert'))
-        return { Icon: AlertTriangle, color: 'text-amber-600', bg: 'bg-amber-50', ring: 'ring-amber-200', dot: 'bg-amber-500' };
     if (t.includes('stock') || t.includes('medicine') || t.includes('inventory'))
         return { Icon: Pill, color: 'text-rose-600', bg: 'bg-rose-50', ring: 'ring-rose-200', dot: 'bg-rose-500' };
+    if (t.includes('disease'))
+        return { Icon: AlertTriangle, color: 'text-amber-600', bg: 'bg-amber-50', ring: 'ring-amber-200', dot: 'bg-amber-500' };
     if (t.includes('system') || t.includes('update'))
         return { Icon: Info, color: 'text-blue-600', bg: 'bg-blue-50', ring: 'ring-blue-200', dot: 'bg-blue-500' };
     return { Icon: Bell, color: 'text-gray-600', bg: 'bg-gray-50', ring: 'ring-gray-200', dot: 'bg-gray-500' };

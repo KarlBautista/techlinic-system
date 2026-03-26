@@ -3,12 +3,12 @@ import { showToast } from './Toast'
 import useAuth from '../store/useAuthStore'
 import useNotificationStore, { requestNotificationPermission } from '../store/useNotificationStore'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Bell, BellOff, AlertTriangle, Pill, Info, Trash2, X, CheckCheck } from 'lucide-react'
+import { Bell, BellOff, AlertTriangle, Pill, Info, Trash2, X, CheckCheck, Search } from 'lucide-react'
 
 const getNotifCategory = (title = '') => {
     const t = title.toLowerCase()
-    if (t.includes('disease') || t.includes('alert')) return 'alerts'
-    if (t.includes('stock') || t.includes('medicine') || t.includes('inventory')) return 'medicine'
+    if (t.includes('disease')) return 'alerts'
+    if (t.includes('stock') || t.includes('medicine') || t.includes('inventory') || t.includes('low stock')) return 'medicine'
     return 'system'
 }
 
@@ -47,8 +47,9 @@ const formatDateTime = (dateString) => {
 
 const TABS = [
     { key: 'all', label: 'View all' },
-    { key: 'alerts', label: 'Alerts' },
-    { key: 'medicine', label: 'Medicine' },
+    { key: 'unread', label: 'Unread' },
+    { key: 'alerts', label: 'Disease Alerts' },
+    { key: 'medicine', label: 'Medicine Alerts' },
 ]
 
 const NotificationModal = ({ isOpen, onClose }) => {
@@ -66,13 +67,17 @@ const NotificationModal = ({ isOpen, onClose }) => {
 
     const [confirmClear, setConfirmClear] = useState(false)
     const [activeTab, setActiveTab] = useState('all')
+    const [searchQuery, setSearchQuery] = useState('')
 
     useEffect(() => {
         if (isOpen && authenticatedUser?.id) {
             requestNotificationPermission()
             fetchNotifications(authenticatedUser.id, true)
         }
-        if (!isOpen) setActiveTab('all')
+        if (!isOpen) {
+            setActiveTab('all')
+            setSearchQuery('')
+        }
     }, [isOpen, authenticatedUser?.id])
 
     useEffect(() => {
@@ -83,18 +88,31 @@ const NotificationModal = ({ isOpen, onClose }) => {
     }, [isOpen, onClose])
 
     const categoryCounts = useMemo(() => {
-        const counts = { all: notifications.length, alerts: 0, medicine: 0, system: 0 }
+        const counts = { all: notifications.length, unread: 0, alerts: 0, medicine: 0, system: 0 }
         notifications.forEach(n => {
             const cat = getNotifCategory(n.title)
             counts[cat]++
+            if (!n.is_read) counts.unread++
         })
         return counts
     }, [notifications])
 
     const filteredNotifications = useMemo(() => {
-        if (activeTab === 'all') return notifications
-        return notifications.filter(n => getNotifCategory(n.title) === activeTab)
-    }, [notifications, activeTab])
+        let filtered = notifications
+        if (activeTab === 'unread') {
+            filtered = filtered.filter(n => !n.is_read)
+        } else if (activeTab !== 'all') {
+            filtered = filtered.filter(n => getNotifCategory(n.title) === activeTab)
+        }
+        if (searchQuery.trim()) {
+            const q = searchQuery.toLowerCase()
+            filtered = filtered.filter(n =>
+                (n.title && n.title.toLowerCase().includes(q)) ||
+                (n.message && n.message.toLowerCase().includes(q))
+            )
+        }
+        return filtered
+    }, [notifications, activeTab, searchQuery])
 
     const handleMarkAsRead = async (notificationId) => {
         await markAsRead(notificationId)
@@ -142,7 +160,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
                     className="fixed inset-0 z-100 flex items-center justify-center"
                     onClick={onClose}
                 >
-                    <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+                    <div className="absolute inset-0 bg-black/60" />
 
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95, y: 10 }}
@@ -150,7 +168,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
                         exit={{ opacity: 0, scale: 0.95, y: 10 }}
                         transition={{ duration: 0.25, ease: 'easeOut' }}
                         onClick={(e) => e.stopPropagation()}
-                        className="relative w-full max-w-md h-[85vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden mx-4"
+                        className="relative w-full max-w-xl h-[85vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden mx-4"
                     >
                         {/* Header */}
                         <div className="px-6 pt-5 pb-0">
@@ -239,6 +257,18 @@ const NotificationModal = ({ isOpen, onClose }) => {
                                     )
                                 })}
                             </div>
+
+                            {/* Search bar */}
+                            <div className="relative pb-3">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" style={{ top: 'calc(50% - 6px)' }} />
+                                <input
+                                    type="text"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    placeholder="Search notifications..."
+                                    className="w-full pl-9 pr-4 py-2 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all"
+                                />
+                            </div>
                         </div>
 
                         {/* Divider */}
@@ -268,9 +298,13 @@ const NotificationModal = ({ isOpen, onClose }) => {
                                     </div>
                                     <p className="text-sm font-medium text-gray-500">No notifications</p>
                                     <p className="text-xs text-gray-400">
-                                        {activeTab === 'all'
-                                            ? 'Disease alerts and system updates will appear here'
-                                            : `No ${activeTab} notifications yet`
+                                        {searchQuery.trim()
+                                            ? 'No notifications match your search'
+                                            : activeTab === 'all'
+                                                ? 'Disease alerts and system updates will appear here'
+                                                : activeTab === 'unread'
+                                                    ? 'All notifications have been read'
+                                                    : `No ${activeTab} notifications yet`
                                         }
                                     </p>
                                 </div>
