@@ -35,13 +35,6 @@ const router = createBrowserRouter([
       { path: "/activity-log", element: <ActivityLog /> },
       { path: "/notifications", element: <Notifications /> },
       { path: "/settings", element: <Settings /> },
-    ],
-  },
-
-  // ── NURSE only (with AppLayout) ──
-  {
-    element: <ProtectedRoute allowedRoles={["NURSE"]}><AppLayout /></ProtectedRoute>,
-    children: [
       { path: "/new-patient", element: <NewPatient /> },
     ],
   },

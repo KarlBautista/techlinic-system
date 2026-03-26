@@ -94,8 +94,8 @@ const NewPatient = () => {
     }
   }
 
-  const handleStudentIdBlur = async () => {
-    const id = String(patientInput.studentId || "").trim();
+  const handleStudentIdBlur = async (e) => {
+    const id = String(e?.target?.value || patientInput.studentId || "").trim();
     if (!id) {
       setStudentInformation(null);
       return;
@@ -166,6 +166,25 @@ const NewPatient = () => {
 
   const handleSetPatientInput = (e) => {
     const { name, value } = e.target;
+
+    // When student ID changes and there was previous auto-fill, clear auto-filled fields
+    if (name === "studentId" && studentInformation) {
+      setStudentInformation(null);
+      setPatientInput((prev) => ({
+        ...prev,
+        studentId: value,
+        firstName: "",
+        lastName: "",
+        email: "",
+        contactNumber: "",
+        yearLevel: "",
+        department: "",
+        sex: "",
+        dateOfBirth: "",
+        address: "",
+      }));
+      return;
+    }
 
     if (name === "medication") {
       // If empty value, set to null instead of undefined or empty object
@@ -477,94 +496,105 @@ const NewPatient = () => {
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -20 }}
                       transition={{ duration: 0.25 }}
-                      className='flex-1 flex flex-col'
+                      className='flex-1 flex flex-col min-h-0'
                     >
-                      <p className='text-xs text-gray-400 mb-4'>Enter the patient ID to auto-fill existing records</p>
-                      <div className='grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4'>
-                        <div className='space-y-1.5'>
-                          <label htmlFor="studentID" className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Patient ID</label>
-                          <input type="text" name="studentId" placeholder="Enter patient ID" id='studentID' value={patientInput.studentId} onChange={handleSetPatientInput} onBlur={handleStudentIdBlur}
-                            className='w-full py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all' />
-                        </div>
-                        <div className='space-y-1.5'>
-                          <label htmlFor="firstName" className='text-xs font-medium text-gray-500 uppercase tracking-wider'>First Name</label>
-                          <input type="text" name="firstName" placeholder="Enter first name" id='firstName' value={patientInput.firstName} onChange={handleSetPatientInput}
-                            className='w-full py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all' />
-                        </div>
-                        <div className='space-y-1.5'>
-                          <label htmlFor="lastName" className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Last Name</label>
-                          <input type="text" name="lastName" placeholder="Enter last name" id='lastName' value={patientInput.lastName} onChange={handleSetPatientInput}
-                            className='w-full py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all' />
-                        </div>
-                        <div className='space-y-1.5'>
-                          <label htmlFor="contactNum" className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Contact Number</label>
-                          <input type="tel" inputMode="numeric" name="contactNumber" placeholder="Enter contact number" id='contactNum' value={patientInput.contactNumber} onChange={handleSetPatientInput}
-                            className='w-full py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all' />
-                        </div>
-                        <div className='space-y-1.5'>
-                          <Dropdown
-                            name="yearLevel"
-                            label="Year Level"
-                            placeholder="Select Year"
-                            options={[
-                              { label: '1st year', value: '1' },
-                              { label: '2nd year', value: '2' },
-                              { label: '3rd year', value: '3' },
-                              { label: '4th year', value: '4' },
-                            ]}
-                            value={patientInput.yearLevel}
-                            onChange={handleSetPatientInput}
-                          />
-                        </div>
-                        <div className='space-y-1.5'>
-                          <Dropdown
-                            name="department"
-                            label="Department"
-                            placeholder="Select Department"
-                            options={[
-                              { label: 'College of Science', value: 'College of Science' },
-                              { label: 'College of Engineering', value: 'College of Engineering' },
-                              { label: 'College of Industrial Technology', value: 'College of Industrial Technology' },
-                              { label: 'College of Architecture and Fine Arts', value: 'College of Architecture and Fine Arts' },
-                              { label: 'College of Industrial Education', value: 'College of Industrial Education' },
-                              { label: 'College of Liberal Arts', value: 'College of Liberal Arts' },
-                            ]}
-                            value={patientInput.department}
-                            onChange={handleSetPatientInput}
-                          />
-                        </div>
-                        <div className='space-y-1.5'>
-                          <Dropdown
-                            name="sex"
-                            label="Sex"
-                            placeholder="Select Sex"
-                            options={[
-                              { label: 'Male', value: 'Male' },
-                              { label: 'Female', value: 'Female' },
-                            ]}
-                            value={patientInput.sex}
-                            onChange={handleSetPatientInput}
-                          />
-                        </div>
-                        <div className='space-y-1.5'>
-                          <label htmlFor="email" className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Email</label>
-                          <input type="text" name="email" placeholder="Enter email address" id='email' value={patientInput.email} onChange={handleSetPatientInput}
-                            className='w-full py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all' />
-                        </div>
-                        <div className='space-y-1.5'>
-                          <label htmlFor="address" className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Address</label>
-                          <input type="text" name='address' placeholder='Enter address' id='address' value={patientInput.address} onChange={handleSetPatientInput}
-                            className='w-full py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all' />
-                        </div>
-                        <div className='space-y-1.5'>
-                          <label htmlFor="dateOfBirth" className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Date of Birth</label>
-                          <input type="date" name='dateOfBirth' id='dateOfBirth' value={patientInput.dateOfBirth} onChange={handleSetPatientInput}
-                            className='w-full py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all' />
+                      <div className='flex-1 overflow-y-auto min-h-0 px-1'>
+                        <p className='text-xs text-gray-400 mb-4'>Enter the patient ID to auto-fill existing records</p>
+                        <div className='grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4'>
+                          <div className='space-y-1.5'>
+                            <label htmlFor="studentID" className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Patient ID</label>
+                            <input type="text" name="studentId" placeholder="Enter patient ID" id='studentID' value={patientInput.studentId} onChange={handleSetPatientInput} onBlur={handleStudentIdBlur}
+                              className='w-full py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all' />
+                          </div>
+                          <div className='space-y-1.5'>
+                            <label htmlFor="firstName" className='text-xs font-medium text-gray-500 uppercase tracking-wider'>First Name</label>
+                            <input type="text" name="firstName" placeholder="Enter first name" id='firstName' value={patientInput.firstName} onChange={handleSetPatientInput}
+                              readOnly={!!studentInformation}
+                              className={`w-full py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all ${studentInformation ? 'bg-gray-50 cursor-not-allowed' : ''}`} />
+                          </div>
+                          <div className='space-y-1.5'>
+                            <label htmlFor="lastName" className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Last Name</label>
+                            <input type="text" name="lastName" placeholder="Enter last name" id='lastName' value={patientInput.lastName} onChange={handleSetPatientInput}
+                              readOnly={!!studentInformation}
+                              className={`w-full py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all ${studentInformation ? 'bg-gray-50 cursor-not-allowed' : ''}`} />
+                          </div>
+                          <div className='space-y-1.5'>
+                            <label htmlFor="contactNum" className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Contact Number</label>
+                            <input type="tel" inputMode="numeric" name="contactNumber" placeholder="Enter contact number" id='contactNum' value={patientInput.contactNumber} onChange={handleSetPatientInput}
+                              readOnly={!!studentInformation}
+                              className={`w-full py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all ${studentInformation ? 'bg-gray-50 cursor-not-allowed' : ''}`} />
+                          </div>
+                          <div className='space-y-1.5'>
+                            <Dropdown
+                              name="yearLevel"
+                              label="Year Level"
+                              placeholder="Select Year"
+                              options={[
+                                { label: '1st year', value: '1' },
+                                { label: '2nd year', value: '2' },
+                                { label: '3rd year', value: '3' },
+                                { label: '4th year', value: '4' },
+                              ]}
+                              value={patientInput.yearLevel}
+                              onChange={handleSetPatientInput}
+                              disabled={!!studentInformation}
+                            />
+                          </div>
+                          <div className='space-y-1.5'>
+                            <Dropdown
+                              name="department"
+                              label="Department"
+                              placeholder="Select Department"
+                              options={[
+                                { label: 'College of Science', value: 'College of Science' },
+                                { label: 'College of Engineering', value: 'College of Engineering' },
+                                { label: 'College of Industrial Technology', value: 'College of Industrial Technology' },
+                                { label: 'College of Architecture and Fine Arts', value: 'College of Architecture and Fine Arts' },
+                                { label: 'College of Industrial Education', value: 'College of Industrial Education' },
+                                { label: 'College of Liberal Arts', value: 'College of Liberal Arts' },
+                              ]}
+                              value={patientInput.department}
+                              onChange={handleSetPatientInput}
+                              disabled={!!studentInformation}
+                            />
+                          </div>
+                          <div className='space-y-1.5'>
+                            <Dropdown
+                              name="sex"
+                              label="Sex"
+                              placeholder="Select Sex"
+                              options={[
+                                { label: 'Male', value: 'Male' },
+                                { label: 'Female', value: 'Female' },
+                              ]}
+                              value={patientInput.sex}
+                              onChange={handleSetPatientInput}
+                              disabled={!!studentInformation}
+                            />
+                          </div>
+                          <div className='space-y-1.5'>
+                            <label htmlFor="email" className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Email</label>
+                            <input type="text" name="email" placeholder="Enter email address" id='email' value={patientInput.email} onChange={handleSetPatientInput}
+                              readOnly={!!studentInformation}
+                              className={`w-full py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all ${studentInformation ? 'bg-gray-50 cursor-not-allowed' : ''}`} />
+                          </div>
+                          <div className='space-y-1.5'>
+                            <label htmlFor="address" className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Address</label>
+                            <input type="text" name='address' placeholder='Enter address' id='address' value={patientInput.address} onChange={handleSetPatientInput}
+                              readOnly={!!studentInformation}
+                              className={`w-full py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all ${studentInformation ? 'bg-gray-50 cursor-not-allowed' : ''}`} />
+                          </div>
+                          <div className='space-y-1.5'>
+                            <label htmlFor="dateOfBirth" className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Date of Birth</label>
+                            <input type="date" name='dateOfBirth' id='dateOfBirth' value={patientInput.dateOfBirth} onChange={handleSetPatientInput}
+                              readOnly={!!studentInformation}
+                              className={`w-full py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all ${studentInformation ? 'bg-gray-50 cursor-not-allowed' : ''}`} />
+                          </div>
                         </div>
                       </div>
 
                       {/* Step 1 Navigation */}
-                      <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
+                      <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100 shrink-0">
                         <motion.button
                           whileTap={{ scale: 0.97 }}
                           type="button"
@@ -593,76 +623,78 @@ const NewPatient = () => {
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -20 }}
                       transition={{ duration: 0.25 }}
-                      className='flex-1 flex flex-col gap-5'
+                      className='flex-1 flex flex-col min-h-0'
                     >
-                      <div>
-                        <div className='flex items-end gap-2'>
-                          <div className='flex-1'>
-                            <Dropdown
-                              name="diseaseId"
-                              label="Diagnosis"
-                              placeholder="Select Diagnosis"
-                              options={diseases && diseases.length > 0 ? diseases.map((d) => ({ label: d.name, value: String(d.id) })) : []}
-                              value={patientInput.diseaseId}
-                              onChange={handleSetPatientInput}
-                            />
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => setShowAddDisease(!showAddDisease)}
-                            className={`shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-sm transition-all ${showAddDisease
-                              ? 'bg-gray-100 text-gray-600 ring-1 ring-gray-200'
-                              : 'bg-crimson-600 text-white hover:bg-crimson-700 shadow-sm'
-                              }`}
-                            title={showAddDisease ? 'Cancel' : 'Add new disease'}
-                          >
-                            {showAddDisease ? <X className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
-                          </button>
-                        </div>
-                        {showAddDisease && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            transition={{ duration: 0.2 }}
-                            className='flex items-center gap-2 mt-2'
-                          >
-                            <input
-                              type="text"
-                              value={newDiseaseName}
-                              onChange={(e) => setNewDiseaseName(e.target.value)}
-                              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddDisease(); } }}
-                              placeholder="Enter disease name..."
-                              className='flex-1 py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'
-                              autoFocus
-                            />
+                      <div className='flex-1 overflow-y-auto min-h-0 px-1 space-y-5 flex flex-col'>
+                        <div>
+                          <div className='flex items-end gap-2'>
+                            <div className='flex-1'>
+                              <Dropdown
+                                name="diseaseId"
+                                label="Diagnosis"
+                                placeholder="Select Diagnosis"
+                                options={diseases && diseases.length > 0 ? diseases.map((d) => ({ label: d.name, value: String(d.id) })) : []}
+                                value={patientInput.diseaseId}
+                                onChange={handleSetPatientInput}
+                              />
+                            </div>
                             <button
                               type="button"
-                              onClick={handleAddDisease}
-                              disabled={!newDiseaseName.trim() || isAddingDisease}
-                              className='shrink-0 px-3 py-2 rounded-xl bg-crimson-600 text-white text-sm font-medium hover:bg-crimson-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm'
+                              onClick={() => setShowAddDisease(!showAddDisease)}
+                              className={`shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-sm transition-all ${showAddDisease
+                                ? 'bg-gray-100 text-gray-600 ring-1 ring-gray-200'
+                                : 'bg-crimson-600 text-white hover:bg-crimson-700 shadow-sm'
+                                }`}
+                              title={showAddDisease ? 'Cancel' : 'Add new disease'}
                             >
-                              {isAddingDisease ? 'Adding...' : 'Add'}
+                              {showAddDisease ? <X className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
                             </button>
-                          </motion.div>
-                        )}
-                      </div>
+                          </div>
+                          {showAddDisease && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: 'auto' }}
+                              transition={{ duration: 0.2 }}
+                              className='flex items-center gap-2 mt-2'
+                            >
+                              <input
+                                type="text"
+                                value={newDiseaseName}
+                                onChange={(e) => setNewDiseaseName(e.target.value)}
+                                onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddDisease(); } }}
+                                placeholder="Enter disease name..."
+                                className='flex-1 py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'
+                                autoFocus
+                              />
+                              <button
+                                type="button"
+                                onClick={handleAddDisease}
+                                disabled={!newDiseaseName.trim() || isAddingDisease}
+                                className='shrink-0 px-3 py-2 rounded-xl bg-crimson-600 text-white text-sm font-medium hover:bg-crimson-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm'
+                              >
+                                {isAddingDisease ? 'Adding...' : 'Add'}
+                              </button>
+                            </motion.div>
+                          )}
+                        </div>
 
-                      <div className='flex-1 flex flex-col'>
-                        <label className='text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5'>
-                          <FileText className="w-3 h-3 text-gray-400" />
-                          Treatment
-                        </label>
-                        <textarea
-                          name='treatment'
-                          value={patientInput.treatment}
-                          onChange={handleSetPatientInput}
-                          className='w-full flex-1 min-h-[120px] p-3 resize-none outline-none rounded-xl border border-gray-200 text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all placeholder:text-gray-400'
-                          placeholder='Describe the treatment plan...'
-                        />
+                        <div className='flex-1 flex flex-col'>
+                          <label className='text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5'>
+                            <FileText className="w-3 h-3 text-gray-400" />
+                            Treatment
+                          </label>
+                          <textarea
+                            name='treatment'
+                            value={patientInput.treatment}
+                            onChange={handleSetPatientInput}
+                            className='w-full flex-1 min-h-[120px] p-3 resize-none outline-none rounded-xl border border-gray-200 text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all placeholder:text-gray-400'
+                            placeholder='Describe the treatment plan...'
+                          />
+                        </div>
                       </div>
 
                       {/* Step 2 Navigation */}
-                      <div className="flex items-center justify-between mt-2 pt-4 border-t border-gray-100">
+                      <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100 shrink-0">
                         <motion.button
                           whileTap={{ scale: 0.97 }}
                           type="button"
@@ -691,40 +723,42 @@ const NewPatient = () => {
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -20 }}
                       transition={{ duration: 0.25 }}
-                      className='flex-1 flex flex-col gap-5'
+                      className='flex-1 flex flex-col min-h-0'
                     >
-                      <div className='grid grid-cols-1 md:grid-cols-2 gap-5'>
-                        <Dropdown
-                          name="medication"
-                          label="Medication"
-                          placeholder="Select Medication"
-                          options={medicines?.map((m) => ({ label: `${m.medicine_name}, ${m.generic_name} - ${m.stock_level} in stock`, value: String(m.id) })) || []}
-                          value={String(patientInput.medication?.id || "")}
-                          onChange={handleSetPatientInput}
-                        />
-                        <div className='space-y-1.5'>
-                          <label htmlFor="quantity" className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Quantity</label>
-                          <input type="number" name="quantity" placeholder="Enter quantity" id='quantity' value={patientInput.quantity} onChange={handleSetPatientInput}
-                            className='w-full py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all' />
+                      <div className='flex-1 overflow-y-auto min-h-0 px-1 space-y-5 flex flex-col'>
+                        <div className='grid grid-cols-1 md:grid-cols-2 gap-5'>
+                          <Dropdown
+                            name="medication"
+                            label="Medication"
+                            placeholder="Select Medication"
+                            options={medicines?.map((m) => ({ label: `${m.medicine_name}, ${m.generic_name} - ${m.stock_level} in stock`, value: String(m.id) })) || []}
+                            value={String(patientInput.medication?.id || "")}
+                            onChange={handleSetPatientInput}
+                          />
+                          <div className='space-y-1.5'>
+                            <label htmlFor="quantity" className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Quantity</label>
+                            <input type="number" name="quantity" placeholder="Enter quantity" id='quantity' value={patientInput.quantity} onChange={handleSetPatientInput}
+                              className='w-full py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all' />
+                          </div>
+                        </div>
+
+                        <div className='flex-1 flex flex-col'>
+                          <label className='text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5'>
+                            <StickyNote className="w-3 h-3 text-gray-400" />
+                            Additional Notes
+                          </label>
+                          <textarea
+                            name='notes'
+                            value={patientInput.notes}
+                            onChange={handleSetPatientInput}
+                            className='w-full flex-1 min-h-[120px] p-3 resize-none outline-none rounded-xl border border-gray-200 text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all placeholder:text-gray-400'
+                            placeholder='Any additional observations or notes...'
+                          />
                         </div>
                       </div>
 
-                      <div className='flex-1 flex flex-col'>
-                        <label className='text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5'>
-                          <StickyNote className="w-3 h-3 text-gray-400" />
-                          Additional Notes
-                        </label>
-                        <textarea
-                          name='notes'
-                          value={patientInput.notes}
-                          onChange={handleSetPatientInput}
-                          className='w-full flex-1 min-h-[120px] p-3 resize-none outline-none rounded-xl border border-gray-200 text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all placeholder:text-gray-400'
-                          placeholder='Any additional observations or notes...'
-                        />
-                      </div>
-
                       {/* Step 3 Navigation */}
-                      <div className="flex items-center justify-between mt-2 pt-4 border-t border-gray-100">
+                      <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100 shrink-0">
                         <motion.button
                           whileTap={{ scale: 0.97 }}
                           type="button"
@@ -755,8 +789,270 @@ const NewPatient = () => {
                       transition={{ duration: 0.25 }}
                       className='flex-1 flex flex-col min-h-0'
                     >
-                      {/* Step 4 Navigation — on top */}
-                      <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-100 shrink-0">
+                      {/* Content — depends on whether diagnosis exists */}
+                      {patientInput.diagnosis && patientInput.diagnosis.trim() ? (
+                        /* ── Prescription Card (with diagnosis) ── */
+                        <div className="flex-1 min-h-0 overflow-y-auto rounded-xl bg-gray-100 p-6">
+                          <div className="bg-white max-w-2xl w-full mx-auto rounded-xl shadow-md border border-gray-200">
+                            {/* Prescription Header */}
+                            <div className="p-6 pb-4">
+                              <div className="flex items-start justify-between">
+                                <div className="flex items-center gap-3">
+                                  <img src={tupLogo} alt="TUP Logo" className="w-12 h-12 object-contain" />
+                                  <span className="text-5xl font-serif font-bold text-gray-800 leading-none">R<sub className="text-3xl">x</sub></span>
+                                </div>
+                                <div className="text-right text-sm text-gray-600 space-y-0.5">
+                                  <p className="font-semibold text-gray-800">{patientInput.attendingPhysician || 'N/A'}</p>
+                                  <p>TechClinic Health Services</p>
+                                  <p>Technological University of the Philippines</p>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="border-t border-gray-200 mx-6" />
+
+                            {/* Patient Info */}
+                            <div className="px-6 py-4 space-y-2">
+                              <div className="flex items-center gap-4">
+                                <div className="flex-1">
+                                  <span className="text-xs text-gray-400 uppercase tracking-wider">Name of Patient</span>
+                                  <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+                                    {patientInput.firstName} {patientInput.lastName}
+                                  </p>
+                                </div>
+                                <div className="w-28">
+                                  <span className="text-xs text-gray-400 uppercase tracking-wider">Age/Sex</span>
+                                  <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+                                    {patientInput.sex || 'N/A'}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-4">
+                                <div className="flex-1">
+                                  <span className="text-xs text-gray-400 uppercase tracking-wider">Address</span>
+                                  <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+                                    {patientInput.address || 'N/A'}
+                                  </p>
+                                </div>
+                                <div className="w-28">
+                                  <span className="text-xs text-gray-400 uppercase tracking-wider">Date</span>
+                                  <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+                                    {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-4">
+                                <div className="flex-1">
+                                  <span className="text-xs text-gray-400 uppercase tracking-wider">Patient ID</span>
+                                  <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+                                    {patientInput.studentId || 'N/A'}
+                                  </p>
+                                </div>
+                                <div className="w-28">
+                                  <span className="text-xs text-gray-400 uppercase tracking-wider">Department</span>
+                                  <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1 truncate" title={patientInput.department}>
+                                    {patientInput.department || 'N/A'}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="border-t border-gray-200 mx-6" />
+
+                            {/* Diagnosis & Treatment */}
+                            <div className="px-6 py-4 space-y-3">
+                              <div>
+                                <span className="text-xs text-gray-400 uppercase tracking-wider">Diagnosis</span>
+                                <p className="text-sm font-medium text-gray-800">
+                                  {patientInput.diagnosis || <span className="italic text-gray-400">Pending diagnosis</span>}
+                                </p>
+                              </div>
+                              <div>
+                                <span className="text-xs text-gray-400 uppercase tracking-wider">Treatment</span>
+                                <p className="text-sm text-gray-800 whitespace-pre-wrap">{patientInput.treatment || 'N/A'}</p>
+                              </div>
+                            </div>
+
+                            <div className="border-t border-gray-200 mx-6" />
+
+                            {/* Drug Prescription Table */}
+                            <div className="px-6 py-4">
+                              <h3 className="text-sm font-bold text-gray-800 mb-3">Drug Prescription</h3>
+                              {patientInput.medication ? (
+                                <table className="w-full text-sm">
+                                  <thead>
+                                    <tr className="border-b border-gray-200">
+                                      <th className="text-left py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Medicine Name</th>
+                                      <th className="text-left py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Generic Name</th>
+                                      <th className="text-left py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Dosage</th>
+                                      <th className="text-left py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Qty</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                      <td className="py-2 text-gray-800 font-medium">{patientInput.medication.medicine_name}</td>
+                                      <td className="py-2 text-gray-600">{patientInput.medication.generic_name || 'N/A'}</td>
+                                      <td className="py-2 text-gray-600">{patientInput.medication.dosage || 'N/A'}</td>
+                                      <td className="py-2 text-gray-600">{patientInput.quantity || 'N/A'}</td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              ) : (
+                                <p className="text-sm text-gray-400 italic">No medication prescribed</p>
+                              )}
+                            </div>
+
+                            {/* Notes */}
+                            {patientInput.notes && (
+                              <>
+                                <div className="border-t border-gray-200 mx-6" />
+                                <div className="px-6 py-4">
+                                  <span className="text-xs text-gray-400 uppercase tracking-wider">Additional Notes</span>
+                                  <p className="text-sm text-gray-800 whitespace-pre-wrap mt-1">{patientInput.notes}</p>
+                                </div>
+                              </>
+                            )}
+
+                            {/* Signature Area */}
+                            <div className="border-t border-gray-200 mx-6" />
+                            <div className="px-6 py-5 flex justify-end">
+                              <div className="text-center">
+                                {userProfile?.signature_url ? (
+                                  <img
+                                    src={userProfile.signature_url}
+                                    alt="Physician signature"
+                                    className="max-h-[80px] max-w-[200px] object-contain mx-auto mb-1"
+                                  />
+                                ) : (
+                                  <div className="w-48 border-b border-gray-300 mb-1" />
+                                )}
+                                <div className="border-t border-gray-300 pt-1 px-4">
+                                  <p className="text-xs font-medium text-gray-700">{patientInput.attendingPhysician || 'N/A'}</p>
+                                  <p className="text-xs text-gray-500">
+                                    {userProfile?.role === 'DOCTOR' ? 'Attending Physician' : 'Attending Personnel'}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        /* ── Patient Referral Summary (no diagnosis) ── */
+                        <div className="flex-1 min-h-0 overflow-y-auto rounded-xl bg-gray-100 p-6">
+                          <div className="bg-white max-w-2xl w-full mx-auto rounded-xl shadow-md border border-gray-200">
+                            {/* Header */}
+                            <div className="p-6 pb-4">
+                              <div className="flex items-center gap-3">
+                                <img src={tupLogo} alt="TUP Logo" className="w-12 h-12 object-contain" />
+                                <div>
+                                  <h2 className="text-lg font-bold text-gray-800">Patient Referral for Diagnosis</h2>
+                                  <p className="text-xs text-gray-500">TechClinic Health Services &mdash; Technological University of the Philippines</p>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="border-t border-gray-200 mx-6" />
+
+                            {/* Patient Info */}
+                            <div className="px-6 py-4 space-y-2">
+                              <div className="flex items-center gap-4">
+                                <div className="flex-1">
+                                  <span className="text-xs text-gray-400 uppercase tracking-wider">Name of Patient</span>
+                                  <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+                                    {patientInput.firstName} {patientInput.lastName}
+                                  </p>
+                                </div>
+                                <div className="w-28">
+                                  <span className="text-xs text-gray-400 uppercase tracking-wider">Sex</span>
+                                  <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+                                    {patientInput.sex || 'N/A'}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-4">
+                                <div className="flex-1">
+                                  <span className="text-xs text-gray-400 uppercase tracking-wider">Patient ID</span>
+                                  <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+                                    {patientInput.studentId || 'N/A'}
+                                  </p>
+                                </div>
+                                <div className="w-28">
+                                  <span className="text-xs text-gray-400 uppercase tracking-wider">Department</span>
+                                  <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1 truncate" title={patientInput.department}>
+                                    {patientInput.department || 'N/A'}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-4">
+                                <div className="flex-1">
+                                  <span className="text-xs text-gray-400 uppercase tracking-wider">Contact</span>
+                                  <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+                                    {patientInput.contactNumber || 'N/A'}
+                                  </p>
+                                </div>
+                                <div className="w-28">
+                                  <span className="text-xs text-gray-400 uppercase tracking-wider">Date</span>
+                                  <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+                                    {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="border-t border-gray-200 mx-6" />
+
+                            {/* Referral Notice */}
+                            <div className="px-6 py-6">
+                              <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 flex items-start gap-3">
+                                <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
+                                  <ClipboardList className="w-4 h-4 text-amber-600" />
+                                </div>
+                                <div>
+                                  <p className="text-sm font-semibold text-amber-800">Pending Physician Diagnosis</p>
+                                  <p className="text-xs text-amber-700 mt-1 leading-relaxed">
+                                    This patient record will be submitted without a diagnosis. A physician will be
+                                    required to review and provide a formal diagnosis and treatment plan.
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Notes if any */}
+                            {patientInput.notes && (
+                              <>
+                                <div className="border-t border-gray-200 mx-6" />
+                                <div className="px-6 py-4">
+                                  <span className="text-xs text-gray-400 uppercase tracking-wider">Nurse Notes</span>
+                                  <p className="text-sm text-gray-800 whitespace-pre-wrap mt-1">{patientInput.notes}</p>
+                                </div>
+                              </>
+                            )}
+
+                            {/* Referred by */}
+                            <div className="border-t border-gray-200 mx-6" />
+                            <div className="px-6 py-5 flex justify-end">
+                              <div className="text-center">
+                                {userProfile?.signature_url ? (
+                                  <img
+                                    src={userProfile.signature_url}
+                                    alt="Personnel signature"
+                                    className="max-h-20 max-w-[200px] object-contain mx-auto mb-1"
+                                  />
+                                ) : (
+                                  <div className="w-48 border-b border-gray-300 mb-1" />
+                                )}
+                                <div className="border-t border-gray-300 pt-1 px-4">
+                                  <p className="text-xs font-medium text-gray-700">{patientInput.attendingPhysician || 'N/A'}</p>
+                                  <p className="text-xs text-gray-500">Referring Personnel</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Step 4 Navigation */}
+                      <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100 shrink-0">
                         <motion.button
                           whileTap={{ scale: 0.97 }}
                           type="button"
@@ -841,268 +1137,6 @@ const NewPatient = () => {
                           )}
                         </div>
                       </div>
-
-                      {/* Content — depends on whether diagnosis exists */}
-                      {patientInput.diagnosis && patientInput.diagnosis.trim() ? (
-                      /* ── Prescription Card (with diagnosis) ── */
-                      <div className="flex-1 min-h-0 overflow-y-auto rounded-lg border border-gray-300">
-                        <div className="bg-white max-w-2xl w-full mx-auto">
-                        {/* Prescription Header */}
-                        <div className="p-6 pb-4">
-                          <div className="flex items-start justify-between">
-                            <div className="flex items-center gap-3">
-                              <img src={tupLogo} alt="TUP Logo" className="w-12 h-12 object-contain" />
-                              <span className="text-5xl font-serif font-bold text-gray-800 leading-none">R<sub className="text-3xl">x</sub></span>
-                            </div>
-                            <div className="text-right text-sm text-gray-600 space-y-0.5">
-                              <p className="font-semibold text-gray-800">{patientInput.attendingPhysician || 'N/A'}</p>
-                              <p>TechClinic Health Services</p>
-                              <p>Technological University of the Philippines</p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="border-t border-gray-200 mx-6" />
-
-                        {/* Patient Info */}
-                        <div className="px-6 py-4 space-y-2">
-                          <div className="flex items-center gap-4">
-                            <div className="flex-1">
-                              <span className="text-xs text-gray-400 uppercase tracking-wider">Name of Patient</span>
-                              <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
-                                {patientInput.firstName} {patientInput.lastName}
-                              </p>
-                            </div>
-                            <div className="w-28">
-                              <span className="text-xs text-gray-400 uppercase tracking-wider">Age/Sex</span>
-                              <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
-                                {patientInput.sex || 'N/A'}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-4">
-                            <div className="flex-1">
-                              <span className="text-xs text-gray-400 uppercase tracking-wider">Address</span>
-                              <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
-                                {patientInput.address || 'N/A'}
-                              </p>
-                            </div>
-                            <div className="w-28">
-                              <span className="text-xs text-gray-400 uppercase tracking-wider">Date</span>
-                              <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
-                                {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-4">
-                            <div className="flex-1">
-                              <span className="text-xs text-gray-400 uppercase tracking-wider">Patient ID</span>
-                              <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
-                                {patientInput.studentId || 'N/A'}
-                              </p>
-                            </div>
-                            <div className="w-28">
-                              <span className="text-xs text-gray-400 uppercase tracking-wider">Department</span>
-                              <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1 truncate" title={patientInput.department}>
-                                {patientInput.department || 'N/A'}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="border-t border-gray-200 mx-6" />
-
-                        {/* Diagnosis & Treatment */}
-                        <div className="px-6 py-4 space-y-3">
-                          <div>
-                            <span className="text-xs text-gray-400 uppercase tracking-wider">Diagnosis</span>
-                            <p className="text-sm font-medium text-gray-800">
-                              {patientInput.diagnosis || <span className="italic text-gray-400">Pending diagnosis</span>}
-                            </p>
-                          </div>
-                          <div>
-                            <span className="text-xs text-gray-400 uppercase tracking-wider">Treatment</span>
-                            <p className="text-sm text-gray-800 whitespace-pre-wrap">{patientInput.treatment || 'N/A'}</p>
-                          </div>
-                        </div>
-
-                        <div className="border-t border-gray-200 mx-6" />
-
-                        {/* Drug Prescription Table */}
-                        <div className="px-6 py-4">
-                          <h3 className="text-sm font-bold text-gray-800 mb-3">Drug Prescription</h3>
-                          {patientInput.medication ? (
-                            <table className="w-full text-sm">
-                              <thead>
-                                <tr className="border-b border-gray-200">
-                                  <th className="text-left py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Medicine Name</th>
-                                  <th className="text-left py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Generic Name</th>
-                                  <th className="text-left py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Dosage</th>
-                                  <th className="text-left py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Qty</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                <tr>
-                                  <td className="py-2 text-gray-800 font-medium">{patientInput.medication.medicine_name}</td>
-                                  <td className="py-2 text-gray-600">{patientInput.medication.generic_name || 'N/A'}</td>
-                                  <td className="py-2 text-gray-600">{patientInput.medication.dosage || 'N/A'}</td>
-                                  <td className="py-2 text-gray-600">{patientInput.quantity || 'N/A'}</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          ) : (
-                            <p className="text-sm text-gray-400 italic">No medication prescribed</p>
-                          )}
-                        </div>
-
-                        {/* Notes */}
-                        {patientInput.notes && (
-                          <>
-                            <div className="border-t border-gray-200 mx-6" />
-                            <div className="px-6 py-4">
-                              <span className="text-xs text-gray-400 uppercase tracking-wider">Additional Notes</span>
-                              <p className="text-sm text-gray-800 whitespace-pre-wrap mt-1">{patientInput.notes}</p>
-                            </div>
-                          </>
-                        )}
-
-                        {/* Signature Area */}
-                        <div className="border-t border-gray-200 mx-6" />
-                        <div className="px-6 py-5 flex justify-end">
-                          <div className="text-center">
-                            {userProfile?.signature_url ? (
-                              <img
-                                src={userProfile.signature_url}
-                                alt="Physician signature"
-                                className="max-h-[80px] max-w-[200px] object-contain mx-auto mb-1"
-                              />
-                            ) : (
-                              <div className="w-48 border-b border-gray-300 mb-1" />
-                            )}
-                            <div className="border-t border-gray-300 pt-1 px-4">
-                              <p className="text-xs font-medium text-gray-700">{patientInput.attendingPhysician || 'N/A'}</p>
-                              <p className="text-xs text-gray-500">
-                                {userProfile?.role === 'DOCTOR' ? 'Attending Physician' : 'Attending Personnel'}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                        </div>
-                      </div>
-                      ) : (
-                      /* ── Patient Referral Summary (no diagnosis) ── */
-                      <div className="flex-1 min-h-0 overflow-y-auto rounded-lg border border-gray-300">
-                        <div className="bg-white max-w-2xl w-full mx-auto">
-                          {/* Header */}
-                          <div className="p-6 pb-4">
-                            <div className="flex items-center gap-3">
-                              <img src={tupLogo} alt="TUP Logo" className="w-12 h-12 object-contain" />
-                              <div>
-                                <h2 className="text-lg font-bold text-gray-800">Patient Referral for Diagnosis</h2>
-                                <p className="text-xs text-gray-500">TechClinic Health Services &mdash; Technological University of the Philippines</p>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="border-t border-gray-200 mx-6" />
-
-                          {/* Patient Info */}
-                          <div className="px-6 py-4 space-y-2">
-                            <div className="flex items-center gap-4">
-                              <div className="flex-1">
-                                <span className="text-xs text-gray-400 uppercase tracking-wider">Name of Patient</span>
-                                <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
-                                  {patientInput.firstName} {patientInput.lastName}
-                                </p>
-                              </div>
-                              <div className="w-28">
-                                <span className="text-xs text-gray-400 uppercase tracking-wider">Sex</span>
-                                <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
-                                  {patientInput.sex || 'N/A'}
-                                </p>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-4">
-                              <div className="flex-1">
-                                <span className="text-xs text-gray-400 uppercase tracking-wider">Patient ID</span>
-                                <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
-                                  {patientInput.studentId || 'N/A'}
-                                </p>
-                              </div>
-                              <div className="w-28">
-                                <span className="text-xs text-gray-400 uppercase tracking-wider">Department</span>
-                                <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1 truncate" title={patientInput.department}>
-                                  {patientInput.department || 'N/A'}
-                                </p>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-4">
-                              <div className="flex-1">
-                                <span className="text-xs text-gray-400 uppercase tracking-wider">Contact</span>
-                                <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
-                                  {patientInput.contactNumber || 'N/A'}
-                                </p>
-                              </div>
-                              <div className="w-28">
-                                <span className="text-xs text-gray-400 uppercase tracking-wider">Date</span>
-                                <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
-                                  {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="border-t border-gray-200 mx-6" />
-
-                          {/* Referral Notice */}
-                          <div className="px-6 py-6">
-                            <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 flex items-start gap-3">
-                              <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
-                                <ClipboardList className="w-4 h-4 text-amber-600" />
-                              </div>
-                              <div>
-                                <p className="text-sm font-semibold text-amber-800">Pending Physician Diagnosis</p>
-                                <p className="text-xs text-amber-700 mt-1 leading-relaxed">
-                                  This patient record will be submitted without a diagnosis. A physician will be
-                                  required to review and provide a formal diagnosis and treatment plan.
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Notes if any */}
-                          {patientInput.notes && (
-                            <>
-                              <div className="border-t border-gray-200 mx-6" />
-                              <div className="px-6 py-4">
-                                <span className="text-xs text-gray-400 uppercase tracking-wider">Nurse Notes</span>
-                                <p className="text-sm text-gray-800 whitespace-pre-wrap mt-1">{patientInput.notes}</p>
-                              </div>
-                            </>
-                          )}
-
-                          {/* Referred by */}
-                          <div className="border-t border-gray-200 mx-6" />
-                          <div className="px-6 py-5 flex justify-end">
-                            <div className="text-center">
-                              {userProfile?.signature_url ? (
-                                <img
-                                  src={userProfile.signature_url}
-                                  alt="Personnel signature"
-                                  className="max-h-20 max-w-[200px] object-contain mx-auto mb-1"
-                                />
-                              ) : (
-                                <div className="w-48 border-b border-gray-300 mb-1" />
-                              )}
-                              <div className="border-t border-gray-300 pt-1 px-4">
-                                <p className="text-xs font-medium text-gray-700">{patientInput.attendingPhysician || 'N/A'}</p>
-                                <p className="text-xs text-gray-500">Referring Personnel</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      )}
                     </motion.div>
                   )}
                 </AnimatePresence>

@@ -280,7 +280,7 @@ export default function Sidebar() {
                                             <Wrapper
                                                 {...wrapperProps}
                                                 className={`
-                                                    relative flex items-center gap-3 rounded-xl transition-all duration-200 group
+                                                    relative flex items-center gap-3 rounded-xl transition-all duration-200 group w-full text-left
                                                     ${collapsed ? 'justify-center h-10 w-10 mx-auto' : 'px-3 py-2.5'}
                                                     ${active && !isNotification
                                                         ? 'bg-crimson-50 text-crimson-600'

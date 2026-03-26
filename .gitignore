@@ -25,3 +25,6 @@ Thumbs.db
 # Build output
 dist/
 dist-ssr/
+
+# GitHub Copilot agents
+.github/agents/
