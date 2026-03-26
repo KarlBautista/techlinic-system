@@ -23,33 +23,47 @@ const PatientsPerDepartmentChart = () => {
       size: "100%",
       id: "patient-per-department",
       toolbar: { show: true },
+      dropShadow: { enabled: true, top: 2, left: 0, blur: 6, opacity: 0.12 }
     },
     labels: [],
+    colors: ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ef4444', '#14b8a6'],
+    stroke: { width: 2, colors: ['#fff'] },
     title: {
       text: 'Number of Patient Records per Department',
       align: 'left',
       style: {
         fontSize: '12px',  
-        fontWeight: 'normal'
-  }
+        fontWeight: 'normal',
+        color: '#6b7280'
+      }
     },
     legend: {
-      position: 'bottom'
+      position: 'bottom',
+      fontSize: '12px',
+      fontWeight: 500,
+      markers: { width: 10, height: 10, radius: 3 },
+      itemMargin: { horizontal: 8, vertical: 4 }
     },
     dataLabels: {
       enabled: true,
       formatter: function (val, opts) {
         return opts.w.config.series[opts.seriesIndex];
-      }
+      },
+      style: { fontSize: '12px', fontWeight: 600 },
+      dropShadow: { enabled: false }
     },
     plotOptions: {
       pie: {
         donut: {
+          size: '58%',
           labels: {
             show: true,
             total: {
               show: true,
               label: 'Total Patients',
+              fontSize: '13px',
+              fontWeight: 600,
+              color: '#374151',
               formatter: function (w) {
                 return w.globals.seriesTotals.reduce((a, b) => a + b, 0);
               }
@@ -59,6 +73,8 @@ const PatientsPerDepartmentChart = () => {
       }
     },
     tooltip: {
+      theme: 'light',
+      style: { fontSize: '12px' },
       y: {
         formatter: function(value) {
           return value + " patients";
@@ -109,8 +125,7 @@ const PatientsPerDepartmentChart = () => {
     }
   }, [selectedCategory, weeklyPatientPerDepartment, monthlyPatientPerDepartment, quarterlyPatientPerDepartment, yearlyPatientPerDepartment]);
 
-  const handleCategoryChange = async (e) => {
-    const value = e.target.value;
+  const handleCategoryChange = async (value) => {
     setSelectedCategory(value);
 
     switch(value) {
@@ -156,18 +171,21 @@ const PatientsPerDepartmentChart = () => {
             {/* Header */}
             <div className='shrink-0 flex items-start justify-between gap-2 pb-2'>
               <div className='text-sm font-semibold text-gray-800'>Patient Records Per Department</div>
-              <select
-                  id='departments'
-                  name='departments'
-                  aria-label='Departments timeframe'
-                  value={selectedCategory}
-                  className='shrink-0 text-xs font-medium px-2 py-1 rounded-lg ring-1 ring-gray-200 outline-none bg-white text-gray-600 focus:ring-crimson-400' 
-                  onChange={handleCategoryChange}>
-                  <option value='week'>This week</option>
-                  <option value='month'>This month</option>
-                  <option value='quarter'>This quarter</option>
-                  <option value='year'>This year</option>
-              </select>
+              <div className='flex gap-1'>
+                {['week', 'month', 'quarter', 'year'].map((val) => (
+                  <button
+                    key={val}
+                    onClick={() => handleCategoryChange(val)}
+                    className={`text-[10px] font-medium px-2.5 py-1 rounded-lg transition-all duration-200 ${
+                      selectedCategory === val
+                        ? 'bg-crimson-600 text-white shadow-sm'
+                        : 'bg-gray-100/80 text-gray-500 hover:bg-gray-200/80'
+                    }`}
+                  >
+                    {val === 'week' ? 'W' : val === 'month' ? 'M' : val === 'quarter' ? 'Q' : 'Y'}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Period info */}

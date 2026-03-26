@@ -18,13 +18,19 @@ const PatientCountsChart = () => {
 
   const [patientData, setPatientData] = useState([]);
   const [patientOptions, setPatientOptions] = useState({
-    chart: { id: "patients-chart", toolbar: { show: true } },
-    xaxis: { categories: [] },
-    colors: ["#ef4444"],
-    stroke: { curve: "smooth" },
+    chart: { id: "patients-chart", toolbar: { show: true }, dropShadow: { enabled: true, top: 2, left: 0, blur: 4, opacity: 0.15 } },
+    xaxis: { categories: [], labels: { style: { colors: '#9ca3af', fontWeight: 500, fontSize: '11px' } } },
+    yaxis: { labels: { style: { colors: '#9ca3af', fontSize: '11px' } } },
+    colors: ["#dc2626"],
+    fill: {
+      type: 'gradient',
+      gradient: { shadeIntensity: 1, opacityFrom: 0.45, opacityTo: 0.05, stops: [0, 90, 100] }
+    },
+    stroke: { curve: "smooth", width: 2.5 },
     dataLabels: { enabled: false },
-    grid: { borderColor: "#e5e7eb" },
-    title: { text: "", align: "left", style: { fontSize: "12px", fontWeight: "normal" } }
+    grid: { borderColor: "#f3f4f6", strokeDashArray: 4 },
+    title: { text: "", align: "left", style: { fontSize: "12px", fontWeight: "normal" } },
+    tooltip: { theme: 'light', style: { fontSize: '12px' }, marker: { show: true } }
   });
 
   const monthNames = [
@@ -159,12 +165,27 @@ const PatientCountsChart = () => {
   };
 
   return (
-    <div className='w-full h-full'>
-      <div className='h-[10%] w-full'>
-        <div className='text-[.9rem] font-semibold'>Patient record count</div>
+    <div className='w-full h-full flex flex-col min-h-0'>
+      <div className='shrink-0 flex items-start justify-between gap-2 pb-1'>
+        <div className='text-sm font-semibold text-gray-800'>Patient record count</div>
+        <div className='flex gap-1'>
+          {['week', 'month', 'quarter', 'year'].map((val) => (
+            <button
+              key={val}
+              onClick={() => handleCategoryChange(val)}
+              className={`text-[10px] font-medium px-2.5 py-1 rounded-lg transition-all duration-200 ${
+                selectedCategory === val
+                  ? 'bg-crimson-600 text-white shadow-sm'
+                  : 'bg-gray-100/80 text-gray-500 hover:bg-gray-200/80'
+              }`}
+            >
+              {val === 'week' ? 'W' : val === 'month' ? 'M' : val === 'quarter' ? 'Q' : 'Y'}
+            </button>
+          ))}
+        </div>
       </div>  
       
-      <div className='h-[90%] w-full'>
+      <div className='flex-1 min-h-0'>
           {patientData.length > 0 ? (
           <Chart
             key={`${selectedCategory}-${patientData.length}`}

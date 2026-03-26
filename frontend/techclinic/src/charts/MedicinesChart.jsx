@@ -27,19 +27,34 @@ const MedicinesChart = () => {
   const medicineChartOptions = {
     chart: {
       id: "medicine-chart",
-      toolbar: { show: true }
+      toolbar: { show: true },
     },
     xaxis: {
       categories: lowStockMedicines.map(med => med.medicine_name),
+      labels: { style: { colors: '#9ca3af', fontWeight: 500, fontSize: '11px' } }
     },
-    colors: ["#ef4444"],
-    labels: { style: { colors: '#6b7280' } },
+    yaxis: { labels: { style: { colors: '#9ca3af', fontSize: '11px' } } },
+    colors: ["#dc2626"],
+    fill: {
+      type: 'gradient',
+      gradient: { shade: 'light', type: 'vertical', shadeIntensity: 0.3, opacityFrom: 1, opacityTo: 0.85, stops: [0, 100] }
+    },
     grid: {
-      borderColor: '#e5e7eb'
+      borderColor: '#f3f4f6',
+      strokeDashArray: 4
     },
     dataLabels: {
-      enabled: false
+      enabled: true,
+      style: { fontSize: '11px', fontWeight: 600, colors: ['#fff'] },
+      dropShadow: { enabled: false }
     },
+    plotOptions: {
+      bar: {
+        borderRadius: 6,
+        columnWidth: '55%',
+      }
+    },
+    tooltip: { theme: 'light', style: { fontSize: '12px' } }
   };
 
   const medicineData = [{

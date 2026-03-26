@@ -23,27 +23,34 @@ const TopDiagnosisChart = () => {
       id: "top-diagnosis",
       toolbar: { show: true },
     },
-    colors: ["#3b82f6"],
+    colors: ["#6366f1"],
+    fill: {
+      type: 'gradient',
+      gradient: { shade: 'light', type: 'horizontal', shadeIntensity: 0.2, opacityFrom: 1, opacityTo: 0.85, stops: [0, 100] }
+    },
     plotOptions: {
       bar: {
         horizontal: true,
-        borderRadius: 4,
-        barHeight: '60%',
+        borderRadius: 6,
+        barHeight: '55%',
       }
     },
     xaxis: {
       categories: [],
-      title: { text: "Number of Patients" },
+      title: { text: "Number of Patients", style: { color: '#9ca3af', fontSize: '11px' } },
       labels: {
         formatter: function(val) {
           return Math.round(val);
-        }
+        },
+        style: { colors: '#9ca3af', fontSize: '11px' }
       }
     },
     yaxis: {
       labels: {
         style: {
-          fontSize: '12px'
+          fontSize: '12px',
+          colors: '#6b7280',
+          fontWeight: 500
         },
         maxWidth: 180
       }
@@ -54,16 +61,21 @@ const TopDiagnosisChart = () => {
         return Math.round(val);
       },
       style: {
-        fontSize: '12px',
+        fontSize: '11px',
         fontWeight: 600,
+        colors: ['#fff']
       },
+      dropShadow: { enabled: false }
     },
     grid: {
-      borderColor: '#e5e7eb',
+      borderColor: '#f3f4f6',
+      strokeDashArray: 4,
       xaxis: { lines: { show: true } },
       yaxis: { lines: { show: false } }
     },
     tooltip: {
+      theme: 'light',
+      style: { fontSize: '12px' },
       y: {
         formatter: function(val) {
           return val + " patients";
@@ -110,8 +122,7 @@ const TopDiagnosisChart = () => {
     }
   }, [selectedCategory, weeklyTopDiagnoses, monthlyTopDiagnoses, quarterlyTopDiagnoses, yearlyTopDiagnoses]);
 
-  const handleCategoryChange = async (e) => {
-    const value = e.target.value;
+  const handleCategoryChange = async (value) => {
     setSelectedCategory(value);
 
     switch(value) {
@@ -163,19 +174,21 @@ const TopDiagnosisChart = () => {
       {/* Header */}
       <div className='shrink-0 flex items-start justify-between gap-2 pb-2'>
         <div className='text-sm font-semibold text-gray-800'>Top Diagnoses</div>
-        <select
-          id='diagnoses-timeframe'
-          name='diagnoses-timeframe'
-          aria-label='Diagnoses timeframe'
-          value={selectedCategory}
-          className='shrink-0 text-xs font-medium px-2 py-1 rounded-lg ring-1 ring-gray-200 outline-none bg-white text-gray-600 focus:ring-crimson-400'
-          onChange={handleCategoryChange}
-        >
-          <option value='week'>This week</option>
-          <option value='month'>This month</option>
-          <option value='quarter'>This quarter</option>
-          <option value='year'>This year</option>
-        </select>
+        <div className='flex gap-1'>
+          {['week', 'month', 'quarter', 'year'].map((val) => (
+            <button
+              key={val}
+              onClick={() => handleCategoryChange(val)}
+              className={`text-[10px] font-medium px-2.5 py-1 rounded-lg transition-all duration-200 ${
+                selectedCategory === val
+                  ? 'bg-crimson-600 text-white shadow-sm'
+                  : 'bg-gray-100/80 text-gray-500 hover:bg-gray-200/80'
+              }`}
+            >
+              {val === 'week' ? 'W' : val === 'month' ? 'M' : val === 'quarter' ? 'Q' : 'Y'}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Period info */}

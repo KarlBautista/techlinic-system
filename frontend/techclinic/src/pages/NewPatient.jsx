@@ -280,12 +280,7 @@ const NewPatient = () => {
         return;
       }
     }
-    if (currentStep === 2) {
-      if (!patientInput.treatment || !patientInput.treatment.trim()) {
-        showToast({ title: "Incomplete", message: "Please fill out the treatment field before proceeding.", type: "warning" });
-        return;
-      }
-    }
+    // Step 2 (Diagnosis & Treatment) is optional — nurse can skip for doctor to complete later
     setCurrentStep((prev) => Math.min(prev + 1, 4));
   };
 
@@ -775,12 +770,12 @@ const NewPatient = () => {
                             className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-crimson-600 text-white text-sm font-medium tracking-wider hover:bg-crimson-700 transition-colors shadow-sm cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                           >
                             {isSubmitting ? <><ButtonLoader /> Submitting...</> : (
-                              patientInput && patientInput.diagnosis && patientInput.diagnosis.length > 0
+                              patientInput.diagnosis && patientInput.diagnosis.trim()
                                 ? "Insert Record"
                                 : "Send for Diagnosis"
                             )}
                           </motion.button>
-                          {patientInput.email && (
+                          {patientInput.diagnosis && patientInput.diagnosis.trim() && patientInput.email && (
                             <motion.button
                               whileTap={{ scale: 0.97 }}
                               type="button"
@@ -843,7 +838,9 @@ const NewPatient = () => {
                         </div>
                       </div>
 
-                      {/* Prescription Card — scrollable */}
+                      {/* Content — depends on whether diagnosis exists */}
+                      {patientInput.diagnosis && patientInput.diagnosis.trim() ? (
+                      /* ── Prescription Card (with diagnosis) ── */
                       <div className="flex-1 min-h-0 overflow-y-auto rounded-lg border border-gray-300">
                         <div className="bg-white max-w-2xl w-full mx-auto">
                         {/* Prescription Header */}
@@ -988,6 +985,120 @@ const NewPatient = () => {
                         </div>
                         </div>
                       </div>
+                      ) : (
+                      /* ── Patient Referral Summary (no diagnosis) ── */
+                      <div className="flex-1 min-h-0 overflow-y-auto rounded-lg border border-gray-300">
+                        <div className="bg-white max-w-2xl w-full mx-auto">
+                          {/* Header */}
+                          <div className="p-6 pb-4">
+                            <div className="flex items-center gap-3">
+                              <img src={tupLogo} alt="TUP Logo" className="w-12 h-12 object-contain" />
+                              <div>
+                                <h2 className="text-lg font-bold text-gray-800">Patient Referral for Diagnosis</h2>
+                                <p className="text-xs text-gray-500">TechClinic Health Services &mdash; Technological University of the Philippines</p>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="border-t border-gray-200 mx-6" />
+
+                          {/* Patient Info */}
+                          <div className="px-6 py-4 space-y-2">
+                            <div className="flex items-center gap-4">
+                              <div className="flex-1">
+                                <span className="text-xs text-gray-400 uppercase tracking-wider">Name of Patient</span>
+                                <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+                                  {patientInput.firstName} {patientInput.lastName}
+                                </p>
+                              </div>
+                              <div className="w-28">
+                                <span className="text-xs text-gray-400 uppercase tracking-wider">Sex</span>
+                                <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+                                  {patientInput.sex || 'N/A'}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-4">
+                              <div className="flex-1">
+                                <span className="text-xs text-gray-400 uppercase tracking-wider">Patient ID</span>
+                                <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+                                  {patientInput.studentId || 'N/A'}
+                                </p>
+                              </div>
+                              <div className="w-28">
+                                <span className="text-xs text-gray-400 uppercase tracking-wider">Department</span>
+                                <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1 truncate" title={patientInput.department}>
+                                  {patientInput.department || 'N/A'}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-4">
+                              <div className="flex-1">
+                                <span className="text-xs text-gray-400 uppercase tracking-wider">Contact</span>
+                                <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+                                  {patientInput.contactNumber || 'N/A'}
+                                </p>
+                              </div>
+                              <div className="w-28">
+                                <span className="text-xs text-gray-400 uppercase tracking-wider">Date</span>
+                                <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+                                  {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="border-t border-gray-200 mx-6" />
+
+                          {/* Referral Notice */}
+                          <div className="px-6 py-6">
+                            <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 flex items-start gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
+                                <ClipboardList className="w-4 h-4 text-amber-600" />
+                              </div>
+                              <div>
+                                <p className="text-sm font-semibold text-amber-800">Pending Physician Diagnosis</p>
+                                <p className="text-xs text-amber-700 mt-1 leading-relaxed">
+                                  This patient record will be submitted without a diagnosis. A physician will be
+                                  required to review and provide a formal diagnosis and treatment plan.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Notes if any */}
+                          {patientInput.notes && (
+                            <>
+                              <div className="border-t border-gray-200 mx-6" />
+                              <div className="px-6 py-4">
+                                <span className="text-xs text-gray-400 uppercase tracking-wider">Nurse Notes</span>
+                                <p className="text-sm text-gray-800 whitespace-pre-wrap mt-1">{patientInput.notes}</p>
+                              </div>
+                            </>
+                          )}
+
+                          {/* Referred by */}
+                          <div className="border-t border-gray-200 mx-6" />
+                          <div className="px-6 py-5 flex justify-end">
+                            <div className="text-center">
+                              {userProfile?.signature_url ? (
+                                <img
+                                  src={userProfile.signature_url}
+                                  alt="Personnel signature"
+                                  className="max-h-20 max-w-[200px] object-contain mx-auto mb-1"
+                                />
+                              ) : (
+                                <div className="w-48 border-b border-gray-300 mb-1" />
+                              )}
+                              <div className="border-t border-gray-300 pt-1 px-4">
+                                <p className="text-xs font-medium text-gray-700">{patientInput.attendingPhysician || 'N/A'}</p>
+                                <p className="text-xs text-gray-500">Referring Personnel</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      )}
                     </motion.div>
                   )}
                 </AnimatePresence>
