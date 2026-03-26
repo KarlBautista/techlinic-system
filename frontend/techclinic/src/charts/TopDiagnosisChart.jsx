@@ -173,16 +173,16 @@ const TopDiagnosisChart = () => {
     <div className='w-full h-full flex flex-col min-h-0'>
       {/* Header */}
       <div className='shrink-0 flex items-start justify-between gap-2 pb-2'>
-        <div className='text-sm font-semibold text-gray-800'>Top Diagnoses</div>
+        <div className='text-sm font-semibold tracking-tight text-gray-800 dark:text-slate-100'>Top Diagnoses</div>
         <div className='flex gap-1'>
           {['week', 'month', 'quarter', 'year'].map((val) => (
             <button
               key={val}
               onClick={() => handleCategoryChange(val)}
-              className={`text-[10px] font-medium px-2.5 py-1 rounded-lg transition-all duration-200 ${
+              className={`h-7 min-w-7 inline-flex items-center justify-center text-[10px] font-semibold rounded-md border transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 ${
                 selectedCategory === val
-                  ? 'bg-crimson-600 text-white shadow-sm'
-                  : 'bg-gray-100/80 text-gray-500 hover:bg-gray-200/80'
+                  ? 'bg-crimson-600 dark:bg-blue-600 border-crimson-600 dark:border-blue-500 text-white shadow-sm'
+                  : 'bg-gray-100/80 dark:bg-[#132246]/70 border-gray-200 dark:border-[#2a4f98] text-gray-500 dark:text-blue-100/80 hover:bg-gray-200/80 dark:hover:bg-[#1b3266]'
               }`}
             >
               {val === 'week' ? 'W' : val === 'month' ? 'M' : val === 'quarter' ? 'Q' : 'Y'}
@@ -193,7 +193,7 @@ const TopDiagnosisChart = () => {
 
       {/* Period info */}
       {periodInfo && (
-        <div className='shrink-0 text-xs font-medium text-gray-400 pb-2'>
+        <div className='shrink-0 text-xs font-semibold tracking-wide text-gray-400 dark:text-blue-200/60 pb-2'>
           <p>{getPeriodDisplay()}</p>
         </div>
       )}
@@ -204,14 +204,14 @@ const TopDiagnosisChart = () => {
           <div className='w-full h-full animate-pulse flex flex-col gap-3 justify-center px-4'>
             {[75, 60, 45, 35, 25].map((w, i) => (
               <div key={i} className='flex items-center gap-3'>
-                <div className='h-3 w-20 bg-gray-100 rounded shrink-0' />
-                <div className='h-6 bg-gray-200 rounded' style={{ width: `${w}%` }} />
+                <div className='h-3 w-20 bg-gray-100 dark:bg-[#111c3a] rounded shrink-0' />
+                <div className='h-6 bg-gray-200 dark:bg-[#132246] rounded' style={{ width: `${w}%` }} />
               </div>
             ))}
           </div>
         ) : !hasData ? (
           <div className='w-full h-full flex items-center justify-center'>
-            <p className='text-sm text-gray-400'>No diagnosis data available for this period</p>
+            <p className='text-sm text-gray-400 dark:text-blue-200/60'>No diagnosis data available for this period</p>
           </div>
         ) : (
           <Chart

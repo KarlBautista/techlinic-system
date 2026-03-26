@@ -166,17 +166,17 @@ const PatientCountsChart = () => {
 
   return (
     <div className='w-full h-full flex flex-col min-h-0'>
-      <div className='shrink-0 flex items-start justify-between gap-2 pb-1'>
-        <div className='text-sm font-semibold text-gray-800'>Patient record count</div>
+      <div className='shrink-0 flex items-start justify-between gap-2 pb-2'>
+        <div className='text-sm font-semibold tracking-tight text-gray-800 dark:text-slate-100'>Patient record count</div>
         <div className='flex gap-1'>
           {['week', 'month', 'quarter', 'year'].map((val) => (
             <button
               key={val}
               onClick={() => handleCategoryChange(val)}
-              className={`text-[10px] font-medium px-2.5 py-1 rounded-lg transition-all duration-200 ${
+              className={`h-7 min-w-7 inline-flex items-center justify-center text-[10px] font-semibold rounded-md border transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 ${
                 selectedCategory === val
-                  ? 'bg-crimson-600 text-white shadow-sm'
-                  : 'bg-gray-100/80 text-gray-500 hover:bg-gray-200/80'
+                  ? 'bg-crimson-600 dark:bg-blue-600 border-crimson-600 dark:border-blue-500 text-white shadow-sm'
+                  : 'bg-gray-100/80 dark:bg-[#132246]/70 border-gray-200 dark:border-[#2a4f98] text-gray-500 dark:text-blue-100/80 hover:bg-gray-200/80 dark:hover:bg-[#1b3266]'
               }`}
             >
               {val === 'week' ? 'W' : val === 'month' ? 'M' : val === 'quarter' ? 'Q' : 'Y'}
@@ -187,7 +187,7 @@ const PatientCountsChart = () => {
       
       <div className='flex-1 min-h-0'>
           {patientData.length > 0 ? (
-          <Chart
+            <Chart
             key={`${selectedCategory}-${patientData.length}`}
             options={patientOptions}
             series={[{ name: "Patient Records", data: patientData }]}
@@ -197,7 +197,7 @@ const PatientCountsChart = () => {
         ) : (
           <div className='w-full h-full animate-pulse flex items-end gap-3 px-4 pb-6 pt-4'>
             {[35, 55, 45, 70, 50, 60, 40].map((h, i) => (
-              <div key={i} className='flex-1 bg-gray-200 rounded-t' style={{ height: `${h}%` }} />
+              <div key={i} className='flex-1 bg-gray-200 dark:bg-[#132246] rounded-t' style={{ height: `${h}%` }} />
             ))}
           </div>
         )}

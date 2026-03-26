@@ -9,12 +9,12 @@ const MedicinesChart = () => {
     return (
       <div className='w-full h-full flex flex-col min-h-0 animate-pulse'>
         <div className='shrink-0'>
-          <div className='h-4 w-24 bg-gray-200 rounded' />
-          <div className='h-3 w-40 bg-gray-100 rounded mt-2' />
+          <div className='h-4 w-24 bg-gray-200 dark:bg-[#132246] rounded' />
+          <div className='h-3 w-40 bg-gray-100 dark:bg-[#111c3a] rounded mt-2' />
         </div>
         <div className='flex-1 min-h-0 mt-4 flex items-end gap-3 px-4 pb-4'>
           {[40, 65, 30, 80, 50].map((h, i) => (
-            <div key={i} className='flex-1 bg-gray-200 rounded-t' style={{ height: `${h}%` }} />
+            <div key={i} className='flex-1 bg-gray-200 dark:bg-[#132246] rounded-t' style={{ height: `${h}%` }} />
           ))}
         </div>
       </div>
@@ -27,11 +27,23 @@ const MedicinesChart = () => {
   const medicineChartOptions = {
     chart: {
       id: "medicine-chart",
-      toolbar: { show: true },
+      toolbar: { show: false },
+      parentHeightOffset: 0,
     },
     xaxis: {
       categories: lowStockMedicines.map(med => med.medicine_name),
-      labels: { style: { colors: '#9ca3af', fontWeight: 500, fontSize: '11px' } }
+      labels: {
+        rotate: -16,
+        offsetY: 4,
+        hideOverlappingLabels: true,
+        trim: true,
+        maxHeight: 52,
+        style: { colors: '#9ca3af', fontWeight: 500, fontSize: '11px' },
+        formatter: function (value) {
+          if (!value) return '';
+          return value.length > 18 ? `${value.slice(0, 18)}...` : value;
+        }
+      }
     },
     yaxis: { labels: { style: { colors: '#9ca3af', fontSize: '11px' } } },
     colors: ["#dc2626"],
@@ -41,20 +53,28 @@ const MedicinesChart = () => {
     },
     grid: {
       borderColor: '#f3f4f6',
-      strokeDashArray: 4
+      strokeDashArray: 4,
+      padding: { left: 4, right: 8, top: 8, bottom: 10 }
     },
-    dataLabels: {
-      enabled: true,
-      style: { fontSize: '11px', fontWeight: 600, colors: ['#fff'] },
-      dropShadow: { enabled: false }
-    },
+    dataLabels: { enabled: false },
     plotOptions: {
       bar: {
         borderRadius: 6,
-        columnWidth: '55%',
+        columnWidth: '48%',
       }
     },
-    tooltip: { theme: 'light', style: { fontSize: '12px' } }
+    states: {
+      hover: {
+        filter: { type: 'lighten', value: 0.15 }
+      }
+    },
+    tooltip: {
+      theme: 'light',
+      shared: false,
+      intersect: false,
+      followCursor: true,
+      style: { fontSize: '12px' }
+    }
   };
 
   const medicineData = [{
@@ -65,10 +85,10 @@ const MedicinesChart = () => {
   return (
     <div className='w-full h-full flex flex-col min-h-0'>
       <div className='shrink-0'>
-        <div className='text-sm font-semibold text-gray-800'>Lowest Stock</div>
-        <p className='text-xs text-gray-400 mt-0.5'>Total medicines tracked: {medicines.length}</p> 
+        <div className='text-sm font-semibold tracking-tight text-gray-800 dark:text-slate-100'>Lowest Stock</div>
+        <p className='text-xs font-medium text-gray-400 dark:text-blue-200/60 mt-0.5'>Total medicines tracked: {medicines.length}</p>
       </div>  
-      <div className='flex-1 min-h-0 mt-2'>
+      <div className='flex-1 min-h-0 mt-3 pb-1'>
        <Chart
           options={medicineChartOptions}
           series={medicineData}
