@@ -590,7 +590,7 @@ const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime, physicianDa
             </div>
             <div className="text-gray-600 dark:text-[#94969C]">
               {physicianData?.role === 'DOCTOR' ? 'Attending Physician' : 'Attending Personnel'}
-            </p>
+            </div>
           </div>
         </div>
       </div>

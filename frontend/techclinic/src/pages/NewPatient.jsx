@@ -656,42 +656,14 @@ const NewPatient = () => {
                             />
                             <button
                               type="button"
-                              onClick={() => setShowAddDisease(!showAddDisease)}
-                              className={`shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-sm transition-all ${showAddDisease
-                                ? 'bg-gray-100 text-gray-600 ring-1 ring-gray-200'
-                                : 'bg-crimson-600 text-white hover:bg-crimson-700 shadow-sm'
-                                }`}
-                              title={showAddDisease ? 'Cancel' : 'Add new disease'}
+                              onClick={handleAddDisease}
+                              disabled={!newDiseaseName.trim() || isAddingDisease}
+                              className='shrink-0 px-3 py-2 rounded-xl bg-crimson-600 text-white text-sm font-medium hover:bg-crimson-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm'
                             >
-                              {showAddDisease ? <X className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
+                              {isAddingDisease ? 'Adding...' : 'Add'}
                             </button>
-                          </div>
-                          {showAddDisease && (
-                            <motion.div
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: 'auto' }}
-                              transition={{ duration: 0.2 }}
-                              className='flex items-center gap-2 mt-2'
-                            >
-                              <input
-                                type="text"
-                                value={newDiseaseName}
-                                onChange={(e) => setNewDiseaseName(e.target.value)}
-                                onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddDisease(); } }}
-                                placeholder="Enter disease name..."
-                                className='flex-1 py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'
-                                autoFocus
-                              />
-                              <button
-                                type="button"
-                                onClick={handleAddDisease}
-                                disabled={!newDiseaseName.trim() || isAddingDisease}
-                                className='shrink-0 px-3 py-2 rounded-xl bg-crimson-600 text-white text-sm font-medium hover:bg-crimson-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm'
-                              >
-                                {isAddingDisease ? 'Adding...' : 'Add'}
-                              </button>
-                            </motion.div>
-                          )}
+                          </motion.div>
+                        )}
                         </div>
 
                       <div className='flex-1 flex flex-col'>

@@ -503,7 +503,7 @@ const NewDashboard = () => {
                                                 <td className='px-3 py-3.5'>
                                                     <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-crimson-500 group-hover:translate-x-0.5 transition-all" />
                                                 </td>
-                                            </tr>
+                                            </motion.tr>
                                         ))}
                                     </tbody>
                                 </table>

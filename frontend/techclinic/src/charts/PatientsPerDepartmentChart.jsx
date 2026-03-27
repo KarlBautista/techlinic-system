@@ -199,44 +199,6 @@ const PatientsPerDepartmentChart = () => {
 
   return (
     <div className='w-full h-full flex flex-col min-h-0'>
-          <div className='w-full h-full flex flex-col min-h-0'>
-            {/* Header */}
-            <div className='shrink-0 flex items-start justify-between gap-2 pb-2'>
-              <div className='text-sm font-semibold text-gray-800'>Patient Records Per Department</div>
-              <ChartPeriodSelector
-                selectedCategory={selectedCategory}
-                onCategoryChange={handleCategoryChange}
-                customStart={customStart}
-                customEnd={customEnd}
-                onCustomStartChange={setCustomStart}
-                onCustomEndChange={setCustomEnd}
-                onCustomApply={handleCustomDateApply}
-              />
-            </div>
-
-            {/* Period info */}
-            {periodInfo && (
-              <div className='shrink-0 text-xs font-medium text-gray-400 pb-2'>
-                <p>{getPeriodDisplay()}</p>
-              </div>
-            )}
-
-            {/* Chart */}
-            <div className='flex-1 min-h-0'>
-              {totalPatients === 0 ? (
-                <div className='w-full h-full flex items-center justify-center'>
-                  <p className='text-sm text-gray-400'>No patient records for this period</p>
-                </div>
-              ) : (
-                <Chart
-                  options={patientOptions}
-                  series={patientData}
-                  type='donut'
-                  height="100%"
-                  width="100%"
-                />
-              )}
-            </div>
       <div className='w-full h-full flex flex-col min-h-0'>
         {/* Header */}
         <div className='shrink-0 flex items-start justify-between gap-2 pb-2'>

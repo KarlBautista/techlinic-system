@@ -226,7 +226,6 @@ const TopDiagnosisChart = () => {
 
       {/* Chart */}
       <div className='flex-1 min-h-0'>
-        {!hasData ? (
         {!chartData ? (
           <div className='w-full h-full animate-pulse flex flex-col gap-3 justify-center px-4'>
             {[75, 60, 45, 35, 25].map((w, i) => (
