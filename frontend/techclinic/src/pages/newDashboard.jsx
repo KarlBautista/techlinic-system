@@ -415,9 +415,9 @@ const NewDashboard = () => {
                         {/* Table Header */}
                         <div className='px-5 py-4 flex items-center justify-between border-b border-gray-100 dark:border-[#1F2A37]'>
                             <div className='flex items-center gap-3'>
-                                <h2 className='text-lg font-semibold text-gray-800 dark:text-slate-100'>Today's Records</h2>
+                                <h2 className='text-lg font-semibold text-gray-800 dark:text-slate-100'>{tableFilter === 'pending' ? 'Pending Records' : "Today's Records"}</h2>
                                 <span className='inline-flex items-center justify-center h-6 min-w-6 px-2 rounded-full bg-crimson-600 dark:bg-crimson-600 text-white text-xs font-bold'>
-                                    {todayRecords.length}
+                                    {filteredTableRecords.length}
                                 </span>
                             </div>
                             {pendingCount > 0 && (
@@ -429,8 +429,8 @@ const NewDashboard = () => {
                         </div>
 
                         {/* Table Content */}
-                        <div className='flex-1 overflow-auto'>
-                            {todayRecords.length > 0 ? (
+                        <div className='flex-1 overflow-auto min-h-[300px]'>
+                            {paginatedTableRecords.length > 0 ? (
                                 <table className='w-full'>
                                     <thead className='sticky top-0 bg-gray-50/95 dark:bg-[#1F242F]/95 backdrop-blur-sm'>
                                         <tr>
@@ -443,7 +443,7 @@ const NewDashboard = () => {
                                         </tr>
                                     </thead>
                                     <tbody className='divide-y divide-gray-50 dark:divide-[#1F2A37]'>
-                                        {todayRecords.map((patient, idx) => (
+                                        {paginatedTableRecords.map((patient, idx) => (
                                             <motion.tr
                                                 key={patient.id}
                                                 initial={{ opacity: 0, x: -10 }}
@@ -512,8 +512,8 @@ const NewDashboard = () => {
                                     <div className="w-16 h-16 rounded-2xl bg-gray-50 dark:bg-[#1F242F] flex items-center justify-center mb-4">
                                         <ClipboardCheck className="w-8 h-8 text-gray-300 dark:text-gray-500" />
                                     </div>
-                                    <p className='text-sm font-medium text-gray-500 dark:text-slate-300'>No records for today</p>
-                                    <p className='text-xs text-gray-400 dark:text-gray-500 mt-1'>Patient visits will appear here</p>
+                                    <p className='text-sm font-medium text-gray-500 dark:text-slate-300'>{tableFilter === 'pending' ? 'No pending records' : 'No records for today'}</p>
+                                    <p className='text-xs text-gray-400 dark:text-gray-500 mt-1'>{tableFilter === 'pending' ? 'All records are complete' : 'Patient visits will appear here'}</p>
                                     <Link
                                         to='/new-patient'
                                         className='mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-crimson-600 dark:text-crimson-300 hover:text-crimson-700 dark:hover:text-gray-200 transition-colors group'

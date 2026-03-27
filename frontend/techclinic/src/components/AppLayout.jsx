@@ -10,9 +10,11 @@ import Sidebar from './Sidebar'
 
 export default function AppLayout() {
     return (
-        <div className="h-screen w-full flex flex-col sm:flex-row bg-background overflow-hidden">
+        <div className="h-screen w-full flex flex-col sm:flex-row bg-background overflow-hidden print:overflow-visible">
             {/* ── Sidebar (desktop: left, mobile: fixed bottom via Sidebar) ── */}
-            <Sidebar />
+            <div className="print:hidden">
+                <Sidebar />
+            </div>
 
             {/* ── Main Content Area ── */}
             <main className="flex-1 h-full overflow-auto pb-16 sm:pb-0">

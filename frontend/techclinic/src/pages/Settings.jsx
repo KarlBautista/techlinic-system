@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { User, Shield, Lock, Mail, KeyRound, Pencil, PenTool, PenLine, CheckCircle2, AlertCircle, UserPen, IdCard, Tag } from 'lucide-react';
 import useAuth from '../store/useAuthStore';
 import SignaturePad from '../components/SignaturePad';
@@ -200,245 +200,174 @@ const getInitials = () => {
 
   return (  
     <>
-      <div className='flex flex-col gap-4'>
-        {/* Page Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <h1 className='text-2xl font-bold text-gray-800 dark:text-white'>Settings</h1>
-          <p className='text-sm text-gray-500 dark:text-[#94969C] mt-1'>Manage your profile and account settings</p>
-        </motion.div>
-
-        {/* Profile Banner */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.05, duration: 0.35 }}
-          className='bg-white dark:bg-[#161B26] rounded-xl shadow-sm ring-1 ring-gray-100 dark:ring-[#1F2A37] overflow-hidden'
-        >
-          {/* Banner top stripe */}
-          <div className='h-28 bg-linear-to-r from-crimson-600 to-crimson-400 relative'>
-            <div className='absolute -bottom-10 left-6 md:left-10'>
-              <div className='w-20 h-20 md:w-24 md:h-24 rounded-full bg-white dark:bg-[#161B26] border-4 border-white shadow-md flex items-center justify-center'>
-                <div className='w-full h-full rounded-full bg-linear-to-br from-crimson-600 to-crimson-500 flex items-center justify-center'>
-                  <p className='text-white text-xl md:text-2xl font-bold'>{getInitials()}</p>
-                </div>
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className='rounded-xl ring-1 ring-gray-200 dark:ring-[#1F2A37] bg-white dark:bg-[#161B26]'
+      >
+        {/* ─── Profile Section ─── */}
+        <div className='p-5'>
+          <div className='flex items-center justify-between'>
+            <div className='flex items-center gap-4'>
+              <div className='w-14 h-14 rounded-full bg-linear-to-br from-crimson-600 to-crimson-500 flex items-center justify-center shrink-0'>
+                <p className='text-white text-lg font-bold'>{getInitials()}</p>
+              </div>
+              <div>
+                <p className='text-sm font-semibold text-gray-900 dark:text-white'>{getDisplayName()}</p>
+                <p className='text-xs text-gray-500 dark:text-[#94969C] mt-0.5'>{displayedProfile?.role || 'N/A'}</p>
+                <p className='text-xs text-gray-400 dark:text-[#85888E] mt-0.5'>{displayedProfile?.address || ''}</p>
               </div>
             </div>
-          </div>
-          <div className='pt-14 pb-6 px-6 md:px-10'>
-            <div className='flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3'>
-              <div>
-                <h2 className='text-xl md:text-2xl font-bold text-gray-800 dark:text-white'>{getDisplayName()}</h2>
-                <p className='text-sm text-gray-500 dark:text-[#94969C] mt-0.5'>
-                  <span className='inline-flex items-center gap-1.5'>
-                    <IdCard className="w-3.5 h-3.5 text-gray-400 dark:text-[#94969C]" />
-                    {authenticatedUser?.id ? `${authenticatedUser.id.slice(0, 8)}...` : 'N/A'}
-                  </span>
-                  <span className='mx-2 text-gray-300 dark:text-[#94969C]'>|</span>
-                  <span className='inline-flex items-center gap-1.5'>
-                    <Tag className="w-3.5 h-3.5 text-gray-400 dark:text-[#94969C]" />
-                    {displayedProfile?.role || 'N/A'}
-                  </span>
-                </p>
-              </div>
-              <button onClick={handleToggleEdit} className='inline-flex items-center gap-2 px-4 py-2.5 bg-crimson-600 hover:bg-crimson-700 text-white text-sm font-medium rounded-xl transition-colors shadow-sm'>
-                <Pencil className="w-3.5 h-3.5" />
-                Edit Profile
-              </button>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Info Cards Grid */}
-        <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-          {/* Personal Information Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.35 }}
-            className='bg-white dark:bg-[#161B26] rounded-xl shadow-sm ring-1 ring-gray-100 dark:ring-[#1F2A37] p-6'
-          >
-            <div className='flex items-center gap-3 mb-5'>
-              <div className='w-9 h-9 rounded-xl bg-crimson-50 dark:bg-[#1F242F] flex items-center justify-center ring-1 ring-crimson-100 dark:ring-[#333741]'>
-                <User className="w-4 h-4 text-crimson-600" />
-              </div>
-              <h3 className='text-base font-semibold text-gray-800 dark:text-white'>Personal Information</h3>
-            </div>
-
-            <div className='space-y-4'>
-              <div className='flex items-start justify-between'>
-                <div>
-                  <p className='text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider'>First Name</p>
-                  <p className='text-sm font-medium text-gray-800 dark:text-white mt-0.5'>{displayedProfile?.first_name || 'N/A'}</p>
-                </div>
-                <div className='text-right'>
-                  <p className='text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider'>Last Name</p>
-                  <p className='text-sm font-medium text-gray-800 dark:text-white mt-0.5'>{displayedProfile?.last_name || 'N/A'}</p>
-                </div>
-              </div>
-
-              <div className='border-t border-gray-50 dark:border-[#1F2A37]'></div>
-
-              <div className='flex items-start justify-between'>
-                <div>
-                  <p className='text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider'>Gender</p>
-                  <p className='text-sm font-medium text-gray-800 dark:text-white mt-0.5'>{displayedProfile?.sex || 'N/A'}</p>
-                </div>
-                <div className='text-right'>
-                  <p className='text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider'>Date of Birth</p>
-                  <p className='text-sm font-medium text-gray-800 dark:text-white mt-0.5'>{formatDateForInput(displayedProfile?.date_of_birth) || 'N/A'}</p>
-                </div>
-              </div>
-
-              <div className='border-t border-gray-50 dark:border-[#1F2A37]'></div>
-
-              <div>
-                <p className='text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider'>Address</p>
-                <p className='text-sm font-medium text-gray-800 dark:text-white mt-0.5'>{displayedProfile?.address || 'N/A'}</p>
-              </div>
-
-              <div className='border-t border-gray-50 dark:border-[#1F2A37]'></div>
-
-              <div>
-                <p className='text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider'>Role</p>
-                <span className='inline-flex items-center gap-1.5 mt-0.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-crimson-50 dark:bg-[#1F242F] text-crimson-600 ring-1 ring-crimson-100 dark:ring-[#333741]'>
-                  <Shield className="w-3 h-3" />
-                  {displayedProfile?.role || 'N/A'}
-                </span>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Login & Security Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15, duration: 0.35 }}
-            className='bg-white dark:bg-[#161B26] rounded-xl shadow-sm ring-1 ring-gray-100 dark:ring-[#1F2A37] p-6'
-          >
-            <div className='flex items-center gap-3 mb-5'>
-              <div className='w-9 h-9 rounded-xl bg-crimson-50 dark:bg-[#1F242F] flex items-center justify-center ring-1 ring-crimson-100 dark:ring-[#333741]'>
-                <Lock className="w-4 h-4 text-crimson-600" />
-              </div>
-              <h3 className='text-base font-semibold text-gray-800 dark:text-white'>Login & Security</h3>
-            </div>
-
-            <div className='space-y-4'>
-              <div>
-                <p className='text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider'>Email Address</p>
-                <div className='flex items-center gap-2 mt-1'>
-                  <Mail className="w-3.5 h-3.5 text-gray-400 dark:text-[#94969C]" />
-                  <p className='text-sm font-medium text-gray-800 dark:text-white'>{authenticatedUser?.email || 'N/A'}</p>
-                </div>
-              </div>
-
-              <div className='border-t border-gray-50 dark:border-[#1F2A37]'></div>
-
-              <div>
-                <p className='text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider'>Password</p>
-                <div className='flex items-center justify-between mt-1'>
-                  <div className='flex items-center gap-2'>
-                    <KeyRound className="w-3.5 h-3.5 text-gray-400 dark:text-[#94969C]" />
-                    <p className='text-sm font-medium text-gray-800 dark:text-white tracking-widest'>••••••••</p>
-                  </div>
-                  <button 
-                    onClick={handleEditPassword} 
-                    className='inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-crimson-600 bg-crimson-50 dark:bg-[#1F242F] hover:bg-crimson-100 rounded-xl ring-1 ring-crimson-100 dark:ring-[#333741] transition-colors'>
-                    <Pencil className="w-3 h-3" />
-                    Change
-                  </button>
-                </div>
-              </div>
-
-              <div className='border-t border-gray-50 dark:border-[#1F2A37]'></div>
-
-              <div>
-                <p className='text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider'>Account Status</p>
-                <span className='inline-flex items-center gap-1.5 mt-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-700 ring-1 ring-green-100'>
-                  <span className='w-1.5 h-1.5 rounded-full bg-green-500'></span>
-                  Active
-                </span>
-              </div>
-
-              <div className='border-t border-gray-50 dark:border-[#1F2A37]'></div>
-
-              <div>
-                <p className='text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider'>Last Sign In</p>
-                <p className='text-sm font-medium text-gray-800 dark:text-white mt-0.5'>
-                  {authenticatedUser?.last_sign_in_at 
-                    ? new Date(authenticatedUser.last_sign_in_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })
-                    : 'N/A'
-                  }
-                </p>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Signature Card - Full Width */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.35 }}
-          className='bg-white dark:bg-[#161B26] rounded-xl shadow-sm ring-1 ring-gray-100 dark:ring-[#1F2A37] p-6'
-        >
-          <div className='flex items-center justify-between mb-5'>
-            <div className='flex items-center gap-3'>
-              <div className='w-9 h-9 rounded-xl bg-crimson-50 dark:bg-[#1F242F] flex items-center justify-center ring-1 ring-crimson-100 dark:ring-[#333741]'>
-                <PenLine className="w-4 h-4 text-crimson-600" />
-              </div>
-              <div>
-                <h3 className='text-base font-semibold text-gray-800 dark:text-white'>Digital Signature</h3>
-                <p className='text-xs text-gray-400 dark:text-[#94969C] mt-0.5'>Used on prescriptions and medical certificates</p>
-              </div>
-            </div>
-            <button
-              onClick={() => { setSignatureMessage(''); setShowSignatureModal(true); }}
-              className='inline-flex items-center gap-2 px-4 py-2.5 bg-crimson-600 hover:bg-crimson-700 text-white text-sm font-medium rounded-xl transition-colors shadow-sm'
-            >
-              <PenTool className="w-3.5 h-3.5" />
-              {userProfile?.signature_url ? 'Update Signature' : 'Add Signature'}
+            <button onClick={handleToggleEdit} className='inline-flex items-center gap-1.5 px-4 py-2 rounded-lg ring-1 ring-gray-200 dark:ring-[#333741] text-sm font-medium text-gray-700 dark:text-[#CECFD2] hover:bg-gray-50 dark:hover:bg-[#1F242F] transition-colors cursor-pointer'>
+              Edit <Pencil className='w-3.5 h-3.5' />
             </button>
           </div>
+        </div>
 
-          {userProfile?.signature_url ? (
-            <div className='ring-1 ring-gray-200 dark:ring-[#1F2A37] rounded-xl p-6 bg-gray-50 dark:bg-[#1F242F] flex flex-col items-center gap-3'>
-              <img
-                src={userProfile.signature_url}
-                alt="Your signature"
-                className='max-h-[120px] max-w-full object-contain'
-              />
-              <p className='text-xs text-gray-400 dark:text-[#94969C]'>Your current digital signature</p>
+        {/* ─── Personal Information Section ─── */}
+        <div className='px-5 pb-5'>
+          <div className='flex items-center justify-between border-t border-gray-200 dark:border-[#1F2A37] pt-5 mb-5'>
+            <h3 className='text-lg font-bold text-gray-900 dark:text-white'>Personal Information</h3>
+          </div>
+
+          <div className='grid grid-cols-2 gap-x-8 gap-y-5'>
+            <div>
+              <p className='text-xs text-gray-400 dark:text-[#85888E]'>First Name</p>
+              <p className='text-sm font-medium text-gray-900 dark:text-white mt-1'>{displayedProfile?.first_name || 'N/A'}</p>
             </div>
-          ) : (
-            <div className='border-2 border-dashed border-gray-200 dark:border-[#1F2A37] rounded-xl p-8 flex flex-col items-center gap-3'>
-              <div className='w-16 h-16 rounded-2xl bg-gray-50 dark:bg-[#1F242F] flex items-center justify-center'>
-                <PenLine className="w-7 h-7 text-gray-300 dark:text-[#94969C]" />
+            <div>
+              <p className='text-xs text-gray-400 dark:text-[#85888E]'>Last Name</p>
+              <p className='text-sm font-medium text-gray-900 dark:text-white mt-1'>{displayedProfile?.last_name || 'N/A'}</p>
+            </div>
+            <div>
+              <p className='text-xs text-gray-400 dark:text-[#85888E]'>Email address</p>
+              <p className='text-sm font-medium text-gray-900 dark:text-white mt-1'>{authenticatedUser?.email || 'N/A'}</p>
+            </div>
+            <div>
+              <p className='text-xs text-gray-400 dark:text-[#85888E]'>Gender</p>
+              <p className='text-sm font-medium text-gray-900 dark:text-white mt-1'>{displayedProfile?.sex || 'N/A'}</p>
+            </div>
+            <div>
+              <p className='text-xs text-gray-400 dark:text-[#85888E]'>Date of Birth</p>
+              <p className='text-sm font-medium text-gray-900 dark:text-white mt-1'>{formatDateForInput(displayedProfile?.date_of_birth) || 'N/A'}</p>
+            </div>
+            <div>
+              <p className='text-xs text-gray-400 dark:text-[#85888E]'>Address</p>
+              <p className='text-sm font-medium text-gray-900 dark:text-white mt-1'>{displayedProfile?.address || 'N/A'}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* ─── Account Security Section ─── */}
+        <div className='px-5 pb-5'>
+          <h3 className='text-lg font-bold text-gray-900 dark:text-white border-t border-gray-200 dark:border-[#1F2A37] pt-5 mb-5'>Account Security</h3>
+
+          <div className='space-y-4'>
+            <div className='flex items-center justify-between'>
+              <div>
+                <p className='text-xs text-gray-400 dark:text-[#85888E]'>Email</p>
+                <p className='text-sm font-medium text-gray-900 dark:text-white mt-1'>{authenticatedUser?.email || 'N/A'}</p>
               </div>
-              <p className='text-sm font-medium text-gray-500 dark:text-[#94969C]'>No signature added yet</p>
-              <p className='text-xs text-gray-400 dark:text-[#94969C]'>Add your signature to appear on prescriptions and certificates</p>
             </div>
-          )}
 
-          {signatureMessage && (
-            <div className={`mt-3 flex items-center gap-2 p-3 rounded-xl text-sm ${
-              signatureMessage.includes('success') ? 'bg-green-50 text-green-700 ring-1 ring-green-100' : 'bg-red-50 text-red-600 ring-1 ring-red-100'
-            }`}>
-              {signatureMessage.includes('success') ? <CheckCircle2 className="w-4 h-4 shrink-0" /> : <AlertCircle className="w-4 h-4 shrink-0" />}
-              {signatureMessage}
+            <div className='flex items-center justify-between'>
+              <div>
+                <p className='text-xs text-gray-400 dark:text-[#85888E]'>Password</p>
+                <p className='text-sm font-medium text-gray-900 dark:text-white mt-1 tracking-widest'>••••••••</p>
+              </div>
+              <button onClick={handleEditPassword} className='inline-flex items-center gap-1.5 px-4 py-2 rounded-lg ring-1 ring-gray-200 dark:ring-[#333741] text-sm font-medium text-gray-700 dark:text-[#CECFD2] hover:bg-gray-50 dark:hover:bg-[#1F242F] transition-colors cursor-pointer'>
+                Change password
+              </button>
             </div>
-          )}
-        </motion.div>
-      </div>
+
+            <div className='flex items-center justify-between'>
+              <div>
+                <p className='text-xs text-gray-400 dark:text-[#85888E]'>Account Status</p>
+                <p className='text-sm font-medium text-gray-900 dark:text-white mt-1'>Active</p>
+              </div>
+              <span className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-700 ring-1 ring-green-100'>
+                <span className='w-1.5 h-1.5 rounded-full bg-green-500'></span>
+                Active
+              </span>
+            </div>
+
+            <div>
+              <p className='text-xs text-gray-400 dark:text-[#85888E]'>Last Sign In</p>
+              <p className='text-sm font-medium text-gray-900 dark:text-white mt-1'>
+                {authenticatedUser?.last_sign_in_at 
+                  ? new Date(authenticatedUser.last_sign_in_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+                  : 'N/A'
+                }
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ─── Digital Signature Section ─── */}
+        <div className='px-5 pb-5'>
+          <h3 className='text-lg font-bold text-gray-900 dark:text-white border-t border-gray-200 dark:border-[#1F2A37] pt-5 mb-3'>Digital Signature</h3>
+          <p className='text-xs text-gray-400 dark:text-[#85888E] mt-1'>Used on prescriptions and medical certificates</p>
+
+          <div className='mt-5'>
+            {userProfile?.signature_url ? (
+              <div className='flex items-center justify-between'>
+                <div className='ring-1 ring-gray-200 dark:ring-[#1F2A37] rounded-lg p-4 bg-gray-50 dark:bg-[#1F242F]'>
+                  <img
+                    src={userProfile.signature_url}
+                    alt="Your signature"
+                    className='max-h-[80px] max-w-[200px] object-contain'
+                  />
+                </div>
+                <button
+                  onClick={() => { setSignatureMessage(''); setShowSignatureModal(true); }}
+                  className='inline-flex items-center gap-1.5 px-4 py-2 rounded-lg ring-1 ring-gray-200 dark:ring-[#333741] text-sm font-medium text-gray-700 dark:text-[#CECFD2] hover:bg-gray-50 dark:hover:bg-[#1F242F] transition-colors cursor-pointer'
+                >
+                  Update <Pencil className='w-3.5 h-3.5' />
+                </button>
+              </div>
+            ) : (
+              <div className='flex items-center justify-between'>
+                <p className='text-sm text-gray-500 dark:text-[#94969C]'>No signature added yet</p>
+                <button
+                  onClick={() => { setSignatureMessage(''); setShowSignatureModal(true); }}
+                  className='inline-flex items-center gap-1.5 px-4 py-2 rounded-lg ring-1 ring-gray-200 dark:ring-[#333741] text-sm font-medium text-gray-700 dark:text-[#CECFD2] hover:bg-gray-50 dark:hover:bg-[#1F242F] transition-colors cursor-pointer'
+                >
+                  Add Signature
+                </button>
+              </div>
+            )}
+
+            {signatureMessage && (
+              <div className={`mt-3 flex items-center gap-2 p-3 rounded-lg text-sm ${
+                signatureMessage.includes('success') ? 'bg-green-50 text-green-700 ring-1 ring-green-100' : 'bg-red-50 text-red-600 ring-1 ring-red-100'
+              }`}>
+                {signatureMessage.includes('success') ? <CheckCircle2 className="w-4 h-4 shrink-0" /> : <AlertCircle className="w-4 h-4 shrink-0" />}
+                {signatureMessage}
+              </div>
+            )}
+          </div>
+        </div>
+      </motion.div>
 
     {/* Change Password Modal */}
+    <AnimatePresence>
     {showModal && (
-      <div className="fixed inset-0 z-50 flex items-center justify-center">
-        <div className="absolute inset-0 bg-black/50 modal-backdrop-enter" onClick={handleCloseModal}></div>
-        <div className="relative bg-white dark:bg-[#161B26] rounded-xl shadow-xl w-[90%] max-w-md p-6 z-10 modal-content-enter">
+      <motion.div
+        className="fixed inset-0 z-50 flex items-center justify-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+      >
+        <div className="absolute inset-0 bg-black/60" onClick={handleCloseModal}></div>
+        <motion.div
+          className="relative bg-white dark:bg-[#161B26] rounded-2xl shadow-2xl w-[90%] max-w-md p-6 z-10"
+          initial={{ opacity: 0, scale: 0.95, y: 10 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 10 }}
+          transition={{ duration: 0.2 }}
+        >
           <div className='flex items-center gap-3 mb-5'>
             <div className='w-9 h-9 rounded-xl bg-crimson-50 dark:bg-[#1F242F] flex items-center justify-center ring-1 ring-crimson-100 dark:ring-[#333741]'>
               <Lock className="w-4 h-4 text-crimson-600" />
@@ -491,15 +420,29 @@ const getInitials = () => {
               <button type="submit" className="px-4 py-2.5 rounded-xl text-sm font-medium bg-crimson-600 text-white hover:bg-crimson-700 transition-colors shadow-sm">Update Password</button>
             </div>
           </form>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     )}
+    </AnimatePresence>
 
     {/* Edit Profile Modal */}
+    <AnimatePresence>
     {showProfileModal && (
-      <div className="fixed inset-0 z-50 flex items-center justify-center">
-        <div className="absolute inset-0 bg-black/50 modal-backdrop-enter" onClick={() => setShowProfileModal(false)}></div>
-        <div className="relative bg-white dark:bg-[#161B26] rounded-xl shadow-xl w-[90%] max-w-lg p-6 z-10 modal-content-enter max-h-[90vh] overflow-auto">
+      <motion.div
+        className="fixed inset-0 z-50 flex items-center justify-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+      >
+        <div className="absolute inset-0 bg-black/60" onClick={() => setShowProfileModal(false)}></div>
+        <motion.div
+          className="relative bg-white dark:bg-[#161B26] rounded-2xl shadow-2xl w-[90%] max-w-lg p-6 z-10 max-h-[90vh] overflow-auto"
+          initial={{ opacity: 0, scale: 0.95, y: 10 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 10 }}
+          transition={{ duration: 0.2 }}
+        >
           <div className='flex items-center gap-3 mb-5'>
             <div className='w-9 h-9 rounded-xl bg-crimson-50 dark:bg-[#1F242F] flex items-center justify-center ring-1 ring-crimson-100 dark:ring-[#333741]'>
               <UserPen className="w-4 h-4 text-crimson-600" />
@@ -559,15 +502,29 @@ const getInitials = () => {
               <button type="submit" disabled={saving} className="px-4 py-2.5 rounded-xl text-sm font-medium bg-crimson-600 text-white hover:bg-crimson-700 transition-colors shadow-sm inline-flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">{saving ? <><span className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin'></span> Saving...</> : 'Save Changes'}</button>
             </div>
           </form>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     )}
+    </AnimatePresence>
 
     {/* Signature Modal */}
+    <AnimatePresence>
     {showSignatureModal && (
-      <div className="fixed inset-0 z-50 flex items-center justify-center">
-        <div className="absolute inset-0 bg-black/50 modal-backdrop-enter" onClick={() => setShowSignatureModal(false)}></div>
-        <div className="relative bg-white dark:bg-[#161B26] rounded-xl shadow-xl w-[90%] max-w-lg p-6 z-10 modal-content-enter max-h-[90vh] overflow-auto">
+      <motion.div
+        className="fixed inset-0 z-50 flex items-center justify-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+      >
+        <div className="absolute inset-0 bg-black/60" onClick={() => setShowSignatureModal(false)}></div>
+        <motion.div
+          className="relative bg-white dark:bg-[#161B26] rounded-2xl shadow-2xl w-[90%] max-w-lg p-6 z-10 max-h-[90vh] overflow-auto"
+          initial={{ opacity: 0, scale: 0.95, y: 10 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 10 }}
+          transition={{ duration: 0.2 }}
+        >
           <div className='flex items-center gap-3 mb-5'>
             <div className='w-9 h-9 rounded-xl bg-crimson-50 dark:bg-[#1F242F] flex items-center justify-center ring-1 ring-crimson-100 dark:ring-[#333741]'>
               <PenLine className="w-4 h-4 text-crimson-600" />
@@ -599,9 +556,10 @@ const getInitials = () => {
               Close
             </button>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     )}
+    </AnimatePresence>
     </>
   );
 };

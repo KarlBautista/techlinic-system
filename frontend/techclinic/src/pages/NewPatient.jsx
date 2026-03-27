@@ -62,7 +62,8 @@ const NewPatient = () => {
     physicianSignatureUrl: userProfile?.signature_url || null,
   });
 
-  // Pre-fill patient data from navigation state (e.g., from "New Visit" button)
+  // Pre-fill patient data from navigation state (e.g., from "Create Appointment" button)
+  const isReturningPatient = !!location.state?.patientData;
   useEffect(() => {
     const passedData = location.state?.patientData;
     if (passedData) {
@@ -425,7 +426,7 @@ const NewPatient = () => {
   };
 
   return (
-    <div className='h-full flex flex-col overflow-hidden'>
+    <div className='h-full flex flex-col overflow-visible'>
       {isLoading ? (
         <FormSkeleton />
       ) : (
@@ -486,7 +487,7 @@ const NewPatient = () => {
           {/* ─── Form Card ─── */}
           <div className='flex-1 min-h-0 flex flex-col'>
             <div className="bg-white dark:bg-[#161B26] rounded-2xl shadow-sm ring-1 ring-gray-100 dark:ring-[#1F2A37] p-6 md:p-8 flex-1 min-h-0 flex flex-col">
-              <form onSubmit={handleFormSubmit} className='flex-1 min-h-0 flex flex-col overflow-hidden'>
+              <form onSubmit={handleFormSubmit} className='flex-1 min-h-0 flex flex-col'>
                 <AnimatePresence mode="wait">
                   {/* ══ Step 1: Personal Information ══ */}
                   {currentStep === 1 && (
@@ -498,27 +499,33 @@ const NewPatient = () => {
                       transition={{ duration: 0.25 }}
                       className='flex-1 flex flex-col min-h-0'
                     >
-                      <p className='text-xs text-gray-400 dark:text-[#94969C] mb-4'>Enter the patient ID to auto-fill existing records</p>
+                      <p className='text-xs text-gray-400 dark:text-[#94969C] mb-4'>
+                        {isReturningPatient ? 'Patient information is pre-filled from existing records' : 'Enter the patient ID to auto-fill existing records'}
+                      </p>
                       <div className='grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4'>
                         <div className='space-y-1.5'>
                           <label htmlFor="studentID" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Patient ID</label>
                           <input type="text" name="studentId" placeholder="Enter patient ID" id='studentID' value={patientInput.studentId} onChange={handleSetPatientInput} onBlur={handleStudentIdBlur}
-                            className='w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all' />
+                            readOnly={isReturningPatient}
+                            className={`w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all ${isReturningPatient ? 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed opacity-70' : ''}`} />
                         </div>
                         <div className='space-y-1.5'>
                           <label htmlFor="firstName" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>First Name</label>
                           <input type="text" name="firstName" placeholder="Enter first name" id='firstName' value={patientInput.firstName} onChange={handleSetPatientInput}
-                            className='w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all' />
+                            readOnly={isReturningPatient}
+                            className={`w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all ${isReturningPatient ? 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed opacity-70' : ''}`} />
                         </div>
                         <div className='space-y-1.5'>
                           <label htmlFor="lastName" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Last Name</label>
                           <input type="text" name="lastName" placeholder="Enter last name" id='lastName' value={patientInput.lastName} onChange={handleSetPatientInput}
-                            className='w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all' />
+                            readOnly={isReturningPatient}
+                            className={`w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all ${isReturningPatient ? 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed opacity-70' : ''}`} />
                         </div>
                         <div className='space-y-1.5'>
                           <label htmlFor="contactNum" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Contact Number</label>
                           <input type="tel" inputMode="numeric" name="contactNumber" placeholder="Enter contact number" id='contactNum' value={patientInput.contactNumber} onChange={handleSetPatientInput}
-                            className='w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all' />
+                            readOnly={isReturningPatient}
+                            className={`w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all ${isReturningPatient ? 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed opacity-70' : ''}`} />
                         </div>
                         <div className='space-y-1.5'>
                           <Dropdown
@@ -533,6 +540,7 @@ const NewPatient = () => {
                             ]}
                             value={patientInput.yearLevel}
                             onChange={handleSetPatientInput}
+                            disabled={isReturningPatient}
                           />
                         </div>
                         <div className='space-y-1.5'>
@@ -550,6 +558,7 @@ const NewPatient = () => {
                             ]}
                             value={patientInput.department}
                             onChange={handleSetPatientInput}
+                            disabled={isReturningPatient}
                           />
                         </div>
                         <div className='space-y-1.5'>
@@ -563,22 +572,26 @@ const NewPatient = () => {
                             ]}
                             value={patientInput.sex}
                             onChange={handleSetPatientInput}
+                            disabled={isReturningPatient}
                           />
                         </div>
                         <div className='space-y-1.5'>
                           <label htmlFor="email" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Email</label>
                           <input type="text" name="email" placeholder="Enter email address" id='email' value={patientInput.email} onChange={handleSetPatientInput}
-                            className='w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all' />
+                            readOnly={isReturningPatient}
+                            className={`w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all ${isReturningPatient ? 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed opacity-70' : ''}`} />
                         </div>
                         <div className='space-y-1.5'>
                           <label htmlFor="address" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Address</label>
                           <input type="text" name='address' placeholder='Enter address' id='address' value={patientInput.address} onChange={handleSetPatientInput}
-                            className='w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all' />
+                            readOnly={isReturningPatient}
+                            className={`w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all ${isReturningPatient ? 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed opacity-70' : ''}`} />
                         </div>
                         <div className='space-y-1.5'>
                           <label htmlFor="dateOfBirth" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Date of Birth</label>
                           <input type="date" name='dateOfBirth' id='dateOfBirth' value={patientInput.dateOfBirth} onChange={handleSetPatientInput}
-                            className='w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all' />
+                            readOnly={isReturningPatient}
+                            className={`w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all ${isReturningPatient ? 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed opacity-70' : ''}`} />
                         </div>
                       </div>
 

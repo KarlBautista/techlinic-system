@@ -105,14 +105,13 @@ const newMedicine = () => {
 
   return (
     <>
-      {showForm && (
-        <MedicineForm
-          medicine={medicineFormData}
-          onClose={() => setShowForm(false)}
-          onUpdate={(updatedForm) => updateMedicine(updatedForm)}
-          onDelete={(medicineId) => deleteMedicine(medicineId)}
-        />
-      )}
+      <MedicineForm
+        medicine={medicineFormData}
+        open={showForm}
+        onClose={() => setShowForm(false)}
+        onUpdate={(updatedForm) => updateMedicine(updatedForm)}
+        onDelete={(medicineId) => deleteMedicine(medicineId)}
+      />
 
       {showAddForm && (
         <AddMedicineModal onClose={() => setShowAddForm(false)} />
@@ -120,7 +119,7 @@ const newMedicine = () => {
 
       <div className='flex flex-col gap-4 h-full'>
         {isLoading && !medicines ? (
-          <div className='w-full h-full flex flex-col gap-5 animate-pulse'>
+          <div className='w-full h-full flex flex-col gap-5 animate-pulse print:hidden'>
             {/* Skeleton Header */}
             <div className='flex items-center justify-between'>
               <div className='flex items-center gap-4'>
@@ -161,7 +160,7 @@ const newMedicine = () => {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className='w-full h-full flex flex-col gap-5'
+          className='w-full h-full flex flex-col gap-5 print:hidden'
         >
           {/* ─── Page Header ─── */}
           <motion.div variants={itemVariants} className="flex items-center justify-between">
@@ -176,13 +175,22 @@ const newMedicine = () => {
                 </p>
               </div>
             </div>
-            <button
-              onClick={() => handleAddMedicine()}
-              className='inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-crimson-600 text-white text-xs font-medium hover:bg-crimson-700 transition-colors shadow-sm cursor-pointer'
-            >
-              <Plus className="w-4 h-4" />
-              Add Medicine
-            </button>
+            <div className='flex items-center gap-2'>
+              <button
+                onClick={() => window.print()}
+                className='inline-flex items-center justify-center w-10 h-10 bg-white dark:bg-[#161B26] ring-1 ring-gray-200 dark:ring-[#333741] rounded-lg text-gray-600 dark:text-[#94969C] hover:ring-gray-300 hover:text-gray-800 transition-all print:hidden'
+                title='Print inventory'
+              >
+                <i className="fa-solid fa-print text-sm"></i>
+              </button>
+              <button
+                onClick={() => handleAddMedicine()}
+                className='inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-crimson-600 text-white text-xs font-medium hover:bg-crimson-700 transition-colors shadow-sm cursor-pointer print:hidden'
+              >
+                <Plus className="w-4 h-4" />
+                Add Medicine
+              </button>
+            </div>
           </motion.div>
 
           {/* ─── Filters & Search ─── */}
@@ -420,6 +428,37 @@ const newMedicine = () => {
           </motion.div>
         </motion.div>
         )}
+
+        {/* ─── Print-Only Table ─── */}
+        <div className='hidden print:block'>
+          <h2 className='text-xl font-bold mb-1'>Medicine Inventory</h2>
+          <p className='text-sm text-gray-500 mb-4'>Printed on {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+          <table className='w-full border-collapse text-sm'>
+            <thead>
+              <tr className='border-b-2 border-gray-300'>
+                <th className='text-left py-2 font-semibold'>Medicine Name</th>
+                <th className='text-left py-2 font-semibold'>Generic Name</th>
+                <th className='text-left py-2 font-semibold'>Type</th>
+                <th className='text-left py-2 font-semibold'>Dosage</th>
+                <th className='text-left py-2 font-semibold'>Stock</th>
+                <th className='text-left py-2 font-semibold'>Expiry</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredMedicines.map((medicine) => (
+                <tr key={medicine.id} className='border-b border-gray-200'>
+                  <td className='py-2'>{medicine.medicine_name}</td>
+                  <td className='py-2'>{medicine.generic_name}</td>
+                  <td className='py-2'>{medicine.type}</td>
+                  <td className='py-2'>{medicine.dosage} {medicine.unit_of_measure}</td>
+                  <td className='py-2'>{medicine.stock_level}</td>
+                  <td className='py-2'>{formatDate(medicine.expiry_date)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className='text-xs text-gray-500 mt-3'>Total: {filteredMedicines.length} item(s)</p>
+        </div>
       </div>
     </>
   );

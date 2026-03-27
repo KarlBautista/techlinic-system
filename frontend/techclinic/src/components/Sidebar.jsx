@@ -152,7 +152,12 @@ export default function Sidebar() {
 
     useEffect(() => {
         localStorage.setItem('tc-theme', isDarkMode ? 'dark' : 'light')
+        document.body.classList.add('theme-transition')
         document.body.classList.toggle('dark', isDarkMode)
+        const timeout = setTimeout(() => {
+            document.body.classList.remove('theme-transition')
+        }, 350)
+        return () => clearTimeout(timeout)
     }, [isDarkMode])
 
     // ── Close profile menu on outside click ──

@@ -11,12 +11,24 @@ const Login = () => {
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [errors, setErrors] = useState({ email: '', password: '' });
+    const [touched, setTouched] = useState({ email: false, password: false });
     const { signInWithGoogle, authenticatedUser, signIn, isSessionVerified } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
     
    
     const from = location.state?.from?.pathname || "/dashboard";
+
+    // Apply theme: respect saved preference, default to light
+    useEffect(() => {
+        const saved = localStorage.getItem('tc-theme');
+        if (saved === 'dark') {
+            document.body.classList.add('dark');
+        } else {
+            document.body.classList.remove('dark');
+        }
+    }, []);
     
     useEffect(() => {
         if (isSessionVerified && authenticatedUser) {
@@ -24,6 +36,36 @@ const Login = () => {
             navigate(from, { replace: true });
         }
     }, [authenticatedUser, isSessionVerified, navigate, from]);
+
+    const validateEmail = (value) => {
+        if (!value.trim()) return 'Email is required.';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Please enter a valid email address.';
+        return '';
+    };
+
+    const validatePassword = (value) => {
+        if (!value) return 'Password is required.';
+        if (value.length < 6) return 'Password must be at least 6 characters.';
+        return '';
+    };
+
+    const handleEmailChange = (e) => {
+        const val = e.target.value;
+        setEmail(val);
+        if (touched.email) setErrors(prev => ({ ...prev, email: validateEmail(val) }));
+    };
+
+    const handlePasswordChange = (e) => {
+        const val = e.target.value;
+        setPassword(val);
+        if (touched.password) setErrors(prev => ({ ...prev, password: validatePassword(val) }));
+    };
+
+    const handleBlur = (field) => {
+        setTouched(prev => ({ ...prev, [field]: true }));
+        if (field === 'email') setErrors(prev => ({ ...prev, email: validateEmail(email) }));
+        if (field === 'password') setErrors(prev => ({ ...prev, password: validatePassword(password) }));
+    };
 
     const handleSignInWithGoogle = async () => {
         try {
@@ -45,9 +87,14 @@ const Login = () => {
 
     const handleSignin = async (e) => {
         e.preventDefault();
-        
-        if (!email || !password) {
-            showToast({ title: 'Missing Fields', message: 'Please enter both email and password', type: 'warning' });
+
+        const emailError = validateEmail(email);
+        const passwordError = validatePassword(password);
+        setErrors({ email: emailError, password: passwordError });
+        setTouched({ email: true, password: true });
+
+        if (emailError || passwordError) {
+            showToast({ title: 'Validation Error', message: emailError || passwordError, type: 'warning' });
             return;
         }
         
@@ -120,11 +167,19 @@ const Login = () => {
                                 <input
                                     type="text"
                                     value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    onChange={handleEmailChange}
+                                    onBlur={() => handleBlur('email')}
                                     placeholder="you@tup.edu.ph"
-                                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all"
+                                    className={`w-full pl-10 pr-4 py-3 rounded-xl border text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none transition-all ${
+                                        touched.email && errors.email
+                                            ? 'border-red-400 focus:border-red-400 focus:ring-2 focus:ring-red-100'
+                                            : 'border-gray-200 dark:border-[#1F2A37] focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741]'
+                                    }`}
                                 />
                             </div>
+                            {touched.email && errors.email && (
+                                <p className="text-xs text-red-500 mt-1">{errors.email}</p>
+                            )}
                         </div>
 
                         {/* Password Field */}
@@ -137,9 +192,14 @@ const Login = () => {
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    onChange={handlePasswordChange}
+                                    onBlur={() => handleBlur('password')}
                                     placeholder="Enter your password"
-                                    className="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all"
+                                    className={`w-full pl-10 pr-10 py-3 rounded-xl border text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none transition-all ${
+                                        touched.password && errors.password
+                                            ? 'border-red-400 focus:border-red-400 focus:ring-2 focus:ring-red-100'
+                                            : 'border-gray-200 dark:border-[#1F2A37] focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741]'
+                                    }`}
                                 />
                                 <button
                                     type="button"
@@ -149,6 +209,9 @@ const Login = () => {
                                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                 </button>
                             </div>
+                            {touched.password && errors.password && (
+                                <p className="text-xs text-red-500 mt-1">{errors.password}</p>
+                            )}
                         </div>
 
                         {/* Submit Button */}

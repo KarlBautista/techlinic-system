@@ -126,15 +126,32 @@ const insertRecord = async (req, res) => {
 
         // Update medication stock only if we have valid data
         if(hasDiagnosis && medication && medication.id && quantity && Number(quantity) > 0) {
-            const newStockLevel = Number(medication.stock_level) - Number(quantity);
-            
-            const { error: decreaseMedicationStockQuantityError } = await supabase
+            // Fetch current stock from DB to avoid stale data
+            const { data: currentMedicine, error: fetchError } = await supabase
                 .from("medicines")
-                .update({ stock_level: newStockLevel })
-                .eq("id", medication.id);
+                .select("stock_level")
+                .eq("id", medication.id)
+                .single();
 
-            if(decreaseMedicationStockQuantityError) {
-                console.error(`Error updating stock level: ${decreaseMedicationStockQuantityError.message}`);
+            if (fetchError) {
+                console.error(`Error fetching current stock: ${fetchError.message}`);
+            } else {
+                const currentStock = Number(currentMedicine.stock_level);
+                const qty = Number(quantity);
+                const newStockLevel = Math.max(0, currentStock - qty);
+
+                if (currentStock < qty) {
+                    console.warn(`Insufficient stock for medicine ${medication.id}: requested ${qty}, available ${currentStock}. Setting to 0.`);
+                }
+
+                const { error: decreaseMedicationStockQuantityError } = await supabase
+                    .from("medicines")
+                    .update({ stock_level: newStockLevel })
+                    .eq("id", medication.id);
+
+                if(decreaseMedicationStockQuantityError) {
+                    console.error(`Error updating stock level: ${decreaseMedicationStockQuantityError.message}`);
+                }
             }
         }
 
@@ -288,6 +305,33 @@ const addDiagnosis = async (req, res) => {
             console.error(`Error update status: ${updateCompleteStatusError}`);
             return res.status(500).json({ success: false, error: updateCompleteStatusError.message });
         }
+
+        // Decrement medication stock
+        if (medication && medication.id && quantity && Number(quantity) > 0) {
+            const { data: currentMedicine, error: fetchError } = await supabase
+                .from("medicines")
+                .select("stock_level")
+                .eq("id", medication.id)
+                .single();
+
+            if (fetchError) {
+                console.error(`Error fetching current stock: ${fetchError.message}`);
+            } else {
+                const currentStock = Number(currentMedicine.stock_level);
+                const qty = Number(quantity);
+                const newStockLevel = Math.max(0, currentStock - qty);
+
+                const { error: stockError } = await supabase
+                    .from("medicines")
+                    .update({ stock_level: newStockLevel })
+                    .eq("id", medication.id);
+
+                if (stockError) {
+                    console.error(`Error updating stock level: ${stockError.message}`);
+                }
+            }
+        }
+
         return res.status(200).json({ success: true, message: "success diagnosis"});
     } catch (err) {
         console.error(`Something went wrong adding diagnosis: ${err.message}`);

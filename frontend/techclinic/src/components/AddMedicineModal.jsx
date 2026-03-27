@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { showToast } from './Toast'
+import { showModal } from './Modal'
 import useMedicine from '../store/useMedicineStore'
 
 const AddMedicineModal = ({ onClose }) => {
@@ -34,6 +35,15 @@ const AddMedicineModal = ({ onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (isSubmitting) return
+
+    const confirmed = await showModal({
+      type: "confirm",
+      title: "Confirm Add Medicine",
+      confirmLabel: "Add Medicine",
+      cancelLabel: "Cancel",
+    })
+    if (!confirmed) return
+
     setIsSubmitting(true)
 
     try {
@@ -43,6 +53,7 @@ const AddMedicineModal = ({ onClose }) => {
         return
       }
       showToast({ title: 'Medicine Added Successfully', message: 'The new medicine has been added to inventory', type: 'success' })
+      setForm({ name: '', generic: '', brand: '', type: '', dosage: '', unit: '', stock: '', batch: '', expiry: '' })
       handleClose()
       window.location.reload()
     } catch (err) {

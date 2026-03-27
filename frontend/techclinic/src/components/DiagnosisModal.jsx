@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 import emailjs from '@emailjs/browser'
 import supabase from '../config/supabaseClient'
 import useAuth from '../store/useAuthStore'
@@ -11,9 +13,8 @@ const CERT_TMPL = import.meta.env.VITE_EMAILJS_CERTIFICATE_TEMPLATE_ID
 
 const DiagnosisModal = ({ open = false, onClose = () => { }, patient = {}, record = {}, diagnoses = [] }) => {
   const { userProfile } = useAuth();
-  const [activeTab, setActiveTab] = useState('record');
-  const [isVisible, setIsVisible] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('prescription');
   const [physicianData, setPhysicianData] = useState(null);
   const prevTabRef = useRef(activeTab);
 
@@ -24,12 +25,10 @@ const DiagnosisModal = ({ open = false, onClose = () => { }, patient = {}, recor
   const [emailStatus, setEmailStatus] = useState(null); // 'success' | 'error' | null
   const [showSignature, setShowSignature] = useState(true);
 
-  // Handle open/close transitions
+  // Reset tab on open
   useEffect(() => {
     if (open) {
-      setIsVisible(true);
-      setIsClosing(false);
-      setActiveTab('record');
+      setActiveTab('prescription');
     }
   }, [open]);
 
@@ -94,20 +93,13 @@ const DiagnosisModal = ({ open = false, onClose = () => { }, patient = {}, recor
   } : null);
 
   const handleClose = () => {
-    setIsClosing(true);
-    setTimeout(() => {
-      setIsVisible(false);
-      setIsClosing(false);
-      onClose();
-    }, 150);
+    onClose();
   };
 
   // Track tab changes for animation
   useEffect(() => {
     prevTabRef.current = activeTab;
   }, [activeTab]);
-
-  if (!isVisible) return null;
 
   const handlePrint = () => window.print();
 
@@ -167,95 +159,123 @@ const DiagnosisModal = ({ open = false, onClose = () => { }, patient = {}, recor
     ? new Date(primaryDiagnosis.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
     : '';
 
-  const tabs = [
-    { key: 'record', label: 'Record Details', icon: 'fa-solid fa-file-medical' },
-    { key: 'prescription', label: 'Prescription', icon: 'fa-solid fa-prescription' },
-    { key: 'certificate', label: 'Certificate', icon: 'fa-solid fa-certificate' },
-  ];
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className={`absolute inset-0 bg-black/50 ${isClosing ? 'modal-backdrop-exit' : 'modal-backdrop-enter'}`} onClick={handleClose} />
-
-      <div className={`relative z-10 w-[min(900px,95%)] max-h-[90vh] overflow-auto bg-white dark:bg-[#161B26] rounded-lg shadow-lg flex flex-col ${isClosing ? 'modal-content-exit' : 'modal-content-enter'}`}>
-        {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b print:hidden">
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-            Visit — {visitDate}
-          </h3>
-          <div className="flex items-center gap-3">
-            {(activeTab === 'prescription' || activeTab === 'certificate') && (
-              <>
-                {/* Signature Toggle */}
-                {effectivePhysician?.signature_url && (
-                  <label className="inline-flex items-center gap-2 cursor-pointer select-none">
-                    <span className="text-xs text-gray-500 dark:text-[#94969C] font-medium">Signature</span>
-                    <button
-                      type="button"
-                      role="switch"
-                      aria-checked={showSignature}
-                      onClick={() => setShowSignature(prev => !prev)}
-                      className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors duration-200 ${showSignature ? 'bg-[#b01c34]' : 'bg-gray-300'}`}
-                    >
-                      <span className={`inline-block h-3.5 w-3.5 rounded-full bg-white dark:bg-[#161B26] shadow-sm transform transition-transform duration-200 ${showSignature ? 'translate-x-4' : 'translate-x-0.5'}`} />
-                    </button>
-                  </label>
-                )}
-                <button onClick={handlePrint} className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-sm flex items-center gap-1.5 transition-colors">
-                  <i className="fa-solid fa-print"></i>
-                  <span>Print</span>
-                </button>
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-sm flex items-center gap-1.5 transition-colors" onClick={openCompose}>
-                  <i className="fa-solid fa-envelope"></i>
-                  <span>Email</span>
-                </button>
-              </>
-            )}
-            <button onClick={handleClose} className="bg-gray-200 dark:bg-[#1F242F] hover:bg-gray-300 px-3 py-1.5 rounded text-sm transition-colors">
-              <i className="fa-solid fa-xmark"></i>
-            </button>
-          </div>
-        </div>
-
-        {/* Tab Navigation */}
-        <div className="flex border-b px-6 print:hidden">
-          {tabs.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.key
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-gray-500 dark:text-[#94969C] hover:text-gray-700 dark:hover:text-gray-200 hover:border-gray-300 dark:border-[#333741]'
-                }`}
-            >
-              <i className={tab.icon}></i>
-              <span>{tab.label}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Tab Content */}
-        <div className="p-6 overflow-auto flex-1">
-          <div key={activeTab} className="tab-content-enter">
-            {activeTab === 'record' && (
-              <RecordTab patient={patient} record={record} diagnoses={diagnoses} visitDate={visitDate} />
-            )}
-            {activeTab === 'prescription' && (
-              <PrescriptionTab patient={patient} diagnosis={primaryDiagnosis} visitDate={visitDate} visitTime={visitTime} physicianData={effectivePhysician} attendingPhysician={record?.attending_physician} />
-            )}
-            {activeTab === 'certificate' && (
-              <CertificateTab patient={patient} diagnosis={primaryDiagnosis} visitDate={visitDate} physicianData={effectivePhysician} attendingPhysician={record?.attending_physician} />
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Email compose sub-modal */}
-      {showCompose && (
-        <div
-          className="fixed inset-0 z-[60] flex items-center justify-center"
-          onClick={(e) => { if (e.target === e.currentTarget && !sending) setShowCompose(false); }}
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          onClick={handleClose}
         >
+          <div className="absolute inset-0 bg-black/60" />
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-3xl max-h-[90vh] bg-white dark:bg-[#161B26] rounded-2xl shadow-2xl flex flex-col overflow-hidden mx-4"
+          >
+            {/* Header */}
+            <div className="px-6 pt-5 pb-3 print:hidden">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white">Record Details</h2>
+                <div className="flex items-center gap-1">
+                  {record?.status === 'COMPLETE' && (
+                    <>
+                      <button
+                        onClick={handlePrint}
+                        className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-[#94969C] hover:text-emerald-600 hover:bg-gray-100 dark:hover:bg-[#1F242F] transition-colors"
+                        title="Print"
+                      >
+                        <i className="fa-solid fa-print text-sm"></i>
+                      </button>
+                      <button
+                        onClick={openCompose}
+                        className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-[#94969C] hover:text-blue-600 hover:bg-gray-100 dark:hover:bg-[#1F242F] transition-colors"
+                        title="Email"
+                      >
+                        <i className="fa-solid fa-envelope text-sm"></i>
+                      </button>
+                    </>
+                  )}
+                  <button
+                    onClick={handleClose}
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-[#94969C] hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#1F242F] transition-colors"
+                  >
+                    <i className="fa-solid fa-xmark text-sm"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+        {record?.status === 'COMPLETE' ? (
+          <>
+            {/* Tab Toggle */}
+            <div className="flex items-center justify-center px-6 py-3 border-b print:hidden">
+              <div className="relative inline-flex items-center bg-gray-100 dark:bg-[#1F242F] rounded-full p-1">
+                {/* Sliding pill */}
+                <div
+                  className="absolute top-1 bottom-1 w-[calc(50%-4px)] bg-white dark:bg-[#333741] rounded-full shadow-sm transition-transform duration-300 ease-in-out"
+                  style={{ transform: activeTab === 'certificate' ? 'translateX(calc(100% + 8px))' : 'translateX(0)' }}
+                />
+                <button
+                  onClick={() => setActiveTab('prescription')}
+                  className={`relative z-10 px-5 py-1.5 text-sm font-medium rounded-full transition-colors duration-300 ${activeTab === 'prescription' ? 'text-gray-900 dark:text-white' : 'text-gray-400'}`}
+                >
+                  Prescription
+                </button>
+                <button
+                  onClick={() => setActiveTab('certificate')}
+                  className={`relative z-10 px-5 py-1.5 text-sm font-medium rounded-full transition-colors duration-300 ${activeTab === 'certificate' ? 'text-gray-900 dark:text-white' : 'text-gray-400'}`}
+                >
+                  Certificate
+                </button>
+              </div>
+            </div>
+
+            {/* Tab Content */}
+            <div className="p-6 overflow-auto flex-1">
+              <div key={activeTab} className="tab-content-enter">
+                {activeTab === 'prescription' && (
+                  <PrescriptionTab patient={patient} diagnosis={primaryDiagnosis} visitDate={visitDate} visitTime={visitTime} physicianData={effectivePhysician} attendingPhysician={record?.attending_physician} showSignature={showSignature} />
+                )}
+                {activeTab === 'certificate' && (
+                  <CertificateTab patient={patient} diagnosis={primaryDiagnosis} visitDate={visitDate} physicianData={effectivePhysician} attendingPhysician={record?.attending_physician} showSignature={showSignature} />
+                )}
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="flex-1 flex items-center justify-center p-12">
+            <div className="text-center">
+              <i className="fa-solid fa-clock text-4xl text-yellow-400 mb-3"></i>
+              <p className="text-gray-500 dark:text-[#94969C] font-medium">This record is still pending.</p>
+              <p className="text-sm text-gray-400 mt-1">Prescription and certificate will be available once the visit is complete.</p>
+              {userProfile?.role === 'DOCTOR' && record?.id && (
+                <button
+                  onClick={() => { onClose(); navigate(`/add-diagnosis/${record.id}`); }}
+                  className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-crimson-600 hover:bg-crimson-700 text-white text-sm font-medium rounded-lg transition-colors"
+                >
+                  <i className="fa-solid fa-stethoscope"></i>
+                  Proceed to Diagnose
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+          </motion.div>
+
+          {/* Email compose sub-modal */}
+          {showCompose && (
+            <div
+              className="fixed inset-0 z-[60] flex items-center justify-center"
+              onClick={(e) => { if (e.target === e.currentTarget && !sending) setShowCompose(false); }}
+            >
           <div className="absolute inset-0 bg-black/50 -z-10" />
           <div className="relative z-10 w-[min(480px,95%)] bg-white dark:bg-[#161B26] rounded-xl shadow-xl p-6">
 
@@ -326,7 +346,9 @@ const DiagnosisModal = ({ open = false, onClose = () => { }, patient = {}, recor
           </div>
         </div>
       )}
-    </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 
@@ -474,7 +496,7 @@ const RecordTab = ({ patient, record, diagnoses, visitDate }) => {
 };
 
 /* ────────────────────────── Prescription Tab ────────────────────────── */
-const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime, physicianData, attendingPhysician }) => {
+const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime, physicianData, attendingPhysician, showSignature }) => {
   const physicianName = physicianData
     ? `${physicianData.first_name || ''} ${physicianData.last_name || ''}`.trim()
     : attendingPhysician || '';
@@ -600,35 +622,35 @@ const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime, physicianDa
 };
 
 /* ────────────────────────── Certificate Tab ────────────────────────── */
-const CertificateTab = ({ patient, diagnosis, visitDate, physicianData, attendingPhysician }) => {
+const CertificateTab = ({ patient, diagnosis, visitDate, physicianData, attendingPhysician, showSignature }) => {
+  const [excusedDays, setExcusedDays] = useState('');
   return (
-    <div className="border border-gray-900 print:border-black">
-      {/* TUP Header */}
-      <div className="grid grid-cols-[140px_1fr] grid-rows-[84px_46px] border-b border-gray-900">
-        <div className="row-span-2 border-r border-gray-900 flex items-center justify-center p-2">
-          <img src={tupLogo} alt="TUP Logo" className="w-[100px] h-[100px] object-contain" />
-        </div>
-        <div className="border-b border-gray-900 flex flex-col items-center justify-center p-2">
-          <div className="font-extrabold text-sm tracking-wide text-center">
-            TECHNOLOGICAL UNIVERSITY OF THE PHILIPPINES
+    <div className="bg-white max-w-2xl w-full mx-auto rounded-lg border border-gray-300">
+      {/* Certificate Header */}
+      <div className="p-6 pb-4">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-3 flex-shrink-0">
+            <img src={tupLogo} alt="TUP Logo" className="w-12 h-12 object-contain" />
+            <span className="text-lg font-bold text-gray-800 tracking-wide">MEDICAL CERTIFICATE</span>
           </div>
-          <div className="text-[11px] text-center mt-1 text-gray-700 dark:text-gray-200">
-            Ayala Blvd, Ermita, Manila, 1000, Philippines | Tel No. +632-5301-3001 local 607
+          <div className="text-[11px] text-right mt-1 text-gray-700 dark:text-gray-200">
+            Ayala Blvd, Ermita, Manila, 1000, Philippines
+            <br />
+            Tel No. +632-5301-3001 local 607
             <br />
             Flex No. +632-8521-4063 | Email: clinic@tup.edu.ph
           </div>
         </div>
-        <div className="flex items-center justify-center p-2">
-          <div className="font-extrabold tracking-wide">MEDICAL CERTIFICATE</div>
-        </div>
       </div>
 
-      {/* Certificate body */}
-      <div className="px-6 py-8 text-sm leading-relaxed text-gray-800 dark:text-white space-y-5">
-        <div>Date: <span className="font-medium">{visitDate}</span></div>
+      {/* Date row */}
+      <div className="px-4 py-3 text-sm border-b border-gray-300 dark:border-[#333741]">
+        <span>Date: <span className="font-medium underline">{visitDate}</span></span>
+      </div>
 
-        <p className="font-semibold">TO WHOM IT MAY CONCERN:</p>
-
+      {/* To whom it may concern */}
+      <div className="px-4 py-4 text-sm border-b border-gray-300 dark:border-[#333741]">
+        <p className="font-semibold mb-2">TO WHOM IT MAY CONCERN:</p>
         <p>
           This is to certify that{' '}
           <span className="font-medium underline">{patient?.first_name ?? ''} {patient?.last_name ?? ''}</span>{' '}
@@ -636,55 +658,78 @@ const CertificateTab = ({ patient, diagnosis, visitDate, physicianData, attendin
           was examined at the Medical-Dental Clinic on{' '}
           <span className="font-medium underline">{visitDate}</span>.
         </p>
+      </div>
 
-        <div>
-          <p className="mb-1">Findings:</p>
-          <p className="font-medium min-h-6 border-b border-gray-400 pb-1">
-            {diagnosis?.diagnosis ?? ''}
-            {diagnosis?.treatment ? ` — Treatment: ${diagnosis.treatment}` : ''}
-          </p>
+      {/* Findings */}
+      <div className="px-4 py-4 text-sm space-y-1 border-b border-gray-300 dark:border-[#333741]">
+        <span className="text-xs text-gray-400 uppercase tracking-wider">Findings</span>
+        <p className="font-medium min-h-6">
+          {diagnosis?.diagnosis ?? ''}
+          {diagnosis?.treatment ? ` — Treatment: ${diagnosis.treatment}` : ''}
+        </p>
+      </div>
+
+      {/* Medication */}
+      <div className="px-4 py-4 text-sm border-b border-gray-300 dark:border-[#333741]">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <span className="text-xs text-gray-400 uppercase tracking-wider">Medication Prescribed</span>
+            <p className="font-medium mt-1">{diagnosis?.medication ?? '—'}</p>
+          </div>
+          <div>
+            <span className="text-xs text-gray-400 uppercase tracking-wider">Quantity</span>
+            <p className="font-medium mt-1">{diagnosis?.quantity ?? '—'}</p>
+          </div>
         </div>
+      </div>
 
-        <div>
-          <p className="mb-1">Medication Prescribed:</p>
-          <p className="font-medium min-h-6 border-b border-gray-400 pb-1">
-            {diagnosis?.medication ? `${diagnosis.medication}${diagnosis?.quantity ? ` (Qty: ${diagnosis.quantity})` : ''}` : '—'}
-          </p>
-        </div>
+      {/* Recommendation */}
+      <div className="px-4 py-4 text-sm space-y-1 border-b border-gray-300 dark:border-[#333741]">
+        <span className="text-xs text-gray-400 uppercase tracking-wider">Recommendation</span>
+        <p className="font-medium min-h-6">{diagnosis?.notes ?? ''}</p>
+      </div>
 
-        <div>
-          <p className="mb-1">Recommendation:</p>
-          <p className="font-medium min-h-6 border-b border-gray-400 pb-1">
-            {diagnosis?.notes ?? ''}
-          </p>
-        </div>
-
+      {/* Excuse note */}
+      <div className="px-4 py-4 text-sm border-b border-gray-300 dark:border-[#333741]">
         <p>
           It is recommended that the above-named patient be excused from their duties/activities for{' '}
-          <span className="font-medium">______</span> day(s) starting from{' '}
+          <input
+            type="number"
+            min="1"
+            value={excusedDays}
+            onChange={(e) => setExcusedDays(e.target.value)}
+            placeholder="__"
+            className="w-12 text-center font-medium border-b border-gray-400 outline-none bg-transparent print:border-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          />{' '}
+          day(s) starting from{' '}
           <span className="font-medium">{visitDate}</span>.
         </p>
+      </div>
 
-        <div className="mt-12 text-right">
-          <div className="inline-block text-center">
-            {(diagnosis?.physician_signature_url || physicianData?.signature_url) ? (
-              <img
-                src={diagnosis?.physician_signature_url || physicianData?.signature_url}
-                alt="Physician signature"
-                className="max-h-[80px] max-w-[200px] object-contain mx-auto mb-1"
-              />
-            ) : (
-              <div className="h-[60px]"></div>
-            )}
-            <div className="border-t border-gray-900 pt-1 px-4">
-              <div className="font-medium">
-                {physicianData
-                  ? `${physicianData.first_name || ''} ${physicianData.last_name || ''}`.trim()
-                  : attendingPhysician || ''}
-              </div>
-              <div className="text-gray-600 dark:text-[#94969C]">
-                {physicianData?.role === 'DOCTOR' ? 'Attending Physician' : 'Attending Personnel'}
-              </div>
+      {/* Footer */}
+      <div className="px-4 py-6 text-center text-sm text-gray-600 dark:text-[#94969C]">
+        If you have any questions; please feel free to call us at Medical-Dental Clinic.
+      </div>
+
+      <div className="px-4 pb-6 text-right text-sm text-gray-900 dark:text-white">
+        <div className="inline-block text-center">
+          {showSignature && physicianData?.signature_url ? (
+            <img
+              src={diagnosis?.physician_signature_url || physicianData?.signature_url}
+              alt="Physician signature"
+              className="max-h-20 max-w-[200px] object-contain mx-auto mb-1"
+            />
+          ) : (
+            <div className="w-48 border-b border-gray-300 mb-1" />
+          )}
+          <div className="border-t border-gray-900 pt-1 px-4">
+            <div className="font-medium">
+              {physicianData
+                ? `${physicianData.first_name || ''} ${physicianData.last_name || ''}`.trim()
+                : attendingPhysician || ''}
+            </div>
+            <div className="text-gray-600 dark:text-[#94969C]">
+              {physicianData?.role === 'DOCTOR' ? 'Attending Physician' : 'Attending Personnel'}
             </div>
           </div>
         </div>

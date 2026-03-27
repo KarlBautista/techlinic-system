@@ -106,7 +106,7 @@ const PatientRecord = () => {
   return (
     <div className='flex flex-col gap-4 h-full'>
       {initialLoading || isLoadingRecords ? (
-        <div className='w-full h-full flex flex-col gap-5 animate-pulse'>
+        <div className='w-full h-full flex flex-col gap-5 animate-pulse print:hidden'>
           {/* Skeleton Header */}
           <div className='flex items-center justify-between'>
             <div className='flex items-center gap-4'>
@@ -152,7 +152,7 @@ const PatientRecord = () => {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className='w-full h-full flex flex-col gap-5'
+          className='w-full h-full flex flex-col gap-5 print:hidden'
         >
           {/* ─── Page Header ─── */}
           <motion.div variants={itemVariants} className="flex items-center justify-between">
@@ -167,6 +167,13 @@ const PatientRecord = () => {
                 </p>
               </div>
             </div>
+            <button
+              onClick={() => window.print()}
+              className='inline-flex items-center justify-center w-10 h-10 bg-white dark:bg-[#161B26] ring-1 ring-gray-200 dark:ring-[#333741] rounded-lg text-gray-600 dark:text-[#94969C] hover:ring-gray-300 hover:text-gray-800 transition-all print:hidden'
+              title='Print records'
+            >
+              <i className="fa-solid fa-print text-sm"></i>
+            </button>
           </motion.div>
 
           {/* ─── Filters & Search ─── */}
@@ -400,6 +407,35 @@ const PatientRecord = () => {
           </motion.div>
         </motion.div>
       )}
+
+      {/* Print-only table */}
+      <div className='hidden print:block'>
+        <h1 className='text-xl font-bold mb-1'>Patient Records</h1>
+        <p className='text-sm text-gray-500 mb-4'>Printed on {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+        <table className='w-full border-collapse text-sm'>
+          <thead>
+            <tr className='border-b-2 border-gray-800'>
+              <th className='text-left py-2 px-3 font-semibold'>Patient ID</th>
+              <th className='text-left py-2 px-3 font-semibold'>Name</th>
+              <th className='text-left py-2 px-3 font-semibold'>Department</th>
+              <th className='text-left py-2 px-3 font-semibold'>Date</th>
+              <th className='text-left py-2 px-3 font-semibold'>Diagnosis</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredRecords.map((patient) => (
+              <tr key={patient.id} className='border-b border-gray-300'>
+                <td className='py-2 px-3 font-mono'>{patient.student_id}</td>
+                <td className='py-2 px-3'>{patient.first_name} {patient.last_name}</td>
+                <td className='py-2 px-3'>{patient.department}</td>
+                <td className='py-2 px-3'>{formatDate(patient.created_at)}</td>
+                <td className='py-2 px-3'>{patient.diagnoses?.[0]?.diagnosis || 'Pending'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p className='text-xs text-gray-400 mt-4'>Total: {filteredRecords.length} record(s)</p>
+      </div>
     </div>
   )
 }
