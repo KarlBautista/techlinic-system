@@ -19,8 +19,8 @@ const PatientCountsChart = () => {
   const [patientData, setPatientData] = useState([]);
   const [patientOptions, setPatientOptions] = useState({
     chart: { id: "patients-chart", toolbar: { show: true }, dropShadow: { enabled: true, top: 2, left: 0, blur: 4, opacity: 0.15 } },
-    xaxis: { categories: [], labels: { style: { colors: '#9ca3af', fontWeight: 500, fontSize: '11px' } } },
-    yaxis: { labels: { style: { colors: '#9ca3af', fontSize: '11px' } } },
+    xaxis: { categories: [], labels: { style: { colors: '#94969C', fontWeight: 500, fontSize: '11px' } } },
+    yaxis: { labels: { style: { colors: '#94969C', fontSize: '11px' } } },
     colors: ["#dc2626"],
     fill: {
       type: 'gradient',
@@ -175,8 +175,8 @@ const PatientCountsChart = () => {
               onClick={() => handleCategoryChange(val)}
               className={`h-7 min-w-7 inline-flex items-center justify-center text-[10px] font-semibold rounded-md border transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 ${
                 selectedCategory === val
-                  ? 'bg-crimson-600 dark:bg-blue-600 border-crimson-600 dark:border-blue-500 text-white shadow-sm'
-                  : 'bg-gray-100/80 dark:bg-[#132246]/70 border-gray-200 dark:border-[#2a4f98] text-gray-500 dark:text-blue-100/80 hover:bg-gray-200/80 dark:hover:bg-[#1b3266]'
+                  ? 'bg-crimson-600 dark:bg-white dark:text-[#0C111D] border-crimson-600 dark:border-[#333741] text-white shadow-sm'
+                  : 'bg-gray-100/80 dark:bg-[#1F242F]/70 border-gray-200 dark:border-[#333741] text-gray-500 dark:text-[#CECFD2] hover:bg-gray-200/80 dark:hover:bg-[#293040]'
               }`}
             >
               {val === 'week' ? 'W' : val === 'month' ? 'M' : val === 'quarter' ? 'Q' : 'Y'}
@@ -197,7 +197,7 @@ const PatientCountsChart = () => {
         ) : (
           <div className='w-full h-full animate-pulse flex items-end gap-3 px-4 pb-6 pt-4'>
             {[35, 55, 45, 70, 50, 60, 40].map((h, i) => (
-              <div key={i} className='flex-1 bg-gray-200 dark:bg-[#132246] rounded-t' style={{ height: `${h}%` }} />
+              <div key={i} className='flex-1 bg-gray-200 dark:bg-[#1F242F] rounded-t' style={{ height: `${h}%` }} />
             ))}
           </div>
         )}

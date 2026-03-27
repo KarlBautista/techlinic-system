@@ -261,12 +261,12 @@ const AddDiagnosis = () => {
             transition={{ duration: 0.3 }}
             className='flex items-center gap-4 mb-4'
           >
-            <div className='w-12 h-12 rounded-xl bg-crimson-50 flex items-center justify-center ring-1 ring-crimson-100'>
+            <div className='w-12 h-12 rounded-xl bg-crimson-50 dark:bg-[#1F242F] flex items-center justify-center ring-1 ring-crimson-100 dark:ring-[#333741]'>
               <Stethoscope className="w-6 h-6 text-crimson-600" />
             </div>
             <div className='flex-1'>
-              <h1 className='text-2xl font-bold text-gray-800'>Add Patient Diagnosis</h1>
-              <p className='text-sm text-gray-400 mt-0.5'>
+              <h1 className='text-2xl font-bold text-gray-800 dark:text-white'>Add Patient Diagnosis</h1>
+              <p className='text-sm text-gray-400 dark:text-[#94969C] mt-0.5'>
                 {patientInput.firstName ? `${patientInput.firstName} ${patientInput.lastName}` : 'Patient clinical documentation'}
               </p>
             </div>
@@ -282,14 +282,14 @@ const AddDiagnosis = () => {
                       ${currentStep > step.number
                         ? 'bg-crimson-600 border-crimson-600 text-white'
                         : currentStep === step.number
-                          ? 'border-crimson-600 text-crimson-600 bg-white'
-                          : 'border-gray-300 text-gray-400 bg-white'}`}
+                          ? 'border-crimson-600 text-crimson-600 bg-white dark:bg-[#161B26]'
+                          : 'border-gray-300 dark:border-[#333741] text-gray-400 dark:text-[#94969C] bg-white dark:bg-[#161B26]'}`}
                   >
                     {currentStep > step.number ? <Check className="w-4 h-4" /> : step.number}
                   </div>
                   <span
                     className={`text-xs mt-2 font-medium whitespace-nowrap transition-colors
-                      ${currentStep >= step.number ? 'text-crimson-600' : 'text-gray-400'}`}
+                      ${currentStep >= step.number ? 'text-crimson-600' : 'text-gray-400 dark:text-[#94969C]'}`}
                   >
                     {step.label}
                   </span>
@@ -297,7 +297,7 @@ const AddDiagnosis = () => {
                 {index < STEPS.length - 1 && (
                   <div
                     className={`w-16 md:w-28 h-0.5 mx-3 mb-5 transition-all duration-300
-                      ${currentStep > step.number ? 'bg-crimson-600' : 'bg-gray-200'}`}
+                      ${currentStep > step.number ? 'bg-crimson-600' : 'bg-gray-200 dark:bg-[#1F242F]'}`}
                   />
                 )}
               </div>
@@ -306,7 +306,7 @@ const AddDiagnosis = () => {
 
           {/* ─── Form Card ─── */}
           <div className='flex-1 min-h-0 flex flex-col'>
-            <div className="bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 p-6 md:p-8 flex-1 min-h-0 flex flex-col">
+            <div className="bg-white dark:bg-[#161B26] rounded-2xl shadow-sm ring-1 ring-gray-100 dark:ring-[#1F2A37] p-6 md:p-8 flex-1 min-h-0 flex flex-col">
               <form onSubmit={handleFormSubmit} className='flex-1 min-h-0 flex flex-col overflow-hidden'>
                 <AnimatePresence mode="wait">
               {/* ══ Step 1: Patient Info (read-only) ══ */}
@@ -319,7 +319,7 @@ const AddDiagnosis = () => {
                   transition={{ duration: 0.25 }}
                   className='flex-1 flex flex-col'
                 >
-                  <p className='text-xs text-gray-400 mb-4'>Details from the nurse's intake record</p>
+                  <p className='text-xs text-gray-400 dark:text-[#94969C] mb-4'>Details from the nurse's intake record</p>
                   <div className='grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4'>
                     {[
                       { label: 'Patient ID', value: patientInput.studentId },
@@ -334,16 +334,16 @@ const AddDiagnosis = () => {
                       { label: 'Date of Birth', value: patientInput.dateOfBirth },
                     ].map((field) => (
                       <div key={field.label} className='space-y-1.5'>
-                        <label className='text-xs font-medium text-gray-500 uppercase tracking-wider'>{field.label}</label>
-                        <div className='w-full py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 bg-gray-50'>
-                          {field.value || <span className='text-gray-400'>N/A</span>}
+                        <label className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>{field.label}</label>
+                        <div className='w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F]'>
+                          {field.value || <span className='text-gray-400 dark:text-[#94969C]'>N/A</span>}
                         </div>
                       </div>
                     ))}
                   </div>
 
                   {/* Step 1 Navigation */}
-                  <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
+                  <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100 dark:border-[#1F2A37]">
                     <div />
                     <motion.button
                       whileTap={{ scale: 0.97 }}
@@ -383,7 +383,7 @@ const AddDiagnosis = () => {
                         type="button"
                         onClick={() => setShowAddDisease(!showAddDisease)}
                         className={`shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-sm transition-all ${showAddDisease
-                          ? 'bg-gray-100 text-gray-600 ring-1 ring-gray-200'
+                          ? 'bg-gray-100 dark:bg-[#1F242F] text-gray-600 dark:text-[#94969C] ring-1 ring-gray-200 dark:ring-[#1F2A37]'
                           : 'bg-crimson-600 text-white hover:bg-crimson-700 shadow-sm'}`}
                         title={showAddDisease ? 'Cancel' : 'Add new disease'}
                       >
@@ -403,7 +403,7 @@ const AddDiagnosis = () => {
                           onChange={(e) => setNewDiseaseName(e.target.value)}
                           onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddDisease(); } }}
                           placeholder="Enter disease name..."
-                          className='flex-1 py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all'
+                          className='flex-1 py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all'
                           autoFocus
                         />
                         <button
@@ -419,23 +419,23 @@ const AddDiagnosis = () => {
                   </div>
 
                   <div className='flex-1 flex flex-col'>
-                    <label className='text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5'>
-                      <FileText className="w-3 h-3 text-gray-400" />
+                    <label className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider mb-1.5 flex items-center gap-1.5'>
+                      <FileText className="w-3 h-3 text-gray-400 dark:text-[#94969C]" />
                       Treatment
                     </label>
                     <textarea
                       name='treatment'
                       value={patientInput.treatment}
                       onChange={handleSetPatientInput}
-                      className='w-full flex-1 min-h-[120px] p-3 resize-none outline-none rounded-xl border border-gray-200 text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all placeholder:text-gray-400'
+                      className='w-full flex-1 min-h-[120px] p-3 resize-none outline-none rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all placeholder:text-gray-400 dark:placeholder:text-[#94969C] dark:text-[#94969C]'
                       placeholder='Describe the treatment plan...'
                     />
                   </div>
 
                   {/* Step 2 Navigation */}
-                  <div className="flex items-center justify-between mt-2 pt-4 border-t border-gray-100">
+                  <div className="flex items-center justify-between mt-2 pt-4 border-t border-gray-100 dark:border-[#1F2A37]">
                     <motion.button whileTap={{ scale: 0.97 }} type="button" onClick={handleBack}
-                      className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer">
+                      className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 dark:text-[#94969C] hover:bg-gray-100 dark:hover:bg-[#1F242F] dark:bg-[#1F242F] transition-colors cursor-pointer">
                       Back
                     </motion.button>
                     <motion.button whileTap={{ scale: 0.97 }} type="button" onClick={handleNext}
@@ -469,30 +469,30 @@ const AddDiagnosis = () => {
                       onChange={handleSetPatientInput}
                     />
                     <div className='space-y-1.5'>
-                      <label htmlFor="quantity" className='text-xs font-medium text-gray-500 uppercase tracking-wider'>Quantity</label>
+                      <label htmlFor="quantity" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Quantity</label>
                       <input type="number" name="quantity" placeholder="Enter quantity" id='quantity' value={patientInput.quantity} onChange={handleSetPatientInput}
-                        className='w-full py-3 px-4 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all' />
+                        className='w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all' />
                     </div>
                   </div>
 
                   <div className='flex-1 flex flex-col'>
-                    <label className='text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5'>
-                      <StickyNote className="w-3 h-3 text-gray-400" />
+                    <label className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider mb-1.5 flex items-center gap-1.5'>
+                      <StickyNote className="w-3 h-3 text-gray-400 dark:text-[#94969C]" />
                       Additional Notes
                     </label>
                     <textarea
                       name='notes'
                       value={patientInput.notes}
                       onChange={handleSetPatientInput}
-                      className='w-full flex-1 min-h-[120px] p-3 resize-none outline-none rounded-xl border border-gray-200 text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all placeholder:text-gray-400'
+                      className='w-full flex-1 min-h-[120px] p-3 resize-none outline-none rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all placeholder:text-gray-400 dark:placeholder:text-[#94969C] dark:text-[#94969C]'
                       placeholder='Any additional observations or notes...'
                     />
                   </div>
 
                   {/* Step 3 Navigation */}
-                  <div className="flex items-center justify-between mt-2 pt-4 border-t border-gray-100">
+                  <div className="flex items-center justify-between mt-2 pt-4 border-t border-gray-100 dark:border-[#1F2A37]">
                     <motion.button whileTap={{ scale: 0.97 }} type="button" onClick={handleBack}
-                      className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer">
+                      className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 dark:text-[#94969C] hover:bg-gray-100 dark:hover:bg-[#1F242F] dark:bg-[#1F242F] transition-colors cursor-pointer">
                       Back
                     </motion.button>
                     <motion.button whileTap={{ scale: 0.97 }} type="button" onClick={handleNext}
@@ -514,9 +514,9 @@ const AddDiagnosis = () => {
                   className='flex-1 flex flex-col min-h-0'
                 >
                   {/* Step 4 Navigation — on top */}
-                  <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-100 shrink-0">
+                  <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-100 dark:border-[#1F2A37] shrink-0">
                     <motion.button whileTap={{ scale: 0.97 }} type="button" onClick={handleBack}
-                      className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer">
+                      className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 dark:text-[#94969C] hover:bg-gray-100 dark:hover:bg-[#1F242F] dark:bg-[#1F242F] transition-colors cursor-pointer">
                       Back
                     </motion.button>
                     <div className="flex items-center gap-3">
@@ -572,127 +572,127 @@ const AddDiagnosis = () => {
                   </div>
 
                   {/* Prescription Card — scrollable */}
-                  <div className="flex-1 min-h-0 overflow-y-auto rounded-lg border border-gray-300">
-                    <div className="bg-white max-w-2xl w-full mx-auto">
+                  <div className="flex-1 min-h-0 overflow-y-auto rounded-lg border border-gray-300 dark:border-[#333741]">
+                    <div className="bg-white dark:bg-[#161B26] max-w-2xl w-full mx-auto">
                       {/* Prescription Header */}
                       <div className="p-6 pb-4">
                         <div className="flex items-start justify-between">
                           <div className="flex items-center gap-3">
                             <img src={tupLogo} alt="TUP Logo" className="w-12 h-12 object-contain" />
-                            <span className="text-5xl font-serif font-bold text-gray-800 leading-none">R<sub className="text-3xl">x</sub></span>
+                            <span className="text-5xl font-serif font-bold text-gray-800 dark:text-white leading-none">R<sub className="text-3xl">x</sub></span>
                           </div>
-                          <div className="text-right text-sm text-gray-600 space-y-0.5">
-                            <p className="font-semibold text-gray-800">{patientInput.attendingPhysician || 'N/A'}</p>
+                          <div className="text-right text-sm text-gray-600 dark:text-[#94969C] space-y-0.5">
+                            <p className="font-semibold text-gray-800 dark:text-white">{patientInput.attendingPhysician || 'N/A'}</p>
                             <p>TechClinic Health Services</p>
                             <p>Technological University of the Philippines</p>
                           </div>
                         </div>
                       </div>
 
-                      <div className="border-t border-gray-200 mx-6" />
+                      <div className="border-t border-gray-200 dark:border-[#1F2A37] mx-6" />
 
                       {/* Patient Info */}
                       <div className="px-6 py-4 space-y-2">
                         <div className="flex items-center gap-4">
                           <div className="flex-1">
-                            <span className="text-xs text-gray-400 uppercase tracking-wider">Name of Patient</span>
-                            <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+                            <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Name of Patient</span>
+                            <p className="text-sm font-medium text-gray-800 dark:text-white border-b border-dotted border-gray-300 dark:border-[#333741] pb-1">
                               {patientInput.firstName} {patientInput.lastName}
                             </p>
                           </div>
                           <div className="w-28">
-                            <span className="text-xs text-gray-400 uppercase tracking-wider">Age/Sex</span>
-                            <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+                            <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Age/Sex</span>
+                            <p className="text-sm font-medium text-gray-800 dark:text-white border-b border-dotted border-gray-300 dark:border-[#333741] pb-1">
                               {patientInput.sex || 'N/A'}
                             </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-4">
                           <div className="flex-1">
-                            <span className="text-xs text-gray-400 uppercase tracking-wider">Address</span>
-                            <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+                            <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Address</span>
+                            <p className="text-sm font-medium text-gray-800 dark:text-white border-b border-dotted border-gray-300 dark:border-[#333741] pb-1">
                               {patientInput.address || 'N/A'}
                             </p>
                           </div>
                           <div className="w-28">
-                            <span className="text-xs text-gray-400 uppercase tracking-wider">Date</span>
-                            <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+                            <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Date</span>
+                            <p className="text-sm font-medium text-gray-800 dark:text-white border-b border-dotted border-gray-300 dark:border-[#333741] pb-1">
                               {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                             </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-4">
                           <div className="flex-1">
-                            <span className="text-xs text-gray-400 uppercase tracking-wider">Patient ID</span>
-                            <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
+                            <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Patient ID</span>
+                            <p className="text-sm font-medium text-gray-800 dark:text-white border-b border-dotted border-gray-300 dark:border-[#333741] pb-1">
                               {patientInput.studentId || 'N/A'}
                             </p>
                           </div>
                           <div className="w-28">
-                            <span className="text-xs text-gray-400 uppercase tracking-wider">Department</span>
-                            <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1 truncate" title={patientInput.department}>
+                            <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Department</span>
+                            <p className="text-sm font-medium text-gray-800 dark:text-white border-b border-dotted border-gray-300 dark:border-[#333741] pb-1 truncate" title={patientInput.department}>
                               {patientInput.department || 'N/A'}
                             </p>
                           </div>
                         </div>
                       </div>
 
-                      <div className="border-t border-gray-200 mx-6" />
+                      <div className="border-t border-gray-200 dark:border-[#1F2A37] mx-6" />
 
                       {/* Diagnosis & Treatment */}
                       <div className="px-6 py-4 space-y-3">
                         <div>
-                          <span className="text-xs text-gray-400 uppercase tracking-wider">Diagnosis</span>
-                          <p className="text-sm font-medium text-gray-800">{patientInput.diagnosis || 'N/A'}</p>
+                          <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Diagnosis</span>
+                          <p className="text-sm font-medium text-gray-800 dark:text-white">{patientInput.diagnosis || 'N/A'}</p>
                         </div>
                         <div>
-                          <span className="text-xs text-gray-400 uppercase tracking-wider">Treatment</span>
-                          <p className="text-sm text-gray-800 whitespace-pre-wrap">{patientInput.treatment || 'N/A'}</p>
+                          <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Treatment</span>
+                          <p className="text-sm text-gray-800 dark:text-white whitespace-pre-wrap">{patientInput.treatment || 'N/A'}</p>
                         </div>
                       </div>
 
-                      <div className="border-t border-gray-200 mx-6" />
+                      <div className="border-t border-gray-200 dark:border-[#1F2A37] mx-6" />
 
                       {/* Drug Prescription Table */}
                       <div className="px-6 py-4">
-                        <h3 className="text-sm font-bold text-gray-800 mb-3">Drug Prescription</h3>
+                        <h3 className="text-sm font-bold text-gray-800 dark:text-white mb-3">Drug Prescription</h3>
                         {patientInput.medication ? (
                           <table className="w-full text-sm">
                             <thead>
-                              <tr className="border-b border-gray-200">
-                                <th className="text-left py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Medicine Name</th>
-                                <th className="text-left py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Generic Name</th>
-                                <th className="text-left py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Dosage</th>
-                                <th className="text-left py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Qty</th>
+                              <tr className="border-b border-gray-200 dark:border-[#1F2A37]">
+                                <th className="text-left py-2 text-xs font-semibold text-gray-500 dark:text-[#94969C] uppercase tracking-wider">Medicine Name</th>
+                                <th className="text-left py-2 text-xs font-semibold text-gray-500 dark:text-[#94969C] uppercase tracking-wider">Generic Name</th>
+                                <th className="text-left py-2 text-xs font-semibold text-gray-500 dark:text-[#94969C] uppercase tracking-wider">Dosage</th>
+                                <th className="text-left py-2 text-xs font-semibold text-gray-500 dark:text-[#94969C] uppercase tracking-wider">Qty</th>
                               </tr>
                             </thead>
                             <tbody>
                               <tr>
-                                <td className="py-2 text-gray-800 font-medium">{patientInput.medication.medicine_name}</td>
-                                <td className="py-2 text-gray-600">{patientInput.medication.generic_name || 'N/A'}</td>
-                                <td className="py-2 text-gray-600">{patientInput.medication.dosage || 'N/A'}</td>
-                                <td className="py-2 text-gray-600">{patientInput.quantity || 'N/A'}</td>
+                                <td className="py-2 text-gray-800 dark:text-white font-medium">{patientInput.medication.medicine_name}</td>
+                                <td className="py-2 text-gray-600 dark:text-[#94969C]">{patientInput.medication.generic_name || 'N/A'}</td>
+                                <td className="py-2 text-gray-600 dark:text-[#94969C]">{patientInput.medication.dosage || 'N/A'}</td>
+                                <td className="py-2 text-gray-600 dark:text-[#94969C]">{patientInput.quantity || 'N/A'}</td>
                               </tr>
                             </tbody>
                           </table>
                         ) : (
-                          <p className="text-sm text-gray-400 italic">No medication prescribed</p>
+                          <p className="text-sm text-gray-400 dark:text-[#94969C] italic">No medication prescribed</p>
                         )}
                       </div>
 
                       {/* Notes */}
                       {patientInput.notes && (
                         <>
-                          <div className="border-t border-gray-200 mx-6" />
+                          <div className="border-t border-gray-200 dark:border-[#1F2A37] mx-6" />
                           <div className="px-6 py-4">
-                            <span className="text-xs text-gray-400 uppercase tracking-wider">Additional Notes</span>
-                            <p className="text-sm text-gray-800 whitespace-pre-wrap mt-1">{patientInput.notes}</p>
+                            <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Additional Notes</span>
+                            <p className="text-sm text-gray-800 dark:text-white whitespace-pre-wrap mt-1">{patientInput.notes}</p>
                           </div>
                         </>
                       )}
 
                       {/* Signature Area */}
-                      <div className="border-t border-gray-200 mx-6" />
+                      <div className="border-t border-gray-200 dark:border-[#1F2A37] mx-6" />
                       <div className="px-6 py-5 flex justify-end">
                         <div className="text-center">
                           {userProfile?.signature_url ? (
@@ -702,11 +702,11 @@ const AddDiagnosis = () => {
                               className="max-h-20 max-w-[200px] object-contain mx-auto mb-1"
                             />
                           ) : (
-                            <div className="w-48 border-b border-gray-300 mb-1" />
+                            <div className="w-48 border-b border-gray-300 dark:border-[#333741] mb-1" />
                           )}
-                          <div className="border-t border-gray-300 pt-1 px-4">
-                            <p className="text-xs font-medium text-gray-700">{patientInput.attendingPhysician || 'N/A'}</p>
-                            <p className="text-xs text-gray-500">Attending Physician</p>
+                          <div className="border-t border-gray-300 dark:border-[#333741] pt-1 px-4">
+                            <p className="text-xs font-medium text-gray-700 dark:text-gray-200">{patientInput.attendingPhysician || 'N/A'}</p>
+                            <p className="text-xs text-gray-500 dark:text-[#94969C]">Attending Physician</p>
                           </div>
                         </div>
                       </div>

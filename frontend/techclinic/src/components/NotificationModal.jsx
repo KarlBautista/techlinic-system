@@ -168,17 +168,17 @@ const NotificationModal = ({ isOpen, onClose }) => {
                         exit={{ opacity: 0, scale: 0.95, y: 10 }}
                         transition={{ duration: 0.25, ease: 'easeOut' }}
                         onClick={(e) => e.stopPropagation()}
-                        className="relative w-full max-w-xl h-[85vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden mx-4"
+                        className="relative w-full max-w-xl h-[85vh] bg-white dark:bg-[#161B26] rounded-2xl shadow-2xl flex flex-col overflow-hidden mx-4"
                     >
                         {/* Header */}
                         <div className="px-6 pt-5 pb-0">
                             <div className="flex items-center justify-between mb-4">
-                                <h2 className="text-lg font-bold text-gray-900">Notifications</h2>
+                                <h2 className="text-lg font-bold text-gray-900 dark:text-white">Notifications</h2>
                                 <div className="flex items-center gap-1">
                                     {unreadCount > 0 && (
                                         <button
                                             onClick={handleMarkAllAsRead}
-                                            className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-crimson-600 hover:bg-gray-100 transition-colors"
+                                            className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-[#94969C] hover:text-crimson-600 hover:bg-gray-100 dark:hover:bg-[#1F242F] dark:bg-[#1F242F] transition-colors"
                                             title="Mark all as read"
                                         >
                                             <CheckCheck className="w-4 h-4" />
@@ -187,7 +187,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
                                     {notifications.length > 0 && (
                                         <button
                                             onClick={handleClearAllNotifications}
-                                            className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                                            className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-[#94969C] hover:text-red-500 hover:bg-red-50 transition-colors"
                                             title="Clear all notifications"
                                         >
                                             <Trash2 className="w-4 h-4" />
@@ -195,7 +195,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
                                     )}
                                     <button
                                         onClick={onClose}
-                                        className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+                                        className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-[#94969C] hover:text-gray-600 dark:hover:text-gray-300  hover:bg-gray-100 dark:hover:bg-[#1F242F] dark:bg-[#1F242F] transition-colors"
                                     >
                                         <X className="w-4 h-4" />
                                     </button>
@@ -217,7 +217,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
                                             <div className="flex items-center gap-2 shrink-0">
                                                 <button
                                                     onClick={() => setConfirmClear(false)}
-                                                    className="px-3 py-1 text-xs font-medium text-gray-600 bg-white rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                                                    className="px-3 py-1 text-xs font-medium text-gray-600 dark:text-[#94969C] bg-white dark:bg-[#161B26] rounded-lg border border-gray-200 dark:border-[#1F2A37] hover:bg-gray-50 dark:hover:bg-[#1F242F] dark:bg-[#1F242F] transition-colors"
                                                 >
                                                     Cancel
                                                 </button>
@@ -244,12 +244,12 @@ const NotificationModal = ({ isOpen, onClose }) => {
                                             onClick={() => setActiveTab(tab.key)}
                                             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${isActive
                                                 ? 'bg-gray-900 text-white'
-                                                : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                                                : 'text-gray-500 dark:text-[#94969C] hover:bg-gray-100 dark:hover:bg-[#1F242F] dark:bg-[#1F242F] hover:text-gray-700 dark:hover:text-gray-200'
                                                 }`}
                                         >
                                             {tab.label}
                                             {count > 0 && (
-                                                <span className={`text-xs ${isActive ? 'text-gray-300' : 'text-gray-400'}`}>
+                                                <span className={`text-xs ${isActive ? 'text-gray-300 dark:text-[#94969C]' : 'text-gray-400 dark:text-[#94969C]'}`}>
                                                     {count}
                                                 </span>
                                             )}
@@ -260,32 +260,32 @@ const NotificationModal = ({ isOpen, onClose }) => {
 
                             {/* Search bar */}
                             <div className="relative pb-3">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" style={{ top: 'calc(50% - 6px)' }} />
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-[#94969C] pointer-events-none" style={{ top: 'calc(50% - 6px)' }} />
                                 <input
                                     type="text"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     placeholder="Search notifications..."
-                                    className="w-full pl-9 pr-4 py-2 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all"
+                                    className="w-full pl-9 pr-4 py-2 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all"
                                 />
                             </div>
                         </div>
 
                         {/* Divider */}
-                        <div className="h-px bg-gray-100" />
+                        <div className="h-px bg-gray-100 dark:bg-[#1F242F]" />
 
                         {/* Notification list */}
                         <div className="flex-1 overflow-y-auto">
                             {isLoading ? (
                                 <div className="animate-pulse">
                                     {Array.from({ length: 4 }).map((_, i) => (
-                                        <div key={i} className="px-6 py-5 border-b border-gray-50">
+                                        <div key={i} className="px-6 py-5 border-b border-gray-50 dark:border-[#1F2A37]">
                                             <div className="flex items-start gap-3">
-                                                <div className="w-10 h-10 rounded-full bg-gray-200 shrink-0" />
+                                                <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-[#1F242F] shrink-0" />
                                                 <div className="flex-1">
-                                                    <div className="h-4 w-48 bg-gray-200 rounded mb-2" />
-                                                    <div className="h-3 w-32 bg-gray-100 rounded mb-3" />
-                                                    <div className="h-12 w-full bg-gray-50 rounded-lg" />
+                                                    <div className="h-4 w-48 bg-gray-200 dark:bg-[#1F242F] rounded mb-2" />
+                                                    <div className="h-3 w-32 bg-gray-100 dark:bg-[#1F242F] rounded mb-3" />
+                                                    <div className="h-12 w-full bg-gray-50 dark:bg-[#1F242F] rounded-lg" />
                                                 </div>
                                             </div>
                                         </div>
@@ -293,11 +293,11 @@ const NotificationModal = ({ isOpen, onClose }) => {
                                 </div>
                             ) : filteredNotifications.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center gap-3 py-16">
-                                    <div className="w-14 h-14 rounded-full bg-gray-50 flex items-center justify-center">
-                                        <BellOff className="w-6 h-6 text-gray-300" />
+                                    <div className="w-14 h-14 rounded-full bg-gray-50 dark:bg-[#1F242F] flex items-center justify-center">
+                                        <BellOff className="w-6 h-6 text-gray-300 dark:text-[#94969C]" />
                                     </div>
-                                    <p className="text-sm font-medium text-gray-500">No notifications</p>
-                                    <p className="text-xs text-gray-400">
+                                    <p className="text-sm font-medium text-gray-500 dark:text-[#94969C]">No notifications</p>
+                                    <p className="text-xs text-gray-400 dark:text-[#94969C]">
                                         {searchQuery.trim()
                                             ? 'No notifications match your search'
                                             : activeTab === 'all'
@@ -324,7 +324,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
                                                 animate={{ opacity: 1, y: 0 }}
                                                 transition={{ delay: idx * 0.03, duration: 0.2 }}
                                                 onClick={() => !notif.is_read && handleMarkAsRead(notif.id)}
-                                                className={`group relative px-6 py-4 border-b border-gray-50 cursor-pointer transition-colors ${!notif.is_read ? 'hover:bg-gray-50/80' : 'hover:bg-gray-50/50'
+                                                className={`group relative px-6 py-4 border-b border-gray-50 dark:border-[#1F2A37] cursor-pointer transition-colors ${!notif.is_read ? 'hover:bg-gray-50/80 dark:bg-[#1F242F]' : 'hover:bg-gray-50/50 dark:bg-[#0C111D]'
                                                     }`}
                                             >
                                                 <div className="flex items-start gap-3">
@@ -338,7 +338,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
                                                     {/* Content */}
                                                     <div className="flex-1 min-w-0">
                                                         <div className="flex items-start justify-between gap-2">
-                                                            <p className={`text-sm leading-snug pr-6 ${!notif.is_read ? 'font-semibold text-gray-900' : 'font-medium text-gray-600'}`}>
+                                                            <p className={`text-sm leading-snug pr-6 ${!notif.is_read ? 'font-semibold text-gray-900 dark:text-white' : 'font-medium text-gray-600 dark:text-[#94969C]'}`}>
                                                                 {title}
                                                                 <span className={`ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-[0.6rem] font-semibold uppercase ${style.bg} ${style.color}`}>
                                                                     {categoryLabel}
@@ -352,14 +352,14 @@ const NotificationModal = ({ isOpen, onClose }) => {
 
                                                         {/* Date row */}
                                                         <div className="flex items-center justify-between mt-1">
-                                                            <span className="text-xs text-gray-400">{formatDateTime(notif.created_at)}</span>
-                                                            <span className="text-xs text-gray-400">{formatRelativeTime(notif.created_at)}</span>
+                                                            <span className="text-xs text-gray-400 dark:text-[#94969C]">{formatDateTime(notif.created_at)}</span>
+                                                            <span className="text-xs text-gray-400 dark:text-[#94969C]">{formatRelativeTime(notif.created_at)}</span>
                                                         </div>
 
                                                         {/* Message in quote box */}
                                                         {notif.message && (
-                                                            <div className="mt-2.5 px-3 py-2.5 bg-gray-50 rounded-xl border border-gray-100">
-                                                                <p className={`text-[0.8rem] leading-relaxed ${!notif.is_read ? 'text-gray-700' : 'text-gray-500'}`}>
+                                                            <div className="mt-2.5 px-3 py-2.5 bg-gray-50 dark:bg-[#1F242F] rounded-xl border border-gray-100 dark:border-[#1F2A37]">
+                                                                <p className={`text-[0.8rem] leading-relaxed ${!notif.is_read ? 'text-gray-700 dark:text-gray-200' : 'text-gray-500 '}`}>
                                                                     {notif.message}
                                                                 </p>
                                                             </div>
@@ -373,7 +373,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
                                                         e.stopPropagation()
                                                         handleDeleteNotification(notif.id)
                                                     }}
-                                                    className="absolute top-4 right-3 w-7 h-7 rounded-lg flex items-center justify-center text-gray-300 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all"
+                                                    className="absolute top-4 right-3 w-7 h-7 rounded-lg flex items-center justify-center text-gray-300 dark:text-[#94969C] hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all"
                                                     title="Delete notification"
                                                 >
                                                     <Trash2 className="w-3.5 h-3.5" />

@@ -22,13 +22,13 @@ function RegistrationInfo({ message, type = 'text', value = '', onChange, name, 
         ? 'ring-crimson-500'
         : isFocused
             ? 'ring-crimson-400 ring-2'
-            : 'ring-gray-200';
+            : 'ring-gray-200 dark:ring-[#1F2A37]';
 
     return (
         <div className="w-full">
             <label
                 htmlFor={name}
-                className="block text-xs font-medium text-gray-500 mb-1.5 pl-1"
+                className="block text-xs font-medium text-gray-500 dark:text-[#94969C] mb-1.5 pl-1"
             >
                 {message}
             </label>
@@ -42,13 +42,13 @@ function RegistrationInfo({ message, type = 'text', value = '', onChange, name, 
                     onFocus={() => setIsFocused(true)}
                     onBlur={handleBlur}
                     disabled={disabled}
-                    className={`w-full text-sm px-4 py-2.5 ring-1 ${borderColor} rounded-xl outline-none text-gray-800 transition-all ${disabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'}`}
+                    className={`w-full text-sm px-4 py-2.5 ring-1 ${borderColor} rounded-xl outline-none text-gray-800 dark:text-white transition-all ${disabled ? 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed' : 'bg-white dark:bg-[#161B26]'}`}
                 />
                 {value && !disabled && (
                     <button
                         type="button"
                         onClick={handleClear}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 font-bold text-xs"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-[#94969C] hover:text-gray-600 dark:hover:text-gray-300  font-bold text-xs"
                     >
                         ✕
                     </button>

@@ -9,12 +9,12 @@ const MedicinesChart = () => {
     return (
       <div className='w-full h-full flex flex-col min-h-0 animate-pulse'>
         <div className='shrink-0'>
-          <div className='h-4 w-24 bg-gray-200 dark:bg-[#132246] rounded' />
-          <div className='h-3 w-40 bg-gray-100 dark:bg-[#111c3a] rounded mt-2' />
+          <div className='h-4 w-24 bg-gray-200 dark:bg-[#1F242F] rounded' />
+          <div className='h-3 w-40 bg-gray-100 dark:bg-[#1F242F] rounded mt-2' />
         </div>
         <div className='flex-1 min-h-0 mt-4 flex items-end gap-3 px-4 pb-4'>
           {[40, 65, 30, 80, 50].map((h, i) => (
-            <div key={i} className='flex-1 bg-gray-200 dark:bg-[#132246] rounded-t' style={{ height: `${h}%` }} />
+            <div key={i} className='flex-1 bg-gray-200 dark:bg-[#1F242F] rounded-t' style={{ height: `${h}%` }} />
           ))}
         </div>
       </div>
@@ -38,14 +38,14 @@ const MedicinesChart = () => {
         hideOverlappingLabels: true,
         trim: true,
         maxHeight: 52,
-        style: { colors: '#9ca3af', fontWeight: 500, fontSize: '11px' },
+        style: { colors: '#94969C', fontWeight: 500, fontSize: '11px' },
         formatter: function (value) {
           if (!value) return '';
           return value.length > 18 ? `${value.slice(0, 18)}...` : value;
         }
       }
     },
-    yaxis: { labels: { style: { colors: '#9ca3af', fontSize: '11px' } } },
+    yaxis: { labels: { style: { colors: '#94969C', fontSize: '11px' } } },
     colors: ["#dc2626"],
     fill: {
       type: 'gradient',
@@ -86,7 +86,7 @@ const MedicinesChart = () => {
     <div className='w-full h-full flex flex-col min-h-0'>
       <div className='shrink-0'>
         <div className='text-sm font-semibold tracking-tight text-gray-800 dark:text-slate-100'>Lowest Stock</div>
-        <p className='text-xs font-medium text-gray-400 dark:text-blue-200/60 mt-0.5'>Total medicines tracked: {medicines.length}</p>
+        <p className='text-xs font-medium text-gray-400 dark:text-[#94969C] mt-0.5'>Total medicines tracked: {medicines.length}</p>
       </div>  
       <div className='flex-1 min-h-0 mt-3 pb-1'>
        <Chart

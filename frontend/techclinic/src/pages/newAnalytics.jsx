@@ -20,8 +20,8 @@ const itemVariants = {
 };
 
 /* ───── Glassmorphism card classes ───── */
-const glassCard = 'rounded-2xl bg-white/60 dark:bg-[#0a132b]/90 backdrop-blur-xl border border-white/40 dark:border-[#2a4f98]/60 shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:shadow-[0_12px_36px_rgba(4,8,23,0.55)] p-5 relative overflow-hidden'
-const glassCardHover = 'transition-all duration-300 hover:shadow-[0_12px_40px_rgba(0,0,0,0.12)] dark:hover:shadow-[0_14px_42px_rgba(7,15,38,0.7)] hover:bg-white/70 dark:hover:bg-[#10224a]/95'
+const glassCard = 'rounded-2xl bg-white/60 dark:bg-[#161B26]/90 backdrop-blur-xl border border-white/40 dark:border-[#333741]/60 shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.55)] p-5 relative overflow-hidden'
+const glassCardHover = 'transition-all duration-300 hover:shadow-[0_12px_40px_rgba(0,0,0,0.12)] dark:hover:shadow-[0_14px_42px_rgba(0,0,0,0.7)] hover:bg-white/70 dark:hover:bg-[#1F242F]/95'
 
 const newAnalytics = () => {
     return (
@@ -33,9 +33,9 @@ const newAnalytics = () => {
         >
             {/* ─── Subtle ambient background blobs ─── */}
             <div className='pointer-events-none absolute inset-0 overflow-hidden -z-10'>
-                <div className='absolute -top-24 -right-24 w-96 h-96 rounded-full bg-crimson-100/40 dark:bg-blue-500/12 blur-3xl' />
-                <div className='absolute -bottom-32 -left-32 w-md h-112 rounded-full bg-blue-100/30 dark:bg-indigo-500/10 blur-3xl' />
-                <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-amber-50/40 dark:bg-sky-500/8 blur-3xl' />
+                <div className='absolute -top-24 -right-24 w-96 h-96 rounded-full bg-crimson-100/40 dark:bg-white/5 blur-3xl' />
+                <div className='absolute -bottom-32 -left-32 w-md h-112 rounded-full bg-blue-100/30 dark:bg-white/3 blur-3xl' />
+                <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-amber-50/40 dark:bg-white/3 blur-3xl' />
             </div>
 
             {/* ─── Page Header ─── */}
@@ -44,17 +44,17 @@ const newAnalytics = () => {
                 className='flex items-center justify-between shrink-0'
             >
                 <div className='flex items-center gap-4'>
-                    <div className='w-12 h-12 rounded-xl bg-crimson-50 dark:bg-[#132246] flex items-center justify-center ring-1 ring-crimson-100 dark:ring-[#2a4f98]'>
-                        <BarChart3 className='w-6 h-6 text-crimson-600 dark:text-blue-300' />
+                    <div className='w-12 h-12 rounded-xl bg-crimson-50 dark:bg-[#1F242F] flex items-center justify-center ring-1 ring-crimson-100 dark:ring-[#333741]'>
+                        <BarChart3 className='w-6 h-6 text-crimson-600 dark:text-crimson-300' />
                     </div>
                     <div>
                         <h1 className='text-2xl sm:text-[1.7rem] font-bold text-gray-800 dark:text-slate-100 tracking-tight'>Medical Analytics</h1>
-                        <p className='text-sm font-medium text-gray-400 dark:text-blue-200/60 mt-0.5'>Overview of clinic performance and reports</p>
+                        <p className='text-sm font-medium text-gray-400 dark:text-gray-400 mt-0.5'>Overview of clinic performance and reports</p>
                     </div>
                 </div>
-                <div className='hidden sm:flex items-center gap-2 px-4 py-2 bg-white/50 dark:bg-[#132246]/70 backdrop-blur-md rounded-full border border-emerald-200/60 dark:border-[#2a4f98] shadow-sm'>
-                    <span className='w-2 h-2 rounded-full bg-emerald-500 dark:bg-blue-400 animate-pulse' />
-                    <span className='text-xs font-semibold tracking-wide text-emerald-700 dark:text-blue-200'>Live data</span>
+                <div className='hidden sm:flex items-center gap-2 px-4 py-2 bg-white/50 dark:bg-[#1F242F]/70 backdrop-blur-md rounded-full border border-emerald-200/60 dark:border-[#333741] shadow-sm'>
+                    <span className='w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse' />
+                    <span className='text-xs font-semibold tracking-wide text-emerald-700 dark:text-gray-300'>Live data</span>
                 </div>
             </motion.div>
 

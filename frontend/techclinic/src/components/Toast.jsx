@@ -43,13 +43,13 @@ function ToastItem({ toast, onDismiss }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="w-[380px] bg-white rounded-xl shadow-lg ring-1 ring-gray-100 p-4 flex items-start gap-3"
+            className="w-[380px] bg-white dark:bg-[#161B26] rounded-xl shadow-lg ring-1 ring-gray-100 dark:ring-[#1F2A37] p-4 flex items-start gap-3"
         >
             <Icon className={`w-5 h-5 mt-0.5 shrink-0 ${color}`} />
             <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-800">{toast.title}</p>
+                <p className="text-sm font-semibold text-gray-800 dark:text-white">{toast.title}</p>
                 {toast.message && (
-                    <p className="text-sm text-gray-500 mt-0.5 leading-snug">{toast.message}</p>
+                    <p className="text-sm text-gray-500 dark:text-[#94969C] mt-0.5 leading-snug">{toast.message}</p>
                 )}
                 {toast.action && (
                     <button
@@ -57,7 +57,7 @@ function ToastItem({ toast, onDismiss }) {
                             toast.action.onClick?.()
                             onDismiss(toast.id)
                         }}
-                        className="text-sm font-medium text-gray-700 hover:text-gray-900 mt-1.5 inline-flex items-center gap-1 transition-colors"
+                        className="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white dark:text-white mt-1.5 inline-flex items-center gap-1 transition-colors"
                     >
                         {toast.action.label} <span aria-hidden>→</span>
                     </button>
@@ -65,7 +65,7 @@ function ToastItem({ toast, onDismiss }) {
             </div>
             <button
                 onClick={() => onDismiss(toast.id)}
-                className="shrink-0 w-6 h-6 flex items-center justify-center text-gray-300 hover:text-gray-500 transition-colors rounded-lg hover:bg-gray-50"
+                className="shrink-0 w-6 h-6 flex items-center justify-center text-gray-300 dark:text-[#94969C] hover:text-gray-500  transition-colors rounded-lg hover:bg-gray-50 dark:hover:bg-[#1F242F] dark:bg-[#1F242F]"
             >
                 <X className="w-4 h-4" />
             </button>

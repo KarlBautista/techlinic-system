@@ -144,16 +144,16 @@ const getInitials = () => {
 
     return (
         <div className="border-t h-full w-full flex justify-evenly gap-1 min-w-[360px] sm:min-w-0 sm:flex-col 
-            sm:border-r sm:border-gray-200 bg-white">
+            sm:border-r sm:border-gray-200 dark:border-[#1F2A37] bg-white dark:bg-[#161B26]">
         
             {/* ─── Logo / Brand ─── */}
-            <div className='newNavigationContainer h-[10%] w-full gap-3 px-4 py-3 border-b border-gray-100'>
+            <div className='newNavigationContainer h-[10%] w-full gap-3 px-4 py-3 border-b border-gray-100 dark:border-[#1F2A37]'>
                 <div className='w-10 h-10 xl:w-12 xl:h-12 flex items-center justify-center shrink-0'>
                     <img src={TUP} className='h-full w-full object-contain' alt="TUP Logo" />
                 </div>
                 <div className='h-full flex flex-col justify-center'>
                     <p className='text-[#b01c34] font-bold text-sm xl:text-lg lg:text-base 2xl:text-xl leading-tight tracking-tight'>TechClinic</p>
-                    <p className='text-gray-400 text-[0.6rem] xl:text-xs 2xl:text-xs font-medium'>Electronic Medical Record</p>
+                    <p className='text-gray-400 dark:text-[#94969C] text-[0.6rem] xl:text-xs 2xl:text-xs font-medium'>Electronic Medical Record</p>
                 </div>
             </div>
 
@@ -297,41 +297,41 @@ const getInitials = () => {
             )}
            
             {/* ─── User Profile Section ─── */}
-            <div className='newNavigationContainer h-[15%] w-full border-t border-gray-100 relative' ref={profileMenuRef}>
+            <div className='newNavigationContainer h-[15%] w-full border-t border-gray-100 dark:border-[#1F2A37] relative' ref={profileMenuRef}>
                 <button
                     onClick={() => setShowProfileMenu(prev => !prev)}
-                    className='w-full h-full flex gap-3 items-center px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer'
+                    className='w-full h-full flex gap-3 items-center px-4 py-3 hover:bg-gray-50 dark:hover:bg-[#1F242F] dark:bg-[#1F242F] transition-colors cursor-pointer'
                 >
                     <div className='w-10 h-10 xl:w-11 xl:h-11 2xl:w-12 2xl:h-12 rounded-full bg-linear-to-br from-[#b01c34] to-[#d4375a] flex items-center justify-center shrink-0 shadow-sm'>
                         <p className='text-white text-sm xl:text-base 2xl:text-lg font-bold'>{getInitials()}</p>
                     </div>
                     <div className='min-w-0 flex flex-col justify-center text-left flex-1'>
-                        <p className='font-semibold text-gray-800 text-xs lg:text-sm 2xl:text-sm truncate leading-tight'>
+                        <p className='font-semibold text-gray-800 dark:text-white text-xs lg:text-sm 2xl:text-sm truncate leading-tight'>
                             {getDisplayName()}
                         </p>
-                        <p className='text-gray-400 text-[0.6rem] xl:text-xs font-medium'>
+                        <p className='text-gray-400 dark:text-[#94969C] text-[0.6rem] xl:text-xs font-medium'>
                             {userProfile?.role === "DOCTOR" ? "Attending Physician" : "Attending Personnel"}
                         </p>
                     </div>
-                    <svg xmlns="http://www.w3.org/2000/svg" className={`w-4 h-4 text-gray-400 shrink-0 transition-transform duration-200 ${showProfileMenu ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className={`w-4 h-4 text-gray-400 dark:text-[#94969C] shrink-0 transition-transform duration-200 ${showProfileMenu ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                     </svg>
                 </button>
 
                 {/* Popover Menu */}
                 {showProfileMenu && (
-                    <div className='absolute bottom-full left-2 right-2 mb-1 bg-white rounded-lg shadow-lg ring-1 ring-gray-200 py-1 z-50 animate-in fade-in slide-in-from-bottom-2 duration-150'>
+                    <div className='absolute bottom-full left-2 right-2 mb-1 bg-white dark:bg-[#161B26] rounded-lg shadow-lg ring-1 ring-gray-200 dark:ring-[#1F2A37] py-1 z-50 animate-in fade-in slide-in-from-bottom-2 duration-150'>
                         <button
                             onClick={() => { handleSettings(); setShowProfileMenu(false); }}
-                            className='w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#b01c34] transition-colors'
+                            className='w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-[#1F242F] dark:bg-[#1F242F] hover:text-[#b01c34] transition-colors'
                         >
                             <img src={Settings} alt="Settings" className='w-4 h-4 opacity-60' />
                             <span>Settings</span>
                         </button>
-                        <div className='mx-3 border-t border-gray-100' />
+                        <div className='mx-3 border-t border-gray-100 dark:border-[#1F2A37]' />
                         <button
                             onClick={() => { handleSignOut(); setShowProfileMenu(false); }}
-                            className='w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-red-50 hover:text-[#b01c34] transition-colors'
+                            className='w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-red-50 hover:text-[#b01c34] transition-colors'
                         >
                             <img src={Logout} alt="Logout" className='w-4 h-4 opacity-60' />
                             <span>Sign out</span>

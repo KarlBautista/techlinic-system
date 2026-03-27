@@ -34,7 +34,7 @@ const PatientsPerDepartmentChart = () => {
       style: {
         fontSize: '12px',  
         fontWeight: 'normal',
-        color: '#6b7280'
+        color: '#94969C'
       }
     },
     legend: {
@@ -76,7 +76,7 @@ const PatientsPerDepartmentChart = () => {
               label: 'Total',
               fontSize: '11px',
               fontWeight: 600,
-              color: '#9ca3af',
+              color: '#94969C',
               showAlways: true,
               offsetY: -12,
               formatter: function (w) {
@@ -193,8 +193,8 @@ const PatientsPerDepartmentChart = () => {
                 onClick={() => handleCategoryChange(val)}
                 className={`h-7 min-w-7 inline-flex items-center justify-center text-[10px] font-semibold rounded-md border transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 ${
                   selectedCategory === val
-                    ? 'bg-crimson-600 dark:bg-blue-600 border-crimson-600 dark:border-blue-500 text-white shadow-sm'
-                    : 'bg-gray-100/80 dark:bg-[#132246]/70 border-gray-200 dark:border-[#2a4f98] text-gray-500 dark:text-blue-100/80 hover:bg-gray-200/80 dark:hover:bg-[#1b3266]'
+                    ? 'bg-crimson-600 dark:bg-white dark:text-[#0C111D] border-crimson-600 dark:border-[#333741] text-white shadow-sm'
+                    : 'bg-gray-100/80 dark:bg-[#1F242F]/70 border-gray-200 dark:border-[#333741] text-gray-500 dark:text-[#CECFD2] hover:bg-gray-200/80 dark:hover:bg-[#293040]'
                 }`}
               >
                 {val === 'week' ? 'W' : val === 'month' ? 'M' : val === 'quarter' ? 'Q' : 'Y'}
@@ -205,7 +205,7 @@ const PatientsPerDepartmentChart = () => {
 
         {/* Period info */}
         {periodInfo && (
-          <div className='shrink-0 text-xs font-semibold tracking-wide text-gray-400 dark:text-blue-200/60 pb-2'>
+          <div className='shrink-0 text-xs font-semibold tracking-wide text-gray-400 dark:text-[#94969C] pb-2'>
             <p>{getPeriodDisplay()}</p>
           </div>
         )}
@@ -214,13 +214,13 @@ const PatientsPerDepartmentChart = () => {
         <div className='flex-1 min-h-0'>
           {!periodInfo && patientData.length === 0 ? (
             <div className='w-full h-full flex items-center justify-center animate-pulse'>
-              <div className='w-40 h-40 rounded-full bg-gray-200 dark:bg-[#132246] flex items-center justify-center'>
-                <div className='w-24 h-24 rounded-full bg-white dark:bg-[#0a132b]' />
+              <div className='w-40 h-40 rounded-full bg-gray-200 dark:bg-[#1F242F] flex items-center justify-center'>
+                <div className='w-24 h-24 rounded-full bg-white dark:bg-[#161B26]' />
               </div>
             </div>
           ) : totalPatients === 0 ? (
             <div className='w-full h-full flex items-center justify-center'>
-              <p className='text-sm text-gray-400 dark:text-blue-200/60'>No patient records for this period</p>
+              <p className='text-sm text-gray-400 dark:text-[#94969C]'>No patient records for this period</p>
             </div>
           ) : (
             <Chart

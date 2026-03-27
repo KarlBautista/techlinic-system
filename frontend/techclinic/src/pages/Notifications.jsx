@@ -14,7 +14,7 @@ const getNotifStyle = (title = '') => {
         return { Icon: AlertTriangle, color: 'text-amber-600', bg: 'bg-amber-50', ring: 'ring-amber-200', dot: 'bg-amber-500' };
     if (t.includes('system') || t.includes('update'))
         return { Icon: Info, color: 'text-blue-600', bg: 'bg-blue-50', ring: 'ring-blue-200', dot: 'bg-blue-500' };
-    return { Icon: Bell, color: 'text-gray-600', bg: 'bg-gray-50', ring: 'ring-gray-200', dot: 'bg-gray-500' };
+    return { Icon: Bell, color: 'text-gray-600 dark:text-[#94969C]', bg: 'bg-gray-50 dark:bg-[#1F242F]', ring: 'ring-gray-200 dark:ring-[#1F2A37]', dot: 'bg-gray-500' };
 };
 
 const Notifications = () => {
@@ -143,8 +143,8 @@ const Notifications = () => {
                             <Bell className="w-4.5 h-4.5 text-white" />
                         </div>
                         <div>
-                            <h1 className="text-xl font-bold text-gray-800">Notifications</h1>
-                            <p className="text-xs text-gray-500">
+                            <h1 className="text-xl font-bold text-gray-800 dark:text-white">Notifications</h1>
+                            <p className="text-xs text-gray-500 dark:text-[#94969C]">
                                 {unreadCount > 0
                                     ? `${unreadCount} unread notification${unreadCount > 1 ? 's' : ''}`
                                     : 'All caught up'}
@@ -156,7 +156,7 @@ const Notifications = () => {
                         {unreadCount > 0 && (
                             <button
                                 onClick={handleMarkAllAsRead}
-                                className="px-3 py-1.5 text-sm font-medium text-crimson-700 bg-crimson-50 hover:bg-crimson-100 rounded-xl transition-colors ring-1 ring-crimson-100"
+                                className="px-3 py-1.5 text-sm font-medium text-crimson-700 bg-crimson-50 dark:bg-[#1F242F] hover:bg-crimson-100 rounded-xl transition-colors ring-1 ring-crimson-100 dark:ring-[#333741]"
                             >
                                 Mark all read
                             </button>
@@ -167,7 +167,7 @@ const Notifications = () => {
                                 className={`px-3 py-1.5 text-sm font-medium rounded-xl transition-colors ring-1 ${
                                     confirmClear
                                         ? 'text-red-700 bg-red-50 hover:bg-red-100 ring-red-200'
-                                        : 'text-gray-600 bg-gray-50 hover:bg-gray-100 ring-gray-100'
+                                        : 'text-gray-600 dark:text-[#94969C] bg-gray-50 dark:bg-[#1F242F] hover:bg-gray-100 dark:hover:bg-[#1F242F]  ring-gray-100 dark:ring-[#1F2A37]'
                                 }`}
                             >
                                 {confirmClear ? 'Confirm clear all?' : 'Clear all'}
@@ -181,31 +181,31 @@ const Notifications = () => {
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1, duration: 0.35 }}
-                    className="bg-white rounded-xl shadow-sm ring-1 ring-gray-100 flex-1 overflow-hidden flex flex-col"
+                    className="bg-white dark:bg-[#161B26] rounded-xl shadow-sm ring-1 ring-gray-100 dark:ring-[#1F2A37] flex-1 overflow-hidden flex flex-col"
                 >
                     {isLoading ? (
-                        <div className="animate-pulse divide-y divide-gray-50">
+                        <div className="animate-pulse divide-y divide-gray-50 dark:divide-[#1F2A37]">
                             {Array.from({ length: 6 }).map((_, i) => (
                                 <div key={i} className="px-5 py-4 flex items-start gap-4">
-                                    <div className="w-10 h-10 rounded-xl bg-gray-200 shrink-0" />
+                                    <div className="w-10 h-10 rounded-xl bg-gray-200 dark:bg-[#1F242F] shrink-0" />
                                     <div className="flex-1">
-                                        <div className="h-4 w-40 bg-gray-200 rounded" />
-                                        <div className="h-3 w-64 bg-gray-100 rounded mt-2" />
-                                        <div className="h-3 w-20 bg-gray-100 rounded mt-2" />
+                                        <div className="h-4 w-40 bg-gray-200 dark:bg-[#1F242F] rounded" />
+                                        <div className="h-3 w-64 bg-gray-100 dark:bg-[#1F242F] rounded mt-2" />
+                                        <div className="h-3 w-20 bg-gray-100 dark:bg-[#1F242F] rounded mt-2" />
                                     </div>
                                 </div>
                             ))}
                         </div>
                     ) : notifications.length === 0 ? (
                         <div className="flex-1 flex flex-col items-center justify-center gap-3 py-16">
-                            <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center">
-                                <BellOff className="w-7 h-7 text-gray-300" />
+                            <div className="w-16 h-16 rounded-2xl bg-gray-50 dark:bg-[#1F242F] flex items-center justify-center">
+                                <BellOff className="w-7 h-7 text-gray-300 dark:text-[#94969C]" />
                             </div>
-                            <p className="text-sm font-medium text-gray-500">No notifications</p>
-                            <p className="text-xs text-gray-400">Disease alerts and system updates will appear here</p>
+                            <p className="text-sm font-medium text-gray-500 dark:text-[#94969C]">No notifications</p>
+                            <p className="text-xs text-gray-400 dark:text-[#94969C]">Disease alerts and system updates will appear here</p>
                         </div>
                     ) : (
-                        <div className="divide-y divide-gray-50 overflow-y-auto flex-1">
+                        <div className="divide-y divide-gray-50 dark:divide-[#1F2A37] overflow-y-auto flex-1">
                             {notifications.map((notif, idx) => {
                                 const style = getNotifStyle(notif.title);
                                 const title = cleanTitle(notif.title);
@@ -235,14 +235,14 @@ const Notifications = () => {
                                                 {!notif.is_read && (
                                                     <span className={`shrink-0 w-2 h-2 rounded-full ${style.dot}`}></span>
                                                 )}
-                                                <span className={`text-sm font-semibold truncate ${!notif.is_read ? 'text-gray-900' : 'text-gray-600'}`}>
+                                                <span className={`text-sm font-semibold truncate ${!notif.is_read ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-[#94969C]'}`}>
                                                     {title}
                                                 </span>
-                                                <span className="shrink-0 text-xs text-gray-400 ml-auto">
+                                                <span className="shrink-0 text-xs text-gray-400 dark:text-[#94969C] ml-auto">
                                                     {formatDate(notif.created_at)}
                                                 </span>
                                             </div>
-                                            <p className={`text-sm leading-relaxed ${!notif.is_read ? 'text-gray-700' : 'text-gray-500'}`}>
+                                            <p className={`text-sm leading-relaxed ${!notif.is_read ? 'text-gray-700 dark:text-gray-200' : 'text-gray-500 '}`}>
                                                 {notif.message}
                                             </p>
                                         </div>
@@ -253,7 +253,7 @@ const Notifications = () => {
                                                 e.stopPropagation();
                                                 handleDeleteNotification(notif.id);
                                             }}
-                                            className="shrink-0 mt-0.5 w-8 h-8 rounded-xl flex items-center justify-center text-gray-300 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all"
+                                            className="shrink-0 mt-0.5 w-8 h-8 rounded-xl flex items-center justify-center text-gray-300 dark:text-[#94969C] hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all"
                                             title="Delete notification"
                                         >
                                             <Trash2 className="w-3.5 h-3.5" />

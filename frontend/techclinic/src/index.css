@@ -91,37 +91,37 @@
 }
 
 .dark {
-    --background: #040817;
-    --foreground: #eaf1ff;
-    --card: #0a132b;
-    --card-foreground: #eaf1ff;
-    --popover: #0a132b;
-    --popover-foreground: #eaf1ff;
-    --primary: #3b82f6;
-    --primary-foreground: #eaf1ff;
-    --secondary: #111c3a;
-    --secondary-foreground: #d5e3ff;
-    --muted: #111c3a;
-    --muted-foreground: #8ea4cd;
-    --accent: #132246;
-    --accent-foreground: #dbe8ff;
+    --background: #0C111D;
+    --foreground: #F5F5F6;
+    --card: #161B26;
+    --card-foreground: #F5F5F6;
+    --popover: #161B26;
+    --popover-foreground: #F5F5F6;
+    --primary: #FFFFFF;
+    --primary-foreground: #0C111D;
+    --secondary: #1F242F;
+    --secondary-foreground: #CECFD2;
+    --muted: #1F242F;
+    --muted-foreground: #94969C;
+    --accent: #1F242F;
+    --accent-foreground: #F5F5F6;
     --destructive: oklch(0.704 0.191 22.216);
-    --border: rgba(109, 154, 255, 0.2);
-    --input: rgba(109, 154, 255, 0.28);
-    --ring: #3b82f6;
-    --chart-1: #60a5fa;
-    --chart-2: #38bdf8;
+    --border: #1F2A37;
+    --input: #1F2A37;
+    --ring: #FFFFFF;
+    --chart-1: #F5F5F6;
+    --chart-2: #CECFD2;
     --chart-3: #f43f5e;
-    --chart-4: #22d3ee;
+    --chart-4: #94969C;
     --chart-5: #be123c;
-    --sidebar: #070f26;
-    --sidebar-foreground: #dbe8ff;
-    --sidebar-primary: #3b82f6;
-    --sidebar-primary-foreground: #eaf1ff;
-    --sidebar-accent: #132246;
-    --sidebar-accent-foreground: #dbe8ff;
-    --sidebar-border: rgba(109, 154, 255, 0.18);
-    --sidebar-ring: #3b82f6;
+    --sidebar: #0C111D;
+    --sidebar-foreground: #F5F5F6;
+    --sidebar-primary: #FFFFFF;
+    --sidebar-primary-foreground: #0C111D;
+    --sidebar-accent: #1F242F;
+    --sidebar-accent-foreground: #F5F5F6;
+    --sidebar-border: #1F2A37;
+    --sidebar-ring: #FFFFFF;
 }
 
 @layer base {
@@ -136,8 +136,8 @@
 
     body.dark {
         background-image:
-            radial-gradient(1200px 560px at -10% -10%, rgba(59, 130, 246, 0.22), transparent 65%),
-            radial-gradient(820px 400px at 95% 8%, rgba(29, 78, 216, 0.18), transparent 65%);
+            radial-gradient(1200px 560px at -10% -10%, rgba(255, 255, 255, 0.03), transparent 65%),
+            radial-gradient(820px 400px at 95% 8%, rgba(255, 255, 255, 0.02), transparent 65%);
         background-attachment: fixed;
     }
 }
@@ -161,11 +161,11 @@
 }
 
 .dark .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: #243a70;
+    background: #1F2A37;
 }
 
 .dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background: #3556a0;
+    background: #333741;
 }
 
 .scrollbar-hide::-webkit-scrollbar {
@@ -179,21 +179,21 @@
 
 .dark .apexcharts-toolbar svg,
 .dark .apexcharts-menu-icon svg {
-    fill: #9fb8eb !important;
+    fill: #94969C !important;
 }
 
 .dark .apexcharts-menu {
-    background: #0f1c3f !important;
-    border: 1px solid #2a4f98 !important;
-    box-shadow: 0 12px 28px rgba(4, 8, 23, 0.65) !important;
+    background: #1F242F !important;
+    border: 1px solid #333741 !important;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.65) !important;
 }
 
 .dark .apexcharts-menu-item {
-    color: #dbe8ff !important;
+    color: #CECFD2 !important;
 }
 
 .dark .apexcharts-menu-item:hover {
-    background: #1b3266 !important;
+    background: #293040 !important;
 }
 
 .dark .apexcharts-xaxis-label,
@@ -201,30 +201,30 @@
 .dark .apexcharts-legend-text,
 .dark .apexcharts-text,
 .dark .apexcharts-title-text {
-    fill: #cfe0ff !important;
-    color: #cfe0ff !important;
+    fill: #CECFD2 !important;
+    color: #CECFD2 !important;
 }
 
 .dark .apexcharts-datalabel-label,
 .dark .apexcharts-datalabel-value,
 .dark .apexcharts-datalabel,
 .dark .apexcharts-pie-label {
-    fill: #e7efff !important;
+    fill: #F5F5F6 !important;
 }
 
 .dark .apexcharts-tooltip,
 .dark .apexcharts-xaxistooltip,
 .dark .apexcharts-yaxistooltip {
-    background: #0f1c3f !important;
-    border: 1px solid #2a4f98 !important;
-    color: #e7efff !important;
-    box-shadow: 0 12px 28px rgba(4, 8, 23, 0.6) !important;
+    background: #1F242F !important;
+    border: 1px solid #333741 !important;
+    color: #F5F5F6 !important;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6) !important;
 }
 
 .dark .apexcharts-tooltip-title {
-    background: #132246 !important;
-    border-bottom: 1px solid #2a4f98 !important;
-    color: #dbe8ff !important;
+    background: #1F242F !important;
+    border-bottom: 1px solid #333741 !important;
+    color: #CECFD2 !important;
 }
 
 /* ════════════════════════════════════════════════════════════
