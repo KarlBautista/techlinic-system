@@ -14,6 +14,8 @@ import {
     ChevronsLeft,
     ChevronsRight,
     ScrollText,
+    Moon,
+    Sun,
 } from 'lucide-react'
 import { showToast } from './Toast'
 import { showModal } from './Modal'
@@ -134,12 +136,24 @@ export default function Sidebar() {
         return saved === 'true'
     })
 
+    const [isDarkMode, setIsDarkMode] = useState(() => {
+        const saved = localStorage.getItem('tc-theme') || localStorage.getItem('tc-dashboard-theme')
+        if (saved === 'dark') return true
+        if (saved === 'light') return false
+        return window.matchMedia('(prefers-color-scheme: dark)').matches
+    })
+
     const toggleCollapse = () => {
         setCollapsed(prev => {
             localStorage.setItem('tc-sidebar-collapsed', String(!prev))
             return !prev
         })
     }
+
+    useEffect(() => {
+        localStorage.setItem('tc-theme', isDarkMode ? 'dark' : 'light')
+        document.body.classList.toggle('dark', isDarkMode)
+    }, [isDarkMode])
 
     // ── Close profile menu on outside click ──
     useEffect(() => {
@@ -224,10 +238,10 @@ export default function Sidebar() {
                 initial={false}
                 animate={{ width: collapsed ? 72 : 256 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                className="hidden sm:flex flex-col h-full bg-white border-r border-gray-100 relative z-30 overflow"
+                className="hidden sm:flex flex-col h-full bg-white dark:bg-[#0C111D] border-r border-gray-100 dark:border-[#1F2A37] relative z-30 overflow"
             >
                 {/* ── Logo ── */}
-                <div className="flex items-center gap-3 px-4 h-16 border-b border-gray-100 shrink-0">
+                <div className={`flex items-center gap-3 h-16 border-b border-gray-100 dark:border-[#1F2A37] shrink-0 ${collapsed ? 'px-2 justify-center' : 'px-4'}`}>
                     <div className="w-9 h-9 shrink-0 flex items-center justify-center">
                         <img src={TUP} className="w-full h-full object-contain" alt="TUP" />
                     </div>
@@ -240,12 +254,37 @@ export default function Sidebar() {
                                 transition={{ duration: 0.15 }}
                                 className="flex flex-col min-w-0"
                             >
-                                <span className="text-crimson-600 font-bold text-sm leading-tight tracking-tight">TechClinic</span>
-                                <span className="text-gray-400 text-[0.6rem] font-medium truncate">Electronic Medical Record</span>
+                                <span className="text-crimson-600 dark:text-white font-bold text-sm leading-tight tracking-tight">TechClinic</span>
+                                <span className="text-gray-400 dark:text-[#94969C] text-[0.6rem] font-medium truncate">Electronic Medical Record</span>
                             </motion.div>
                         )}
                     </AnimatePresence>
+                    {!collapsed && (
+                        <button
+                            type="button"
+                            onClick={() => setIsDarkMode(prev => !prev)}
+                            className="ml-auto inline-flex items-center justify-center rounded-lg border border-gray-200 dark:border-[#1F2A37] text-gray-500 dark:text-[#94969C] hover:bg-gray-50 dark:hover:bg-[#1F242F] transition-colors h-9 w-9"
+                            aria-label="Toggle dark mode"
+                            title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+                        >
+                            {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
+                        </button>
+                    )}
                 </div>
+                {/* ── Collapsed dark mode toggle ── */}
+                {collapsed && (
+                    <div className="flex justify-center py-2 border-b border-gray-100 dark:border-[#1F2A37]">
+                        <button
+                            type="button"
+                            onClick={() => setIsDarkMode(prev => !prev)}
+                            className="inline-flex items-center justify-center rounded-lg border border-gray-200 dark:border-[#1F2A37] text-gray-500 dark:text-[#94969C] hover:bg-gray-50 dark:hover:bg-[#1F242F] transition-colors h-8 w-8"
+                            aria-label="Toggle dark mode"
+                            title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+                        >
+                            {isDarkMode ? <Sun size={14} /> : <Moon size={14} />}
+                        </button>
+                    </div>
+                )}
 
                 {/* ── Nav Sections ── */}
                 <div className="flex-1 overflow-y-auto overflow-x-hidden py-3 px-3 scrollbar-thin">
@@ -257,14 +296,14 @@ export default function Sidebar() {
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
-                                        className="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-wider px-2 mb-1.5"
+                                        className="text-[0.65rem] font-semibold text-gray-400 dark:text-[#94969C] uppercase tracking-wider px-2 mb-1.5"
                                     >
                                         {section.title}
                                     </motion.p>
                                 )}
                             </AnimatePresence>
                             {collapsed && sIdx > 0 && (
-                                <div className="w-6 h-px bg-gray-200 mx-auto mb-2" />
+                                <div className="w-6 h-px bg-gray-200 dark:bg-[#1F2A37] mx-auto mb-2" />
                             )}
                             <div className="flex flex-col gap-0.5">
                                 {section.items.map((item) => {
@@ -284,9 +323,9 @@ export default function Sidebar() {
                                                     ${collapsed ? 'justify-center h-10 w-10 mx-auto' : 'px-3 py-2.5'}
                                                     ${active && !isNotification
                                                         ? collapsed
-                                                            ? 'text-crimson-600'
-                                                            : 'bg-crimson-50 text-crimson-600'
-                                                        : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'
+                                                            ? 'text-white'
+                                                            : 'bg-crimson-50 text-crimson-600 dark:bg-[#1F242F] dark:text-white dark:ring-1 dark:ring-[#333741]'
+                                                        : 'text-gray-500 dark:text-[#94969C] hover:bg-gray-50 dark:hover:bg-[#1F242F] hover:text-gray-800 dark:hover:text-white'
                                                     }
                                                 `}
                                             >
@@ -294,7 +333,7 @@ export default function Sidebar() {
                                                 {active && !collapsed && (
                                                     <motion.div
                                                         layoutId="sidebar-active"
-                                                        className="absolute left-0 top-1 bottom-1 w-[3px] bg-crimson-600 rounded-r-full"
+                                                        className={`absolute left-0 top-1 bottom-1 w-[3px] bg-crimson-600 dark:bg-white rounded-r-full`}
                                                         transition={{ type: 'spring', stiffness: 350, damping: 30 }}
                                                     />
                                                 )}
@@ -306,7 +345,7 @@ export default function Sidebar() {
                                                     />
                                                     {/* Notification badge (on icon) */}
                                                     {item.hasBadge && unreadCount > 0 && (
-                                                        <span className="absolute -top-1.5 -right-1.5 bg-crimson-600 text-white text-[0.55rem] font-bold rounded-full h-4 w-4 flex items-center justify-center ring-2 ring-white">
+                                                        <span className="absolute -top-1.5 -right-1.5 bg-crimson-600 dark:bg-crimson-500 text-white text-[0.55rem] font-bold rounded-full h-4 w-4 flex items-center justify-center ring-2 ring-white dark:ring-[#0C111D]">
                                                             {unreadCount > 9 ? '9+' : unreadCount}
                                                         </span>
                                                     )}
@@ -334,11 +373,11 @@ export default function Sidebar() {
                 </div>
 
                 {/* ── Collapse Toggle ── */}
-                <div className="px-3 py-2 border-t border-gray-100">
+                <div className="px-3 py-2 border-t border-gray-100 dark:border-[#1F2A37]">
                     <button
                         onClick={toggleCollapse}
                         className={`
-                            flex items-center gap-3 w-full rounded-xl text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-all duration-200 cursor-pointer
+                            flex items-center gap-3 w-full rounded-xl text-gray-400 dark:text-[#94969C] hover:text-gray-600 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-[#1F242F] transition-all duration-200 cursor-pointer
                             ${collapsed ? 'justify-center h-10' : 'px-3 py-2.5'}
                         `}
                     >
@@ -359,11 +398,11 @@ export default function Sidebar() {
                 </div>
 
                 {/* ── User Profile ── */}
-                <div className="border-t border-gray-100 relative" ref={profileRef}>
+                <div className="border-t border-gray-100 dark:border-[#1F2A37] relative" ref={profileRef}>
                     <button
                         onClick={() => setShowProfileMenu(prev => !prev)}
                         className={`
-                            w-full flex items-center gap-3 hover:bg-gray-50 transition-all duration-200 cursor-pointer
+                            w-full flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-[#1F242F] transition-all duration-200 cursor-pointer
                             ${collapsed ? 'justify-center px-2 py-3' : 'px-4 py-3'}
                         `}
                     >
@@ -379,10 +418,10 @@ export default function Sidebar() {
                                     transition={{ duration: 0.15 }}
                                     className="min-w-0 flex-1 text-left"
                                 >
-                                    <p className="text-sm font-semibold text-gray-800 truncate leading-tight">
+                                    <p className="text-sm font-semibold text-gray-800 dark:text-white truncate leading-tight">
                                         {role === 'DOCTOR' ? 'Dr. ' : ''}{getDisplayName()}
                                     </p>
-                                    <p className="text-[0.65rem] text-gray-400 font-medium">
+                                    <p className="text-[0.65rem] text-gray-400 dark:text-[#94969C] font-medium">
                                         {role === 'DOCTOR' ? 'Physician' : 'Personnel'}
                                     </p>
                                 </motion.div>
@@ -398,27 +437,27 @@ export default function Sidebar() {
                                 animate={{ opacity: 1, y: 0, scale: 1 }}
                                 exit={{ opacity: 0, y: 8, scale: 0.95 }}
                                 transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                                className={`absolute bottom-full mb-2 bg-white rounded-xl shadow-lg ring-1 ring-gray-200/80 py-1 z-50 ${collapsed ? 'left-2 w-48' : 'left-2 right-2'
+                                className={`absolute bottom-full mb-2 bg-white dark:bg-[#161B26] rounded-xl shadow-lg ring-1 ring-gray-200/80 dark:ring-[#1F2A37] py-1 z-50 ${collapsed ? 'left-2 w-48' : 'left-2 right-2'
                                     }`}
                             >
                                 {/* User info in popover */}
-                                <div className="px-3 py-2.5 border-b border-gray-100">
-                                    <p className="text-sm font-semibold text-gray-800 truncate">
+                                <div className="px-3 py-2.5 border-b border-gray-100 dark:border-[#1F2A37]">
+                                    <p className="text-sm font-semibold text-gray-800 dark:text-white truncate">
                                         {role === 'DOCTOR' ? 'Dr. ' : ''}{getDisplayName()}
                                     </p>
-                                    <p className="text-xs text-gray-400">{authenticatedUser?.email}</p>
+                                    <p className="text-xs text-gray-400 dark:text-[#94969C]">{authenticatedUser?.email}</p>
                                 </div>
                                 <div className="py-1">
                                     <button
                                         onClick={() => { navigate('/settings'); setShowProfileMenu(false) }}
-                                        className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-crimson-600 transition-colors cursor-pointer"
+                                        className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-gray-600 dark:text-[#94969C] hover:bg-gray-50 dark:hover:bg-[#1F242F] hover:text-crimson-600 dark:hover:text-white transition-colors cursor-pointer"
                                     >
                                         <Settings size={15} strokeWidth={1.8} />
                                         Settings
                                     </button>
                                     <button
                                         onClick={() => { handleSignOut(); setShowProfileMenu(false) }}
-                                        className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-gray-600 hover:bg-red-50 hover:text-crimson-600 transition-colors cursor-pointer"
+                                        className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-gray-600 dark:text-[#94969C] hover:bg-red-50 dark:hover:bg-[#2C1418] hover:text-crimson-600 dark:hover:text-red-400 transition-colors cursor-pointer"
                                     >
                                         <LogOut size={15} strokeWidth={1.8} />
                                         Sign out
@@ -431,7 +470,7 @@ export default function Sidebar() {
             </motion.aside>
 
             {/* ═══ Mobile Bottom Nav ═══ */}
-            <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-100 safe-area-pb">
+            <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-[#0C111D] border-t border-gray-100 dark:border-[#1F2A37] safe-area-pb">
                 <div className="flex items-center justify-around h-16 px-1">
                     {mobileItems.map((item) => {
                         const active = isActive(item)
@@ -447,20 +486,20 @@ export default function Sidebar() {
                                 {...mobileWrapperProps}
                                 className={`
                                     relative flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors
-                                    ${active && !isMobileNotif ? 'text-crimson-600' : 'text-gray-400'}
+                                    ${active && !isMobileNotif ? 'text-crimson-600 dark:text-white' : 'text-gray-400 dark:text-[#94969C]'}
                                 `}
                             >
                                 {active && !isMobileNotif && (
                                     <motion.div
                                         layoutId="mobile-active"
-                                        className="absolute top-0 left-1/4 right-1/4 h-[2px] bg-crimson-600 rounded-b-full"
+                                        className="absolute top-0 left-1/4 right-1/4 h-[2px] bg-crimson-600 dark:bg-white rounded-b-full"
                                         transition={{ type: 'spring', stiffness: 350, damping: 30 }}
                                     />
                                 )}
                                 <div className="relative">
                                     <Icon size={20} strokeWidth={active && !isMobileNotif ? 2.2 : 1.6} />
                                     {item.hasBadge && unreadCount > 0 && (
-                                        <span className="absolute -top-1 -right-1.5 bg-crimson-600 text-white text-[0.5rem] font-bold rounded-full h-3.5 w-3.5 flex items-center justify-center ring-2 ring-white">
+                                        <span className="absolute -top-1 -right-1.5 bg-crimson-600 dark:bg-crimson-500 text-white text-[0.5rem] font-bold rounded-full h-3.5 w-3.5 flex items-center justify-center ring-2 ring-white dark:ring-[#0C111D]">
                                             {unreadCount > 9 ? '9+' : unreadCount}
                                         </span>
                                     )}

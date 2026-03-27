@@ -78,11 +78,11 @@ const Login = () => {
             <div className="flex items-center justify-between px-6 md:px-10 py-4">
                 <div className="flex items-center gap-3">
                     <img src={TUP} alt="TUP" className="w-9 h-9" />
-                    <span className="text-lg font-bold text-gray-800">TechClinic</span>
+                    <span className="text-lg font-bold text-gray-800 dark:text-white">TechClinic</span>
                 </div>
                 <button
                     onClick={() => navigate('/')}
-                    className="text-sm text-gray-500 hover:text-crimson-600 transition-colors cursor-pointer"
+                    className="text-sm text-gray-500 dark:text-[#94969C] hover:text-crimson-600 transition-colors cursor-pointer"
                 >
                     New Patient?&nbsp;
                     <span className="font-semibold text-crimson-600 hover:underline">Register</span>
@@ -98,8 +98,8 @@ const Login = () => {
                     transition={{ duration: 0.4 }}
                     className="text-center mb-6"
                 >
-                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Welcome Back</h1>
-                    <p className="text-gray-500 mt-2 text-sm">Sign in to your clinic account to continue.</p>
+                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Welcome Back</h1>
+                    <p className="text-gray-500 dark:text-[#94969C] mt-2 text-sm">Sign in to your clinic account to continue.</p>
                 </motion.div>
 
                 {/* ─── Login Card ─── */}
@@ -107,14 +107,14 @@ const Login = () => {
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.1 }}
-                    className="w-full max-w-md bg-white rounded-2xl ring-1 ring-gray-200/60 shadow-sm p-8"
+                    className="w-full max-w-md bg-white dark:bg-[#161B26] rounded-2xl ring-1 ring-gray-200/60 shadow-sm p-8"
                 >
                     <form onSubmit={handleSignin} className="space-y-5">
                         {/* Email Field */}
                         <div className="space-y-1.5">
-                            <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">Email Address</label>
+                            <label className="text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider">Email Address</label>
                             <div className="relative">
-                                <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
+                                <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-[#94969C]">
                                     <Mail className="w-4 h-4" />
                                 </div>
                                 <input
@@ -122,16 +122,16 @@ const Login = () => {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder="you@tup.edu.ph"
-                                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all"
+                                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all"
                                 />
                             </div>
                         </div>
 
                         {/* Password Field */}
                         <div className="space-y-1.5">
-                            <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">Password</label>
+                            <label className="text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider">Password</label>
                             <div className="relative">
-                                <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
+                                <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-[#94969C]">
                                     <Lock className="w-4 h-4" />
                                 </div>
                                 <input
@@ -139,12 +139,12 @@ const Login = () => {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     placeholder="Enter your password"
-                                    className="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 transition-all"
+                                    className="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-[#94969C] hover:text-gray-600 dark:hover:text-gray-300"
                                 >
                                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                 </button>
@@ -169,7 +169,7 @@ const Login = () => {
 
                     {/* Footer */}
                     <div className="text-center mt-6">
-                        <p className="text-xs text-gray-400">Clinic personnel access only</p>
+                        <p className="text-xs text-gray-400 dark:text-[#94969C]">Clinic personnel access only</p>
                     </div>
                 </motion.div>
             </div>

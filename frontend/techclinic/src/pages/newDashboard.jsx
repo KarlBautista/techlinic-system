@@ -211,36 +211,36 @@ const NewDashboard = () => {
             value: patientsData?.length || 0,
             subtitle: "Registered patients",
             icon: <Users className="w-5 h-5" />,
-            iconBg: "bg-crimson-50",
-            iconColor: "text-crimson-600",
-            ring: "ring-crimson-100",
+            iconBg: "bg-crimson-50 dark:bg-transparent",
+            iconColor: "text-crimson-600 dark:text-crimson-300",
+            ring: "ring-crimson-100 dark:ring-gray-700",
         },
         {
             label: "Today's Visits",
             value: todayRecords.length,
             subtitle: `${pendingCount} pending · ${completedCount} completed`,
             icon: <CalendarDays className="w-5 h-5" />,
-            iconBg: "bg-amber-50",
-            iconColor: "text-amber-600",
-            ring: "ring-amber-100",
+            iconBg: "bg-amber-50 dark:bg-transparent",
+            iconColor: "text-amber-600 dark:text-amber-300",
+            ring: "ring-amber-100 dark:ring-gray-700",
         },
         {
             label: "Total Records",
             value: records?.length || 0,
             subtitle: "All-time clinic visits",
             icon: <ClipboardCheck className="w-5 h-5" />,
-            iconBg: "bg-emerald-50",
-            iconColor: "text-emerald-600",
-            ring: "ring-emerald-100",
+            iconBg: "bg-emerald-50 dark:bg-transparent",
+            iconColor: "text-emerald-600 dark:text-emerald-300",
+            ring: "ring-emerald-100 dark:ring-gray-700",
         },
         {
             label: "Medicine Stock",
             value: medicines?.length || 0,
             subtitle: "Items in inventory",
             icon: <Pill className="w-5 h-5" />,
-            iconBg: "bg-blue-50",
-            iconColor: "text-blue-600",
-            ring: "ring-blue-100",
+            iconBg: "bg-blue-50 dark:bg-transparent",
+            iconColor: "text-blue-600 dark:text-crimson-300",
+            ring: "ring-blue-100 dark:ring-gray-700",
         },
     ];
 
@@ -249,48 +249,48 @@ const NewDashboard = () => {
             {initialLoading ? (
                 <div className='flex flex-col gap-5 animate-pulse'>
                     {/* Skeleton Welcome Banner */}
-                    <div className='w-full rounded-2xl bg-gray-200 p-6 sm:p-8 h-36' />
+                    <div className='w-full rounded-2xl bg-gray-200 dark:bg-[#1F242F] p-6 sm:p-8 h-36' />
                     {/* Skeleton Quick Actions */}
                     <div className='flex flex-wrap gap-3'>
-                        <div className='h-10 w-32 bg-gray-200 rounded-xl' />
-                        <div className='h-10 w-32 bg-gray-200 rounded-xl' />
-                        <div className='h-10 w-28 bg-gray-200 rounded-xl' />
+                        <div className='h-10 w-32 bg-gray-200 dark:bg-[#1F242F] rounded-xl' />
+                        <div className='h-10 w-32 bg-gray-200 dark:bg-[#1F242F] rounded-xl' />
+                        <div className='h-10 w-28 bg-gray-200 dark:bg-[#1F242F] rounded-xl' />
                     </div>
                     {/* Skeleton Stat Cards */}
                     <div className='w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
                         {Array.from({ length: 4 }).map((_, i) => (
-                            <div key={i} className='bg-white rounded-xl ring-1 ring-gray-100 p-5 flex items-start gap-4'>
-                                <div className='w-11 h-11 rounded-xl bg-gray-200 shrink-0' />
+                            <div key={i} className='bg-white dark:bg-[#161B26] rounded-xl ring-1 ring-gray-100 dark:ring-[#1F2A37] p-5 flex items-start gap-4'>
+                                <div className='w-11 h-11 rounded-xl bg-gray-200 dark:bg-[#1F242F] shrink-0' />
                                 <div className='flex-1'>
-                                    <div className='h-3 w-20 bg-gray-200 rounded' />
-                                    <div className='h-7 w-16 bg-gray-200 rounded mt-2' />
-                                    <div className='h-3 w-28 bg-gray-100 rounded mt-2' />
+                                    <div className='h-3 w-20 bg-gray-200 dark:bg-[#1F242F] rounded' />
+                                    <div className='h-7 w-16 bg-gray-200 dark:bg-[#1F242F] rounded mt-2' />
+                                    <div className='h-3 w-28 bg-gray-100 dark:bg-[#1F242F] rounded mt-2' />
                                 </div>
                             </div>
                         ))}
                     </div>
                     {/* Skeleton Table */}
-                    <div className='bg-white rounded-xl ring-1 ring-gray-100 overflow-hidden'>
-                        <div className='px-5 py-4 border-b border-gray-100 flex items-center gap-3'>
-                            <div className='h-5 w-32 bg-gray-200 rounded' />
-                            <div className='h-6 w-8 bg-gray-200 rounded-full' />
+                    <div className='bg-white dark:bg-[#161B26] rounded-xl ring-1 ring-gray-100 dark:ring-[#1F2A37] overflow-hidden'>
+                        <div className='px-5 py-4 border-b border-gray-100 dark:border-[#1F2A37] flex items-center gap-3'>
+                            <div className='h-5 w-32 bg-gray-200 dark:bg-[#1F242F] rounded' />
+                            <div className='h-6 w-8 bg-gray-200 dark:bg-[#1F242F] rounded-full' />
                         </div>
-                        <div className='px-5 py-3 flex gap-4 border-b border-gray-100'>
+                        <div className='px-5 py-3 flex gap-4 border-b border-gray-100 dark:border-[#1F2A37]'>
                             {[80, 120, 130, 100, 60, 70].map((w, i) => (
-                                <div key={i} className='h-4 bg-gray-200 rounded' style={{ width: w }} />
+                                <div key={i} className='h-4 bg-gray-200 dark:bg-[#1F242F] rounded' style={{ width: w }} />
                             ))}
                         </div>
                         {Array.from({ length: 6 }).map((_, i) => (
-                            <div key={i} className='px-5 py-4 flex items-center gap-4 border-b border-gray-50'>
-                                <div className='h-4 w-20 bg-gray-100 rounded' />
+                            <div key={i} className='px-5 py-4 flex items-center gap-4 border-b border-gray-50 dark:border-[#1F2A37]'>
+                                <div className='h-4 w-20 bg-gray-100 dark:bg-[#1F242F] rounded' />
                                 <div className='flex items-center gap-3'>
-                                    <div className='w-8 h-8 rounded-full bg-gray-200' />
-                                    <div className='h-4 w-28 bg-gray-100 rounded' />
+                                    <div className='w-8 h-8 rounded-full bg-gray-200 dark:bg-[#1F242F]' />
+                                    <div className='h-4 w-28 bg-gray-100 dark:bg-[#1F242F] rounded' />
                                 </div>
-                                <div className='h-4 w-32 bg-gray-100 rounded hidden md:block' />
-                                <div className='h-4 w-24 bg-gray-100 rounded hidden lg:block' />
-                                <div className='h-4 w-16 bg-gray-100 rounded hidden sm:block' />
-                                <div className='h-6 w-16 bg-gray-100 rounded-full' />
+                                <div className='h-4 w-32 bg-gray-100 dark:bg-[#1F242F] rounded hidden md:block' />
+                                <div className='h-4 w-24 bg-gray-100 dark:bg-[#1F242F] rounded hidden lg:block' />
+                                <div className='h-4 w-16 bg-gray-100 dark:bg-[#1F242F] rounded hidden sm:block' />
+                                <div className='h-6 w-16 bg-gray-100 dark:bg-[#1F242F] rounded-full' />
                             </div>
                         ))}
                     </div>
@@ -305,33 +305,34 @@ const NewDashboard = () => {
                     {/* ─── Welcome Banner ─── */}
                     <motion.div
                         variants={itemVariants}
-                        className='w-full rounded-2xl bg-linear-to-br from-crimson-700 via-crimson-600 to-crimson-500 p-6 sm:p-8 text-white shadow-lg relative overflow-hidden'
+                        className='w-full rounded-2xl bg-linear-to-br from-crimson-700 via-crimson-600 to-crimson-500 dark:from-[#0C111D] dark:via-[#161B26] dark:to-[#1F242F] p-6 sm:p-8 text-white shadow-lg relative overflow-hidden ring-1 ring-white/10 dark:ring-gray-600/20'
                     >
                         {/* Decorative background elements */}
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/3" />
-                        <div className="absolute bottom-0 left-0 w-40 h-40 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/4" />
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 dark:bg-white/5 rounded-full -translate-y-1/2 translate-x-1/3" />
+                        <div className="absolute bottom-0 left-0 w-40 h-40 bg-white/5 dark:bg-white/5 rounded-full translate-y-1/2 -translate-x-1/4" />
 
-                        <div className='flex items-center justify-between relative z-10'>
+                        <div className='flex items-start justify-between gap-4 relative z-10'>
                             <div>
                                 <div className='flex items-center gap-2 mb-1'>
-                                    <Activity className="w-4 h-4 text-white/60" />
-                                    <p className='text-sm font-medium text-white/70'>{formatDate(new Date())}</p>
+                                    <Activity className="w-4 h-4 text-white/60 dark:text-gray-300" />
+                                    <p className='text-sm font-medium text-white/70 dark:text-gray-300'>{formatDate(new Date())}</p>
                                 </div>
                                 <h1 className='text-2xl sm:text-3xl font-bold mt-1 tracking-tight'>
                                     {getGreeting()}, {getUserRole() === "DOCTOR" ? "Dr. " : ""}{getDisplayName()}
                                 </h1>
                                 <div className='flex items-center gap-2 mt-3'>
-                                    <span className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/15 text-white backdrop-blur-sm border border-white/10'>
+                                    <span className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/15 dark:bg-[#1F242F]/85 text-white dark:text-gray-200 backdrop-blur-sm border border-white/10 dark:border-gray-600/35'>
                                         {getUserRole()}
                                     </span>
                                     {todayRecords.length > 0 && (
-                                        <span className='inline-flex items-center gap-1.5 text-sm text-white/80'>
+                                        <span className='inline-flex items-center gap-1.5 text-sm text-white/80 dark:text-gray-300'>
                                             <TrendingUp className="w-3.5 h-3.5" />
                                             {todayRecords.length} patient{todayRecords.length !== 1 ? 's' : ''} today
                                         </span>
                                     )}
                                 </div>
                             </div>
+
                         </div>
                     </motion.div>
 
@@ -339,7 +340,7 @@ const NewDashboard = () => {
                     <motion.div variants={itemVariants} className='flex flex-wrap gap-3'>
                         <Link
                             to='/new-patient'
-                            className='group inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-crimson-600 text-white text-sm font-medium hover:bg-crimson-700 transition-all shadow-sm hover:shadow-md'
+                            className='group inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-crimson-600 dark:bg-crimson-600 text-white text-sm font-medium hover:bg-crimson-700 dark:hover:bg-crimson-500 transition-all shadow-sm hover:shadow-md'
                         >
                             <Plus className="w-4 h-4" />
                             New Patient
@@ -347,14 +348,14 @@ const NewDashboard = () => {
                         </Link>
                         <Link
                             to='/patient-record'
-                            className='group inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-gray-700 text-sm font-medium hover:bg-gray-50 transition-all shadow-sm ring-1 ring-gray-200 hover:ring-crimson-200 hover:text-crimson-700'
+                            className='group inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white dark:bg-[#161B26] text-gray-700 dark:text-gray-200 text-sm font-medium hover:bg-gray-50 dark:hover:bg-[#1F242F] transition-all shadow-sm ring-1 ring-gray-200 dark:ring-[#333741] hover:ring-crimson-200 dark:hover:ring-gray-500/70 hover:text-crimson-700 dark:hover:text-gray-200'
                         >
                             <Search className="w-4 h-4" />
                             View Records
                         </Link>
                         <Link
                             to='/medicine-inventory'
-                            className='group inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-gray-700 text-sm font-medium hover:bg-gray-50 transition-all shadow-sm ring-1 ring-gray-200 hover:ring-crimson-200 hover:text-crimson-700'
+                            className='group inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white dark:bg-[#161B26] text-gray-700 dark:text-gray-200 text-sm font-medium hover:bg-gray-50 dark:hover:bg-[#1F242F] transition-all shadow-sm ring-1 ring-gray-200 dark:ring-[#333741] hover:ring-crimson-200 dark:hover:ring-gray-500/70 hover:text-crimson-700 dark:hover:text-gray-200'
                         >
                             <Pill className="w-4 h-4" />
                             Inventory
@@ -369,17 +370,17 @@ const NewDashboard = () => {
                                 variants={cardHover}
                                 initial="rest"
                                 whileHover="hover"
-                                className={`bg-white rounded-xl shadow-sm p-5 flex items-start gap-4 ring-1 ${card.ring} cursor-default`}
+                                className={`bg-white dark:bg-[#161B26] rounded-xl shadow-sm p-5 flex items-start gap-4 ring-1 ${card.ring} cursor-default`}
                             >
                                 <div className={`shrink-0 w-11 h-11 rounded-xl flex items-center justify-center ${card.iconBg} ${card.iconColor}`}>
                                     {card.icon}
                                 </div>
                                 <div className='min-w-0'>
-                                    <p className='text-xs font-medium text-gray-500 uppercase tracking-wide'>{card.label}</p>
-                                    <p className='text-2xl font-bold text-gray-900 mt-0.5 tabular-nums'>
+                                    <p className='text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide'>{card.label}</p>
+                                    <p className='text-2xl font-bold text-gray-900 dark:text-slate-100 mt-0.5 tabular-nums'>
                                         <AnimateNumber value={card.value} />
                                     </p>
-                                    <p className='text-xs text-gray-400 mt-0.5 truncate'>{card.subtitle}</p>
+                                    <p className='text-xs text-gray-400 dark:text-gray-500 mt-0.5 truncate'>{card.subtitle}</p>
                                 </div>
                             </motion.div>
                         ))}
@@ -409,27 +410,46 @@ const NewDashboard = () => {
                     {/* Table */}
                     <motion.div
                         variants={itemVariants}
-                        className='bg-white rounded-xl shadow-sm flex-1 flex flex-col overflow-hidden ring-1 ring-gray-100 min-h-[400px]'
+                        className='bg-white dark:bg-[#161B26] rounded-xl shadow-sm flex-1 flex flex-col overflow-hidden ring-1 ring-gray-100 dark:ring-[#1F2A37]'
                     >
-                        <div className='overflow-auto flex-1'>
-                            {paginatedTableRecords.length > 0 ? (
+                        {/* Table Header */}
+                        <div className='px-5 py-4 flex items-center justify-between border-b border-gray-100 dark:border-[#1F2A37]'>
+                            <div className='flex items-center gap-3'>
+                                <h2 className='text-lg font-semibold text-gray-800 dark:text-slate-100'>Today's Records</h2>
+                                <span className='inline-flex items-center justify-center h-6 min-w-6 px-2 rounded-full bg-crimson-600 dark:bg-crimson-600 text-white text-xs font-bold'>
+                                    {todayRecords.length}
+                                </span>
+                            </div>
+                            {pendingCount > 0 && (
+                                <span className='inline-flex items-center gap-1.5 text-xs font-medium text-amber-600 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 px-2.5 py-1 rounded-full ring-1 ring-transparent dark:ring-amber-900/50'>
+                                    <span className='w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-amber-400 animate-pulse' />
+                                    {pendingCount} pending
+                                </span>
+                            )}
+                        </div>
+
+                        {/* Table Content */}
+                        <div className='flex-1 overflow-auto'>
+                            {todayRecords.length > 0 ? (
                                 <table className='w-full'>
-                                    <thead className='sticky top-0 bg-gray-50/95 backdrop-blur-sm'>
+                                    <thead className='sticky top-0 bg-gray-50/95 dark:bg-[#1F242F]/95 backdrop-blur-sm'>
                                         <tr>
-                                            <th className='text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3'>Patient ID</th>
-                                            <th className='text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3'>Name</th>
-                                            <th className='text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3 hidden lg:table-cell'>Department</th>
-                                            <th className='text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell'>Date</th>
-                                            <th className='text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3 hidden sm:table-cell'>Diagnosis</th>
-                                            <th className='text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3'>Status</th>
-                                            <th className='w-10'></th>
+                                            <th className='text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-5 py-3'>Patient ID</th>
+                                            <th className='text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-5 py-3'>Patient Name</th>
+                                            <th className='text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-5 py-3 hidden md:table-cell'>Department</th>
+                                            <th className='text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-5 py-3 hidden lg:table-cell'>Diagnosis</th>
+                                            <th className='text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-5 py-3 hidden sm:table-cell'>Time</th>
+                                            <th className='text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-5 py-3'>Status</th>
                                         </tr>
                                     </thead>
-                                    <tbody className='divide-y divide-gray-50'>
-                                        {paginatedTableRecords.map((patient) => (
-                                            <tr
+                                    <tbody className='divide-y divide-gray-50 dark:divide-[#1F2A37]'>
+                                        {todayRecords.map((patient, idx) => (
+                                            <motion.tr
                                                 key={patient.id}
-                                                className='cursor-pointer hover:bg-crimson-50/40 transition-colors group'
+                                                initial={{ opacity: 0, x: -10 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                transition={{ delay: idx * 0.03, duration: 0.3 }}
+                                                className='hover:bg-crimson-50/40 dark:hover:bg-[#1F242F] cursor-pointer transition-colors group'
                                                 onClick={
                                                     patient.status === "INCOMPLETE" && userProfile?.role === "DOCTOR"
                                                         ? () => handleDiagnose(patient.id)
@@ -439,38 +459,43 @@ const NewDashboard = () => {
                                                 }
                                             >
                                                 <td className='px-5 py-3.5'>
-                                                    <span className='text-sm font-mono font-medium text-gray-900 group-hover:text-crimson-600 transition-colors'>
+                                                    <span className='text-sm font-mono font-medium text-gray-900 dark:text-slate-100 group-hover:text-crimson-600 dark:group-hover:text-crimson-300 transition-colors'>
                                                         {patient.student_id}
                                                     </span>
                                                 </td>
                                                 <td className='px-5 py-3.5'>
                                                     <div className='flex items-center gap-3'>
-                                                        <div className='w-8 h-8 rounded-full bg-linear-to-br from-crimson-100 to-crimson-50 flex items-center justify-center text-xs font-bold text-crimson-600 shrink-0 ring-1 ring-crimson-100'>
+                                                        <div className='w-8 h-8 rounded-full bg-linear-to-br from-crimson-100 to-crimson-50 dark:from-[#293040] dark:to-[#1F242F] flex items-center justify-center text-xs font-bold text-crimson-600 dark:text-gray-300 shrink-0 ring-1 ring-crimson-100 dark:ring-gray-700'>
                                                             {patient.first_name?.[0]}{patient.last_name?.[0]}
                                                         </div>
-                                                        <span className='text-sm text-gray-700 font-medium'>{`${patient.first_name} ${patient.last_name}`}</span>
+                                                        <span className='text-sm text-gray-700 dark:text-slate-200 truncate font-medium'>{`${patient.first_name} ${patient.last_name}`}</span>
                                                     </div>
                                                 </td>
-                                                <td className='px-5 py-3.5 hidden lg:table-cell'>
-                                                    <span className='text-sm text-gray-600'>{patient.department}</span>
-                                                </td>
                                                 <td className='px-5 py-3.5 hidden md:table-cell'>
-                                                    <span className='text-sm text-gray-500'>{formatDateShort(patient.created_at)}</span>
+                                                    <span className='text-sm text-gray-600 dark:text-slate-300'>{patient.department}</span>
                                                 </td>
-                                                <td className='px-5 py-3.5 hidden sm:table-cell'>
-                                                    <span className='text-sm text-gray-600 truncate max-w-[180px] block'>
+                                                <td className='px-5 py-3.5 hidden lg:table-cell'>
+                                                    <span className='text-sm text-gray-600 dark:text-slate-300 truncate max-w-[200px] block'>
                                                         {patient.diagnoses[0]?.diagnosis || (
-                                                            <span className='text-gray-400 italic'>Pending</span>
+                                                            <span className='text-gray-400 dark:text-gray-500 italic'>Pending</span>
                                                         )}
                                                     </span>
                                                 </td>
+                                                <td className='px-5 py-3.5 hidden sm:table-cell'>
+                                                    <div className='flex items-center gap-1.5 text-gray-400 dark:text-gray-500'>
+                                                        <Clock className="w-3.5 h-3.5" />
+                                                        <span className='text-xs font-medium'>{formatTime(patient.created_at)}</span>
+                                                    </div>
+                                                </td>
                                                 <td className='px-5 py-3.5'>
                                                     {patient.status === "COMPLETE" ? (
-                                                        <span className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100'>
+                                                        <span className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 ring-1 ring-emerald-100 dark:ring-emerald-900/60'>
+                                                            <span className='w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400' />
                                                             Complete
                                                         </span>
                                                     ) : (
-                                                        <span className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 ring-1 ring-amber-100'>
+                                                        <span className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 ring-1 ring-amber-100 dark:ring-amber-900/60'>
+                                                            <span className='w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-amber-400 animate-pulse' />
                                                             Pending
                                                         </span>
                                                     )}
@@ -483,26 +508,20 @@ const NewDashboard = () => {
                                     </tbody>
                                 </table>
                             ) : (
-                                <div className='flex flex-col items-center justify-center py-20 text-gray-400'>
-                                    <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center mb-4">
-                                        <Search className="w-8 h-8 text-gray-300" />
+                                <div className='flex flex-col items-center justify-center py-20 text-gray-400 dark:text-gray-500'>
+                                    <div className="w-16 h-16 rounded-2xl bg-gray-50 dark:bg-[#1F242F] flex items-center justify-center mb-4">
+                                        <ClipboardCheck className="w-8 h-8 text-gray-300 dark:text-gray-500" />
                                     </div>
-                                    <p className='text-sm font-medium text-gray-500'>
-                                        {tableFilter === 'pending' ? 'No pending records' : 'No records for today'}
-                                    </p>
-                                    <p className='text-xs text-gray-400 mt-1'>
-                                        {tableFilter === 'pending' ? 'All records have been diagnosed' : 'Patient visits will appear here'}
-                                    </p>
-                                    {tableFilter === 'today' && (
-                                        <Link
-                                            to='/new-patient'
-                                            className='mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-crimson-600 hover:text-crimson-700 transition-colors group'
-                                        >
-                                            <Plus className="w-4 h-4" />
-                                            Add first patient
-                                            <ArrowRight className="w-3.5 h-3.5 opacity-0 -ml-1 group-hover:opacity-100 group-hover:ml-0 transition-all" />
-                                        </Link>
-                                    )}
+                                    <p className='text-sm font-medium text-gray-500 dark:text-slate-300'>No records for today</p>
+                                    <p className='text-xs text-gray-400 dark:text-gray-500 mt-1'>Patient visits will appear here</p>
+                                    <Link
+                                        to='/new-patient'
+                                        className='mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-crimson-600 dark:text-crimson-300 hover:text-crimson-700 dark:hover:text-gray-200 transition-colors group'
+                                    >
+                                        <Plus className="w-4 h-4" />
+                                        Add first patient
+                                        <ArrowRight className="w-3.5 h-3.5 opacity-0 -ml-1 group-hover:opacity-100 group-hover:ml-0 transition-all" />
+                                    </Link>
                                 </div>
                             )}
                         </div>

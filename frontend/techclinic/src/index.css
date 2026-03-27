@@ -4,10 +4,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* ════════════════════════════════════════════════════════════
-   TechClinic Design System v2
-   Color palette built around TUP Crimson (#b01c34)
-   ════════════════════════════════════════════════════════════ */
 
 @theme inline {
     --radius-sm: calc(var(--radius) - 4px);
@@ -95,37 +91,37 @@
 }
 
 .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
+    --background: #0C111D;
+    --foreground: #F5F5F6;
+    --card: #161B26;
+    --card-foreground: #F5F5F6;
+    --popover: #161B26;
+    --popover-foreground: #F5F5F6;
+    --primary: #FFFFFF;
+    --primary-foreground: #0C111D;
+    --secondary: #1F242F;
+    --secondary-foreground: #CECFD2;
+    --muted: #1F242F;
+    --muted-foreground: #94969C;
+    --accent: #1F242F;
+    --accent-foreground: #F5F5F6;
     --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
-    --chart-1: oklch(0.488 0.243 264.376);
-    --chart-2: oklch(0.696 0.17 162.48);
-    --chart-3: oklch(0.769 0.188 70.08);
-    --chart-4: oklch(0.627 0.265 303.9);
-    --chart-5: oklch(0.645 0.246 16.439);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.556 0 0);
+    --border: #1F2A37;
+    --input: #1F2A37;
+    --ring: #FFFFFF;
+    --chart-1: #F5F5F6;
+    --chart-2: #CECFD2;
+    --chart-3: #f43f5e;
+    --chart-4: #94969C;
+    --chart-5: #be123c;
+    --sidebar: #0C111D;
+    --sidebar-foreground: #F5F5F6;
+    --sidebar-primary: #FFFFFF;
+    --sidebar-primary-foreground: #0C111D;
+    --sidebar-accent: #1F242F;
+    --sidebar-accent-foreground: #F5F5F6;
+    --sidebar-border: #1F2A37;
+    --sidebar-ring: #FFFFFF;
 }
 
 @layer base {
@@ -136,6 +132,13 @@
         @apply bg-background text-foreground antialiased;
         font-family: "Google Sans Flex", system-ui, -apple-system, sans-serif;
         font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    }
+
+    body.dark {
+        background-image:
+            radial-gradient(1200px 560px at -10% -10%, rgba(255, 255, 255, 0.03), transparent 65%),
+            radial-gradient(820px 400px at 95% 8%, rgba(255, 255, 255, 0.02), transparent 65%);
+        background-attachment: fixed;
     }
 }
 
@@ -157,9 +160,71 @@
     background: oklch(0.65 0 0);
 }
 
+.dark .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #1F2A37;
+}
+
+.dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: #333741;
+}
+
 .scrollbar-hide::-webkit-scrollbar {
     width: 0;
     display: none;
+}
+
+/* ════════════════════════════════════════════════════════════
+   ApexCharts dark-mode menu/dropdown polish
+   ════════════════════════════════════════════════════════════ */
+
+.dark .apexcharts-toolbar svg,
+.dark .apexcharts-menu-icon svg {
+    fill: #94969C !important;
+}
+
+.dark .apexcharts-menu {
+    background: #1F242F !important;
+    border: 1px solid #333741 !important;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.65) !important;
+}
+
+.dark .apexcharts-menu-item {
+    color: #CECFD2 !important;
+}
+
+.dark .apexcharts-menu-item:hover {
+    background: #293040 !important;
+}
+
+.dark .apexcharts-xaxis-label,
+.dark .apexcharts-yaxis-label,
+.dark .apexcharts-legend-text,
+.dark .apexcharts-text,
+.dark .apexcharts-title-text {
+    fill: #CECFD2 !important;
+    color: #CECFD2 !important;
+}
+
+.dark .apexcharts-datalabel-label,
+.dark .apexcharts-datalabel-value,
+.dark .apexcharts-datalabel,
+.dark .apexcharts-pie-label {
+    fill: #F5F5F6 !important;
+}
+
+.dark .apexcharts-tooltip,
+.dark .apexcharts-xaxistooltip,
+.dark .apexcharts-yaxistooltip {
+    background: #1F242F !important;
+    border: 1px solid #333741 !important;
+    color: #F5F5F6 !important;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6) !important;
+}
+
+.dark .apexcharts-tooltip-title {
+    background: #1F242F !important;
+    border-bottom: 1px solid #333741 !important;
+    color: #CECFD2 !important;
 }
 
 /* ════════════════════════════════════════════════════════════

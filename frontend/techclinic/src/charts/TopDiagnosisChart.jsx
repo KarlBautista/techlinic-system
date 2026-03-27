@@ -42,19 +42,19 @@ const TopDiagnosisChart = () => {
     },
     xaxis: {
       categories: [],
-      title: { text: "Number of Patients", style: { color: '#9ca3af', fontSize: '11px' } },
+      title: { text: "Number of Patients", style: { color: '#94969C', fontSize: '11px' } },
       labels: {
         formatter: function(val) {
           return Math.round(val);
         },
-        style: { colors: '#9ca3af', fontSize: '11px' }
+        style: { colors: '#94969C', fontSize: '11px' }
       }
     },
     yaxis: {
       labels: {
         style: {
           fontSize: '12px',
-          colors: '#6b7280',
+          colors: '#94969C',
           fontWeight: 500
         },
         maxWidth: 180
@@ -199,11 +199,27 @@ const TopDiagnosisChart = () => {
           onCustomEndChange={setCustomEnd}
           onCustomApply={handleCustomDateApply}
         />
+        <div className='text-sm font-semibold tracking-tight text-gray-800 dark:text-slate-100'>Top Diagnoses</div>
+        <div className='flex gap-1'>
+          {['week', 'month', 'quarter', 'year'].map((val) => (
+            <button
+              key={val}
+              onClick={() => handleCategoryChange(val)}
+              className={`h-7 min-w-7 inline-flex items-center justify-center text-[10px] font-semibold rounded-md border transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 ${
+                selectedCategory === val
+                  ? 'bg-crimson-600 dark:bg-white dark:text-[#0C111D] border-crimson-600 dark:border-[#333741] text-white shadow-sm'
+                  : 'bg-gray-100/80 dark:bg-[#1F242F]/70 border-gray-200 dark:border-[#333741] text-gray-500 dark:text-[#CECFD2] hover:bg-gray-200/80 dark:hover:bg-[#293040]'
+              }`}
+            >
+              {val === 'week' ? 'W' : val === 'month' ? 'M' : val === 'quarter' ? 'Q' : 'Y'}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Period info */}
       {periodInfo && (
-        <div className='shrink-0 text-xs font-medium text-gray-400 pb-2'>
+        <div className='shrink-0 text-xs font-semibold tracking-wide text-gray-400 dark:text-[#94969C] pb-2'>
           <p>{getPeriodDisplay()}</p>
         </div>
       )}
@@ -211,8 +227,18 @@ const TopDiagnosisChart = () => {
       {/* Chart */}
       <div className='flex-1 min-h-0'>
         {!hasData ? (
+        {!chartData ? (
+          <div className='w-full h-full animate-pulse flex flex-col gap-3 justify-center px-4'>
+            {[75, 60, 45, 35, 25].map((w, i) => (
+              <div key={i} className='flex items-center gap-3'>
+                <div className='h-3 w-20 bg-gray-100 dark:bg-[#1F242F] rounded shrink-0' />
+                <div className='h-6 bg-gray-200 dark:bg-[#1F242F] rounded' style={{ width: `${w}%` }} />
+              </div>
+            ))}
+          </div>
+        ) : !hasData ? (
           <div className='w-full h-full flex items-center justify-center'>
-            <p className='text-sm text-gray-400'>No diagnosis data available for this period</p>
+            <p className='text-sm text-gray-400 dark:text-[#94969C]'>No diagnosis data available for this period</p>
           </div>
         ) : (
           <Chart

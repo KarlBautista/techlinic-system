@@ -23,9 +23,9 @@ const PatientCountsChart = () => {
 
   const [patientData, setPatientData] = useState([]);
   const [patientOptions, setPatientOptions] = useState({
-    chart: { id: "patients-chart", toolbar: { show: true, tools: { download: true, selection: false, zoom: false, zoomin: false, zoomout: false, pan: false, reset: false } }, dropShadow: { enabled: true, top: 2, left: 0, blur: 4, opacity: 0.15 } },
-    xaxis: { categories: [], labels: { style: { colors: '#9ca3af', fontWeight: 500, fontSize: '11px' } } },
-    yaxis: { labels: { style: { colors: '#9ca3af', fontSize: '11px' } } },
+    chart: { id: "patients-chart", toolbar: { show: true }, dropShadow: { enabled: true, top: 2, left: 0, blur: 4, opacity: 0.15 } },
+    xaxis: { categories: [], labels: { style: { colors: '#94969C', fontWeight: 500, fontSize: '11px' } } },
+    yaxis: { labels: { style: { colors: '#94969C', fontSize: '11px' } } },
     colors: ["#dc2626"],
     fill: {
       type: 'gradient',
@@ -191,27 +191,41 @@ const PatientCountsChart = () => {
 
   return (
     <div className='w-full h-full flex flex-col min-h-0'>
-      <div className='shrink-0 flex items-start justify-between gap-2 pb-1'>
-        <div className='text-sm font-semibold text-gray-800'>Patient record count</div>
-        <ChartPeriodSelector
-          selectedCategory={selectedCategory}
-          onCategoryChange={handleCategoryChange}
-          customStart={customStart}
-          customEnd={customEnd}
-          onCustomStartChange={setCustomStart}
-          onCustomEndChange={setCustomEnd}
-          onCustomApply={handleCustomDateApply}
-        />
+      <div className='shrink-0 flex items-start justify-between gap-2 pb-2'>
+        <div className='text-sm font-semibold tracking-tight text-gray-800 dark:text-slate-100'>Patient record count</div>
+        <div className='flex gap-1'>
+          {['week', 'month', 'quarter', 'year'].map((val) => (
+            <button
+              key={val}
+              onClick={() => handleCategoryChange(val)}
+              className={`h-7 min-w-7 inline-flex items-center justify-center text-[10px] font-semibold rounded-md border transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 ${
+                selectedCategory === val
+                  ? 'bg-crimson-600 dark:bg-white dark:text-[#0C111D] border-crimson-600 dark:border-[#333741] text-white shadow-sm'
+                  : 'bg-gray-100/80 dark:bg-[#1F242F]/70 border-gray-200 dark:border-[#333741] text-gray-500 dark:text-[#CECFD2] hover:bg-gray-200/80 dark:hover:bg-[#293040]'
+              }`}
+            >
+              {val === 'week' ? 'W' : val === 'month' ? 'M' : val === 'quarter' ? 'Q' : 'Y'}
+            </button>
+          ))}
+        </div>
       </div>  
       
       <div className='flex-1 min-h-0'>
-        <Chart
-          key={`${selectedCategory}-${patientData.length}`}
-          options={patientOptions}
-          series={[{ name: "Patient Records", data: patientData }]}
-          type="area"
-          height="100%"
-        />
+          {patientData.length > 0 ? (
+            <Chart
+            key={`${selectedCategory}-${patientData.length}`}
+            options={patientOptions}
+            series={[{ name: "Patient Records", data: patientData }]}
+            type="area"
+            height="100%"
+          />
+        ) : (
+          <div className='w-full h-full animate-pulse flex items-end gap-3 px-4 pb-6 pt-4'>
+            {[35, 55, 45, 70, 50, 60, 40].map((h, i) => (
+              <div key={i} className='flex-1 bg-gray-200 dark:bg-[#1F242F] rounded-t' style={{ height: `${h}%` }} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -70,39 +70,39 @@ const IndividualRecord = () => {
           <div className='flex flex-col gap-5 animate-pulse'>
             {/* Skeleton Header */}
             <div className='flex items-center gap-3'>
-              <div className='w-9 h-9 rounded-xl bg-gray-200' />
+              <div className='w-9 h-9 rounded-xl bg-gray-200 dark:bg-[#1F242F]' />
               <div>
-                <div className='h-6 w-40 bg-gray-200 rounded-lg' />
-                <div className='h-4 w-56 bg-gray-100 rounded-lg mt-2' />
+                <div className='h-6 w-40 bg-gray-200 dark:bg-[#1F242F] rounded-lg' />
+                <div className='h-4 w-56 bg-gray-100 dark:bg-[#1F242F] rounded-lg mt-2' />
               </div>
             </div>
             {/* Skeleton Profile Banner */}
-            <div className='w-full rounded-2xl bg-gray-200 h-44' />
+            <div className='w-full rounded-2xl bg-gray-200 dark:bg-[#1F242F] h-44' />
             {/* Skeleton Contact Cards */}
             <div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
               {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className='bg-white rounded-xl ring-1 ring-gray-100 p-4'>
-                  <div className='h-3 w-16 bg-gray-200 rounded mb-3' />
-                  <div className='h-4 w-32 bg-gray-100 rounded' />
+                <div key={i} className='bg-white dark:bg-[#161B26] rounded-xl ring-1 ring-gray-100 dark:ring-[#1F2A37] p-4'>
+                  <div className='h-3 w-16 bg-gray-200 dark:bg-[#1F242F] rounded mb-3' />
+                  <div className='h-4 w-32 bg-gray-100 dark:bg-[#1F242F] rounded' />
                 </div>
               ))}
             </div>
             {/* Skeleton Visit Records */}
-            <div className='bg-white rounded-xl ring-1 ring-gray-100 overflow-hidden'>
-              <div className='px-5 py-4 border-b border-gray-100 flex items-center justify-between'>
-                <div className='h-5 w-28 bg-gray-200 rounded' />
-                <div className='h-9 w-28 bg-gray-200 rounded-xl' />
+            <div className='bg-white dark:bg-[#161B26] rounded-xl ring-1 ring-gray-100 dark:ring-[#1F2A37] overflow-hidden'>
+              <div className='px-5 py-4 border-b border-gray-100 dark:border-[#1F2A37] flex items-center justify-between'>
+                <div className='h-5 w-28 bg-gray-200 dark:bg-[#1F242F] rounded' />
+                <div className='h-9 w-28 bg-gray-200 dark:bg-[#1F242F] rounded-xl' />
               </div>
               {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className='px-5 py-4 flex items-center justify-between border-b border-gray-50'>
+                <div key={i} className='px-5 py-4 flex items-center justify-between border-b border-gray-50 dark:border-[#1F2A37]'>
                   <div className='flex items-center gap-3'>
-                    <div className='w-10 h-10 rounded-xl bg-gray-200' />
+                    <div className='w-10 h-10 rounded-xl bg-gray-200 dark:bg-[#1F242F]' />
                     <div>
-                      <div className='h-4 w-36 bg-gray-100 rounded' />
-                      <div className='h-3 w-24 bg-gray-100 rounded mt-2' />
+                      <div className='h-4 w-36 bg-gray-100 dark:bg-[#1F242F] rounded' />
+                      <div className='h-3 w-24 bg-gray-100 dark:bg-[#1F242F] rounded mt-2' />
                     </div>
                   </div>
-                  <div className='h-6 w-16 bg-gray-100 rounded-full' />
+                  <div className='h-6 w-16 bg-gray-100 dark:bg-[#1F242F] rounded-full' />
                 </div>
               ))}
             </div>
@@ -123,13 +123,13 @@ const IndividualRecord = () => {
         >
           <button 
             onClick={() => navigate(-1)} 
-            className='w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-gray-200 hover:bg-crimson-50 hover:border-crimson-200 hover:text-crimson-600 transition-all shadow-sm text-gray-600'
+            className='w-9 h-9 flex items-center justify-center rounded-xl bg-white dark:bg-[#161B26] border border-gray-200 dark:border-[#1F2A37] hover:bg-crimson-50 dark:bg-[#1F242F] hover:border-crimson-200 hover:text-crimson-600 transition-all shadow-sm text-gray-600 dark:text-[#94969C]'
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
-            <h1 className='text-2xl font-bold text-gray-800'>Patient Record</h1>
-            <p className='text-sm text-gray-500 mt-0.5'>View patient details and visit history</p>
+            <h1 className='text-2xl font-bold text-gray-800 dark:text-white'>Patient Record</h1>
+            <p className='text-sm text-gray-500 dark:text-[#94969C] mt-0.5'>View patient details and visit history</p>
           </div>
         </motion.div>
 
@@ -138,7 +138,7 @@ const IndividualRecord = () => {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.4 }}
-          className='bg-white rounded-xl shadow-sm ring-1 ring-gray-100 overflow-hidden'
+          className='bg-white dark:bg-[#161B26] rounded-xl shadow-sm ring-1 ring-gray-100 dark:ring-[#1F2A37] overflow-hidden'
         >
           {/* Gradient Banner */}
           <div className='h-28 bg-linear-to-br from-crimson-700 via-crimson-600 to-crimson-500 relative'>
@@ -154,32 +154,32 @@ const IndividualRecord = () => {
           <div className='pt-14 pb-5 px-6'>
             <div className='flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3'>
               <div>
-                <h2 className='text-xl font-bold text-gray-800'>
+                <h2 className='text-xl font-bold text-gray-800 dark:text-white'>
                   {`${patientRecord?.first_name ?? ''} ${patientRecord?.last_name ?? ''}`}
                 </h2>
-                <p className='text-sm text-gray-500 mt-1 flex items-center gap-3 flex-wrap'>
+                <p className='text-sm text-gray-500 dark:text-[#94969C] mt-1 flex items-center gap-3 flex-wrap'>
                   <span className='inline-flex items-center gap-1.5'>
-                    <IdCard className="w-3.5 h-3.5 text-gray-400" />
+                    <IdCard className="w-3.5 h-3.5 text-gray-400 dark:text-[#94969C]" />
                     {studentId ?? '—'}
                   </span>
-                  <span className='text-gray-300'>|</span>
+                  <span className='text-gray-300 dark:text-[#94969C]'>|</span>
                   <span className='inline-flex items-center gap-1.5'>
-                    <Building2 className="w-3.5 h-3.5 text-gray-400" />
+                    <Building2 className="w-3.5 h-3.5 text-gray-400 dark:text-[#94969C]" />
                     {patientRecord?.department ?? '—'}
                   </span>
                 </p>
               </div>
               <div className='flex items-center gap-2 flex-wrap'>
-                <span className='inline-flex items-center gap-1.5 px-3 py-1 bg-gray-50 rounded-full text-xs font-medium text-gray-600 ring-1 ring-gray-100'>
-                  <User className="w-3 h-3 text-gray-400" />
+                <span className='inline-flex items-center gap-1.5 px-3 py-1 bg-gray-50 dark:bg-[#1F242F] rounded-full text-xs font-medium text-gray-600 dark:text-[#94969C] ring-1 ring-gray-100 dark:ring-[#1F2A37]'>
+                  <User className="w-3 h-3 text-gray-400 dark:text-[#94969C]" />
                   {patientRecord?.sex ?? '—'}
                 </span>
-                <span className='inline-flex items-center gap-1.5 px-3 py-1 bg-gray-50 rounded-full text-xs font-medium text-gray-600 ring-1 ring-gray-100'>
-                  <GraduationCap className="w-3 h-3 text-gray-400" />
+                <span className='inline-flex items-center gap-1.5 px-3 py-1 bg-gray-50 dark:bg-[#1F242F] rounded-full text-xs font-medium text-gray-600 dark:text-[#94969C] ring-1 ring-gray-100 dark:ring-[#1F2A37]'>
+                  <GraduationCap className="w-3 h-3 text-gray-400 dark:text-[#94969C]" />
                   Year {patientRecord?.year_level ?? patientRecord?.year ?? '—'}
                 </span>
                 {latestDate && (
-                  <span className='inline-flex items-center gap-1.5 px-3 py-1 bg-crimson-50 rounded-full text-xs font-medium text-crimson-700 ring-1 ring-crimson-100'>
+                  <span className='inline-flex items-center gap-1.5 px-3 py-1 bg-crimson-50 dark:bg-[#1F242F] rounded-full text-xs font-medium text-crimson-700 ring-1 ring-crimson-100 dark:ring-[#333741]'>
                     <Clock className="w-3 h-3 text-crimson-500" />
                     Last visit: {latestDate}
                   </span>
@@ -201,14 +201,14 @@ const IndividualRecord = () => {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 + idx * 0.05, duration: 0.35 }}
-              className='bg-white rounded-xl shadow-sm ring-1 ring-gray-100 p-5 flex items-center gap-4'
+              className='bg-white dark:bg-[#161B26] rounded-xl shadow-sm ring-1 ring-gray-100 dark:ring-[#1F2A37] p-5 flex items-center gap-4'
             >
-              <div className='w-10 h-10 rounded-xl bg-crimson-50 flex items-center justify-center shrink-0'>
+              <div className='w-10 h-10 rounded-xl bg-crimson-50 dark:bg-[#1F242F] flex items-center justify-center shrink-0'>
                 {item.icon}
               </div>
               <div className='min-w-0'>
-                <p className='text-xs text-gray-400 font-medium uppercase tracking-wider'>{item.label}</p>
-                <p className='text-sm font-semibold text-gray-800 truncate'>{item.value ?? '—'}</p>
+                <p className='text-xs text-gray-400 dark:text-[#94969C] font-medium uppercase tracking-wider'>{item.label}</p>
+                <p className='text-sm font-semibold text-gray-800 dark:text-white truncate'>{item.value ?? '—'}</p>
               </div>
             </motion.div>
           ))}
@@ -219,13 +219,13 @@ const IndividualRecord = () => {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35, duration: 0.4 }}
-          className='bg-white rounded-xl shadow-sm ring-1 ring-gray-100 overflow-hidden'
+          className='bg-white dark:bg-[#161B26] rounded-xl shadow-sm ring-1 ring-gray-100 dark:ring-[#1F2A37] overflow-hidden'
         >
           {/* Section Header */}
-          <div className='px-6 py-4 border-b border-gray-100 flex items-center justify-between'>
+          <div className='px-6 py-4 border-b border-gray-100 dark:border-[#1F2A37] flex items-center justify-between'>
             <div className='flex items-center gap-3'>
-              <h2 className='text-lg font-bold text-gray-800'>Visit Records</h2>
-              <span className='inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-crimson-50 text-crimson-700 ring-1 ring-crimson-100'>
+              <h2 className='text-lg font-bold text-gray-800 dark:text-white'>Visit Records</h2>
+              <span className='inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-crimson-50 dark:bg-[#1F242F] text-crimson-700 ring-1 ring-crimson-100 dark:ring-[#333741]'>
                 {totalVisits}
               </span>
             </div>
@@ -257,11 +257,11 @@ const IndividualRecord = () => {
           <div className='p-4'>
             {(!allRecords || allRecords.length === 0) ? (
               <div className='py-16 text-center'>
-                <div className='w-16 h-16 mx-auto mb-4 rounded-2xl bg-gray-50 flex items-center justify-center'>
-                  <Stethoscope className="w-7 h-7 text-gray-300" />
+                <div className='w-16 h-16 mx-auto mb-4 rounded-2xl bg-gray-50 dark:bg-[#1F242F] flex items-center justify-center'>
+                  <Stethoscope className="w-7 h-7 text-gray-300 dark:text-[#94969C]" />
                 </div>
-                <p className='text-gray-500 font-medium text-sm'>No visit records yet</p>
-                <p className='text-xs text-gray-400 mt-1'>Records will appear here after clinic visits</p>
+                <p className='text-gray-500 dark:text-[#94969C] font-medium text-sm'>No visit records yet</p>
+                <p className='text-xs text-gray-400 dark:text-[#94969C] mt-1'>Records will appear here after clinic visits</p>
               </div>
             ) : (
               <div className='flex flex-col gap-2'>
@@ -283,17 +283,17 @@ const IndividualRecord = () => {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: idx * 0.04, duration: 0.3 }}
                       type='button'
-                      className='w-full flex items-center justify-between p-4 rounded-xl hover:bg-crimson-50/40 transition-all text-left group ring-1 ring-transparent hover:ring-crimson-100'
+                      className='w-full flex items-center justify-between p-4 rounded-xl hover:bg-crimson-50/40 transition-all text-left group ring-1 ring-transparent hover:ring-crimson-100 dark:ring-[#333741]'
                       onClick={() => handleOpenRecord(record)}
                     >
                       <div className='flex items-start gap-4'>
-                        <div className='w-10 h-10 rounded-xl bg-crimson-50 flex items-center justify-center shrink-0 mt-0.5'>
+                        <div className='w-10 h-10 rounded-xl bg-crimson-50 dark:bg-[#1F242F] flex items-center justify-center shrink-0 mt-0.5'>
                           <Stethoscope className="w-4.5 h-4.5 text-crimson-600" />
                         </div>
                         <div className='flex-1'>
-                          <p className='font-semibold text-gray-800 text-sm group-hover:text-crimson-700 transition-colors'>{diagName}</p>
-                          <p className='text-xs text-gray-400 mt-0.5'>{diagDate}</p>
-                          <div className='flex gap-4 mt-2 text-xs text-gray-400'>
+                          <p className='font-semibold text-gray-800 dark:text-white text-sm group-hover:text-crimson-700 transition-colors'>{diagName}</p>
+                          <p className='text-xs text-gray-400 dark:text-[#94969C] mt-0.5'>{diagDate}</p>
+                          <div className='flex gap-4 mt-2 text-xs text-gray-400 dark:text-[#94969C]'>
                             <span className='inline-flex items-center gap-1'>
                               <Pill className="w-3 h-3" />{medication}
                             </span>
@@ -311,7 +311,7 @@ const IndividualRecord = () => {
                         }`}>
                           {record?.status ?? '—'}
                         </span>
-                        <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-crimson-500 group-hover:translate-x-0.5 transition-all" />
+                        <ChevronRight className="w-4 h-4 text-gray-300 dark:text-[#94969C] group-hover:text-crimson-500 group-hover:translate-x-0.5 transition-all" />
                       </div>
                     </motion.button>
                   )

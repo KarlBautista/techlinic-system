@@ -207,8 +207,8 @@ const getInitials = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <h1 className='text-2xl font-bold text-gray-800'>Settings</h1>
-          <p className='text-sm text-gray-500 mt-1'>Manage your profile and account settings</p>
+          <h1 className='text-2xl font-bold text-gray-800 dark:text-white'>Settings</h1>
+          <p className='text-sm text-gray-500 dark:text-[#94969C] mt-1'>Manage your profile and account settings</p>
         </motion.div>
 
         {/* Profile Banner */}
@@ -216,12 +216,12 @@ const getInitials = () => {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05, duration: 0.35 }}
-          className='bg-white rounded-xl shadow-sm ring-1 ring-gray-100 overflow-hidden'
+          className='bg-white dark:bg-[#161B26] rounded-xl shadow-sm ring-1 ring-gray-100 dark:ring-[#1F2A37] overflow-hidden'
         >
           {/* Banner top stripe */}
           <div className='h-28 bg-linear-to-r from-crimson-600 to-crimson-400 relative'>
             <div className='absolute -bottom-10 left-6 md:left-10'>
-              <div className='w-20 h-20 md:w-24 md:h-24 rounded-full bg-white border-4 border-white shadow-md flex items-center justify-center'>
+              <div className='w-20 h-20 md:w-24 md:h-24 rounded-full bg-white dark:bg-[#161B26] border-4 border-white shadow-md flex items-center justify-center'>
                 <div className='w-full h-full rounded-full bg-linear-to-br from-crimson-600 to-crimson-500 flex items-center justify-center'>
                   <p className='text-white text-xl md:text-2xl font-bold'>{getInitials()}</p>
                 </div>
@@ -231,15 +231,15 @@ const getInitials = () => {
           <div className='pt-14 pb-6 px-6 md:px-10'>
             <div className='flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3'>
               <div>
-                <h2 className='text-xl md:text-2xl font-bold text-gray-800'>{getDisplayName()}</h2>
-                <p className='text-sm text-gray-500 mt-0.5'>
+                <h2 className='text-xl md:text-2xl font-bold text-gray-800 dark:text-white'>{getDisplayName()}</h2>
+                <p className='text-sm text-gray-500 dark:text-[#94969C] mt-0.5'>
                   <span className='inline-flex items-center gap-1.5'>
-                    <IdCard className="w-3.5 h-3.5 text-gray-400" />
+                    <IdCard className="w-3.5 h-3.5 text-gray-400 dark:text-[#94969C]" />
                     {authenticatedUser?.id ? `${authenticatedUser.id.slice(0, 8)}...` : 'N/A'}
                   </span>
-                  <span className='mx-2 text-gray-300'>|</span>
+                  <span className='mx-2 text-gray-300 dark:text-[#94969C]'>|</span>
                   <span className='inline-flex items-center gap-1.5'>
-                    <Tag className="w-3.5 h-3.5 text-gray-400" />
+                    <Tag className="w-3.5 h-3.5 text-gray-400 dark:text-[#94969C]" />
                     {displayedProfile?.role || 'N/A'}
                   </span>
                 </p>
@@ -259,52 +259,52 @@ const getInitials = () => {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.35 }}
-            className='bg-white rounded-xl shadow-sm ring-1 ring-gray-100 p-6'
+            className='bg-white dark:bg-[#161B26] rounded-xl shadow-sm ring-1 ring-gray-100 dark:ring-[#1F2A37] p-6'
           >
             <div className='flex items-center gap-3 mb-5'>
-              <div className='w-9 h-9 rounded-xl bg-crimson-50 flex items-center justify-center ring-1 ring-crimson-100'>
+              <div className='w-9 h-9 rounded-xl bg-crimson-50 dark:bg-[#1F242F] flex items-center justify-center ring-1 ring-crimson-100 dark:ring-[#333741]'>
                 <User className="w-4 h-4 text-crimson-600" />
               </div>
-              <h3 className='text-base font-semibold text-gray-800'>Personal Information</h3>
+              <h3 className='text-base font-semibold text-gray-800 dark:text-white'>Personal Information</h3>
             </div>
 
             <div className='space-y-4'>
               <div className='flex items-start justify-between'>
                 <div>
-                  <p className='text-xs font-medium text-gray-400 uppercase tracking-wider'>First Name</p>
-                  <p className='text-sm font-medium text-gray-800 mt-0.5'>{displayedProfile?.first_name || 'N/A'}</p>
+                  <p className='text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider'>First Name</p>
+                  <p className='text-sm font-medium text-gray-800 dark:text-white mt-0.5'>{displayedProfile?.first_name || 'N/A'}</p>
                 </div>
                 <div className='text-right'>
-                  <p className='text-xs font-medium text-gray-400 uppercase tracking-wider'>Last Name</p>
-                  <p className='text-sm font-medium text-gray-800 mt-0.5'>{displayedProfile?.last_name || 'N/A'}</p>
+                  <p className='text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider'>Last Name</p>
+                  <p className='text-sm font-medium text-gray-800 dark:text-white mt-0.5'>{displayedProfile?.last_name || 'N/A'}</p>
                 </div>
               </div>
 
-              <div className='border-t border-gray-50'></div>
+              <div className='border-t border-gray-50 dark:border-[#1F2A37]'></div>
 
               <div className='flex items-start justify-between'>
                 <div>
-                  <p className='text-xs font-medium text-gray-400 uppercase tracking-wider'>Gender</p>
-                  <p className='text-sm font-medium text-gray-800 mt-0.5'>{displayedProfile?.sex || 'N/A'}</p>
+                  <p className='text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider'>Gender</p>
+                  <p className='text-sm font-medium text-gray-800 dark:text-white mt-0.5'>{displayedProfile?.sex || 'N/A'}</p>
                 </div>
                 <div className='text-right'>
-                  <p className='text-xs font-medium text-gray-400 uppercase tracking-wider'>Date of Birth</p>
-                  <p className='text-sm font-medium text-gray-800 mt-0.5'>{formatDateForInput(displayedProfile?.date_of_birth) || 'N/A'}</p>
+                  <p className='text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider'>Date of Birth</p>
+                  <p className='text-sm font-medium text-gray-800 dark:text-white mt-0.5'>{formatDateForInput(displayedProfile?.date_of_birth) || 'N/A'}</p>
                 </div>
               </div>
 
-              <div className='border-t border-gray-50'></div>
+              <div className='border-t border-gray-50 dark:border-[#1F2A37]'></div>
 
               <div>
-                <p className='text-xs font-medium text-gray-400 uppercase tracking-wider'>Address</p>
-                <p className='text-sm font-medium text-gray-800 mt-0.5'>{displayedProfile?.address || 'N/A'}</p>
+                <p className='text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider'>Address</p>
+                <p className='text-sm font-medium text-gray-800 dark:text-white mt-0.5'>{displayedProfile?.address || 'N/A'}</p>
               </div>
 
-              <div className='border-t border-gray-50'></div>
+              <div className='border-t border-gray-50 dark:border-[#1F2A37]'></div>
 
               <div>
-                <p className='text-xs font-medium text-gray-400 uppercase tracking-wider'>Role</p>
-                <span className='inline-flex items-center gap-1.5 mt-0.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-crimson-50 text-crimson-600 ring-1 ring-crimson-100'>
+                <p className='text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider'>Role</p>
+                <span className='inline-flex items-center gap-1.5 mt-0.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-crimson-50 dark:bg-[#1F242F] text-crimson-600 ring-1 ring-crimson-100 dark:ring-[#333741]'>
                   <Shield className="w-3 h-3" />
                   {displayedProfile?.role || 'N/A'}
                 </span>
@@ -317,57 +317,57 @@ const getInitials = () => {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15, duration: 0.35 }}
-            className='bg-white rounded-xl shadow-sm ring-1 ring-gray-100 p-6'
+            className='bg-white dark:bg-[#161B26] rounded-xl shadow-sm ring-1 ring-gray-100 dark:ring-[#1F2A37] p-6'
           >
             <div className='flex items-center gap-3 mb-5'>
-              <div className='w-9 h-9 rounded-xl bg-crimson-50 flex items-center justify-center ring-1 ring-crimson-100'>
+              <div className='w-9 h-9 rounded-xl bg-crimson-50 dark:bg-[#1F242F] flex items-center justify-center ring-1 ring-crimson-100 dark:ring-[#333741]'>
                 <Lock className="w-4 h-4 text-crimson-600" />
               </div>
-              <h3 className='text-base font-semibold text-gray-800'>Login & Security</h3>
+              <h3 className='text-base font-semibold text-gray-800 dark:text-white'>Login & Security</h3>
             </div>
 
             <div className='space-y-4'>
               <div>
-                <p className='text-xs font-medium text-gray-400 uppercase tracking-wider'>Email Address</p>
+                <p className='text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider'>Email Address</p>
                 <div className='flex items-center gap-2 mt-1'>
-                  <Mail className="w-3.5 h-3.5 text-gray-400" />
-                  <p className='text-sm font-medium text-gray-800'>{authenticatedUser?.email || 'N/A'}</p>
+                  <Mail className="w-3.5 h-3.5 text-gray-400 dark:text-[#94969C]" />
+                  <p className='text-sm font-medium text-gray-800 dark:text-white'>{authenticatedUser?.email || 'N/A'}</p>
                 </div>
               </div>
 
-              <div className='border-t border-gray-50'></div>
+              <div className='border-t border-gray-50 dark:border-[#1F2A37]'></div>
 
               <div>
-                <p className='text-xs font-medium text-gray-400 uppercase tracking-wider'>Password</p>
+                <p className='text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider'>Password</p>
                 <div className='flex items-center justify-between mt-1'>
                   <div className='flex items-center gap-2'>
-                    <KeyRound className="w-3.5 h-3.5 text-gray-400" />
-                    <p className='text-sm font-medium text-gray-800 tracking-widest'>••••••••</p>
+                    <KeyRound className="w-3.5 h-3.5 text-gray-400 dark:text-[#94969C]" />
+                    <p className='text-sm font-medium text-gray-800 dark:text-white tracking-widest'>••••••••</p>
                   </div>
                   <button 
                     onClick={handleEditPassword} 
-                    className='inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-crimson-600 bg-crimson-50 hover:bg-crimson-100 rounded-xl ring-1 ring-crimson-100 transition-colors'>
+                    className='inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-crimson-600 bg-crimson-50 dark:bg-[#1F242F] hover:bg-crimson-100 rounded-xl ring-1 ring-crimson-100 dark:ring-[#333741] transition-colors'>
                     <Pencil className="w-3 h-3" />
                     Change
                   </button>
                 </div>
               </div>
 
-              <div className='border-t border-gray-50'></div>
+              <div className='border-t border-gray-50 dark:border-[#1F2A37]'></div>
 
               <div>
-                <p className='text-xs font-medium text-gray-400 uppercase tracking-wider'>Account Status</p>
+                <p className='text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider'>Account Status</p>
                 <span className='inline-flex items-center gap-1.5 mt-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-700 ring-1 ring-green-100'>
                   <span className='w-1.5 h-1.5 rounded-full bg-green-500'></span>
                   Active
                 </span>
               </div>
 
-              <div className='border-t border-gray-50'></div>
+              <div className='border-t border-gray-50 dark:border-[#1F2A37]'></div>
 
               <div>
-                <p className='text-xs font-medium text-gray-400 uppercase tracking-wider'>Last Sign In</p>
-                <p className='text-sm font-medium text-gray-800 mt-0.5'>
+                <p className='text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider'>Last Sign In</p>
+                <p className='text-sm font-medium text-gray-800 dark:text-white mt-0.5'>
                   {authenticatedUser?.last_sign_in_at 
                     ? new Date(authenticatedUser.last_sign_in_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })
                     : 'N/A'
@@ -383,16 +383,16 @@ const getInitials = () => {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.35 }}
-          className='bg-white rounded-xl shadow-sm ring-1 ring-gray-100 p-6'
+          className='bg-white dark:bg-[#161B26] rounded-xl shadow-sm ring-1 ring-gray-100 dark:ring-[#1F2A37] p-6'
         >
           <div className='flex items-center justify-between mb-5'>
             <div className='flex items-center gap-3'>
-              <div className='w-9 h-9 rounded-xl bg-crimson-50 flex items-center justify-center ring-1 ring-crimson-100'>
+              <div className='w-9 h-9 rounded-xl bg-crimson-50 dark:bg-[#1F242F] flex items-center justify-center ring-1 ring-crimson-100 dark:ring-[#333741]'>
                 <PenLine className="w-4 h-4 text-crimson-600" />
               </div>
               <div>
-                <h3 className='text-base font-semibold text-gray-800'>Digital Signature</h3>
-                <p className='text-xs text-gray-400 mt-0.5'>Used on prescriptions and medical certificates</p>
+                <h3 className='text-base font-semibold text-gray-800 dark:text-white'>Digital Signature</h3>
+                <p className='text-xs text-gray-400 dark:text-[#94969C] mt-0.5'>Used on prescriptions and medical certificates</p>
               </div>
             </div>
             <button
@@ -405,21 +405,21 @@ const getInitials = () => {
           </div>
 
           {userProfile?.signature_url ? (
-            <div className='ring-1 ring-gray-200 rounded-xl p-6 bg-gray-50 flex flex-col items-center gap-3'>
+            <div className='ring-1 ring-gray-200 dark:ring-[#1F2A37] rounded-xl p-6 bg-gray-50 dark:bg-[#1F242F] flex flex-col items-center gap-3'>
               <img
                 src={userProfile.signature_url}
                 alt="Your signature"
                 className='max-h-[120px] max-w-full object-contain'
               />
-              <p className='text-xs text-gray-400'>Your current digital signature</p>
+              <p className='text-xs text-gray-400 dark:text-[#94969C]'>Your current digital signature</p>
             </div>
           ) : (
-            <div className='border-2 border-dashed border-gray-200 rounded-xl p-8 flex flex-col items-center gap-3'>
-              <div className='w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center'>
-                <PenLine className="w-7 h-7 text-gray-300" />
+            <div className='border-2 border-dashed border-gray-200 dark:border-[#1F2A37] rounded-xl p-8 flex flex-col items-center gap-3'>
+              <div className='w-16 h-16 rounded-2xl bg-gray-50 dark:bg-[#1F242F] flex items-center justify-center'>
+                <PenLine className="w-7 h-7 text-gray-300 dark:text-[#94969C]" />
               </div>
-              <p className='text-sm font-medium text-gray-500'>No signature added yet</p>
-              <p className='text-xs text-gray-400'>Add your signature to appear on prescriptions and certificates</p>
+              <p className='text-sm font-medium text-gray-500 dark:text-[#94969C]'>No signature added yet</p>
+              <p className='text-xs text-gray-400 dark:text-[#94969C]'>Add your signature to appear on prescriptions and certificates</p>
             </div>
           )}
 
@@ -438,43 +438,43 @@ const getInitials = () => {
     {showModal && (
       <div className="fixed inset-0 z-50 flex items-center justify-center">
         <div className="absolute inset-0 bg-black/50 modal-backdrop-enter" onClick={handleCloseModal}></div>
-        <div className="relative bg-white rounded-xl shadow-xl w-[90%] max-w-md p-6 z-10 modal-content-enter">
+        <div className="relative bg-white dark:bg-[#161B26] rounded-xl shadow-xl w-[90%] max-w-md p-6 z-10 modal-content-enter">
           <div className='flex items-center gap-3 mb-5'>
-            <div className='w-9 h-9 rounded-xl bg-crimson-50 flex items-center justify-center ring-1 ring-crimson-100'>
+            <div className='w-9 h-9 rounded-xl bg-crimson-50 dark:bg-[#1F242F] flex items-center justify-center ring-1 ring-crimson-100 dark:ring-[#333741]'>
               <Lock className="w-4 h-4 text-crimson-600" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-800">Change Password</h3>
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Change Password</h3>
           </div>
           <form onSubmit={handleSavePassword} className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Current password</label>
+              <label className="block text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider mb-1">Current password</label>
               <input
                 type="password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                className="w-full p-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 focus:border-crimson-400 outline-none transition-all"
+                className="w-full p-2.5 border border-gray-200 dark:border-[#1F2A37] rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] focus:border-crimson-400 outline-none transition-all"
                 placeholder="Enter current password"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">New password</label>
+              <label className="block text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider mb-1">New password</label>
               <input
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full p-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 focus:border-crimson-400 outline-none transition-all"
+                className="w-full p-2.5 border border-gray-200 dark:border-[#1F2A37] rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] focus:border-crimson-400 outline-none transition-all"
                 placeholder="Enter new password"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Confirm new password</label>
+              <label className="block text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider mb-1">Confirm new password</label>
               <input
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full p-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 focus:border-crimson-400 outline-none transition-all"
+                className="w-full p-2.5 border border-gray-200 dark:border-[#1F2A37] rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] focus:border-crimson-400 outline-none transition-all"
                 placeholder="Confirm new password"
               />
             </div>
@@ -487,7 +487,7 @@ const getInitials = () => {
             )}
 
             <div className="flex justify-end gap-2 pt-2">
-              <button type="button" onClick={handleCloseModal} className="px-4 py-2.5 rounded-xl text-sm font-medium bg-gray-100 hover:bg-gray-200 transition-colors">Cancel</button>
+              <button type="button" onClick={handleCloseModal} className="px-4 py-2.5 rounded-xl text-sm font-medium bg-gray-100 dark:bg-[#1F242F] hover:bg-gray-200  transition-colors">Cancel</button>
               <button type="submit" className="px-4 py-2.5 rounded-xl text-sm font-medium bg-crimson-600 text-white hover:bg-crimson-700 transition-colors shadow-sm">Update Password</button>
             </div>
           </form>
@@ -499,35 +499,35 @@ const getInitials = () => {
     {showProfileModal && (
       <div className="fixed inset-0 z-50 flex items-center justify-center">
         <div className="absolute inset-0 bg-black/50 modal-backdrop-enter" onClick={() => setShowProfileModal(false)}></div>
-        <div className="relative bg-white rounded-xl shadow-xl w-[90%] max-w-lg p-6 z-10 modal-content-enter max-h-[90vh] overflow-auto">
+        <div className="relative bg-white dark:bg-[#161B26] rounded-xl shadow-xl w-[90%] max-w-lg p-6 z-10 modal-content-enter max-h-[90vh] overflow-auto">
           <div className='flex items-center gap-3 mb-5'>
-            <div className='w-9 h-9 rounded-xl bg-crimson-50 flex items-center justify-center ring-1 ring-crimson-100'>
+            <div className='w-9 h-9 rounded-xl bg-crimson-50 dark:bg-[#1F242F] flex items-center justify-center ring-1 ring-crimson-100 dark:ring-[#333741]'>
               <UserPen className="w-4 h-4 text-crimson-600" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-800">Edit Personal Information</h3>
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Edit Personal Information</h3>
           </div>
           <form onSubmit={handleSaveProfile} className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Role</label>
-              <input value={role} disabled className="w-full p-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 text-gray-500 cursor-not-allowed" />
+              <label className="block text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider mb-1">Role</label>
+              <input value={role} disabled className="w-full p-2.5 border border-gray-200 dark:border-[#1F2A37] rounded-xl text-sm bg-gray-50 dark:bg-[#1F242F] text-gray-500 dark:text-[#94969C] cursor-not-allowed" />
             </div>
 
             <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
               <div>
-                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">First name</label>
-                <input value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full p-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 focus:border-crimson-400 outline-none transition-all" placeholder="First name" />
+                <label className="block text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider mb-1">First name</label>
+                <input value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full p-2.5 border border-gray-200 dark:border-[#1F2A37] rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] focus:border-crimson-400 outline-none transition-all" placeholder="First name" />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Last name</label>
-                <input value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full p-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 focus:border-crimson-400 outline-none transition-all" placeholder="Last name" />
+                <label className="block text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider mb-1">Last name</label>
+                <input value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full p-2.5 border border-gray-200 dark:border-[#1F2A37] rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] focus:border-crimson-400 outline-none transition-all" placeholder="Last name" />
               </div>
             </div>
 
             <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
               <div>
-                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Gender</label>
-                <select value={sex} onChange={(e) => setSex(e.target.value)} className="w-full p-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 focus:border-crimson-400 outline-none transition-all">
+                <label className="block text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider mb-1">Gender</label>
+                <select value={sex} onChange={(e) => setSex(e.target.value)} className="w-full p-2.5 border border-gray-200 dark:border-[#1F2A37] rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] focus:border-crimson-400 outline-none transition-all">
                   <option value=''>Select</option>
                   <option value='Male'>Male</option>
                   <option value='Female'>Female</option>
@@ -535,14 +535,14 @@ const getInitials = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Date of birth</label>
-                <input type='date' value={dateOfBirth} onChange={(e) => setDateOfBirth(e.target.value)} className="w-full p-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 focus:border-crimson-400 outline-none transition-all" />
+                <label className="block text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider mb-1">Date of birth</label>
+                <input type='date' value={dateOfBirth} onChange={(e) => setDateOfBirth(e.target.value)} className="w-full p-2.5 border border-gray-200 dark:border-[#1F2A37] rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] focus:border-crimson-400 outline-none transition-all" />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Address</label>
-              <input value={address} onChange={(e) => setAddress(e.target.value)} className="w-full p-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 focus:border-crimson-400 outline-none transition-all" placeholder="Full address" />
+              <label className="block text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider mb-1">Address</label>
+              <input value={address} onChange={(e) => setAddress(e.target.value)} className="w-full p-2.5 border border-gray-200 dark:border-[#1F2A37] rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] focus:border-crimson-400 outline-none transition-all" placeholder="Full address" />
             </div>
 
             {profileMessage && (
@@ -555,7 +555,7 @@ const getInitials = () => {
             )}
 
             <div className="flex justify-end gap-2 pt-2">
-              <button type="button" onClick={() => setShowProfileModal(false)} className="px-4 py-2.5 rounded-xl text-sm font-medium bg-gray-100 hover:bg-gray-200 transition-colors">Cancel</button>
+              <button type="button" onClick={() => setShowProfileModal(false)} className="px-4 py-2.5 rounded-xl text-sm font-medium bg-gray-100 dark:bg-[#1F242F] hover:bg-gray-200  transition-colors">Cancel</button>
               <button type="submit" disabled={saving} className="px-4 py-2.5 rounded-xl text-sm font-medium bg-crimson-600 text-white hover:bg-crimson-700 transition-colors shadow-sm inline-flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">{saving ? <><span className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin'></span> Saving...</> : 'Save Changes'}</button>
             </div>
           </form>
@@ -567,12 +567,12 @@ const getInitials = () => {
     {showSignatureModal && (
       <div className="fixed inset-0 z-50 flex items-center justify-center">
         <div className="absolute inset-0 bg-black/50 modal-backdrop-enter" onClick={() => setShowSignatureModal(false)}></div>
-        <div className="relative bg-white rounded-xl shadow-xl w-[90%] max-w-lg p-6 z-10 modal-content-enter max-h-[90vh] overflow-auto">
+        <div className="relative bg-white dark:bg-[#161B26] rounded-xl shadow-xl w-[90%] max-w-lg p-6 z-10 modal-content-enter max-h-[90vh] overflow-auto">
           <div className='flex items-center gap-3 mb-5'>
-            <div className='w-9 h-9 rounded-xl bg-crimson-50 flex items-center justify-center ring-1 ring-crimson-100'>
+            <div className='w-9 h-9 rounded-xl bg-crimson-50 dark:bg-[#1F242F] flex items-center justify-center ring-1 ring-crimson-100 dark:ring-[#333741]'>
               <PenLine className="w-4 h-4 text-crimson-600" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-800">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
               {userProfile?.signature_url ? 'Update Your Signature' : 'Add Your Signature'}
             </h3>
           </div>
@@ -580,7 +580,7 @@ const getInitials = () => {
           {signatureSaving ? (
             <div className="flex flex-col items-center gap-3 py-8">
               <span className='w-8 h-8 border-3 border-crimson-600 border-t-transparent rounded-full animate-spin'></span>
-              <p className="text-sm text-gray-500">Saving signature...</p>
+              <p className="text-sm text-gray-500 dark:text-[#94969C]">Saving signature...</p>
             </div>
           ) : (
             <SignaturePad
@@ -594,7 +594,7 @@ const getInitials = () => {
             <button
               type="button"
               onClick={() => setShowSignatureModal(false)}
-              className="px-4 py-2.5 rounded-xl text-sm font-medium bg-gray-100 hover:bg-gray-200 transition-colors"
+              className="px-4 py-2.5 rounded-xl text-sm font-medium bg-gray-100 dark:bg-[#1F242F] hover:bg-gray-200  transition-colors"
             >
               Close
             </button>

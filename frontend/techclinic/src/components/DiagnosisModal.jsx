@@ -176,15 +176,30 @@ const DiagnosisModal = ({ open = false, onClose = () => { }, patient = {}, recor
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className={`absolute inset-0 bg-black/50 ${isClosing ? 'modal-backdrop-exit' : 'modal-backdrop-enter'}`} onClick={handleClose} />
 
-      <div className={`relative z-10 w-[min(900px,95%)] max-h-[90vh] overflow-auto bg-white rounded-lg shadow-lg flex flex-col ${isClosing ? 'modal-content-exit' : 'modal-content-enter'}`}>
+      <div className={`relative z-10 w-[min(900px,95%)] max-h-[90vh] overflow-auto bg-white dark:bg-[#161B26] rounded-lg shadow-lg flex flex-col ${isClosing ? 'modal-content-exit' : 'modal-content-enter'}`}>
         {/* Modal Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b print:hidden">
-          <h3 className="text-lg font-semibold text-gray-800">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
             Visit — {visitDate}
           </h3>
           <div className="flex items-center gap-3">
             {(activeTab === 'prescription' || activeTab === 'certificate') && (
               <>
+                {/* Signature Toggle */}
+                {effectivePhysician?.signature_url && (
+                  <label className="inline-flex items-center gap-2 cursor-pointer select-none">
+                    <span className="text-xs text-gray-500 dark:text-[#94969C] font-medium">Signature</span>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={showSignature}
+                      onClick={() => setShowSignature(prev => !prev)}
+                      className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors duration-200 ${showSignature ? 'bg-[#b01c34]' : 'bg-gray-300'}`}
+                    >
+                      <span className={`inline-block h-3.5 w-3.5 rounded-full bg-white dark:bg-[#161B26] shadow-sm transform transition-transform duration-200 ${showSignature ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                    </button>
+                  </label>
+                )}
                 <button onClick={handlePrint} className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-sm flex items-center gap-1.5 transition-colors">
                   <i className="fa-solid fa-print"></i>
                   <span>Print</span>
@@ -195,7 +210,7 @@ const DiagnosisModal = ({ open = false, onClose = () => { }, patient = {}, recor
                 </button>
               </>
             )}
-            <button onClick={handleClose} className="bg-gray-200 hover:bg-gray-300 px-3 py-1.5 rounded text-sm transition-colors">
+            <button onClick={handleClose} className="bg-gray-200 dark:bg-[#1F242F] hover:bg-gray-300 px-3 py-1.5 rounded text-sm transition-colors">
               <i className="fa-solid fa-xmark"></i>
             </button>
           </div>
@@ -209,7 +224,7 @@ const DiagnosisModal = ({ open = false, onClose = () => { }, patient = {}, recor
               onClick={() => setActiveTab(tab.key)}
               className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.key
                 ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-gray-500 dark:text-[#94969C] hover:text-gray-700 dark:hover:text-gray-200 hover:border-gray-300 dark:border-[#333741]'
                 }`}
             >
               <i className={tab.icon}></i>
@@ -241,38 +256,38 @@ const DiagnosisModal = ({ open = false, onClose = () => { }, patient = {}, recor
           onClick={(e) => { if (e.target === e.currentTarget && !sending) setShowCompose(false); }}
         >
           <div className="absolute inset-0 bg-black/50 -z-10" />
-          <div className="relative z-10 w-[min(480px,95%)] bg-white rounded-xl shadow-xl p-6">
+          <div className="relative z-10 w-[min(480px,95%)] bg-white dark:bg-[#161B26] rounded-xl shadow-xl p-6">
 
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-base font-semibold text-gray-800">
+              <h3 className="text-base font-semibold text-gray-800 dark:text-white">
                 {activeTab === 'prescription' ? 'Send Prescription via Email' : 'Send Certificate via Email'}
               </h3>
               <button
                 onClick={() => setShowCompose(false)}
                 disabled={sending}
-                className="text-gray-400 hover:text-gray-600 transition disabled:opacity-40"
+                className="text-gray-400 dark:text-[#94969C] hover:text-gray-600 dark:hover:text-gray-300  transition disabled:opacity-40"
               >
                 <i className="fa-solid fa-xmark text-sm" />
               </button>
             </div>
 
             {/* Summary */}
-            <div className="bg-gray-50 rounded-lg p-3 mb-4 text-sm space-y-1 text-gray-600 border border-gray-200">
-              <p><span className="font-medium text-gray-800">Patient:</span> {patient?.first_name} {patient?.last_name}</p>
-              <p><span className="font-medium text-gray-800">ID:</span> {patient?.student_id ?? patient?.id ?? '—'}</p>
-              <p><span className="font-medium text-gray-800">Date:</span> {visitDate}</p>
+            <div className="bg-gray-50 dark:bg-[#1F242F] rounded-lg p-3 mb-4 text-sm space-y-1 text-gray-600 dark:text-[#94969C] border border-gray-200 dark:border-[#1F2A37]">
+              <p><span className="font-medium text-gray-800 dark:text-white">Patient:</span> {patient?.first_name} {patient?.last_name}</p>
+              <p><span className="font-medium text-gray-800 dark:text-white">ID:</span> {patient?.student_id ?? patient?.id ?? '—'}</p>
+              <p><span className="font-medium text-gray-800 dark:text-white">Date:</span> {visitDate}</p>
               {activeTab === 'prescription' && primaryDiagnosis?.medication && (
-                <p><span className="font-medium text-gray-800">Medication:</span> {primaryDiagnosis.medication}</p>
+                <p><span className="font-medium text-gray-800 dark:text-white">Medication:</span> {primaryDiagnosis.medication}</p>
               )}
             </div>
 
-            <label className="block text-sm font-medium text-gray-700 mb-1">Recipient Email</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Recipient Email</label>
             <input
               type="email"
               value={emailTo}
               onChange={(e) => setEmailTo(e.target.value)}
               placeholder="patient@email.com"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 mb-4"
+              className="w-full border border-gray-300 dark:border-[#333741] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 mb-4"
             />
 
             {emailStatus === 'success' && (
@@ -290,7 +305,7 @@ const DiagnosisModal = ({ open = false, onClose = () => { }, patient = {}, recor
               <button
                 onClick={() => setShowCompose(false)}
                 disabled={sending}
-                className="px-4 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition disabled:opacity-40"
+                className="px-4 py-2 text-sm bg-gray-100 dark:bg-[#1F242F] text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200  transition disabled:opacity-40"
               >
                 Cancel
               </button>
@@ -323,54 +338,54 @@ const RecordTab = ({ patient, record, diagnoses, visitDate }) => {
       {/* ═══ Left Column ═══ */}
       <div className="w-full lg:w-[60%] flex flex-col gap-5">
         {/* ─── Student Information ─── */}
-        <div className="bg-white rounded-xl ring-1 ring-gray-100 shadow-sm p-5">
+        <div className="bg-white dark:bg-[#161B26] rounded-xl ring-1 ring-gray-100 dark:ring-[#1F2A37] shadow-sm p-5">
           <div className="flex items-center gap-2.5 mb-4">
             <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
               <i className="fa-solid fa-user text-blue-600 text-sm"></i>
             </div>
-            <h4 className="text-sm font-semibold text-gray-800">Student Information</h4>
+            <h4 className="text-sm font-semibold text-gray-800 dark:text-white">Student Information</h4>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
             <div>
-              <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Name</span>
-              <p className="font-medium text-gray-800 mt-0.5">{patient?.first_name ?? ''} {patient?.last_name ?? ''}</p>
+              <span className="text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Name</span>
+              <p className="font-medium text-gray-800 dark:text-white mt-0.5">{patient?.first_name ?? ''} {patient?.last_name ?? ''}</p>
             </div>
             <div>
-              <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Patient ID</span>
-              <p className="font-medium text-gray-800 mt-0.5">{patient?.student_id ?? record?.student_id ?? '—'}</p>
-            </div>
-          </div>
-          <div className="h-px bg-gray-100 my-3" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
-            <div>
-              <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Department</span>
-              <p className="font-medium text-gray-800 mt-0.5">{patient?.department ?? record?.department ?? '—'}</p>
-            </div>
-            <div>
-              <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Year Level</span>
-              <p className="font-medium text-gray-800 mt-0.5">{patient?.year_level ?? record?.year_level ?? '—'}</p>
+              <span className="text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Patient ID</span>
+              <p className="font-medium text-gray-800 dark:text-white mt-0.5">{patient?.student_id ?? record?.student_id ?? '—'}</p>
             </div>
           </div>
-          <div className="h-px bg-gray-100 my-3" />
+          <div className="h-px bg-gray-100 dark:bg-[#1F242F] my-3" />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
             <div>
-              <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Sex</span>
-              <p className="font-medium text-gray-800 mt-0.5">{patient?.sex ?? '—'}</p>
+              <span className="text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Department</span>
+              <p className="font-medium text-gray-800 dark:text-white mt-0.5">{patient?.department ?? record?.department ?? '—'}</p>
             </div>
             <div>
-              <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Contact</span>
-              <p className="font-medium text-gray-800 mt-0.5">{patient?.contact_number ?? '—'}</p>
+              <span className="text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Year Level</span>
+              <p className="font-medium text-gray-800 dark:text-white mt-0.5">{patient?.year_level ?? record?.year_level ?? '—'}</p>
             </div>
           </div>
-          <div className="h-px bg-gray-100 my-3" />
+          <div className="h-px bg-gray-100 dark:bg-[#1F242F] my-3" />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
             <div>
-              <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Date of Visit</span>
-              <p className="font-medium text-gray-800 mt-0.5">{visitDate}</p>
+              <span className="text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Sex</span>
+              <p className="font-medium text-gray-800 dark:text-white mt-0.5">{patient?.sex ?? '—'}</p>
             </div>
             <div>
-              <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Status</span>
+              <span className="text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Contact</span>
+              <p className="font-medium text-gray-800 dark:text-white mt-0.5">{patient?.contact_number ?? '—'}</p>
+            </div>
+          </div>
+          <div className="h-px bg-gray-100 dark:bg-[#1F242F] my-3" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
+            <div>
+              <span className="text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Date of Visit</span>
+              <p className="font-medium text-gray-800 dark:text-white mt-0.5">{visitDate}</p>
+            </div>
+            <div>
+              <span className="text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Status</span>
               <div className="mt-0.5">
                 <span className={`inline-block px-2.5 py-0.5 rounded-lg text-xs font-semibold ${record?.status === 'COMPLETE' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
                   }`}>
@@ -382,73 +397,73 @@ const RecordTab = ({ patient, record, diagnoses, visitDate }) => {
         </div>
 
         {/* ─── Medical Details ─── */}
-        <div className="bg-white rounded-xl ring-1 ring-gray-100 shadow-sm p-5">
+        <div className="bg-white dark:bg-[#161B26] rounded-xl ring-1 ring-gray-100 dark:ring-[#1F2A37] shadow-sm p-5">
           <div className="flex items-center gap-2.5 mb-4">
             <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center">
               <i className="fa-solid fa-stethoscope text-red-600 text-sm"></i>
             </div>
-            <h4 className="text-sm font-semibold text-gray-800">Medical Details</h4>
+            <h4 className="text-sm font-semibold text-gray-800 dark:text-white">Medical Details</h4>
           </div>
 
           {diagnoses.length > 0 ? (
             <div className="space-y-3">
               {diagnoses.map((d, idx) => (
-                <div key={d?.id ?? idx} className={`text-sm ${idx > 0 ? 'pt-3 border-t border-gray-100' : ''}`}>
+                <div key={d?.id ?? idx} className={`text-sm ${idx > 0 ? 'pt-3 border-t border-gray-100 dark:border-[#1F2A37]' : ''}`}>
                   <div className="flex items-start justify-between mb-2">
-                    <span className="font-semibold text-gray-800">{d?.diagnosis || 'Untitled Diagnosis'}</span>
-                    <span className="text-xs text-gray-400">
+                    <span className="font-semibold text-gray-800 dark:text-white">{d?.diagnosis || 'Untitled Diagnosis'}</span>
+                    <span className="text-xs text-gray-400 dark:text-[#94969C]">
                       {d?.created_at ? new Date(d.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : ''}
                     </span>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
                     <div>
-                      <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Medication</span>
-                      <p className="font-medium text-gray-800 mt-0.5">{d?.medication ?? '—'}</p>
+                      <span className="text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Medication</span>
+                      <p className="font-medium text-gray-800 dark:text-white mt-0.5">{d?.medication ?? '—'}</p>
                     </div>
                     <div>
-                      <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Quantity</span>
-                      <p className="font-medium text-gray-800 mt-0.5">{d?.quantity ?? '—'}</p>
+                      <span className="text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Quantity</span>
+                      <p className="font-medium text-gray-800 dark:text-white mt-0.5">{d?.quantity ?? '—'}</p>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-gray-400 text-sm">No diagnoses recorded for this visit.</p>
+            <p className="text-gray-400 dark:text-[#94969C] text-sm">No diagnoses recorded for this visit.</p>
           )}
         </div>
       </div>
 
       {/* ═══ Right Column — Treatment & Notes ═══ */}
-      <div className="w-full lg:w-[40%] bg-white rounded-xl ring-1 ring-gray-100 shadow-sm p-5 flex flex-col">
+      <div className="w-full lg:w-[40%] bg-white dark:bg-[#161B26] rounded-xl ring-1 ring-gray-100 dark:ring-[#1F2A37] shadow-sm p-5 flex flex-col">
         <div className="flex items-center gap-2.5 mb-4">
           <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
             <i className="fa-solid fa-file-medical text-emerald-600 text-sm"></i>
           </div>
-          <h4 className="text-sm font-semibold text-gray-800">Treatment & Notes</h4>
+          <h4 className="text-sm font-semibold text-gray-800 dark:text-white">Treatment & Notes</h4>
         </div>
 
         <div className="flex flex-col gap-4 flex-1 text-sm">
           <div>
-            <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Attending Physician</span>
-            <p className="font-medium text-gray-800 mt-0.5">{record?.attending_physician ?? '—'}</p>
+            <span className="text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Attending Physician</span>
+            <p className="font-medium text-gray-800 dark:text-white mt-0.5">{record?.attending_physician ?? '—'}</p>
           </div>
 
-          <div className="h-px bg-gray-100" />
+          <div className="h-px bg-gray-100 dark:bg-[#1F242F]" />
 
           <div className="flex-1">
-            <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Treatment</span>
-            <div className="mt-1.5 bg-gray-50 rounded-xl border border-gray-100 p-3 min-h-[80px]">
-              <p className="text-gray-800 whitespace-pre-wrap">{primaryDiag?.treatment ?? '—'}</p>
+            <span className="text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Treatment</span>
+            <div className="mt-1.5 bg-gray-50 dark:bg-[#1F242F] rounded-xl border border-gray-100 dark:border-[#1F2A37] p-3 min-h-[80px]">
+              <p className="text-gray-800 dark:text-white whitespace-pre-wrap">{primaryDiag?.treatment ?? '—'}</p>
             </div>
           </div>
 
-          <div className="h-px bg-gray-100" />
+          <div className="h-px bg-gray-100 dark:bg-[#1F242F]" />
 
           <div className="flex-1">
-            <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Additional Notes</span>
-            <div className="mt-1.5 bg-gray-50 rounded-xl border border-gray-100 p-3 min-h-[80px]">
-              <p className="text-gray-800 whitespace-pre-wrap">{primaryDiag?.notes ?? '—'}</p>
+            <span className="text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Additional Notes</span>
+            <div className="mt-1.5 bg-gray-50 dark:bg-[#1F242F] rounded-xl border border-gray-100 dark:border-[#1F2A37] p-3 min-h-[80px]">
+              <p className="text-gray-800 dark:text-white whitespace-pre-wrap">{primaryDiag?.notes ?? '—'}</p>
             </div>
           </div>
         </div>
@@ -472,66 +487,25 @@ const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime, physicianDa
             <img src={tupLogo} alt="TUP Logo" className="w-12 h-12 object-contain" />
             <span className="text-5xl font-serif font-bold text-gray-800 leading-none">R<sub className="text-3xl">x</sub></span>
           </div>
-          <div className="text-right text-sm text-gray-600 space-y-0.5">
-            <p className="font-semibold text-gray-800">{physicianName || 'N/A'}</p>
-            <p>TechClinic Health Services</p>
-            <p>Technological University of the Philippines</p>
+          <div className="text-[11px] text-center mt-1 text-gray-700 dark:text-gray-200">
+            Ayala Blvd, Ermita, Manila, 1000, Philippines | Tel No. +632-5301-3001 local 607
+            <br />
+            Flex No. +632-8521-4063 | Email: clinic@tup.edu.ph | Website: www.tup.edu.ph
           </div>
         </div>
       </div>
 
-      <div className="border-t border-gray-200 mx-6" />
-
-      {/* Patient Info */}
-      <div className="px-6 py-4 space-y-2">
-        <div className="flex items-center gap-4">
-          <div className="flex-1">
-            <span className="text-xs text-gray-400 uppercase tracking-wider">Name of Patient</span>
-            <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
-              {patient?.first_name ?? ''} {patient?.last_name ?? ''}
-            </p>
-          </div>
-          <div className="w-28">
-            <span className="text-xs text-gray-400 uppercase tracking-wider">Age/Sex</span>
-            <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
-              {patient?.sex || 'N/A'}
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="flex-1">
-            <span className="text-xs text-gray-400 uppercase tracking-wider">Address</span>
-            <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
-              {patient?.address || 'N/A'}
-            </p>
-          </div>
-          <div className="w-28">
-            <span className="text-xs text-gray-400 uppercase tracking-wider">Date</span>
-            <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
-              {visitDate}
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="flex-1">
-            <span className="text-xs text-gray-400 uppercase tracking-wider">Patient ID</span>
-            <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1">
-              {patient?.student_id || 'N/A'}
-            </p>
-          </div>
-          <div className="w-28">
-            <span className="text-xs text-gray-400 uppercase tracking-wider">Department</span>
-            <p className="text-sm font-medium text-gray-800 border-b border-dotted border-gray-300 pb-1 truncate" title={patient?.department}>
-              {patient?.department || 'N/A'}
-            </p>
-          </div>
+      {/* Date / time row */}
+      <div className="px-4 py-3 text-sm border-b border-gray-300 dark:border-[#333741]">
+        <div className="flex gap-8">
+          <span>Date: <span className="font-medium underline">{visitDate}</span></span>
+          <span>Time Entered: <span className="font-medium underline">{visitTime || '__________'}</span></span>
+          <span>Time Discharged: __________</span>
         </div>
       </div>
 
-      <div className="border-t border-gray-200 mx-6" />
-
-      {/* Diagnosis & Treatment */}
-      <div className="px-6 py-4 space-y-3">
+      {/* Patient info */}
+      <div className="px-4 py-4 text-sm space-y-2 border-b border-gray-300 dark:border-[#333741]">
         <div>
           <span className="text-xs text-gray-400 uppercase tracking-wider">Diagnosis</span>
           <p className="text-sm font-medium text-gray-800">
@@ -544,49 +518,62 @@ const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime, physicianDa
         </div>
       </div>
 
-      <div className="border-t border-gray-200 mx-6" />
-
-      {/* Drug Prescription Table */}
-      <div className="px-6 py-4">
-        <h3 className="text-sm font-bold text-gray-800 mb-3">Drug Prescription</h3>
-        {diagnosis?.medication ? (
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-gray-200">
-                <th className="text-left py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Medicine Name</th>
-                <th className="text-left py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Dosage</th>
-                <th className="text-left py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Qty</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="py-2 text-gray-800 font-medium">{diagnosis.medication}</td>
-                <td className="py-2 text-gray-600">{diagnosis.dosage || 'N/A'}</td>
-                <td className="py-2 text-gray-600">{diagnosis.quantity || 'N/A'}</td>
-              </tr>
-            </tbody>
-          </table>
-        ) : (
-          <p className="text-sm text-gray-400 italic">No medication prescribed</p>
-        )}
+      {/* Rx Symbol */}
+      <div className="px-4 pt-4 pb-1">
+        <span className="text-3xl font-bold italic text-gray-800 dark:text-white" style={{ fontFamily: 'serif' }}>&#8478;</span>
       </div>
 
-      {/* Notes */}
-      {diagnosis?.notes && (
-        <>
-          <div className="border-t border-gray-200 mx-6" />
-          <div className="px-6 py-4">
-            <span className="text-xs text-gray-400 uppercase tracking-wider">Additional Notes</span>
-            <p className="text-sm text-gray-800 whitespace-pre-wrap mt-1">{diagnosis.notes}</p>
-          </div>
-        </>
-      )}
+      {/* Diagnosis / reason */}
+      <div className="px-4 py-4 text-sm space-y-1 border-b border-gray-300 dark:border-[#333741]">
+        <p>This is to inform you that the above came to the clinic due to:</p>
+        <p className="font-medium mt-1 min-h-6 underline">{diagnosis?.diagnosis ?? ''}</p>
+      </div>
 
-      {/* Signature Area */}
-      <div className="border-t border-gray-200 mx-6" />
-      <div className="px-6 py-5 flex justify-end">
-        <div className="text-center">
-          {(diagnosis?.physician_signature_url || physicianData?.signature_url) ? (
+      {/* Medication & treatment */}
+      <div className="px-4 py-4 text-sm space-y-2 border-b border-gray-300 dark:border-[#333741]">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <span className="text-gray-500 dark:text-[#94969C]">Medication:</span>{' '}
+            <span className="font-medium">{diagnosis?.medication ?? '—'}</span>
+          </div>
+          <div>
+            <span className="text-gray-500 dark:text-[#94969C]">Quantity:</span>{' '}
+            <span className="font-medium">{diagnosis?.quantity ?? '—'}</span>
+          </div>
+        </div>
+        <div>
+          <span className="text-gray-500 dark:text-[#94969C]">Treatment:</span>{' '}
+          <span className="font-medium">{diagnosis?.treatment ?? '—'}</span>
+        </div>
+      </div>
+
+      {/* Remarks */}
+      <div className="px-4 py-4 text-sm space-y-1 border-b border-gray-300 dark:border-[#333741]">
+        <p>Remarks:</p>
+        <p className="font-medium min-h-6">{diagnosis?.notes ?? ''}</p>
+      </div>
+
+      {/* Checkboxes */}
+      <div className="flex justify-between items-center px-4 py-3 text-sm border-b border-gray-300 dark:border-[#333741]">
+        <label className="flex items-center gap-2">
+          <input type="checkbox" /> Medical Certificate / Clinic Pass
+        </label>
+        <label className="flex items-center gap-2">
+          <input type="checkbox" /> Referral for Counselling
+        </label>
+        <label className="flex items-center gap-2">
+          <input type="checkbox" /> For Quarantine
+        </label>
+      </div>
+
+      {/* Footer */}
+      <div className="px-4 py-6 text-center text-sm text-gray-600 dark:text-[#94969C]">
+        If you have any questions; please feel free to call us at Medical-Dental Clinic.
+      </div>
+
+      <div className="px-4 pb-6 text-right text-sm text-gray-900 dark:text-white">
+        <div className="inline-block text-center">
+          {showSignature && physicianData?.signature_url ? (
             <img
               src={diagnosis?.physician_signature_url || physicianData?.signature_url}
               alt="Physician signature"
@@ -595,9 +582,13 @@ const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime, physicianDa
           ) : (
             <div className="w-48 border-b border-gray-300 mb-1" />
           )}
-          <div className="border-t border-gray-300 pt-1 px-4">
-            <p className="text-xs font-medium text-gray-700">{physicianName || 'N/A'}</p>
-            <p className="text-xs text-gray-500">
+          <div className="border-t border-gray-900 pt-1 px-4">
+            <div className="font-medium">
+              {physicianData
+                ? `${physicianData.first_name || ''} ${physicianData.last_name || ''}`.trim()
+                : attendingPhysician || ''}
+            </div>
+            <div className="text-gray-600 dark:text-[#94969C]">
               {physicianData?.role === 'DOCTOR' ? 'Attending Physician' : 'Attending Personnel'}
             </p>
           </div>
@@ -620,7 +611,7 @@ const CertificateTab = ({ patient, diagnosis, visitDate, physicianData, attendin
           <div className="font-extrabold text-sm tracking-wide text-center">
             TECHNOLOGICAL UNIVERSITY OF THE PHILIPPINES
           </div>
-          <div className="text-[11px] text-center mt-1 text-gray-700">
+          <div className="text-[11px] text-center mt-1 text-gray-700 dark:text-gray-200">
             Ayala Blvd, Ermita, Manila, 1000, Philippines | Tel No. +632-5301-3001 local 607
             <br />
             Flex No. +632-8521-4063 | Email: clinic@tup.edu.ph
@@ -632,7 +623,7 @@ const CertificateTab = ({ patient, diagnosis, visitDate, physicianData, attendin
       </div>
 
       {/* Certificate body */}
-      <div className="px-6 py-8 text-sm leading-relaxed text-gray-800 space-y-5">
+      <div className="px-6 py-8 text-sm leading-relaxed text-gray-800 dark:text-white space-y-5">
         <div>Date: <span className="font-medium">{visitDate}</span></div>
 
         <p className="font-semibold">TO WHOM IT MAY CONCERN:</p>
@@ -690,7 +681,7 @@ const CertificateTab = ({ patient, diagnosis, visitDate, physicianData, attendin
                   ? `${physicianData.first_name || ''} ${physicianData.last_name || ''}`.trim()
                   : attendingPhysician || ''}
               </div>
-              <div className="text-gray-600">
+              <div className="text-gray-600 dark:text-[#94969C]">
                 {physicianData?.role === 'DOCTOR' ? 'Attending Physician' : 'Attending Personnel'}
               </div>
             </div>

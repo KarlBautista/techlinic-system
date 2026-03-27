@@ -127,7 +127,7 @@ const SignaturePad = ({ onSave, existingSignature = null, onClear }) => {
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
             mode === 'draw'
               ? 'bg-[#b01c34] text-white'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              : 'bg-gray-100 dark:bg-[#1F242F] text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#293040]'
           }`}
         >
           <i className="fa-solid fa-pen-nib"></i>
@@ -139,7 +139,7 @@ const SignaturePad = ({ onSave, existingSignature = null, onClear }) => {
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
             mode === 'upload'
               ? 'bg-[#b01c34] text-white'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              : 'bg-gray-100 dark:bg-[#1F242F] text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#293040]'
           }`}
         >
           <i className="fa-solid fa-upload"></i>
@@ -149,7 +149,7 @@ const SignaturePad = ({ onSave, existingSignature = null, onClear }) => {
 
       {/* Draw Mode */}
       {mode === 'draw' && (
-        <div className="border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-white">
+        <div className="border-2 border-dashed border-gray-300 dark:border-[#333741] rounded-lg overflow-hidden bg-white dark:bg-[#161B26]">
           <SignatureCanvas
             ref={sigCanvas}
             penColor="black"
@@ -159,7 +159,7 @@ const SignaturePad = ({ onSave, existingSignature = null, onClear }) => {
             }}
             onEnd={handleEnd}
           />
-          <div className="bg-gray-50 px-3 py-1.5 text-xs text-gray-400 text-center border-t">
+          <div className="bg-gray-50 dark:bg-[#1F242F] px-3 py-1.5 text-xs text-gray-400 dark:text-[#94969C] text-center border-t">
             Draw your signature above
           </div>
         </div>
@@ -170,7 +170,7 @@ const SignaturePad = ({ onSave, existingSignature = null, onClear }) => {
         <div className="space-y-3">
           <div
             onClick={() => fileInputRef.current?.click()}
-            className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-[#b01c34]/50 hover:bg-red-50/30 transition-colors"
+            className="border-2 border-dashed border-gray-300 dark:border-[#333741] rounded-lg p-6 text-center cursor-pointer hover:border-[#b01c34]/50 hover:bg-red-50/30 transition-colors"
           >
             {uploadPreview ? (
               <div className="flex flex-col items-center gap-2">
@@ -179,10 +179,10 @@ const SignaturePad = ({ onSave, existingSignature = null, onClear }) => {
                   alt="Signature preview"
                   className="max-h-[160px] max-w-full object-contain"
                 />
-                <p className="text-xs text-gray-400">Click to replace</p>
+                <p className="text-xs text-gray-400 dark:text-[#94969C]">Click to replace</p>
               </div>
             ) : (
-              <div className="flex flex-col items-center gap-2 text-gray-400">
+              <div className="flex flex-col items-center gap-2 text-gray-400 dark:text-[#94969C]">
                 <i className="fa-solid fa-cloud-arrow-up text-3xl"></i>
                 <p className="text-sm font-medium">Click to upload signature image</p>
                 <p className="text-xs">PNG, JPG — Max 2MB</p>
@@ -201,8 +201,8 @@ const SignaturePad = ({ onSave, existingSignature = null, onClear }) => {
 
       {/* Existing Signature Preview */}
       {existingSignature && !hasContent && (
-        <div className="rounded-lg border border-gray-200 p-4 bg-gray-50">
-          <p className="text-xs text-gray-500 mb-2 font-medium uppercase tracking-wider">Current Signature</p>
+        <div className="rounded-lg border border-gray-200 dark:border-[#1F2A37] p-4 bg-gray-50 dark:bg-[#1F242F]">
+          <p className="text-xs text-gray-500 dark:text-[#94969C] mb-2 font-medium uppercase tracking-wider">Current Signature</p>
           <img
             src={existingSignature}
             alt="Current signature"
@@ -216,7 +216,7 @@ const SignaturePad = ({ onSave, existingSignature = null, onClear }) => {
         <button
           type="button"
           onClick={handleClear}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 dark:text-[#94969C] bg-gray-100 dark:bg-[#1F242F] hover:bg-gray-200  rounded-lg transition-colors"
         >
           <i className="fa-solid fa-eraser text-xs"></i>
           Clear
