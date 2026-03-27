@@ -714,6 +714,125 @@ const getYearlyTopDiagnoses = async (req, res) => {
 
 
 
+// ── Custom date range endpoints ──
+
+const getCustomPatients = async (req, res) => {
+    const { startDate, endDate } = req.query;
+    if (!startDate || !endDate) {
+        return res.status(400).json({ success: false, error: "startDate and endDate are required" });
+    }
+
+    const start = moment(startDate).startOf("day").utc().format("YYYY-MM-DD 00:00:00");
+    const end = moment(endDate).endOf("day").utc().format("YYYY-MM-DD 23:59:59");
+
+    try {
+        const { data, error } = await supabase.from("records").select("*")
+            .gte("created_at", start).lte("created_at", end);
+
+        if (error) {
+            return res.status(500).json({ success: false, error: error.message });
+        }
+
+        // Group by date
+        const result = {};
+        data.forEach((patient) => {
+            const day = moment(patient.created_at).format("MMM DD");
+            result[day] = (result[day] || 0) + 1;
+        });
+
+        const categories = Object.keys(result);
+        const counts = Object.values(result);
+
+        res.status(200).json({
+            success: true,
+            categories,
+            data: counts,
+            start_date: startDate,
+            end_date: endDate
+        });
+    } catch (err) {
+        return res.status(500).json({ success: false, error: err.message });
+    }
+};
+
+const getCustomPatientsPerDepartment = async (req, res) => {
+    const { startDate, endDate } = req.query;
+    if (!startDate || !endDate) {
+        return res.status(400).json({ success: false, error: "startDate and endDate are required" });
+    }
+
+    const start = moment(startDate).startOf("day").utc().format("YYYY-MM-DD 00:00:00");
+    const end = moment(endDate).endOf("day").utc().format("YYYY-MM-DD 23:59:59");
+
+    try {
+        const { data: recordsData, error } = await supabase.from("records").select("*")
+            .gte("created_at", start).lte("created_at", end);
+
+        if (error) {
+            return res.status(500).json({ success: false, error: error.message });
+        }
+
+        const departmentCounts = {};
+        recordsData.forEach((record) => {
+            const dept = record.department || "Unknown";
+            departmentCounts[dept] = (departmentCounts[dept] || 0) + 1;
+        });
+
+        res.status(200).json({
+            success: true,
+            data: departmentCounts,
+            period: {
+                type: "custom",
+                range: `${moment(startDate).format("MMM DD, YYYY")} - ${moment(endDate).format("MMM DD, YYYY")}`
+            }
+        });
+    } catch (err) {
+        return res.status(500).json({ success: false, error: err.message });
+    }
+};
+
+const getCustomTopDiagnoses = async (req, res) => {
+    const { startDate, endDate } = req.query;
+    if (!startDate || !endDate) {
+        return res.status(400).json({ success: false, error: "startDate and endDate are required" });
+    }
+
+    const start = moment(startDate).startOf("day").utc().format("YYYY-MM-DD 00:00:00");
+    const end = moment(endDate).endOf("day").utc().format("YYYY-MM-DD 23:59:59");
+
+    try {
+        const { data: diagnosesData, error } = await supabase
+            .from("diagnoses")
+            .select("*")
+            .gte("created_at", start)
+            .lte("created_at", end);
+
+        if (error) {
+            return res.status(500).json({ success: false, error: error.message });
+        }
+
+        const topDiagnoses = getTopDiagnoses(diagnosesData, 5);
+        const diagnosisNames = topDiagnoses.map(d => d[0]);
+        const diagnosisCounts = topDiagnoses.map(d => d[1]);
+        const cumulativePercent = calculateCumulativePercent(diagnosisCounts);
+
+        res.status(200).json({
+            success: true,
+            data: {
+                topDiagnosesCount: diagnosisCounts,
+                topDiagnosesNames: diagnosisNames,
+                cumulativePercent: cumulativePercent,
+                period: {
+                    type: "custom",
+                    range: `${moment(startDate).format("MMM DD, YYYY")} - ${moment(endDate).format("MMM DD, YYYY")}`
+                }
+            }
+        });
+    } catch (err) {
+        return res.status(500).json({ success: false, error: err.message });
+    }
+};
+
 const getMostUsedMedicines = async (req, res) => {
     try {
         const { data: diagnoses, error } = await supabase
@@ -764,5 +883,8 @@ module.exports = { getWeeklyPatients,
     getMonthlyTopDiagnoses,
     getQuarterlyTopDiagnoses,
     getYearlyTopDiagnoses,
-    getMostUsedMedicines
+    getMostUsedMedicines,
+    getCustomPatients,
+    getCustomPatientsPerDepartment,
+    getCustomTopDiagnoses
         }

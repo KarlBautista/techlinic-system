@@ -27,7 +27,7 @@ const MedicinesChart = () => {
   const medicineChartOptions = {
     chart: {
       id: "medicine-chart",
-      toolbar: { show: true },
+      toolbar: { show: true, tools: { download: true, selection: false, zoom: false, zoomin: false, zoomout: false, pan: false, reset: false } },
     },
     xaxis: {
       categories: lowStockMedicines.map(med => med.medicine_name),
