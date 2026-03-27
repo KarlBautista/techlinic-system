@@ -64,22 +64,18 @@ const newAnalytics = () => {
             <div className='lg:hidden flex flex-col gap-4 flex-1 min-h-0'>
                 <motion.div variants={itemVariants}
                     className={`h-72 w-full ${glassCard} ${glassCardHover}`}>
-                    <div className='absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-crimson-400 via-crimson-500 to-rose-400 rounded-t-2xl' />
                     <PatientCountsChart />
                 </motion.div>
                 <motion.div variants={itemVariants}
                     className={`h-80 w-full ${glassCard} ${glassCardHover}`}>
-                    <div className='absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-violet-400 via-indigo-400 to-blue-400 rounded-t-2xl' />
                     <PatientsPerDepartmentChart />
                 </motion.div>
                 <motion.div variants={itemVariants}
                     className={`h-64 w-full ${glassCard} ${glassCardHover}`}>
-                    <div className='absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-amber-400 via-orange-400 to-rose-400 rounded-t-2xl' />
                     <MedicineChart />
                 </motion.div>
                 <motion.div variants={itemVariants}
                     className={`h-auto w-full ${glassCard} ${glassCardHover}`}>
-                    <div className='absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-blue-400 via-cyan-400 to-teal-400 rounded-t-2xl' />
                     <TopDiagnosisChart />
                 </motion.div>
             </div>
@@ -90,13 +86,11 @@ const newAnalytics = () => {
                 <div className='flex flex-col w-[60%] gap-4 min-h-0'>
                     {/* Patient Counts chart */}
                     <motion.div variants={itemVariants} className={`h-[50%] min-h-52 ${glassCard} ${glassCardHover}`}>
-                        <div className='absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-crimson-400 via-crimson-500 to-rose-400 rounded-t-2xl' />
                         <PatientCountsChart />
                     </motion.div>
 
                     {/* Top Diagnoses chart */}
                     <motion.div variants={itemVariants} className={`flex-1 min-h-52 ${glassCard} ${glassCardHover}`}>
-                        <div className='absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-blue-400 via-cyan-400 to-teal-400 rounded-t-2xl' />
                         <TopDiagnosisChart />
                     </motion.div>
                 </div>
@@ -105,13 +99,11 @@ const newAnalytics = () => {
                 <div className='flex flex-col w-[40%] gap-4 min-h-0'>
                     {/* Medicine Stock */}
                     <motion.div variants={itemVariants} className={`h-[45%] min-h-52 ${glassCard} ${glassCardHover}`}>
-                        <div className='absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-amber-400 via-orange-400 to-rose-400 rounded-t-2xl' />
                         <MedicineChart />
                     </motion.div>
 
                     {/* Patients Per Department */}
                     <motion.div variants={itemVariants} className={`flex-1 min-h-52 ${glassCard} ${glassCardHover} flex flex-col`}>
-                        <div className='absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-violet-400 via-indigo-400 to-blue-400 rounded-t-2xl' />
                         <PatientsPerDepartmentChart />
                     </motion.div>
                 </div>

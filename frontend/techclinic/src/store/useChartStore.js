@@ -21,6 +21,9 @@ const useChart = create((set, get) => ({
     monthlyTopDiagnoses: null,
     quarterlyTopDiagnoses: null,
     yearlyTopDiagnoses: null,
+    customPatientCount: null,
+    customPatientPerDepartment: null,
+    customTopDiagnoses: null,
 
     // Cache timestamps
     _ts: {},
@@ -207,6 +210,39 @@ const useChart = create((set, get) => ({
         } catch (err) {
             console.error(`Something went wrong getting yearly top diagnoses: ${err.message}`);
             return;
+        }
+    },
+
+    getCustomPatientCount: async (startDate, endDate) => {
+        try {
+            const response = await api.get(`/get-custom-patients?startDate=${startDate}&endDate=${endDate}`);
+            if (response.status === 200) {
+                set(s => ({ customPatientCount: response.data, _ts: { ...s._ts, customPatientCount: Date.now() } }));
+            }
+        } catch (err) {
+            console.error(`Something went wrong getting custom patient count: ${err.message}`);
+        }
+    },
+
+    getCustomPatientPerDepartmentCount: async (startDate, endDate) => {
+        try {
+            const response = await api.get(`/get-custom-patients-per-department?startDate=${startDate}&endDate=${endDate}`);
+            if (response.status === 200) {
+                set(s => ({ customPatientPerDepartment: response.data, _ts: { ...s._ts, customPatientPerDepartment: Date.now() } }));
+            }
+        } catch (err) {
+            console.error(`Something went wrong getting custom patients per department: ${err.message}`);
+        }
+    },
+
+    getCustomTopDiagnoses: async (startDate, endDate) => {
+        try {
+            const response = await api.get(`/get-custom-top-diagnoses?startDate=${startDate}&endDate=${endDate}`);
+            if (response.status === 200) {
+                set(s => ({ customTopDiagnoses: response.data.data, _ts: { ...s._ts, customTopDiagnoses: Date.now() } }));
+            }
+        } catch (err) {
+            console.error(`Something went wrong getting custom top diagnoses: ${err.message}`);
         }
     },
 

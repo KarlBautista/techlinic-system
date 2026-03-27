@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Chart from "react-apexcharts"
 import useChart from '../store/useChartStore';
+import ChartPeriodSelector from '../components/ChartPeriodSelector';
 
 const PatientsPerDepartmentChart = () => {
   const { 
@@ -8,21 +9,25 @@ const PatientsPerDepartmentChart = () => {
     getMonthlyPatientPerDepartmentCount, 
     getQuarterlyPatientPerDepartmentCount, 
     getYearlyPatientPerDepartmentCount,
+    getCustomPatientPerDepartmentCount,
     weeklyPatientPerDepartment, 
     monthlyPatientPerDepartment,
     quarterlyPatientPerDepartment, 
-    yearlyPatientPerDepartment 
+    yearlyPatientPerDepartment,
+    customPatientPerDepartment
   } = useChart();
   
   const [selectedCategory, setSelectedCategory] = useState("week");
   const [patientData, setPatientData] = useState([]);
   const [periodInfo, setPeriodInfo] = useState(null);
+  const [customStart, setCustomStart] = useState("");
+  const [customEnd, setCustomEnd] = useState("");
   const [patientOptions, setPatientOptions] = useState({
     chart: {
       type: "donut",
       size: "100%",
       id: "patient-per-department",
-      toolbar: { show: true },
+      toolbar: { show: true, tools: { download: true, selection: false, zoom: false, zoomin: false, zoomout: false, pan: false, reset: false } },
       dropShadow: { enabled: true, top: 2, left: 0, blur: 6, opacity: 0.12 }
     },
     labels: [],
@@ -106,6 +111,9 @@ const PatientsPerDepartmentChart = () => {
       case "year":
         currentData = yearlyPatientPerDepartment;
         break;
+      case "custom":
+        currentData = customPatientPerDepartment;
+        break;
       default:
         currentData = null;
     }
@@ -123,7 +131,7 @@ const PatientsPerDepartmentChart = () => {
       setPatientData(series);
       setPeriodInfo(currentData.period);
     }
-  }, [selectedCategory, weeklyPatientPerDepartment, monthlyPatientPerDepartment, quarterlyPatientPerDepartment, yearlyPatientPerDepartment]);
+  }, [selectedCategory, weeklyPatientPerDepartment, monthlyPatientPerDepartment, quarterlyPatientPerDepartment, yearlyPatientPerDepartment, customPatientPerDepartment]);
 
   const handleCategoryChange = async (value) => {
     setSelectedCategory(value);
@@ -146,6 +154,12 @@ const PatientsPerDepartmentChart = () => {
     }
   };
 
+  const handleCustomDateApply = async () => {
+    if (customStart && customEnd) {
+      await getCustomPatientPerDepartmentCount(customStart, customEnd);
+    }
+  };
+
   const totalPatients = patientData.reduce((acc, val) => acc + val, 0);
 
   const getPeriodDisplay = () => {
@@ -160,6 +174,8 @@ const PatientsPerDepartmentChart = () => {
         return `${periodInfo.quarter} (${periodInfo.range})`;
       case "year":
         return `Year ${periodInfo.year}`;
+      case "custom":
+        return periodInfo.range || '';
       default:
         return '';
     }
@@ -171,21 +187,15 @@ const PatientsPerDepartmentChart = () => {
             {/* Header */}
             <div className='shrink-0 flex items-start justify-between gap-2 pb-2'>
               <div className='text-sm font-semibold text-gray-800'>Patient Records Per Department</div>
-              <div className='flex gap-1'>
-                {['week', 'month', 'quarter', 'year'].map((val) => (
-                  <button
-                    key={val}
-                    onClick={() => handleCategoryChange(val)}
-                    className={`text-[10px] font-medium px-2.5 py-1 rounded-lg transition-all duration-200 ${
-                      selectedCategory === val
-                        ? 'bg-crimson-600 text-white shadow-sm'
-                        : 'bg-gray-100/80 text-gray-500 hover:bg-gray-200/80'
-                    }`}
-                  >
-                    {val === 'week' ? 'W' : val === 'month' ? 'M' : val === 'quarter' ? 'Q' : 'Y'}
-                  </button>
-                ))}
-              </div>
+              <ChartPeriodSelector
+                selectedCategory={selectedCategory}
+                onCategoryChange={handleCategoryChange}
+                customStart={customStart}
+                customEnd={customEnd}
+                onCustomStartChange={setCustomStart}
+                onCustomEndChange={setCustomEnd}
+                onCustomApply={handleCustomDateApply}
+              />
             </div>
 
             {/* Period info */}
@@ -197,13 +207,7 @@ const PatientsPerDepartmentChart = () => {
 
             {/* Chart */}
             <div className='flex-1 min-h-0'>
-              {!periodInfo && patientData.length === 0 ? (
-                <div className='w-full h-full flex items-center justify-center animate-pulse'>
-                  <div className='w-40 h-40 rounded-full bg-gray-200 flex items-center justify-center'>
-                    <div className='w-24 h-24 rounded-full bg-white' />
-                  </div>
-                </div>
-              ) : totalPatients === 0 ? (
+              {totalPatients === 0 ? (
                 <div className='w-full h-full flex items-center justify-center'>
                   <p className='text-sm text-gray-400'>No patient records for this period</p>
                 </div>

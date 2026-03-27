@@ -209,8 +209,8 @@ export default function Sidebar() {
             return
         }
         showToast({ title: 'Signed Out', message: 'Thank you for choosing TechClinic.', type: 'success' })
-        navigate('/', { replace: true })
-        setTimeout(() => { window.location.href = '/' }, 100)
+        navigate('/login', { replace: true })
+        setTimeout(() => { window.location.href = '/login' }, 100)
     }
 
     // ════════════════════════════════════════════════════

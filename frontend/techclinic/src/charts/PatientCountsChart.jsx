@@ -1,24 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import Chart from "react-apexcharts";
 import useChart from '../store/useChartStore';
+import ChartPeriodSelector from '../components/ChartPeriodSelector';
 
 const PatientCountsChart = () => {
   const [selectedCategory, setSelectedCategory] = useState("week");
+  const [customStart, setCustomStart] = useState("");
+  const [customEnd, setCustomEnd] = useState("");
 
   const { 
     getWeeklyPatientCount, 
     getMonthlyPatientsCount, 
     getQuarterlyPatientsCount,
     getYearlyPatientCount,
+    getCustomPatientCount,
     weeklyPatientCount, 
     monthlyPatientCount,
     quarterlyPatientCount,
-    yearlyPatientCount
+    yearlyPatientCount,
+    customPatientCount
   } = useChart();
 
   const [patientData, setPatientData] = useState([]);
   const [patientOptions, setPatientOptions] = useState({
-    chart: { id: "patients-chart", toolbar: { show: true }, dropShadow: { enabled: true, top: 2, left: 0, blur: 4, opacity: 0.15 } },
+    chart: { id: "patients-chart", toolbar: { show: true, tools: { download: true, selection: false, zoom: false, zoomin: false, zoomout: false, pan: false, reset: false } }, dropShadow: { enabled: true, top: 2, left: 0, blur: 4, opacity: 0.15 } },
     xaxis: { categories: [], labels: { style: { colors: '#9ca3af', fontWeight: 500, fontSize: '11px' } } },
     yaxis: { labels: { style: { colors: '#9ca3af', fontSize: '11px' } } },
     colors: ["#dc2626"],
@@ -164,43 +169,49 @@ const PatientCountsChart = () => {
     if (value === "year") await getYearlyPatientCount();
   };
 
+  const handleCustomDateApply = async () => {
+    if (customStart && customEnd) {
+      await getCustomPatientCount(customStart, customEnd);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedCategory === "custom" && customPatientCount) {
+      setPatientData(customPatientCount.data || []);
+      setPatientOptions(prev => ({
+        ...prev,
+        xaxis: { categories: customPatientCount.categories || [] },
+        title: {
+          ...prev.title,
+          text: `${formatDate(customPatientCount.start_date)} - ${formatDate(customPatientCount.end_date)}`
+        }
+      }));
+    }
+  }, [customPatientCount, selectedCategory]);
+
   return (
     <div className='w-full h-full flex flex-col min-h-0'>
       <div className='shrink-0 flex items-start justify-between gap-2 pb-1'>
         <div className='text-sm font-semibold text-gray-800'>Patient record count</div>
-        <div className='flex gap-1'>
-          {['week', 'month', 'quarter', 'year'].map((val) => (
-            <button
-              key={val}
-              onClick={() => handleCategoryChange(val)}
-              className={`text-[10px] font-medium px-2.5 py-1 rounded-lg transition-all duration-200 ${
-                selectedCategory === val
-                  ? 'bg-crimson-600 text-white shadow-sm'
-                  : 'bg-gray-100/80 text-gray-500 hover:bg-gray-200/80'
-              }`}
-            >
-              {val === 'week' ? 'W' : val === 'month' ? 'M' : val === 'quarter' ? 'Q' : 'Y'}
-            </button>
-          ))}
-        </div>
+        <ChartPeriodSelector
+          selectedCategory={selectedCategory}
+          onCategoryChange={handleCategoryChange}
+          customStart={customStart}
+          customEnd={customEnd}
+          onCustomStartChange={setCustomStart}
+          onCustomEndChange={setCustomEnd}
+          onCustomApply={handleCustomDateApply}
+        />
       </div>  
       
       <div className='flex-1 min-h-0'>
-          {patientData.length > 0 ? (
-          <Chart
-            key={`${selectedCategory}-${patientData.length}`}
-            options={patientOptions}
-            series={[{ name: "Patient Records", data: patientData }]}
-            type="area"
-            height="100%"
-          />
-        ) : (
-          <div className='w-full h-full animate-pulse flex items-end gap-3 px-4 pb-6 pt-4'>
-            {[35, 55, 45, 70, 50, 60, 40].map((h, i) => (
-              <div key={i} className='flex-1 bg-gray-200 rounded-t' style={{ height: `${h}%` }} />
-            ))}
-          </div>
-        )}
+        <Chart
+          key={`${selectedCategory}-${patientData.length}`}
+          options={patientOptions}
+          series={[{ name: "Patient Records", data: patientData }]}
+          type="area"
+          height="100%"
+        />
       </div>
     </div>
   );
