@@ -224,7 +224,7 @@ export default function Sidebar() {
                 initial={false}
                 animate={{ width: collapsed ? 72 : 256 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                className="hidden sm:flex flex-col h-full bg-white border-r border-gray-100 relative z-30 overflow-hidden"
+                className="hidden sm:flex flex-col h-full bg-white border-r border-gray-100 relative z-30 overflow"
             >
                 {/* ── Logo ── */}
                 <div className="flex items-center gap-3 px-4 h-16 border-b border-gray-100 shrink-0">
@@ -283,16 +283,18 @@ export default function Sidebar() {
                                                     relative flex items-center gap-3 rounded-xl transition-all duration-200 group w-full text-left
                                                     ${collapsed ? 'justify-center h-10 w-10 mx-auto' : 'px-3 py-2.5'}
                                                     ${active && !isNotification
-                                                        ? 'bg-crimson-50 text-crimson-600'
+                                                        ? collapsed
+                                                            ? 'text-crimson-600'
+                                                            : 'bg-crimson-50 text-crimson-600'
                                                         : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'
                                                     }
                                                 `}
                                             >
                                                 {/* Active indicator bar */}
-                                                {active && (
+                                                {active && !collapsed && (
                                                     <motion.div
                                                         layoutId="sidebar-active"
-                                                        className={`absolute ${collapsed ? 'left-0 top-1 bottom-1 w-[3px]' : 'left-0 top-1 bottom-1 w-[3px]'} bg-crimson-600 rounded-r-full`}
+                                                        className="absolute left-0 top-1 bottom-1 w-[3px] bg-crimson-600 rounded-r-full"
                                                         transition={{ type: 'spring', stiffness: 350, damping: 30 }}
                                                     />
                                                 )}
