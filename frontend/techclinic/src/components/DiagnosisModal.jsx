@@ -22,6 +22,7 @@ const DiagnosisModal = ({ open = false, onClose = () => { }, patient = {}, recor
   const [emailTo, setEmailTo] = useState('');
   const [sending, setSending] = useState(false);
   const [emailStatus, setEmailStatus] = useState(null); // 'success' | 'error' | null
+  const [showSignature, setShowSignature] = useState(true);
 
   // Handle open/close transitions
   useEffect(() => {

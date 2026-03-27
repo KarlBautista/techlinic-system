@@ -27,7 +27,7 @@ const MedicinesChart = () => {
   const medicineChartOptions = {
     chart: {
       id: "medicine-chart",
-      toolbar: { show: false },
+      toolbar: { show: true, tools: { download: true, selection: false, zoom: false, zoomin: false, zoomout: false, pan: false, reset: false } },
       parentHeightOffset: 0,
     },
     xaxis: {

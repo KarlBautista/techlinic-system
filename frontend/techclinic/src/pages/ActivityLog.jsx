@@ -361,13 +361,16 @@ const ActivityLog = () => {
 
             {/* ─── Pagination Footer ─── */}
             {filteredLogs.length > 0 && (
-              <div className='px-5 py-3 border-t border-gray-100 dark:border-[#1F2A37] flex items-center justify-between text-xs text-gray-500 dark:text-[#94969C]'>
-                <span>{filteredLogs.length} total entr{filteredLogs.length !== 1 ? 'ies' : 'y'}</span>
+              <div className='flex items-center justify-between px-5 py-3 border-t border-gray-100 dark:border-[#1F2A37]'>
+                <span className='text-xs text-gray-500 dark:text-[#94969C] font-medium'>
+                  Total Entries: {filteredLogs.length}
+                </span>
+
                 <div className='flex items-center gap-1'>
                   <button
                     onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                     disabled={currentPage === 1}
-                    className='w-8 h-8 rounded-lg flex items-center justify-center hover:bg-gray-100 dark:hover:bg-[#1F242F] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer'
+                    className='w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 dark:text-[#94969C] hover:text-crimson-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer'
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </button>
@@ -378,7 +381,10 @@ const ActivityLog = () => {
                       <button
                         key={p}
                         onClick={() => setCurrentPage(p)}
-                        className={`w-8 h-8 rounded-lg flex items-center justify-center font-medium transition-colors cursor-pointer ${currentPage === p ? 'bg-crimson-600 text-white' : 'hover:bg-gray-100 dark:hover:bg-[#1F242F] text-gray-600 dark:text-[#CECFD2]'}`}
+                        className={`w-8 h-8 rounded-lg text-xs font-semibold transition-all cursor-pointer
+                          ${currentPage === p
+                            ? 'bg-crimson-600 text-white shadow-sm'
+                            : 'text-gray-500 dark:text-[#94969C] hover:bg-gray-100 dark:hover:bg-[#1F242F] dark:bg-[#1F242F]'}`}
                       >
                         {p}
                       </button>
@@ -387,18 +393,21 @@ const ActivityLog = () => {
                   <button
                     onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                     disabled={currentPage === totalPages}
-                    className='w-8 h-8 rounded-lg flex items-center justify-center hover:bg-gray-100 dark:hover:bg-[#1F242F] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer'
+                    className='w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 dark:text-[#94969C] hover:text-crimson-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer'
                   >
                     <ChevronRight className="w-4 h-4" />
                   </button>
-                  <span className='mx-2 text-gray-300 dark:text-[#333741]'>|</span>
+                </div>
+
+                <div className='flex items-center gap-2'>
+                  <span className='text-xs text-gray-500 dark:text-[#94969C] font-medium'>Show per Page:</span>
                   <select
                     value={rowsPerPage}
                     onChange={(e) => { setRowsPerPage(Number(e.target.value)); setCurrentPage(1); }}
-                    className='h-8 px-2 rounded-lg bg-white dark:bg-[#161B26] ring-1 ring-gray-200 dark:ring-[#1F2A37] outline-none text-xs cursor-pointer dark:text-[#CECFD2]'
+                    className='h-8 px-2 rounded-lg bg-white dark:bg-[#161B26] ring-1 ring-gray-200 dark:ring-[#1F2A37] outline-none text-xs font-medium text-gray-600 dark:text-[#94969C] focus:ring-crimson-400 transition-all cursor-pointer'
                   >
                     {ROWS_OPTIONS.map(n => (
-                      <option key={n} value={n}>{n} rows</option>
+                      <option key={n} value={n}>{n}</option>
                     ))}
                   </select>
                 </div>

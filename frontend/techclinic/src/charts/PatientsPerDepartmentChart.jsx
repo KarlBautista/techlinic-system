@@ -28,7 +28,6 @@ const PatientsPerDepartmentChart = () => {
       size: "100%",
       id: "patient-per-department",
       toolbar: { show: true, tools: { download: true, selection: false, zoom: false, zoomin: false, zoomout: false, pan: false, reset: false } },
-      toolbar: { show: false },
       dropShadow: { enabled: true, top: 2, left: 0, blur: 6, opacity: 0.12 }
     },
     labels: [],
@@ -203,21 +202,15 @@ const PatientsPerDepartmentChart = () => {
         {/* Header */}
         <div className='shrink-0 flex items-start justify-between gap-2 pb-2'>
           <div className='text-sm font-semibold tracking-tight text-gray-800 dark:text-slate-100'>Patient Records Per Department</div>
-          <div className='flex gap-1'>
-            {['week', 'month', 'quarter', 'year'].map((val) => (
-              <button
-                key={val}
-                onClick={() => handleCategoryChange(val)}
-                className={`h-7 min-w-7 inline-flex items-center justify-center text-[10px] font-semibold rounded-md border transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 ${
-                  selectedCategory === val
-                    ? 'bg-crimson-600 dark:bg-white dark:text-[#0C111D] border-crimson-600 dark:border-[#333741] text-white shadow-sm'
-                    : 'bg-gray-100/80 dark:bg-[#1F242F]/70 border-gray-200 dark:border-[#333741] text-gray-500 dark:text-[#CECFD2] hover:bg-gray-200/80 dark:hover:bg-[#293040]'
-                }`}
-              >
-                {val === 'week' ? 'W' : val === 'month' ? 'M' : val === 'quarter' ? 'Q' : 'Y'}
-              </button>
-            ))}
-          </div>
+          <ChartPeriodSelector
+            selectedCategory={selectedCategory}
+            onCategoryChange={handleCategoryChange}
+            customStart={customStart}
+            customEnd={customEnd}
+            onCustomStartChange={setCustomStart}
+            onCustomEndChange={setCustomEnd}
+            onCustomApply={handleCustomDateApply}
+          />
         </div>
 
         {/* Period info */}

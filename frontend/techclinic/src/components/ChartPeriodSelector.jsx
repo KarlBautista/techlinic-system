@@ -28,7 +28,7 @@ function ChartPeriodSelector({ selectedCategory, onCategoryChange, customStart, 
 
   const handleSelect = (value) => {
     onCategoryChange(value);
-    setIsOpen(false);
+    if (value !== 'custom') setIsOpen(false);
   };
 
   return (
@@ -36,11 +36,11 @@ function ChartPeriodSelector({ selectedCategory, onCategoryChange, customStart, 
       <div ref={dropdownRef} className='relative'>
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className='inline-flex items-center gap-1.5 h-7 px-3 rounded-full bg-white ring-1 ring-gray-200 text-[11px] font-medium text-gray-600 hover:ring-gray-300 transition-all cursor-pointer'
+          className='inline-flex items-center gap-1.5 h-7 px-3 rounded-full bg-white dark:bg-[#1F242F] ring-1 ring-gray-200 dark:ring-[#333741] text-[11px] font-medium text-gray-600 dark:text-[#CECFD2] hover:ring-gray-300 dark:hover:ring-[#444] transition-all cursor-pointer'
         >
-          <Calendar className="w-3 h-3 text-gray-400" />
+          <Calendar className="w-3 h-3 text-gray-400 dark:text-[#94969C]" />
           <span>{currentLabel}</span>
-          <ChevronDown className={`w-3 h-3 text-gray-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+          <ChevronDown className={`w-3 h-3 text-gray-400 dark:text-[#94969C] transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
         </button>
 
         <AnimatePresence>
@@ -50,19 +50,19 @@ function ChartPeriodSelector({ selectedCategory, onCategoryChange, customStart, 
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -4, scale: 0.95 }}
               transition={{ duration: 0.15 }}
-              className='absolute top-full right-0 mt-1.5 w-44 bg-white rounded-xl shadow-xl ring-1 ring-gray-100 py-1.5 z-20'
+              className='absolute top-full right-0 mt-1.5 w-44 bg-white dark:bg-[#161B26] rounded-xl shadow-xl ring-1 ring-gray-100 dark:ring-[#1F2A37] py-1.5 z-20'
             >
               {PERIOD_OPTIONS.map(opt => (
                 <button
                   key={opt.value}
                   onClick={() => handleSelect(opt.value)}
-                  className='w-full flex items-center justify-between px-3 py-2 hover:bg-gray-50 transition-colors cursor-pointer'
+                  className='w-full flex items-center justify-between px-3 py-2 hover:bg-gray-50 dark:hover:bg-[#1F242F] transition-colors cursor-pointer'
                 >
-                  <span className={`text-xs font-medium ${selectedCategory === opt.value ? 'text-crimson-600' : 'text-gray-700'}`}>
+                  <span className={`text-xs font-medium ${selectedCategory === opt.value ? 'text-crimson-600 dark:text-crimson-400' : 'text-gray-700 dark:text-[#CECFD2]'}`}>
                     {opt.label}
                   </span>
                   {selectedCategory === opt.value && (
-                    <Check className="w-3.5 h-3.5 text-crimson-500" />
+                    <Check className="w-3.5 h-3.5 text-crimson-500 dark:text-crimson-400" />
                   )}
                 </button>
               ))}
@@ -84,14 +84,14 @@ function ChartPeriodSelector({ selectedCategory, onCategoryChange, customStart, 
               type="date"
               value={customStart}
               onChange={(e) => onCustomStartChange(e.target.value)}
-              className='text-[10px] h-7 px-2 rounded-full ring-1 ring-gray-200 bg-white text-gray-600 outline-none focus:ring-crimson-400 transition-all'
+              className='text-[10px] h-7 px-2 rounded-full ring-1 ring-gray-200 dark:ring-[#333741] bg-white dark:bg-[#1F242F] text-gray-600 dark:text-[#CECFD2] outline-none focus:ring-crimson-400 transition-all'
             />
-            <span className='text-[10px] text-gray-400'>to</span>
+            <span className='text-[10px] text-gray-400 dark:text-[#94969C]'>to</span>
             <input
               type="date"
               value={customEnd}
               onChange={(e) => onCustomEndChange(e.target.value)}
-              className='text-[10px] h-7 px-2 rounded-full ring-1 ring-gray-200 bg-white text-gray-600 outline-none focus:ring-crimson-400 transition-all'
+              className='text-[10px] h-7 px-2 rounded-full ring-1 ring-gray-200 dark:ring-[#333741] bg-white dark:bg-[#1F242F] text-gray-600 dark:text-[#CECFD2] outline-none focus:ring-crimson-400 transition-all'
             />
             <button
               onClick={onCustomApply}

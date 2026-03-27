@@ -238,10 +238,10 @@ export default function Sidebar() {
                 initial={false}
                 animate={{ width: collapsed ? 72 : 256 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                className="hidden sm:flex flex-col h-full bg-white dark:bg-[#0C111D] border-r border-gray-100 dark:border-[#1F2A37] relative z-30 overflow"
+                className="hidden sm:flex flex-col h-full bg-gray-50 dark:bg-[#0C111D] border-r border-gray-200 dark:border-[#1F2A37] relative z-30 overflow-hidden"
             >
                 {/* ── Logo ── */}
-                <div className={`flex items-center gap-3 h-16 border-b border-gray-100 dark:border-[#1F2A37] shrink-0 ${collapsed ? 'px-2 justify-center' : 'px-4'}`}>
+                <div className={`flex items-center gap-3 h-16 border-b border-gray-200 dark:border-[#1F2A37] shrink-0 transition-all duration-300 ${collapsed ? 'px-2 justify-center' : 'px-4'}`}>
                     <div className="w-9 h-9 shrink-0 flex items-center justify-center">
                         <img src={TUP} className="w-full h-full object-contain" alt="TUP" />
                     </div>
@@ -273,7 +273,7 @@ export default function Sidebar() {
                 </div>
                 {/* ── Collapsed dark mode toggle ── */}
                 {collapsed && (
-                    <div className="flex justify-center py-2 border-b border-gray-100 dark:border-[#1F2A37]">
+                    <div className="flex justify-center py-2 border-b border-gray-200 dark:border-[#1F2A37]">
                         <button
                             type="button"
                             onClick={() => setIsDarkMode(prev => !prev)}
@@ -323,9 +323,9 @@ export default function Sidebar() {
                                                     ${collapsed ? 'justify-center h-10 w-10 mx-auto' : 'px-3 py-2.5'}
                                                     ${active && !isNotification
                                                         ? collapsed
-                                                            ? 'text-white'
+                                                            ? 'bg-crimson-600 text-white dark:bg-[#1F242F] dark:text-white'
                                                             : 'bg-crimson-50 text-crimson-600 dark:bg-[#1F242F] dark:text-white dark:ring-1 dark:ring-[#333741]'
-                                                        : 'text-gray-500 dark:text-[#94969C] hover:bg-gray-50 dark:hover:bg-[#1F242F] hover:text-gray-800 dark:hover:text-white'
+                                                        : 'text-gray-500 dark:text-[#94969C] hover:bg-white dark:hover:bg-[#1F242F] hover:text-gray-800 dark:hover:text-white'
                                                     }
                                                 `}
                                             >
@@ -373,11 +373,11 @@ export default function Sidebar() {
                 </div>
 
                 {/* ── Collapse Toggle ── */}
-                <div className="px-3 py-2 border-t border-gray-100 dark:border-[#1F2A37]">
+                <div className="px-3 py-2 border-t border-gray-200 dark:border-[#1F2A37]">
                     <button
                         onClick={toggleCollapse}
                         className={`
-                            flex items-center gap-3 w-full rounded-xl text-gray-400 dark:text-[#94969C] hover:text-gray-600 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-[#1F242F] transition-all duration-200 cursor-pointer
+                            flex items-center gap-3 w-full rounded-xl text-gray-400 dark:text-[#94969C] hover:text-gray-600 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-[#1F242F] transition-all duration-300 cursor-pointer
                             ${collapsed ? 'justify-center h-10' : 'px-3 py-2.5'}
                         `}
                     >
@@ -398,11 +398,11 @@ export default function Sidebar() {
                 </div>
 
                 {/* ── User Profile ── */}
-                <div className="border-t border-gray-100 dark:border-[#1F2A37] relative" ref={profileRef}>
+                <div className="border-t border-gray-200 dark:border-[#1F2A37] relative" ref={profileRef}>
                     <button
                         onClick={() => setShowProfileMenu(prev => !prev)}
                         className={`
-                            w-full flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-[#1F242F] transition-all duration-200 cursor-pointer
+                            w-full flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-[#1F242F] transition-all duration-300 cursor-pointer
                             ${collapsed ? 'justify-center px-2 py-3' : 'px-4 py-3'}
                         `}
                     >
