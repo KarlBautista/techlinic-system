@@ -246,7 +246,7 @@ const DiagnosisModal = ({ open = false, onClose = () => { }, patient = {}, recor
             </div>
 
             {/* Tab Content */}
-            <div className="p-6 overflow-auto flex-1">
+            <div className="p-6 overflow-auto flex-1 scrollbar-notifications">
               <div key={activeTab} className="tab-content-enter">
                 {activeTab === 'prescription' && (
                   <PrescriptionTab patient={patient} diagnosis={primaryDiagnosis} visitDate={visitDate} visitTime={visitTime} timeDischarged={timeDischarged} onTimeDischargedChange={setTimeDischarged} physicianData={effectivePhysician} attendingPhysician={record?.attending_physician} showSignature={showSignature} />
