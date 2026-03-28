@@ -389,16 +389,20 @@ const NewDashboard = () => {
                     {/* ─── Records Table with Filters ─── */}
 
                     {/* Filter Tabs */}
-                    <motion.div variants={itemVariants} className='flex items-center gap-1 bg-gray-100 rounded-lg p-0.5 w-fit'>
+                    <motion.div variants={itemVariants} className='flex items-center gap-1 bg-gray-100 dark:bg-[#1F242F] rounded-lg p-0.5 w-fit ring-1 ring-gray-200 dark:ring-[#333741]'>
                         <button
                             onClick={() => setTableFilter('today')}
-                            className={`px-4 py-2 rounded-md text-xs font-medium transition-all cursor-pointer ${tableFilter === 'today' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                            className={`px-4 py-2 rounded-md text-xs font-medium transition-all cursor-pointer ${tableFilter === 'today'
+                                ? 'bg-white dark:bg-[#161B26] text-gray-800 dark:text-white shadow-sm ring-1 ring-gray-200 dark:ring-[#333741]'
+                                : 'text-gray-500 dark:text-[#94969C] hover:text-gray-700 dark:hover:text-gray-200 hover:bg-white/60 dark:hover:bg-[#2A303A]'}`}
                         >
                             Today
                         </button>
                         <button
                             onClick={() => setTableFilter('pending')}
-                            className={`px-4 py-2 rounded-md text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 ${tableFilter === 'pending' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                            className={`px-4 py-2 rounded-md text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 ${tableFilter === 'pending'
+                                ? 'bg-white dark:bg-[#161B26] text-gray-800 dark:text-white shadow-sm ring-1 ring-gray-200 dark:ring-[#333741]'
+                                : 'text-gray-500 dark:text-[#94969C] hover:text-gray-700 dark:hover:text-gray-200 hover:bg-white/60 dark:hover:bg-[#2A303A]'}`}
                         >
                             Pending
                             {pendingRecords.length > 0 && tableFilter !== 'pending' && (
@@ -420,12 +424,26 @@ const NewDashboard = () => {
                                     {filteredTableRecords.length}
                                 </span>
                             </div>
-                            {pendingCount > 0 && (
-                                <span className='inline-flex items-center gap-1.5 text-xs font-medium text-amber-600 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 px-2.5 py-1 rounded-full ring-1 ring-transparent dark:ring-amber-900/50'>
-                                    <span className='w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-amber-400 animate-pulse' />
-                                    {pendingCount} pending
-                                </span>
-                            )}
+                            <div className='flex items-center gap-2'>
+                                {pendingCount > 0 && (
+                                    <span className='inline-flex items-center gap-1.5 text-xs font-medium text-amber-600 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 px-2.5 py-1 rounded-full ring-1 ring-transparent dark:ring-amber-900/50'>
+                                        <span className='w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-amber-400 animate-pulse' />
+                                        {pendingCount} pending
+                                    </span>
+                                )}
+                                <div className='flex items-center gap-2'>
+                                    <span className='text-xs text-gray-500 dark:text-[#94969C] font-medium'>Show per page:</span>
+                                    <select
+                                        value={rowsPerPage}
+                                        onChange={(e) => setRowsPerPage(Number(e.target.value))}
+                                        className='h-8 px-2 rounded-lg bg-white dark:bg-[#1F242F] ring-1 ring-gray-200 dark:ring-[#333741] outline-none text-xs font-medium text-gray-600 dark:text-gray-200 focus:ring-crimson-400 dark:focus:ring-crimson-500 transition-all cursor-pointer'
+                                    >
+                                        {ROWS_OPTIONS.map(n => (
+                                            <option key={n} value={n}>{n}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
                         </div>
 
                         {/* Table Content */}
@@ -528,8 +546,8 @@ const NewDashboard = () => {
 
                         {/* Pagination */}
                         {totalPages > 0 && (
-                            <div className='flex items-center justify-between px-5 py-3 border-t border-gray-100'>
-                                <span className='text-xs text-gray-500 font-medium'>
+                            <div className='flex items-center justify-between px-5 py-3 border-t border-gray-100 dark:border-[#1F2A37]'>
+                                <span className='text-xs text-gray-500 dark:text-[#94969C] font-medium'>
                                     Total Records: {filteredTableRecords.length}
                                 </span>
 
@@ -537,7 +555,7 @@ const NewDashboard = () => {
                                     <button
                                         onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                                         disabled={currentPage === 1}
-                                        className='w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-crimson-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer'
+                                        className='w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 dark:text-[#94969C] hover:text-crimson-600 dark:hover:text-crimson-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer'
                                     >
                                         <ChevronLeft className="w-4 h-4" />
                                     </button>
@@ -549,7 +567,7 @@ const NewDashboard = () => {
                                             className={`w-8 h-8 rounded-lg text-xs font-semibold transition-all cursor-pointer
                                                 ${currentPage === page
                                                     ? 'bg-crimson-600 text-white shadow-sm'
-                                                    : 'text-gray-500 hover:bg-gray-100'}`}
+                                                    : 'text-gray-500 dark:text-[#94969C] hover:bg-gray-100 dark:hover:bg-[#1F242F]'}`}
                                         >
                                             {page}
                                         </button>
@@ -558,23 +576,10 @@ const NewDashboard = () => {
                                     <button
                                         onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                                         disabled={currentPage === totalPages}
-                                        className='w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-crimson-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer'
+                                        className='w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 dark:text-[#94969C] hover:text-crimson-600 dark:hover:text-crimson-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer'
                                     >
                                         <ChevronRight className="w-4 h-4" />
                                     </button>
-                                </div>
-
-                                <div className='flex items-center gap-2'>
-                                    <span className='text-xs text-gray-500 font-medium'>Show per Page:</span>
-                                    <select
-                                        value={rowsPerPage}
-                                        onChange={(e) => setRowsPerPage(Number(e.target.value))}
-                                        className='h-8 px-2 rounded-lg bg-white ring-1 ring-gray-200 outline-none text-xs font-medium text-gray-600 focus:ring-crimson-400 transition-all cursor-pointer'
-                                    >
-                                        {ROWS_OPTIONS.map(n => (
-                                            <option key={n} value={n}>{n}</option>
-                                        ))}
-                                    </select>
                                 </div>
                             </div>
                         )}

@@ -24,11 +24,15 @@ const DiagnosisModal = ({ open = false, onClose = () => { }, patient = {}, recor
   const [sending, setSending] = useState(false);
   const [emailStatus, setEmailStatus] = useState(null); // 'success' | 'error' | null
   const [showSignature, setShowSignature] = useState(true);
+  const [timeDischarged, setTimeDischarged] = useState('');
+  const [excusedDays, setExcusedDays] = useState('');
 
   // Reset tab on open
   useEffect(() => {
     if (open) {
       setActiveTab('prescription');
+      setTimeDischarged('');
+      setExcusedDays('');
     }
   }, [open]);
 
@@ -131,7 +135,10 @@ const DiagnosisModal = ({ open = false, onClose = () => { }, patient = {}, recor
         dosage: primaryDiagnosis?.dosage ?? '—',
         quantity: primaryDiagnosis?.quantity ?? '—',
         notes: primaryDiagnosis?.notes ?? primaryDiagnosis?.additional_notes ?? '—',
-      } : {}),
+        time_discharged: timeDischarged.trim() || '__________',
+      } : {
+        excused_days: excusedDays || '—',
+      }),
     };
 
     console.log('[EmailJS] Sending with params:', { SERVICE_ID, templateId, PUBLIC_KEY: PUBLIC_KEY?.slice(0, 6) + '...', templateParams });
@@ -242,10 +249,10 @@ const DiagnosisModal = ({ open = false, onClose = () => { }, patient = {}, recor
             <div className="p-6 overflow-auto flex-1">
               <div key={activeTab} className="tab-content-enter">
                 {activeTab === 'prescription' && (
-                  <PrescriptionTab patient={patient} diagnosis={primaryDiagnosis} visitDate={visitDate} visitTime={visitTime} physicianData={effectivePhysician} attendingPhysician={record?.attending_physician} showSignature={showSignature} />
+                  <PrescriptionTab patient={patient} diagnosis={primaryDiagnosis} visitDate={visitDate} visitTime={visitTime} timeDischarged={timeDischarged} onTimeDischargedChange={setTimeDischarged} physicianData={effectivePhysician} attendingPhysician={record?.attending_physician} showSignature={showSignature} />
                 )}
                 {activeTab === 'certificate' && (
-                  <CertificateTab patient={patient} diagnosis={primaryDiagnosis} visitDate={visitDate} physicianData={effectivePhysician} attendingPhysician={record?.attending_physician} showSignature={showSignature} />
+                  <CertificateTab patient={patient} diagnosis={primaryDiagnosis} visitDate={visitDate} excusedDays={excusedDays} onExcusedDaysChange={setExcusedDays} physicianData={effectivePhysician} attendingPhysician={record?.attending_physician} showSignature={showSignature} />
                 )}
               </div>
             </div>
@@ -502,7 +509,7 @@ const RecordTab = ({ patient, record, diagnoses, visitDate }) => {
 };
 
 /* ────────────────────────── Prescription Tab ────────────────────────── */
-const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime, physicianData, attendingPhysician, showSignature }) => {
+const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime, timeDischarged, onTimeDischargedChange, physicianData, attendingPhysician, showSignature }) => {
   const physicianName = physicianData
     ? `${physicianData.first_name || ''} ${physicianData.last_name || ''}`.trim()
     : attendingPhysician || '';
@@ -529,7 +536,17 @@ const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime, physicianDa
         <div className="flex gap-8">
           <span>Date: <span className="font-medium underline">{visitDate}</span></span>
           <span>Time Entered: <span className="font-medium underline">{visitTime || '__________'}</span></span>
-          <span>Time Discharged: __________</span>
+          <span>
+            Time Discharged:{' '}
+            <input
+              type="text"
+              inputMode="numeric"
+              value={timeDischarged}
+              onChange={(e) => onTimeDischargedChange(e.target.value.replace(/[^0-9]/g, ''))}
+              placeholder="__________"
+              className="w-24 text-center font-medium underline outline-none bg-transparent"
+            />
+          </span>
         </div>
       </div>
 
@@ -628,8 +645,7 @@ const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime, physicianDa
 };
 
 /* ────────────────────────── Certificate Tab ────────────────────────── */
-const CertificateTab = ({ patient, diagnosis, visitDate, physicianData, attendingPhysician, showSignature }) => {
-  const [excusedDays, setExcusedDays] = useState('');
+const CertificateTab = ({ patient, diagnosis, visitDate, excusedDays, onExcusedDaysChange, physicianData, attendingPhysician, showSignature }) => {
   return (
     <div className="bg-white dark:bg-white text-gray-800 dark:text-gray-800 max-w-2xl w-full mx-auto rounded-lg border border-gray-300 dark:border-gray-300">
       {/* Certificate Header */}
@@ -700,12 +716,12 @@ const CertificateTab = ({ patient, diagnosis, visitDate, physicianData, attendin
         <p>
           It is recommended that the above-named patient be excused from their duties/activities for{' '}
           <input
-            type="number"
-            min="1"
+            type="text"
+            inputMode="numeric"
             value={excusedDays}
-            onChange={(e) => setExcusedDays(e.target.value)}
+            onChange={(e) => onExcusedDaysChange(e.target.value.replace(/[^0-9]/g, ''))}
             placeholder="__"
-            className="w-12 text-center font-medium border-b border-gray-400 dark:border-[#94969C] outline-none bg-transparent print:border-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            className="w-12 text-center font-medium border-b border-gray-400 dark:border-[#94969C] outline-none bg-transparent print:border-none"
           />{' '}
           day(s) starting from{' '}
           <span className="font-medium">{visitDate}</span>.
