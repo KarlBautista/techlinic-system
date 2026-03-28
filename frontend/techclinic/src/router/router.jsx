@@ -16,6 +16,7 @@ import ActivityLog from "../pages/ActivityLog";
 import LandingPage from "../pages/LandingPage"
 import ForgotPassword from "../pages/ForgotPassword"
 import ResetPassword from "../pages/ResetPassword"
+import DocumentView from "../pages/DocumentView"
 import ProtectedRoute from "../components/ProtectedRoute";
 import AppLayout from "../components/AppLayout";
 
@@ -25,6 +26,7 @@ const router = createBrowserRouter([
   { path: "/login", element: <Login /> },
   { path: "/forgot-password", element: <ForgotPassword /> },
   { path: "/reset-password", element: <ResetPassword /> },
+  { path: "/document/:id", element: <DocumentView /> },
 
   // ── Protected routes (with AppLayout — sidebar + content) ──
   {

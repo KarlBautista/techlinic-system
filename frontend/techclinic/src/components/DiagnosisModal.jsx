@@ -152,6 +152,22 @@ const DiagnosisModal = ({ open = false, onClose = () => { }, patient = {}, recor
       }),
     };
 
+    // Save document to shared_documents for patient download link
+    try {
+      const { to_email, ...docData } = templateParams;
+      const { data: savedDoc, error: saveErr } = await supabase
+        .from('shared_documents')
+        .insert({ type: activeTab, data: docData })
+        .select('id')
+        .single();
+
+      if (!saveErr && savedDoc) {
+        templateParams.view_url = `${window.location.origin}/document/${savedDoc.id}`;
+      }
+    } catch (err) {
+      console.warn('Could not save document for download link:', err);
+    }
+
     console.log('[EmailJS] Sending with params:', { SERVICE_ID, templateId, PUBLIC_KEY: PUBLIC_KEY?.slice(0, 6) + '...', templateParams });
 
     try {
