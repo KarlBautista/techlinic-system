@@ -35,6 +35,10 @@ const DEPARTMENT_OPTIONS = [
 const SEX_OPTIONS = ['Male', 'Female'];
 const PRIMARY_COLOR = "#B22222";
 const REQUIRED_FIELDS = ['studentId', 'firstName', 'lastName', 'contactNumber', 'yearLevel', 'department', 'sex', 'email', 'address', 'dateOfBirth'];
+const PATIENT_ID_REGEX = /^[A-Z0-9-]+$/;
+const NAME_REGEX = /^[A-Za-zÑñ][A-Za-zÑñ\s'.-]*$/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const CONTACT_REGEX = /^[0-9+\-() ]{7,15}$/;
 
 const STEPS = [
     { number: 1, label: 'Personal Details' },
@@ -155,9 +159,18 @@ function LandingPage() {
     const handleFormSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.studentId || !formData.firstName || !formData.lastName || !formData.contactNumber ||
-            !formData.yearLevel || !formData.department || !formData.sex || !formData.email ||
-            !formData.address || !formData.dateOfBirth) {
+        const trimmed = {
+            studentId: formData.studentId.trim(),
+            firstName: formData.firstName.trim(),
+            lastName: formData.lastName.trim(),
+            email: formData.email.trim(),
+            contactNumber: formData.contactNumber.trim(),
+            address: formData.address.trim(),
+        };
+
+        if (!trimmed.studentId || !trimmed.firstName || !trimmed.lastName || !trimmed.contactNumber ||
+            !formData.yearLevel || !formData.department || !formData.sex || !trimmed.email ||
+            !trimmed.address || !formData.dateOfBirth) {
             showToast({
                 title: "Incomplete Form",
                 message: "Please fill out all required fields before submitting.",
@@ -166,9 +179,26 @@ function LandingPage() {
             return;
         }
 
+        if (!PATIENT_ID_REGEX.test(trimmed.studentId)) {
+            showToast({
+                title: "Invalid Patient ID",
+                message: "Patient ID must contain only letters, numbers, and hyphens.",
+                type: "warning"
+            });
+            return;
+        }
+
+        if (!NAME_REGEX.test(trimmed.firstName) || !NAME_REGEX.test(trimmed.lastName)) {
+            showToast({
+                title: "Invalid Name",
+                message: "First Name and Last Name contain invalid characters.",
+                type: "warning"
+            });
+            return;
+        }
+
         // Validate email format
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(formData.email)) {
+        if (!EMAIL_REGEX.test(trimmed.email)) {
             showToast({
                 title: "Invalid Email",
                 message: "Please enter a valid email address.",
@@ -178,11 +208,10 @@ function LandingPage() {
         }
 
         // Validate contact number
-        const contactRegex = /^[0-9+\-() ]{7,11}$/;
-        if (!contactRegex.test(formData.contactNumber)) {
+        if (!CONTACT_REGEX.test(trimmed.contactNumber)) {
             showToast({
                 title: "Invalid Contact Number",
-                message: "Please enter a valid contact number (7-11 digits).",
+                message: "Please enter a valid contact number (7-15 digits).",
                 type: "warning"
             });
             return;
@@ -290,16 +319,24 @@ function LandingPage() {
         const newErrors = {};
         if (step === 1) {
             if (!formData.studentId.trim()) newErrors.studentId = 'Patient ID is required';
+            else if (!PATIENT_ID_REGEX.test(formData.studentId.trim())) newErrors.studentId = 'Patient ID must contain only letters, numbers, and hyphens';
+
             if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
+            else if (!NAME_REGEX.test(formData.firstName.trim())) newErrors.firstName = 'First name contains invalid characters';
+
             if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
+            else if (!NAME_REGEX.test(formData.lastName.trim())) newErrors.lastName = 'Last name contains invalid characters';
+
             if (!formData.sex) newErrors.sex = 'Please select sex';
             if (!formData.dateOfBirth) newErrors.dateOfBirth = 'Please enter date of birth';
         }
         if (step === 2) {
             if (!formData.email.trim()) newErrors.email = 'Email is required';
-            else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Please enter a valid email';
+            else if (!EMAIL_REGEX.test(formData.email.trim())) newErrors.email = 'Please enter a valid email';
+
             if (!formData.contactNumber.trim()) newErrors.contactNumber = 'Contact number is required';
-            else if (!/^[0-9+\-() ]{7,15}$/.test(formData.contactNumber)) newErrors.contactNumber = 'Please enter a valid contact number';
+            else if (!CONTACT_REGEX.test(formData.contactNumber.trim())) newErrors.contactNumber = 'Please enter a valid contact number';
+
             if (!formData.address.trim()) newErrors.address = 'Address is required';
             if (!formData.department) newErrors.department = 'Please select a department';
             if (!formData.yearLevel) newErrors.yearLevel = 'Please select a year level';
@@ -312,6 +349,12 @@ function LandingPage() {
         if (validateStep(currentStep)) {
             setCurrentStep(prev => prev + 1);
             setErrors({});
+        } else {
+            showToast({
+                title: "Validation Error",
+                message: "Please correct the highlighted fields before proceeding.",
+                type: "warning"
+            });
         }
     };
 
