@@ -431,18 +431,6 @@ const NewDashboard = () => {
                                         {pendingCount} pending
                                     </span>
                                 )}
-                                <div className='flex items-center gap-2'>
-                                    <span className='text-xs text-gray-500 dark:text-[#94969C] font-medium'>Show per page:</span>
-                                    <select
-                                        value={rowsPerPage}
-                                        onChange={(e) => setRowsPerPage(Number(e.target.value))}
-                                        className='h-8 px-2 rounded-lg bg-white dark:bg-[#1F242F] ring-1 ring-gray-200 dark:ring-[#333741] outline-none text-xs font-medium text-gray-600 dark:text-gray-200 focus:ring-crimson-400 dark:focus:ring-crimson-500 transition-all cursor-pointer'
-                                    >
-                                        {ROWS_OPTIONS.map(n => (
-                                            <option key={n} value={n}>{n}</option>
-                                        ))}
-                                    </select>
-                                </div>
                             </div>
                         </div>
 
@@ -580,6 +568,19 @@ const NewDashboard = () => {
                                     >
                                         <ChevronRight className="w-4 h-4" />
                                     </button>
+                                </div>
+
+                                <div className='flex items-center gap-2'>
+                                    <span className='text-xs text-gray-500 dark:text-[#94969C] font-medium'>Show per page:</span>
+                                    <select
+                                        value={rowsPerPage}
+                                        onChange={(e) => setRowsPerPage(Number(e.target.value))}
+                                        className='h-8 px-2 rounded-lg bg-white dark:bg-[#1F242F] ring-1 ring-gray-200 dark:ring-[#333741] outline-none text-xs font-medium text-gray-600 dark:text-gray-200 focus:ring-crimson-400 dark:focus:ring-crimson-500 transition-all cursor-pointer'
+                                    >
+                                        {ROWS_OPTIONS.map(n => (
+                                            <option key={n} value={n}>{n}</option>
+                                        ))}
+                                    </select>
                                 </div>
 
                             </div>
