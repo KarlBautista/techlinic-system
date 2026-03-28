@@ -179,6 +179,49 @@ body.theme-transition *::after {
     background: #333741;
 }
 
+.scrollbar-notifications {
+    scrollbar-width: thin;
+    scrollbar-color: #c9cdd4 transparent;
+    scrollbar-gutter: stable;
+}
+
+.scrollbar-notifications::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scrollbar-notifications::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.scrollbar-notifications::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #d6dae1 0%, #c2c8d1 100%);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+.scrollbar-notifications::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #c7ced8 0%, #aeb7c3 100%);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+.dark .scrollbar-notifications {
+    scrollbar-color: #4b5563 transparent;
+}
+
+.dark .scrollbar-notifications::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #475569 0%, #374151 100%);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+.dark .scrollbar-notifications::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #5b6678 0%, #445063 100%);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
 .scrollbar-hide::-webkit-scrollbar {
     width: 0;
     display: none;

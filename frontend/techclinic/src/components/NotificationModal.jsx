@@ -275,7 +275,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
                         <div className="h-px bg-gray-100 dark:bg-[#1F242F]" />
 
                         {/* Notification list */}
-                        <div className="flex-1 overflow-y-auto">
+                        <div className="flex-1 overflow-y-auto scrollbar-notifications">
                             {isLoading ? (
                                 <div className="animate-pulse">
                                     {Array.from({ length: 4 }).map((_, i) => (

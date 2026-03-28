@@ -274,10 +274,16 @@ const DiagnosisModal = ({ open = false, onClose = () => { }, patient = {}, recor
           {showCompose && (
             <div
               className="fixed inset-0 z-[60] flex items-center justify-center"
-              onClick={(e) => { if (e.target === e.currentTarget && !sending) setShowCompose(false); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (e.target === e.currentTarget && !sending) setShowCompose(false);
+              }}
             >
           <div className="absolute inset-0 bg-black/50 -z-10" />
-          <div className="relative z-10 w-[min(480px,95%)] bg-white dark:bg-[#161B26] rounded-xl shadow-xl p-6">
+          <div
+            className="relative z-10 w-[min(480px,95%)] bg-white dark:bg-[#161B26] rounded-xl shadow-xl p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
 
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-base font-semibold text-gray-800 dark:text-white">
@@ -502,15 +508,15 @@ const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime, physicianDa
     : attendingPhysician || '';
 
   return (
-    <div className="bg-white max-w-2xl w-full mx-auto rounded-lg border border-gray-300">
+    <div className="bg-white dark:bg-white text-gray-800 dark:text-gray-800 max-w-2xl w-full mx-auto rounded-lg border border-gray-300 dark:border-gray-300">
       {/* Prescription Header */}
       <div className="p-6 pb-4">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <img src={tupLogo} alt="TUP Logo" className="w-12 h-12 object-contain" />
-            <span className="text-5xl font-serif font-bold text-gray-800 leading-none">R<sub className="text-3xl">x</sub></span>
+            <span className="text-5xl font-serif font-bold text-gray-800 dark:text-gray-800 leading-none">R<sub className="text-3xl">x</sub></span>
           </div>
-          <div className="text-[11px] text-center mt-1 text-gray-700 dark:text-gray-200">
+          <div className="text-[11px] text-center mt-1 text-gray-700 dark:text-gray-700">
             Ayala Blvd, Ermita, Manila, 1000, Philippines | Tel No. +632-5301-3001 local 607
             <br />
             Flex No. +632-8521-4063 | Email: clinic@tup.edu.ph | Website: www.tup.edu.ph
@@ -530,26 +536,26 @@ const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime, physicianDa
       {/* Patient info */}
       <div className="px-4 py-4 text-sm space-y-2 border-b border-gray-300 dark:border-[#333741]">
         <div>
-          <span className="text-xs text-gray-400 uppercase tracking-wider">Diagnosis</span>
+          <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Diagnosis</span>
           <p className="text-sm font-medium text-gray-800">
-            {diagnosis?.diagnosis || <span className="italic text-gray-400">N/A</span>}
+            {diagnosis?.diagnosis || <span className="italic text-gray-400 dark:text-[#94969C]">N/A</span>}
           </p>
         </div>
         <div>
-          <span className="text-xs text-gray-400 uppercase tracking-wider">Treatment</span>
-          <p className="text-sm text-gray-800 whitespace-pre-wrap">{diagnosis?.treatment || 'N/A'}</p>
+          <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Treatment</span>
+          <p className="text-sm text-gray-800 dark:text-gray-800 whitespace-pre-wrap">{diagnosis?.treatment || 'N/A'}</p>
         </div>
       </div>
 
       {/* Rx Symbol */}
       <div className="px-4 pt-4 pb-1">
-        <span className="text-3xl font-bold italic text-gray-800 dark:text-white" style={{ fontFamily: 'serif' }}>&#8478;</span>
+        <span className="text-3xl font-bold italic text-gray-800 dark:text-gray-800" style={{ fontFamily: 'serif' }}>&#8478;</span>
       </div>
 
       {/* Diagnosis / reason */}
       <div className="px-4 py-4 text-sm space-y-1 border-b border-gray-300 dark:border-[#333741]">
         <p>This is to inform you that the above came to the clinic due to:</p>
-        <p className="font-medium mt-1 min-h-6 underline">{diagnosis?.diagnosis ?? ''}</p>
+        <p className="font-medium mt-1 min-h-6 underline text-gray-800 dark:text-gray-800">{diagnosis?.diagnosis ?? ''}</p>
       </div>
 
       {/* Medication & treatment */}
@@ -573,18 +579,18 @@ const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime, physicianDa
       {/* Remarks */}
       <div className="px-4 py-4 text-sm space-y-1 border-b border-gray-300 dark:border-[#333741]">
         <p>Remarks:</p>
-        <p className="font-medium min-h-6">{diagnosis?.notes ?? ''}</p>
+        <p className="font-medium min-h-6 text-gray-800 dark:text-gray-800">{diagnosis?.notes ?? ''}</p>
       </div>
 
       {/* Checkboxes */}
       <div className="flex justify-between items-center px-4 py-3 text-sm border-b border-gray-300 dark:border-[#333741]">
-        <label className="flex items-center gap-2">
+        <label className="flex items-center gap-2 text-gray-800 dark:text-gray-800">
           <input type="checkbox" /> Medical Certificate / Clinic Pass
         </label>
-        <label className="flex items-center gap-2">
+        <label className="flex items-center gap-2 text-gray-800 dark:text-gray-800">
           <input type="checkbox" /> Referral for Counselling
         </label>
-        <label className="flex items-center gap-2">
+        <label className="flex items-center gap-2 text-gray-800 dark:text-gray-800">
           <input type="checkbox" /> For Quarantine
         </label>
       </div>
@@ -594,7 +600,7 @@ const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime, physicianDa
         If you have any questions; please feel free to call us at Medical-Dental Clinic.
       </div>
 
-      <div className="px-4 pb-6 text-right text-sm text-gray-900 dark:text-white">
+      <div className="px-4 pb-6 text-right text-sm text-gray-900 dark:text-gray-900">
         <div className="inline-block text-center">
           {showSignature && physicianData?.signature_url ? (
             <img
@@ -605,7 +611,7 @@ const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime, physicianDa
           ) : (
             <div className="w-48 border-b border-gray-300 mb-1" />
           )}
-          <div className="border-t border-gray-900 pt-1 px-4">
+          <div className="border-t border-gray-900 dark:border-gray-900 pt-1 px-4">
             <div className="font-medium">
               {physicianData
                 ? `${physicianData.first_name || ''} ${physicianData.last_name || ''}`.trim()
@@ -625,15 +631,15 @@ const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime, physicianDa
 const CertificateTab = ({ patient, diagnosis, visitDate, physicianData, attendingPhysician, showSignature }) => {
   const [excusedDays, setExcusedDays] = useState('');
   return (
-    <div className="bg-white max-w-2xl w-full mx-auto rounded-lg border border-gray-300">
+    <div className="bg-white dark:bg-white text-gray-800 dark:text-gray-800 max-w-2xl w-full mx-auto rounded-lg border border-gray-300 dark:border-gray-300">
       {/* Certificate Header */}
       <div className="p-6 pb-4">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3 flex-shrink-0">
             <img src={tupLogo} alt="TUP Logo" className="w-12 h-12 object-contain" />
-            <span className="text-lg font-bold text-gray-800 tracking-wide">MEDICAL CERTIFICATE</span>
+            <span className="text-lg font-bold text-gray-800 dark:text-gray-800 tracking-wide">MEDICAL CERTIFICATE</span>
           </div>
-          <div className="text-[11px] text-right mt-1 text-gray-700 dark:text-gray-200">
+          <div className="text-[11px] text-right mt-1 text-gray-700 dark:text-gray-700">
             Ayala Blvd, Ermita, Manila, 1000, Philippines
             <br />
             Tel No. +632-5301-3001 local 607
@@ -650,7 +656,7 @@ const CertificateTab = ({ patient, diagnosis, visitDate, physicianData, attendin
 
       {/* To whom it may concern */}
       <div className="px-4 py-4 text-sm border-b border-gray-300 dark:border-[#333741]">
-        <p className="font-semibold mb-2">TO WHOM IT MAY CONCERN:</p>
+        <p className="font-semibold mb-2 text-gray-800 dark:text-gray-800">TO WHOM IT MAY CONCERN:</p>
         <p>
           This is to certify that{' '}
           <span className="font-medium underline">{patient?.first_name ?? ''} {patient?.last_name ?? ''}</span>{' '}
@@ -662,8 +668,8 @@ const CertificateTab = ({ patient, diagnosis, visitDate, physicianData, attendin
 
       {/* Findings */}
       <div className="px-4 py-4 text-sm space-y-1 border-b border-gray-300 dark:border-[#333741]">
-        <span className="text-xs text-gray-400 uppercase tracking-wider">Findings</span>
-        <p className="font-medium min-h-6">
+        <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Findings</span>
+        <p className="font-medium min-h-6 text-gray-800 dark:text-gray-800">
           {diagnosis?.diagnosis ?? ''}
           {diagnosis?.treatment ? ` — Treatment: ${diagnosis.treatment}` : ''}
         </p>
@@ -673,20 +679,20 @@ const CertificateTab = ({ patient, diagnosis, visitDate, physicianData, attendin
       <div className="px-4 py-4 text-sm border-b border-gray-300 dark:border-[#333741]">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <span className="text-xs text-gray-400 uppercase tracking-wider">Medication Prescribed</span>
-            <p className="font-medium mt-1">{diagnosis?.medication ?? '—'}</p>
+            <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Medication Prescribed</span>
+            <p className="font-medium mt-1 text-gray-800 dark:text-gray-800">{diagnosis?.medication ?? '—'}</p>
           </div>
           <div>
-            <span className="text-xs text-gray-400 uppercase tracking-wider">Quantity</span>
-            <p className="font-medium mt-1">{diagnosis?.quantity ?? '—'}</p>
+            <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Quantity</span>
+            <p className="font-medium mt-1 text-gray-800 dark:text-gray-800">{diagnosis?.quantity ?? '—'}</p>
           </div>
         </div>
       </div>
 
       {/* Recommendation */}
       <div className="px-4 py-4 text-sm space-y-1 border-b border-gray-300 dark:border-[#333741]">
-        <span className="text-xs text-gray-400 uppercase tracking-wider">Recommendation</span>
-        <p className="font-medium min-h-6">{diagnosis?.notes ?? ''}</p>
+        <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Recommendation</span>
+        <p className="font-medium min-h-6 text-gray-800 dark:text-gray-800">{diagnosis?.notes ?? ''}</p>
       </div>
 
       {/* Excuse note */}
@@ -699,7 +705,7 @@ const CertificateTab = ({ patient, diagnosis, visitDate, physicianData, attendin
             value={excusedDays}
             onChange={(e) => setExcusedDays(e.target.value)}
             placeholder="__"
-            className="w-12 text-center font-medium border-b border-gray-400 outline-none bg-transparent print:border-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            className="w-12 text-center font-medium border-b border-gray-400 dark:border-[#94969C] outline-none bg-transparent print:border-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />{' '}
           day(s) starting from{' '}
           <span className="font-medium">{visitDate}</span>.
@@ -711,7 +717,7 @@ const CertificateTab = ({ patient, diagnosis, visitDate, physicianData, attendin
         If you have any questions; please feel free to call us at Medical-Dental Clinic.
       </div>
 
-      <div className="px-4 pb-6 text-right text-sm text-gray-900 dark:text-white">
+      <div className="px-4 pb-6 text-right text-sm text-gray-900 dark:text-gray-900">
         <div className="inline-block text-center">
           {showSignature && physicianData?.signature_url ? (
             <img
@@ -722,7 +728,7 @@ const CertificateTab = ({ patient, diagnosis, visitDate, physicianData, attendin
           ) : (
             <div className="w-48 border-b border-gray-300 mb-1" />
           )}
-          <div className="border-t border-gray-900 pt-1 px-4">
+          <div className="border-t border-gray-900 dark:border-gray-900 pt-1 px-4">
             <div className="font-medium">
               {physicianData
                 ? `${physicianData.first_name || ''} ${physicianData.last_name || ''}`.trim()

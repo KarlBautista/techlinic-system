@@ -205,7 +205,7 @@ const Notifications = () => {
                             <p className="text-xs text-gray-400 dark:text-[#94969C]">Disease alerts and system updates will appear here</p>
                         </div>
                     ) : (
-                        <div className="divide-y divide-gray-50 dark:divide-[#1F2A37] overflow-y-auto flex-1">
+                        <div className="divide-y divide-gray-50 dark:divide-[#1F2A37] overflow-y-auto flex-1 scrollbar-notifications">
                             {notifications.map((notif, idx) => {
                                 const style = getNotifStyle(notif.title);
                                 const title = cleanTitle(notif.title);
