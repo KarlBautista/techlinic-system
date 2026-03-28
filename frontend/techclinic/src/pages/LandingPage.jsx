@@ -321,23 +321,23 @@ function LandingPage() {
     };
 
     const ReviewField = ({ label, value }) => (
-        <div className="bg-gray-50 dark:bg-[#1F242F] rounded-xl px-4 py-3">
-            <p className="text-xs text-gray-400 dark:text-[#94969C] font-medium">{label}</p>
-            <p className="text-sm text-gray-800 dark:text-white font-medium mt-0.5">{value || '—'}</p>
+        <div className="bg-gray-50 rounded-xl px-4 py-3">
+            <p className="text-xs text-gray-400 font-medium">{label}</p>
+            <p className="text-sm text-gray-800 font-medium mt-0.5">{value || '—'}</p>
         </div>
     );
 
     return (
-        <div className="h-screen flex flex-col bg-linear-to-br from-rose-50/30 via-white to-amber-50/20">
+        <div className="h-screen flex flex-col bg-gradient-to-br from-[#fff7f7] via-[#ffffff] to-[#fffaf2]">
             {/* ─── Top Bar ─── */}
             <div className="flex items-center justify-between px-6 md:px-10 py-4">
                 <div className="flex items-center gap-3">
                     <img src={TUP} alt="TUP" className="w-9 h-9" />
-                    <span className="text-lg font-bold text-gray-800 dark:text-white">TechClinic</span>
+                    <span className="text-lg font-bold text-gray-800">TechClinic</span>
                 </div>
                 <button
                     onClick={handleLog}
-                    className="text-sm text-gray-500 dark:text-[#94969C] hover:text-crimson-600 transition-colors cursor-pointer"
+                    className="text-sm text-gray-500 hover:text-crimson-600 transition-colors cursor-pointer"
                 >
                     Clinic Personnel?&nbsp;
                     <span className="font-semibold text-crimson-600 hover:underline">Login</span>
@@ -353,8 +353,8 @@ function LandingPage() {
                     transition={{ duration: 0.4 }}
                     className="text-center mb-6"
                 >
-                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Patient Registration</h1>
-                    <p className="text-gray-500 dark:text-[#94969C] mt-2 text-sm">Kindly provide the necessary details before continuing.</p>
+                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Patient Registration</h1>
+                    <p className="text-gray-500 mt-2 text-sm">Kindly provide the necessary details before continuing.</p>
                 </motion.div>
 
                 {/* ─── Stepper ─── */}
@@ -367,14 +367,14 @@ function LandingPage() {
                                         ${currentStep > step.number
                                             ? 'bg-crimson-600 border-crimson-600 text-white'
                                             : currentStep === step.number
-                                                ? 'border-crimson-600 text-crimson-600 bg-white dark:bg-[#161B26]'
-                                                : 'border-gray-300 dark:border-[#333741] text-gray-400 dark:text-[#94969C] bg-white dark:bg-[#161B26]'}`}
+                                                ? 'border-crimson-600 text-crimson-600 bg-white'
+                                                : 'border-gray-300 text-gray-400 bg-white'}`}
                                 >
                                     {currentStep > step.number ? <Check className="w-4 h-4" /> : step.number}
                                 </div>
                                 <span
                                     className={`text-xs mt-2 font-medium whitespace-nowrap transition-colors
-                                        ${currentStep >= step.number ? 'text-crimson-600' : 'text-gray-400 dark:text-[#94969C]'}`}
+                                        ${currentStep >= step.number ? 'text-crimson-600' : 'text-gray-400'}`}
                                 >
                                     {step.label}
                                 </span>
@@ -382,7 +382,7 @@ function LandingPage() {
                             {index < STEPS.length - 1 && (
                                 <div
                                     className={`w-16 md:w-28 h-0.5 mx-3 mb-5 transition-all duration-300
-                                        ${currentStep > step.number ? 'bg-crimson-600' : 'bg-gray-200 dark:bg-[#1F242F]'}`}
+                                        ${currentStep > step.number ? 'bg-crimson-600' : 'bg-gray-200'}`}
                                 />
                             )}
                         </div>
@@ -396,7 +396,7 @@ function LandingPage() {
                     transition={{ duration: 0.4, delay: 0.1 }}
                     className="w-full max-w-2xl"
                 >
-                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm ring-1 ring-gray-100 dark:ring-[#1F2A37] p-6 md:p-8">
+                    <div className="bg-white rounded-2xl shadow-lg shadow-rose-100/30 ring-1 ring-gray-200 p-6 md:p-8">
                         <AnimatePresence mode="wait">
                             {/* ══ Step 1: Personal Details ══ */}
                             {currentStep === 1 && (
@@ -409,23 +409,23 @@ function LandingPage() {
                                     className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5"
                                 >
                                     <div className="md:col-span-2">
-                                        <RegistrationInfo message="Patient ID*" name="studentId" value={formData.studentId} onChange={handleInputChange} onBlur={handleStudentIdBlur} showValidation={!!errors.studentId} disabled={isStudentConfirmed} />
+                                        <RegistrationInfo message="Patient ID*" name="studentId" value={formData.studentId} onChange={handleInputChange} onBlur={handleStudentIdBlur} showValidation={!!errors.studentId} disabled={isStudentConfirmed} lightOnly />
                                         {errors.studentId && <p className="text-xs text-red-500 mt-1 pl-1">{errors.studentId}</p>}
                                     </div>
                                     <div>
-                                        <RegistrationInfo message="First Name*" name="firstName" value={formData.firstName} onChange={handleInputChange} showValidation={!!errors.firstName} disabled={isStudentConfirmed} />
+                                        <RegistrationInfo message="First Name*" name="firstName" value={formData.firstName} onChange={handleInputChange} showValidation={!!errors.firstName} disabled={isStudentConfirmed} lightOnly />
                                         {errors.firstName && <p className="text-xs text-red-500 mt-1 pl-1">{errors.firstName}</p>}
                                     </div>
                                     <div>
-                                        <RegistrationInfo message="Last Name*" name="lastName" value={formData.lastName} onChange={handleInputChange} showValidation={!!errors.lastName} disabled={isStudentConfirmed} />
+                                        <RegistrationInfo message="Last Name*" name="lastName" value={formData.lastName} onChange={handleInputChange} showValidation={!!errors.lastName} disabled={isStudentConfirmed} lightOnly />
                                         {errors.lastName && <p className="text-xs text-red-500 mt-1 pl-1">{errors.lastName}</p>}
                                     </div>
                                     <div>
-                                        <Dropdown name="sex" options={SEX_OPTIONS} placeholder="Sex*" value={formData.sex} onChange={handleInputChange} showValidation={!!errors.sex} disabled={isStudentConfirmed} />
+                                        <Dropdown name="sex" options={SEX_OPTIONS} placeholder="Sex*" value={formData.sex} onChange={handleInputChange} showValidation={!!errors.sex} disabled={isStudentConfirmed} lightOnly />
                                         {errors.sex && <p className="text-xs text-red-500 mt-1 pl-1">{errors.sex}</p>}
                                     </div>
                                     <div>
-                                        <RegistrationInfo type="date" message="Date of Birth*" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleInputChange} showValidation={!!errors.dateOfBirth} disabled={isStudentConfirmed} />
+                                        <RegistrationInfo type="date" message="Date of Birth*" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleInputChange} showValidation={!!errors.dateOfBirth} disabled={isStudentConfirmed} lightOnly />
                                         {errors.dateOfBirth && <p className="text-xs text-red-500 mt-1 pl-1">{errors.dateOfBirth}</p>}
                                     </div>
                                 </motion.div>
@@ -442,23 +442,23 @@ function LandingPage() {
                                     className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5"
                                 >
                                     <div>
-                                        <RegistrationInfo message="Email Address*" name="email" value={formData.email} onChange={handleInputChange} showValidation={!!errors.email} disabled={isStudentConfirmed} />
+                                        <RegistrationInfo message="Email Address*" name="email" value={formData.email} onChange={handleInputChange} showValidation={!!errors.email} disabled={isStudentConfirmed} lightOnly />
                                         {errors.email && <p className="text-xs text-red-500 mt-1 pl-1">{errors.email}</p>}
                                     </div>
                                     <div>
-                                        <RegistrationInfo message="Contact Number*" name="contactNumber" value={formData.contactNumber} onChange={handleInputChange} showValidation={!!errors.contactNumber} disabled={isStudentConfirmed} />
+                                        <RegistrationInfo message="Contact Number*" name="contactNumber" value={formData.contactNumber} onChange={handleInputChange} showValidation={!!errors.contactNumber} disabled={isStudentConfirmed} lightOnly />
                                         {errors.contactNumber && <p className="text-xs text-red-500 mt-1 pl-1">{errors.contactNumber}</p>}
                                     </div>
                                     <div className="md:col-span-2">
-                                        <RegistrationInfo message="Address*" name="address" value={formData.address} onChange={handleInputChange} showValidation={!!errors.address} disabled={isStudentConfirmed} />
+                                        <RegistrationInfo message="Address*" name="address" value={formData.address} onChange={handleInputChange} showValidation={!!errors.address} disabled={isStudentConfirmed} lightOnly />
                                         {errors.address && <p className="text-xs text-red-500 mt-1 pl-1">{errors.address}</p>}
                                     </div>
                                     <div>
-                                        <Dropdown name="department" options={DEPARTMENT_OPTIONS} placeholder="Department*" value={formData.department} onChange={handleInputChange} showValidation={!!errors.department} disabled={isStudentConfirmed} />
+                                        <Dropdown name="department" options={DEPARTMENT_OPTIONS} placeholder="Department*" value={formData.department} onChange={handleInputChange} showValidation={!!errors.department} disabled={isStudentConfirmed} lightOnly />
                                         {errors.department && <p className="text-xs text-red-500 mt-1 pl-1">{errors.department}</p>}
                                     </div>
                                     <div>
-                                        <Dropdown name="yearLevel" options={YEAR_OPTIONS} placeholder="Year Level*" value={formData.yearLevel} onChange={handleInputChange} showValidation={!!errors.yearLevel} disabled={isStudentConfirmed} />
+                                        <Dropdown name="yearLevel" options={YEAR_OPTIONS} placeholder="Year Level*" value={formData.yearLevel} onChange={handleInputChange} showValidation={!!errors.yearLevel} disabled={isStudentConfirmed} lightOnly />
                                         {errors.yearLevel && <p className="text-xs text-red-500 mt-1 pl-1">{errors.yearLevel}</p>}
                                     </div>
                                 </motion.div>
@@ -475,7 +475,7 @@ function LandingPage() {
                                     className="space-y-6"
                                 >
                                     <div>
-                                        <h3 className="text-xs font-semibold text-gray-400 dark:text-[#94969C] uppercase tracking-wider mb-3">Personal Details</h3>
+                                        <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Personal Details</h3>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                             <ReviewField label="Patient ID" value={formData.studentId} />
                                             <ReviewField label="First Name" value={formData.firstName} />
@@ -484,8 +484,8 @@ function LandingPage() {
                                             <ReviewField label="Date of Birth" value={formatDateToMMDDYY(formData.dateOfBirth)} />
                                         </div>
                                     </div>
-                                    <div className="border-t border-gray-100 dark:border-[#1F2A37] pt-5">
-                                        <h3 className="text-xs font-semibold text-gray-400 dark:text-[#94969C] uppercase tracking-wider mb-3">Contact & Academic</h3>
+                                    <div className="border-t border-gray-100 pt-5">
+                                        <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Contact & Academic</h3>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                             <ReviewField label="Email" value={formData.email} />
                                             <ReviewField label="Contact Number" value={formData.contactNumber} />
@@ -505,7 +505,7 @@ function LandingPage() {
                             <motion.button
                                 whileTap={{ scale: 0.97 }}
                                 onClick={handleBack}
-                                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 dark:text-[#94969C] hover:bg-gray-100 dark:hover:bg-[#1F242F] dark:bg-[#1F242F] transition-colors cursor-pointer"
+                                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer"
                             >
                                 Back
                             </motion.button>
@@ -513,7 +513,7 @@ function LandingPage() {
                             <button
                                 type="button"
                                 onClick={handleClear}
-                                className="text-sm text-gray-400 dark:text-[#94969C] hover:text-crimson-600 transition-colors cursor-pointer"
+                                className="text-sm text-gray-400 hover:text-crimson-600 transition-colors cursor-pointer"
                             >
                                 Clear all
                             </button>
