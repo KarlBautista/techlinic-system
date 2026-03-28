@@ -243,7 +243,7 @@ export default function Sidebar() {
                 initial={false}
                 animate={{ width: collapsed ? 72 : 256 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                className="hidden sm:flex flex-col h-full bg-gray-50 dark:bg-[#0C111D] border-r border-gray-200 dark:border-[#1F2A37] relative z-30 overflow-hidden"
+                className="hidden sm:flex flex-col h-full bg-gray-50 dark:bg-[#0C111D] border-r border-gray-200 dark:border-[#1F2A37] relative z-30 overflow-visible"
             >
                 {/* ── Logo ── */}
                 <div className={`flex items-center gap-3 h-16 border-b border-gray-200 dark:border-[#1F2A37] shrink-0 transition-all duration-300 ${collapsed ? 'px-2 justify-center' : 'px-4'}`}>
@@ -442,7 +442,7 @@ export default function Sidebar() {
                                 animate={{ opacity: 1, y: 0, scale: 1 }}
                                 exit={{ opacity: 0, y: 8, scale: 0.95 }}
                                 transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                                className={`absolute bottom-full mb-2 bg-white dark:bg-[#161B26] rounded-xl shadow-lg ring-1 ring-gray-200/80 dark:ring-[#1F2A37] py-1 z-50 ${collapsed ? 'left-2 w-48' : 'left-2 right-2'
+                                className={`absolute bottom-full mb-2 bg-white dark:bg-[#161B26] rounded-xl shadow-lg ring-1 ring-gray-200/80 dark:ring-[#1F2A37] py-1 z-50 ${collapsed ? 'left-full ml-2 w-56' : 'left-2 right-2'
                                     }`}
                             >
                                 {/* User info in popover */}
