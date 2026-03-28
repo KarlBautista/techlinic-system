@@ -14,6 +14,8 @@ import Settings from "../pages/Settings";
 import AddDiagnosis from "../pages/AddDiagnosis";
 import ActivityLog from "../pages/ActivityLog";
 import LandingPage from "../pages/LandingPage"
+import ForgotPassword from "../pages/ForgotPassword"
+import ResetPassword from "../pages/ResetPassword"
 import ProtectedRoute from "../components/ProtectedRoute";
 import AppLayout from "../components/AppLayout";
 
@@ -21,6 +23,8 @@ const router = createBrowserRouter([
   // ── Public routes ──
   { path: "/", element: <LandingPage /> },
   { path: "/login", element: <Login /> },
+  { path: "/forgot-password", element: <ForgotPassword /> },
+  { path: "/reset-password", element: <ResetPassword /> },
 
   // ── Protected routes (with AppLayout — sidebar + content) ──
   {

@@ -216,6 +216,17 @@ const Login = () => {
                             )}
                         </div>
 
+                        {/* Forgot Password */}
+                        <div className="text-right">
+                            <button
+                                type="button"
+                                onClick={() => navigate('/forgot-password')}
+                                className="text-xs text-crimson-600 font-medium hover:underline cursor-pointer"
+                            >
+                                Forgot Password?
+                            </button>
+                        </div>
+
                         {/* Submit Button */}
                         <motion.button
                             whileTap={{ scale: 0.98 }}
