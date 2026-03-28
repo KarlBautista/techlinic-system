@@ -178,7 +178,7 @@ const newMedicine = () => {
             <div className='flex items-center gap-2'>
               <button
                 onClick={() => window.print()}
-                className='inline-flex items-center justify-center w-10 h-10 bg-white dark:bg-[#161B26] ring-1 ring-gray-200 dark:ring-[#333741] rounded-lg text-gray-600 dark:text-[#94969C] hover:ring-gray-300 hover:text-gray-800 transition-all print:hidden'
+                className='inline-flex items-center justify-center w-10 h-10 bg-white dark:bg-[#161B26] ring-1 ring-gray-200 dark:ring-[#333741] rounded-lg text-gray-600 dark:text-[#94969C] hover:ring-gray-300 dark:hover:ring-[#4B5563] hover:text-gray-800 dark:hover:text-gray-200 dark:hover:bg-[#1F242F] transition-all print:hidden'
                 title='Print inventory'
               >
                 <i className="fa-solid fa-print text-sm"></i>
@@ -201,7 +201,7 @@ const newMedicine = () => {
               <div ref={typeRef} className='relative'>
                 <button
                   onClick={() => { setTypeOpen(!typeOpen); setStockOpen(false); }}
-                  className='inline-flex items-center gap-2 h-10 px-4 rounded-full bg-white dark:bg-[#161B26] ring-1 ring-gray-200 dark:ring-[#333741] text-xs font-medium text-gray-600 dark:text-[#94969C] hover:ring-gray-300 dark:hover:ring-[#333741]  transition-all cursor-pointer'
+                  className='inline-flex items-center gap-2 h-10 px-4 rounded-full bg-white dark:bg-[#161B26] ring-1 ring-gray-200 dark:ring-[#333741] text-xs font-medium text-gray-600 dark:text-[#94969C] hover:ring-gray-300 dark:hover:ring-[#4B5563] dark:hover:bg-[#1F242F] transition-all cursor-pointer'
                 >
                   <Beaker className="w-4 h-4 text-gray-400 dark:text-[#94969C]" />
                   <span>{selectedType}</span>
@@ -211,7 +211,7 @@ const newMedicine = () => {
                   <div className='absolute top-full left-0 mt-2 w-56 bg-white dark:bg-[#161B26] rounded-2xl shadow-xl ring-1 ring-gray-100 dark:ring-[#1F2A37] py-2 z-20'>
                     <button
                       onClick={() => { setSelectedType("All Type"); setTypeOpen(false); }}
-                      className='w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-[#1F242F] dark:bg-[#1F242F] transition-colors cursor-pointer'
+                      className='w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-[#293040] transition-colors cursor-pointer'
                     >
                       <div className='flex items-center gap-3'>
                         <Beaker className="w-4 h-4 text-gray-400 dark:text-[#94969C]" />
@@ -227,7 +227,7 @@ const newMedicine = () => {
                       <button
                         key={type}
                         onClick={() => { setSelectedType(type); setTypeOpen(false); }}
-                        className='w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-[#1F242F] dark:bg-[#1F242F] transition-colors cursor-pointer'
+                        className='w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-[#293040] transition-colors cursor-pointer'
                       >
                         <div className='flex items-center gap-3'>
                           <Pill className="w-4 h-4 text-gray-400 dark:text-[#94969C]" />
@@ -248,7 +248,7 @@ const newMedicine = () => {
               <div ref={stockRef} className='relative'>
                 <button
                   onClick={() => { setStockOpen(!stockOpen); setTypeOpen(false); }}
-                  className='inline-flex items-center gap-2 h-10 px-4 rounded-full bg-white dark:bg-[#161B26] ring-1 ring-gray-200 dark:ring-[#333741] text-xs font-medium text-gray-600 dark:text-[#94969C] hover:ring-gray-300 dark:hover:ring-[#333741]  transition-all cursor-pointer'
+                  className='inline-flex items-center gap-2 h-10 px-4 rounded-full bg-white dark:bg-[#161B26] ring-1 ring-gray-200 dark:ring-[#333741] text-xs font-medium text-gray-600 dark:text-[#94969C] hover:ring-gray-300 dark:hover:ring-[#4B5563] dark:hover:bg-[#1F242F] transition-all cursor-pointer'
                 >
                   <BarChart3 className="w-4 h-4 text-gray-400 dark:text-[#94969C]" />
                   <span>{selectedStock}</span>
@@ -265,7 +265,7 @@ const newMedicine = () => {
                       <button
                         key={opt.value}
                         onClick={() => { setSelectedStock(opt.value); setStockOpen(false); }}
-                        className='w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-[#1F242F] dark:bg-[#1F242F] transition-colors cursor-pointer'
+                        className='w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-[#293040] transition-colors cursor-pointer'
                       >
                         <div className='flex items-center gap-3'>
                           <BarChart3 className="w-4 h-4 text-gray-400 dark:text-[#94969C]" />
@@ -319,11 +319,11 @@ const newMedicine = () => {
                     {paginatedMedicines.map((medicine) => (
                       <tr
                         key={medicine.id}
-                        className='cursor-pointer hover:bg-crimson-50/40 transition-colors group'
+                        className='cursor-pointer hover:bg-crimson-50/40 dark:hover:bg-[#293040] transition-colors group'
                         onClick={() => handleUpdateMedicine(medicine)}
                       >
                         <td className='px-5 py-3.5'>
-                          <span className='text-sm font-medium text-gray-900 dark:text-white group-hover:text-crimson-600 transition-colors'>
+                          <span className='text-sm font-medium text-gray-900 dark:text-white group-hover:text-crimson-600 dark:group-hover:text-crimson-300 transition-colors'>
                             {medicine.medicine_name}
                           </span>
                         </td>
@@ -396,7 +396,7 @@ const newMedicine = () => {
                       className={`w-8 h-8 rounded-lg text-xs font-semibold transition-all cursor-pointer
                         ${currentPage === page
                           ? 'bg-crimson-600 text-white shadow-sm'
-                          : 'text-gray-500 dark:text-[#94969C] hover:bg-gray-100 dark:hover:bg-[#1F242F] dark:bg-[#1F242F]'}`}
+                          : 'text-gray-500 dark:text-[#94969C] hover:bg-gray-100 dark:hover:bg-[#293040]'}`}
                     >
                       {page}
                     </button>

@@ -182,7 +182,7 @@ const ActivityLog = () => {
               <div ref={roleRef} className='relative'>
                 <button
                   onClick={() => { setRoleOpen(!roleOpen); setEntityOpen(false); }}
-                  className='inline-flex items-center gap-2 h-10 px-4 rounded-full bg-white dark:bg-[#161B26] ring-1 ring-gray-200 dark:ring-[#1F2A37] text-xs font-medium text-gray-600 dark:text-[#CECFD2] hover:ring-gray-300 dark:hover:ring-[#333741] transition-all cursor-pointer'
+                  className='inline-flex items-center gap-2 h-10 px-4 rounded-full bg-white dark:bg-[#161B26] ring-1 ring-gray-200 dark:ring-[#1F2A37] text-xs font-medium text-gray-600 dark:text-[#CECFD2] hover:ring-gray-300 dark:hover:ring-[#4B5563] dark:hover:bg-[#1F242F] transition-all cursor-pointer'
                 >
                   <User className="w-4 h-4 text-gray-400 dark:text-[#94969C]" />
                   <span>{roleFilter === 'ALL' ? 'All Roles' : roleFilter}</span>
@@ -198,7 +198,7 @@ const ActivityLog = () => {
                       <button
                         key={opt.value}
                         onClick={() => { setRoleFilter(opt.value); setRoleOpen(false); }}
-                        className='w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-[#1F242F] transition-colors cursor-pointer'
+                        className='w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-[#293040] transition-colors cursor-pointer'
                       >
                         <div className='flex items-center gap-3'>
                           <User className="w-4 h-4 text-gray-400 dark:text-[#94969C]" />
@@ -219,7 +219,7 @@ const ActivityLog = () => {
               <div ref={entityRef} className='relative'>
                 <button
                   onClick={() => { setEntityOpen(!entityOpen); setRoleOpen(false); }}
-                  className='inline-flex items-center gap-2 h-10 px-4 rounded-full bg-white dark:bg-[#161B26] ring-1 ring-gray-200 dark:ring-[#1F2A37] text-xs font-medium text-gray-600 dark:text-[#CECFD2] hover:ring-gray-300 dark:hover:ring-[#333741] transition-all cursor-pointer'
+                  className='inline-flex items-center gap-2 h-10 px-4 rounded-full bg-white dark:bg-[#161B26] ring-1 ring-gray-200 dark:ring-[#1F2A37] text-xs font-medium text-gray-600 dark:text-[#CECFD2] hover:ring-gray-300 dark:hover:ring-[#4B5563] dark:hover:bg-[#1F242F] transition-all cursor-pointer'
                 >
                   <Pill className="w-4 h-4 text-gray-400 dark:text-[#94969C]" />
                   <span>{entityFilter === 'ALL' ? 'All Categories' : entityFilter}</span>
@@ -234,7 +234,7 @@ const ActivityLog = () => {
                       <button
                         key={opt.value}
                         onClick={() => { setEntityFilter(opt.value); setEntityOpen(false); }}
-                        className='w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-[#1F242F] transition-colors cursor-pointer'
+                        className='w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-[#293040] transition-colors cursor-pointer'
                       >
                         <div className='flex items-center gap-3'>
                           <Pill className="w-4 h-4 text-gray-400 dark:text-[#94969C]" />
@@ -299,7 +299,7 @@ const ActivityLog = () => {
                       return (
                         <tr
                           key={log.id}
-                          className="hover:bg-crimson-50/40 dark:hover:bg-[#1F242F] cursor-pointer transition-colors group"
+                          className="hover:bg-crimson-50/40 dark:hover:bg-[#293040] cursor-pointer transition-colors group"
                           onClick={() => setSelectedLog(log)}
                         >
                           <td className="px-5 py-3.5">
@@ -312,7 +312,7 @@ const ActivityLog = () => {
                               <div className="w-7 h-7 rounded-full bg-[#b01c34]/10 flex items-center justify-center">
                                 <User className="w-3.5 h-3.5 text-[#b01c34]" />
                               </div>
-                              <span className="text-sm font-medium text-gray-900 dark:text-white">
+                              <span className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-crimson-600 dark:group-hover:text-crimson-300 transition-colors">
                                 {log.actor_name}
                               </span>
                             </div>
@@ -384,7 +384,7 @@ const ActivityLog = () => {
                         className={`w-8 h-8 rounded-lg text-xs font-semibold transition-all cursor-pointer
                           ${currentPage === p
                             ? 'bg-crimson-600 text-white shadow-sm'
-                            : 'text-gray-500 dark:text-[#94969C] hover:bg-gray-100 dark:hover:bg-[#1F242F] dark:bg-[#1F242F]'}`}
+                            : 'text-gray-500 dark:text-[#94969C] hover:bg-gray-100 dark:hover:bg-[#293040]'}`}
                       >
                         {p}
                       </button>

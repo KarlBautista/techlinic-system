@@ -169,7 +169,7 @@ const PatientRecord = () => {
             </div>
             <button
               onClick={() => window.print()}
-              className='inline-flex items-center justify-center w-10 h-10 bg-white dark:bg-[#161B26] ring-1 ring-gray-200 dark:ring-[#333741] rounded-lg text-gray-600 dark:text-[#94969C] hover:ring-gray-300 hover:text-gray-800 transition-all print:hidden'
+              className='inline-flex items-center justify-center w-10 h-10 bg-white dark:bg-[#161B26] ring-1 ring-gray-200 dark:ring-[#333741] rounded-lg text-gray-600 dark:text-[#94969C] hover:ring-gray-300 dark:hover:ring-[#4B5563] hover:text-gray-800 dark:hover:text-gray-200 dark:hover:bg-[#1F242F] transition-all print:hidden'
               title='Print records'
             >
               <i className="fa-solid fa-print text-sm"></i>
@@ -184,7 +184,7 @@ const PatientRecord = () => {
               <div ref={deptRef} className='relative'>
                 <button
                   onClick={() => { setDeptOpen(!deptOpen); setStatusOpen(false); }}
-                  className='inline-flex items-center gap-2 h-10 px-4 rounded-full bg-white dark:bg-[#161B26] ring-1 ring-gray-200 dark:ring-[#333741] text-xs font-medium text-gray-600 dark:text-[#94969C] hover:ring-gray-300 dark:hover:ring-[#333741]  transition-all cursor-pointer'
+                  className='inline-flex items-center gap-2 h-10 px-4 rounded-full bg-white dark:bg-[#161B26] ring-1 ring-gray-200 dark:ring-[#333741] text-xs font-medium text-gray-600 dark:text-[#94969C] hover:ring-gray-300 dark:hover:ring-[#4B5563] dark:hover:bg-[#1F242F] transition-all cursor-pointer'
                 >
                   <Building2 className="w-4 h-4 text-gray-400 dark:text-[#94969C]" />
                   <span>{selectedDepartment}</span>
@@ -204,7 +204,7 @@ const PatientRecord = () => {
                       <button
                         key={dept}
                         onClick={() => { setSelectedDepartment(dept); setDeptOpen(false); }}
-                        className='w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-[#1F242F] dark:bg-[#1F242F] transition-colors cursor-pointer'
+                        className='w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-[#293040] transition-colors cursor-pointer'
                       >
                         <div className='flex items-center gap-3'>
                           <Building2 className="w-4 h-4 text-gray-400 dark:text-[#94969C]" />
@@ -225,7 +225,7 @@ const PatientRecord = () => {
               <div ref={statusRef} className='relative'>
                 <button
                   onClick={() => { setStatusOpen(!statusOpen); setDeptOpen(false); }}
-                  className='inline-flex items-center gap-2 h-10 px-4 rounded-full bg-white dark:bg-[#161B26] ring-1 ring-gray-200 dark:ring-[#333741] text-xs font-medium text-gray-600 dark:text-[#94969C] hover:ring-gray-300 dark:hover:ring-[#333741]  transition-all cursor-pointer'
+                  className='inline-flex items-center gap-2 h-10 px-4 rounded-full bg-white dark:bg-[#161B26] ring-1 ring-gray-200 dark:ring-[#333741] text-xs font-medium text-gray-600 dark:text-[#94969C] hover:ring-gray-300 dark:hover:ring-[#4B5563] dark:hover:bg-[#1F242F] transition-all cursor-pointer'
                 >
                   <Activity className="w-4 h-4 text-gray-400 dark:text-[#94969C]" />
                   <span>{selectedStatus}</span>
@@ -241,7 +241,7 @@ const PatientRecord = () => {
                       <button
                         key={opt.value}
                         onClick={() => { setSelectedStatus(opt.value); setStatusOpen(false); }}
-                        className='w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-[#1F242F] dark:bg-[#1F242F] transition-colors cursor-pointer'
+                        className='w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-[#293040] transition-colors cursor-pointer'
                       >
                         <div className='flex items-center gap-3'>
                           <Activity className="w-4 h-4 text-gray-400 dark:text-[#94969C]" />
@@ -294,11 +294,11 @@ const PatientRecord = () => {
                     {paginatedRecords.map((patient, idx) => (
                       <tr
                         key={patient.id}
-                        className='cursor-pointer hover:bg-crimson-50/40 transition-colors group'
+                        className='cursor-pointer hover:bg-crimson-50/40 dark:hover:bg-[#293040] transition-colors group'
                         onClick={() => handleIndividualRecord(patient.student_id)}
                       >
                         <td className='px-5 py-3.5'>
-                          <span className='text-sm font-mono font-medium text-gray-900 dark:text-white group-hover:text-crimson-600 transition-colors'>
+                          <span className='text-sm font-mono font-medium text-gray-900 dark:text-white group-hover:text-crimson-600 dark:group-hover:text-crimson-300 transition-colors'>
                             {patient.student_id}
                           </span>
                         </td>
@@ -375,7 +375,7 @@ const PatientRecord = () => {
                       className={`w-8 h-8 rounded-lg text-xs font-semibold transition-all cursor-pointer
                         ${currentPage === page
                           ? 'bg-crimson-600 text-white shadow-sm'
-                          : 'text-gray-500 dark:text-[#94969C] hover:bg-gray-100 dark:hover:bg-[#1F242F] dark:bg-[#1F242F]'}`}
+                          : 'text-gray-500 dark:text-[#94969C] hover:bg-gray-100 dark:hover:bg-[#293040]'}`}
                     >
                       {page}
                     </button>

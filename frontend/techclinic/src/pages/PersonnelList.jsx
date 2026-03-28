@@ -269,7 +269,7 @@ const PersonnelList = () => {
                 <div ref={roleRef} className='relative'>
                   <button
                     onClick={() => setRoleOpen(!roleOpen)}
-                    className='inline-flex items-center gap-2 h-10 px-4 rounded-full bg-white dark:bg-[#161B26] ring-1 ring-gray-200 dark:ring-[#333741] text-xs font-medium text-gray-600 dark:text-[#94969C] hover:ring-gray-300 dark:hover:ring-[#333741]  transition-all cursor-pointer'
+                    className='inline-flex items-center gap-2 h-10 px-4 rounded-full bg-white dark:bg-[#161B26] ring-1 ring-gray-200 dark:ring-[#333741] text-xs font-medium text-gray-600 dark:text-[#94969C] hover:ring-gray-300 dark:hover:ring-[#4B5563] dark:hover:bg-[#1F242F] transition-all cursor-pointer'
                   >
                     <Users className="w-4 h-4 text-gray-400 dark:text-[#94969C]" />
                     <span>{selectedRole}</span>
@@ -285,7 +285,7 @@ const PersonnelList = () => {
                         <button
                           key={opt.value}
                           onClick={() => { setSelectedRole(opt.value); setRoleOpen(false); }}
-                          className='w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-[#1F242F] dark:bg-[#1F242F] transition-colors cursor-pointer'
+                          className='w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-[#293040] transition-colors cursor-pointer'
                         >
                           <div className='flex items-center gap-3'>
                             <Users className="w-4 h-4 text-gray-400 dark:text-[#94969C]" />
@@ -339,14 +339,14 @@ const PersonnelList = () => {
                       {paginatedUsers.map((user) => (
                         <tr
                           key={user.id}
-                          className='hover:bg-crimson-50/40 transition-colors group'
+                          className='hover:bg-crimson-50/40 dark:hover:bg-[#293040] transition-colors group'
                         >
                           <td className='px-5 py-3.5'>
                             <div className='flex items-center gap-3'>
                               <div className='w-8 h-8 rounded-full bg-linear-to-br from-crimson-100 to-crimson-50 flex items-center justify-center text-xs font-bold text-crimson-600 shrink-0 ring-1 ring-crimson-100 dark:ring-[#333741]'>
                                 {user.first_name?.[0]}{user.last_name?.[0]}
                               </div>
-                              <span className='text-sm font-medium text-gray-900 dark:text-white group-hover:text-crimson-600 transition-colors'>
+                              <span className='text-sm font-medium text-gray-900 dark:text-white group-hover:text-crimson-600 dark:group-hover:text-crimson-300 transition-colors'>
                                 {`${user.first_name} ${user.last_name}`}
                               </span>
                             </div>
@@ -392,7 +392,7 @@ const PersonnelList = () => {
                     <button
                       onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                       disabled={currentPage === 1}
-                      className='w-8 h-8 rounded-lg flex items-center justify-center hover:bg-gray-100 dark:hover:bg-[#1F242F] dark:bg-[#1F242F] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer'
+                      className='w-8 h-8 rounded-lg flex items-center justify-center hover:bg-gray-100 dark:hover:bg-[#293040] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer'
                     >
                       <ChevronLeft className="w-4 h-4" />
                     </button>
@@ -403,7 +403,7 @@ const PersonnelList = () => {
                         <button
                           key={p}
                           onClick={() => setCurrentPage(p)}
-                          className={`w-8 h-8 rounded-lg flex items-center justify-center font-medium transition-colors cursor-pointer ${currentPage === p ? 'bg-crimson-600 text-white' : 'hover:bg-gray-100 dark:hover:bg-[#1F242F] dark:bg-[#1F242F] text-gray-600 dark:text-[#94969C]'}`}
+                          className={`w-8 h-8 rounded-lg flex items-center justify-center font-medium transition-colors cursor-pointer ${currentPage === p ? 'bg-crimson-600 text-white' : 'hover:bg-gray-100 dark:hover:bg-[#293040] text-gray-600 dark:text-[#94969C]'}`}
                         >
                           {p}
                         </button>
@@ -412,7 +412,7 @@ const PersonnelList = () => {
                     <button
                       onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                       disabled={currentPage === totalPages}
-                      className='w-8 h-8 rounded-lg flex items-center justify-center hover:bg-gray-100 dark:hover:bg-[#1F242F] dark:bg-[#1F242F] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer'
+                      className='w-8 h-8 rounded-lg flex items-center justify-center hover:bg-gray-100 dark:hover:bg-[#293040] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer'
                     >
                       <ChevronRight className="w-4 h-4" />
                     </button>
@@ -540,7 +540,7 @@ const PersonnelList = () => {
                   <input
                     type="date" name="date_of_birth" value={personnel.date_of_birth} onChange={handleChange}
                     required
-                    className='px-3 py-2.5 rounded-xl border border-gray-200 dark:border-[#1F2A37] outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all'
+                    className='px-3 py-2.5 rounded-xl border border-gray-200 dark:border-[#1F2A37] outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all dark:[color-scheme:dark]'
                   />
                 </div>
 

@@ -470,7 +470,7 @@ const getInitials = () => {
             <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
               <div>
                 <label className="block text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider mb-1">Gender</label>
-                <select value={sex} onChange={(e) => setSex(e.target.value)} className="w-full p-2.5 border border-gray-200 dark:border-[#1F2A37] rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] focus:border-crimson-400 outline-none transition-all">
+                <select value={sex} onChange={(e) => setSex(e.target.value)} className="w-full p-2.5 border border-gray-200 dark:border-[#1F2A37] rounded-xl text-sm dark:bg-[#161B26] dark:text-white focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] focus:border-crimson-400 outline-none transition-all dark:[color-scheme:dark]">
                   <option value=''>Select</option>
                   <option value='Male'>Male</option>
                   <option value='Female'>Female</option>
@@ -479,7 +479,7 @@ const getInitials = () => {
 
               <div>
                 <label className="block text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider mb-1">Date of birth</label>
-                <input type='date' value={dateOfBirth} onChange={(e) => setDateOfBirth(e.target.value)} className="w-full p-2.5 border border-gray-200 dark:border-[#1F2A37] rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] focus:border-crimson-400 outline-none transition-all" />
+                <input type='date' value={dateOfBirth} onChange={(e) => setDateOfBirth(e.target.value)} className="w-full p-2.5 border border-gray-200 dark:border-[#1F2A37] rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] focus:border-crimson-400 outline-none transition-all dark:[color-scheme:dark]" />
               </div>
             </div>
 
