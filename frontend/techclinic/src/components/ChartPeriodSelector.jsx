@@ -95,7 +95,7 @@ function ChartPeriodSelector({ selectedCategory, onCategoryChange, customStart, 
             />
             <button
               onClick={onCustomApply}
-              disabled={!customStart || !customEnd}
+              disabled={!customStart || !customEnd || (customStart && customEnd && customStart > customEnd)}
               className='text-[10px] font-medium h-7 px-3 rounded-full bg-crimson-600 text-white shadow-sm disabled:opacity-40 disabled:cursor-not-allowed hover:bg-crimson-700 transition-all cursor-pointer'
             >
               Apply

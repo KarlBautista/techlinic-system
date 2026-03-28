@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { User, Shield, Lock, Mail, KeyRound, Pencil, PenTool, PenLine, CheckCircle2, AlertCircle, UserPen, IdCard, Tag } from 'lucide-react';
 import useAuth from '../store/useAuthStore';
 import SignaturePad from '../components/SignaturePad';
+import { validateName, validateAddress, validateDateOfBirth, validatePassword, LIMITS } from '../lib/validation';
 
 
 const Settings = () => {
@@ -83,6 +84,7 @@ const getInitials = () => {
   const [role, setRole] = useState('');
   const [email, setEmail] = useState('');
   const [profileMessage, setProfileMessage] = useState('');
+  const [profileErrors, setProfileErrors] = useState({});
 
   const handleEditPassword = () => {
     setError('');
@@ -125,6 +127,16 @@ const getInitials = () => {
   const handleSaveProfile = async (e) => {
     e.preventDefault();
     setProfileMessage('');
+
+    // Validate profile fields
+    const errs = {};
+    if (firstName) { const err = validateName(firstName, 'First name'); if (err) errs.firstName = err; }
+    if (lastName) { const err = validateName(lastName, 'Last name'); if (err) errs.lastName = err; }
+    if (address) { const err = validateAddress(address); if (err) errs.address = err; }
+    if (dateOfBirth) { const err = validateDateOfBirth(dateOfBirth); if (err) errs.dateOfBirth = err; }
+    setProfileErrors(errs);
+    if (Object.keys(errs).length > 0) return;
+
     setSaving(true);
 
     try {
@@ -180,12 +192,13 @@ const getInitials = () => {
       setError('All fields are required.');
       return;
     }
-    if (newPassword !== confirmPassword) {
-      setError('New password and confirmation do not match.');
+    const passwordErr = validatePassword(newPassword, { requireStrength: true });
+    if (passwordErr) {
+      setError(passwordErr);
       return;
     }
-    if (newPassword.length < 6) {
-      setError('Password must be at least 6 characters.');
+    if (newPassword !== confirmPassword) {
+      setError('New password and confirmation do not match.');
       return;
     }
     // UI-only: no backend call here. You can wire this to your API later.
@@ -381,6 +394,7 @@ const getInitials = () => {
                 type="password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
+                maxLength={LIMITS.PASSWORD_MAX}
                 className="w-full p-2.5 border border-gray-200 dark:border-[#1F2A37] rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] focus:border-crimson-400 outline-none transition-all"
                 placeholder="Enter current password"
               />
@@ -392,6 +406,7 @@ const getInitials = () => {
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
+                maxLength={LIMITS.PASSWORD_MAX}
                 className="w-full p-2.5 border border-gray-200 dark:border-[#1F2A37] rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] focus:border-crimson-400 outline-none transition-all"
                 placeholder="Enter new password"
               />
@@ -403,6 +418,7 @@ const getInitials = () => {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
+                maxLength={LIMITS.PASSWORD_MAX}
                 className="w-full p-2.5 border border-gray-200 dark:border-[#1F2A37] rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] focus:border-crimson-400 outline-none transition-all"
                 placeholder="Confirm new password"
               />
@@ -458,12 +474,14 @@ const getInitials = () => {
             <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
               <div>
                 <label className="block text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider mb-1">First name</label>
-                <input value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full p-2.5 border border-gray-200 dark:border-[#1F2A37] rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] focus:border-crimson-400 outline-none transition-all" placeholder="First name" />
+                <input value={firstName} onChange={(e) => setFirstName(e.target.value)} maxLength={LIMITS.NAME_MAX} className={`w-full p-2.5 border rounded-xl text-sm focus:ring-2 outline-none transition-all ${profileErrors.firstName ? 'border-red-400 focus:ring-red-200 focus:border-red-400' : 'border-gray-200 dark:border-[#1F2A37] focus:ring-crimson-100 dark:ring-[#333741] focus:border-crimson-400'}`} placeholder="First name" />
+                {profileErrors.firstName && <p className="text-xs text-red-500 mt-1">{profileErrors.firstName}</p>}
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider mb-1">Last name</label>
-                <input value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full p-2.5 border border-gray-200 dark:border-[#1F2A37] rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] focus:border-crimson-400 outline-none transition-all" placeholder="Last name" />
+                <input value={lastName} onChange={(e) => setLastName(e.target.value)} maxLength={LIMITS.NAME_MAX} className={`w-full p-2.5 border rounded-xl text-sm focus:ring-2 outline-none transition-all ${profileErrors.lastName ? 'border-red-400 focus:ring-red-200 focus:border-red-400' : 'border-gray-200 dark:border-[#1F2A37] focus:ring-crimson-100 dark:ring-[#333741] focus:border-crimson-400'}`} placeholder="Last name" />
+                {profileErrors.lastName && <p className="text-xs text-red-500 mt-1">{profileErrors.lastName}</p>}
               </div>
             </div>
 
@@ -479,13 +497,15 @@ const getInitials = () => {
 
               <div>
                 <label className="block text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider mb-1">Date of birth</label>
-                <input type='date' value={dateOfBirth} onChange={(e) => setDateOfBirth(e.target.value)} className="w-full p-2.5 border border-gray-200 dark:border-[#1F2A37] rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] focus:border-crimson-400 outline-none transition-all dark:[color-scheme:dark]" />
+                <input type='date' value={dateOfBirth} onChange={(e) => setDateOfBirth(e.target.value)} className={`w-full p-2.5 border rounded-xl text-sm focus:ring-2 outline-none transition-all dark:[color-scheme:dark] ${profileErrors.dateOfBirth ? 'border-red-400 focus:ring-red-200 focus:border-red-400' : 'border-gray-200 dark:border-[#1F2A37] focus:ring-crimson-100 dark:ring-[#333741] focus:border-crimson-400'}`} />
+                {profileErrors.dateOfBirth && <p className="text-xs text-red-500 mt-1">{profileErrors.dateOfBirth}</p>}
               </div>
             </div>
 
             <div>
               <label className="block text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider mb-1">Address</label>
-              <input value={address} onChange={(e) => setAddress(e.target.value)} className="w-full p-2.5 border border-gray-200 dark:border-[#1F2A37] rounded-xl text-sm focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] focus:border-crimson-400 outline-none transition-all" placeholder="Full address" />
+              <input value={address} onChange={(e) => setAddress(e.target.value)} maxLength={LIMITS.ADDRESS_MAX} className={`w-full p-2.5 border rounded-xl text-sm focus:ring-2 outline-none transition-all ${profileErrors.address ? 'border-red-400 focus:ring-red-200 focus:border-red-400' : 'border-gray-200 dark:border-[#1F2A37] focus:ring-crimson-100 dark:ring-[#333741] focus:border-crimson-400'}`} placeholder="Full address" />
+              {profileErrors.address && <p className="text-xs text-red-500 mt-1">{profileErrors.address}</p>}
             </div>
 
             {profileMessage && (

@@ -2,13 +2,19 @@ import React, { useEffect, useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { showToast } from './Toast'
 import { showModal } from './Modal'
+import { validateMedicineForm, hasErrors } from '../lib/validation'
+
 const MedicineForm = ({ medicine, onUpdate, onDelete, onClose, open }) => {
   const [form, setForm] = useState({})
   const [originalForm, setOriginalForm] = useState({})
+  const [errors, setErrors] = useState({})
+  const [touched, setTouched] = useState({})
 
   useEffect(() => {
     setForm(prev => ({ ...prev, ...medicine }))
     setOriginalForm(prev => ({ ...prev, ...medicine }))
+    setErrors({})
+    setTouched({})
   }, [medicine])
 
   const hasChanges = useMemo(() => {
@@ -19,6 +25,21 @@ const MedicineForm = ({ medicine, onUpdate, onDelete, onClose, open }) => {
   const handleChange = e => {
     const { name, value } = e.target
     setForm(prev => ({ ...prev, [name]: value }))
+    if (touched[name]) {
+      const allErrors = validateMedicineForm({ ...form, [name]: value })
+      // Map field keys for edit form (uses different keys than insert)
+      const fieldMap = { medicine_name: 'name', generic_name: 'generic', unit_of_measure: 'unit', stock_level: 'stock', batch_number: 'batch', expiry_date: 'expiry' }
+      const mappedKey = fieldMap[name] || name
+      setErrors(prev => ({ ...prev, [name]: allErrors[mappedKey] || '' }))
+    }
+  }
+
+  const handleBlur = (field) => {
+    setTouched(prev => ({ ...prev, [field]: true }))
+    const allErrors = validateMedicineForm(form)
+    const fieldMap = { medicine_name: 'name', generic_name: 'generic', unit_of_measure: 'unit', stock_level: 'stock', batch_number: 'batch', expiry_date: 'expiry' }
+    const mappedKey = fieldMap[field] || field
+    setErrors(prev => ({ ...prev, [field]: allErrors[mappedKey] || '' }))
   }
 
   const handleClose = () => {
@@ -27,6 +48,23 @@ const MedicineForm = ({ medicine, onUpdate, onDelete, onClose, open }) => {
 
   const handleUpdate = async (e) => {
     e.preventDefault()
+
+    // Validate all fields before update
+    const allErrors = validateMedicineForm(form)
+    const fieldMap = { name: 'medicine_name', generic: 'generic_name', unit: 'unit_of_measure', stock: 'stock_level', batch: 'batch_number', expiry: 'expiry_date' }
+    const mappedErrors = {}
+    for (const [key, val] of Object.entries(allErrors)) {
+      mappedErrors[fieldMap[key] || key] = val
+    }
+    setErrors(mappedErrors)
+    setTouched(Object.fromEntries(Object.keys(mappedErrors).map(k => [k, true])))
+
+    if (hasErrors(mappedErrors)) {
+      const firstError = Object.values(mappedErrors).find(e => e !== '')
+      showToast({ title: 'Validation Error', message: firstError, type: 'warning' })
+      return
+    }
+
     if (onUpdate) onUpdate(form)
     showToast({ title: "Medicine updated successfully", message: "The updated medicine version will be displayed in the table", type: "success" })
     handleClose()
@@ -124,15 +162,18 @@ const MedicineForm = ({ medicine, onUpdate, onDelete, onClose, open }) => {
         {/* Body */}
         <div className="px-6 py-5 grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[60vh] overflow-y-auto">
           <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">Medicine Name</span>
+            <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">Medicine Name <span className="text-red-500">*</span></span>
             <input
               name="medicine_name"
               value={form?.medicine_name || ''}
               onChange={handleChange}
-              className="h-10 px-3 rounded-lg border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:bg-[#161B26] focus:border-[#b01c34] focus:ring-1 focus:ring-[#b01c34]/20 transition-all outline-none"
+              onBlur={() => handleBlur('medicine_name')}
+              maxLength={200}
+              className={`h-10 px-3 rounded-lg border text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:focus:bg-[#161B26] focus:ring-1 transition-all outline-none ${touched.medicine_name && errors.medicine_name ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-[#b01c34] focus:ring-[#b01c34]/20'}`}
               placeholder="Medicine name"
               required
             />
+            {touched.medicine_name && errors.medicine_name && <p className="text-xs text-red-500">{errors.medicine_name}</p>}
           </label>
 
           <label className="flex flex-col gap-1.5">
@@ -141,9 +182,12 @@ const MedicineForm = ({ medicine, onUpdate, onDelete, onClose, open }) => {
               name="generic_name"
               value={form.generic_name || ''}
               onChange={handleChange}
-              className="h-10 px-3 rounded-lg border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:bg-[#161B26] focus:border-[#b01c34] focus:ring-1 focus:ring-[#b01c34]/20 transition-all outline-none"
+              onBlur={() => handleBlur('generic_name')}
+              maxLength={200}
+              className={`h-10 px-3 rounded-lg border text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:focus:bg-[#161B26] focus:ring-1 transition-all outline-none ${touched.generic_name && errors.generic_name ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-[#b01c34] focus:ring-[#b01c34]/20'}`}
               placeholder="Generic name"
             />
+            {touched.generic_name && errors.generic_name && <p className="text-xs text-red-500">{errors.generic_name}</p>}
           </label>
 
           <label className="flex flex-col gap-1.5">
@@ -152,9 +196,12 @@ const MedicineForm = ({ medicine, onUpdate, onDelete, onClose, open }) => {
               name="brand"
               value={form.brand || ''}
               onChange={handleChange}
-              className="h-10 px-3 rounded-lg border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:bg-[#161B26] focus:border-[#b01c34] focus:ring-1 focus:ring-[#b01c34]/20 transition-all outline-none"
+              onBlur={() => handleBlur('brand')}
+              maxLength={200}
+              className={`h-10 px-3 rounded-lg border text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:focus:bg-[#161B26] focus:ring-1 transition-all outline-none ${touched.brand && errors.brand ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-[#b01c34] focus:ring-[#b01c34]/20'}`}
               placeholder="Brand or manufacturer"
             />
+            {touched.brand && errors.brand && <p className="text-xs text-red-500">{errors.brand}</p>}
           </label>
 
           <label className="flex flex-col gap-1.5">
@@ -163,66 +210,83 @@ const MedicineForm = ({ medicine, onUpdate, onDelete, onClose, open }) => {
               name="type"
               value={form.type || ''}
               onChange={handleChange}
-              className="h-10 px-3 rounded-lg border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:bg-[#161B26] focus:border-[#b01c34] focus:ring-1 focus:ring-[#b01c34]/20 transition-all outline-none"
+              onBlur={() => handleBlur('type')}
+              maxLength={100}
+              className={`h-10 px-3 rounded-lg border text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:focus:bg-[#161B26] focus:ring-1 transition-all outline-none ${touched.type && errors.type ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-[#b01c34] focus:ring-[#b01c34]/20'}`}
               placeholder="e.g. Tablet, Syrup, Injection"
             />
+            {touched.type && errors.type && <p className="text-xs text-red-500">{errors.type}</p>}
           </label>
 
           <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">Dosage</span>
+            <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">Dosage <span className="text-red-500">*</span></span>
             <input
               name="dosage"
               value={form.dosage || ''}
               onChange={handleChange}
-              className="h-10 px-3 rounded-lg border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:bg-[#161B26] focus:border-[#b01c34] focus:ring-1 focus:ring-[#b01c34]/20 transition-all outline-none"
+              onBlur={() => handleBlur('dosage')}
+              maxLength={100}
+              className={`h-10 px-3 rounded-lg border text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:focus:bg-[#161B26] focus:ring-1 transition-all outline-none ${touched.dosage && errors.dosage ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-[#b01c34] focus:ring-[#b01c34]/20'}`}
               placeholder="e.g. 500 mg"
             />
+            {touched.dosage && errors.dosage && <p className="text-xs text-red-500">{errors.dosage}</p>}
           </label>
 
           <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">Unit of Measure</span>
+            <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">Unit of Measure <span className="text-red-500">*</span></span>
             <input
               name="unit_of_measure"
               value={form.unit_of_measure || ''}
               onChange={handleChange}
-              className="h-10 px-3 rounded-lg border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:bg-[#161B26] focus:border-[#b01c34] focus:ring-1 focus:ring-[#b01c34]/20 transition-all outline-none"
+              onBlur={() => handleBlur('unit_of_measure')}
+              maxLength={50}
+              className={`h-10 px-3 rounded-lg border text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:focus:bg-[#161B26] focus:ring-1 transition-all outline-none ${touched.unit_of_measure && errors.unit_of_measure ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-[#b01c34] focus:ring-[#b01c34]/20'}`}
               placeholder="e.g. mg, mL, IU"
             />
+            {touched.unit_of_measure && errors.unit_of_measure && <p className="text-xs text-red-500">{errors.unit_of_measure}</p>}
           </label>
 
           <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">Stock Level</span>
+            <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">Stock Level <span className="text-red-500">*</span></span>
             <input
               name="stock_level"
               value={form.stock_level || ''}
               onChange={handleChange}
+              onBlur={() => handleBlur('stock_level')}
               type="number"
               min="0"
-              className="h-10 px-3 rounded-lg border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:bg-[#161B26] focus:border-[#b01c34] focus:ring-1 focus:ring-[#b01c34]/20 transition-all outline-none"
+              max="999999"
+              className={`h-10 px-3 rounded-lg border text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:focus:bg-[#161B26] focus:ring-1 transition-all outline-none ${touched.stock_level && errors.stock_level ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-[#b01c34] focus:ring-[#b01c34]/20'}`}
               placeholder="Quantity in stock"
             />
+            {touched.stock_level && errors.stock_level && <p className="text-xs text-red-500">{errors.stock_level}</p>}
           </label>
 
           <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">Batch Number</span>
+            <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">Batch Number <span className="text-red-500">*</span></span>
             <input
               name="batch_number"
               value={form.batch_number || ''}
               onChange={handleChange}
-              className="h-10 px-3 rounded-lg border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:bg-[#161B26] focus:border-[#b01c34] focus:ring-1 focus:ring-[#b01c34]/20 transition-all outline-none"
+              onBlur={() => handleBlur('batch_number')}
+              maxLength={50}
+              className={`h-10 px-3 rounded-lg border text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:focus:bg-[#161B26] focus:ring-1 transition-all outline-none ${touched.batch_number && errors.batch_number ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-[#b01c34] focus:ring-[#b01c34]/20'}`}
               placeholder="Batch number"
             />
+            {touched.batch_number && errors.batch_number && <p className="text-xs text-red-500">{errors.batch_number}</p>}
           </label>
 
           <label className="flex flex-col gap-1.5 md:col-span-2">
-            <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">Expiry Date</span>
+            <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">Expiry Date <span className="text-red-500">*</span></span>
             <input
               name="expiry_date"
               value={formatDateForInput(form.expiry_date) || ''}
               onChange={handleChange}
+              onBlur={() => handleBlur('expiry_date')}
               type="date"
-              className="h-10 px-3 rounded-lg border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:bg-[#161B26] focus:border-[#b01c34] focus:ring-1 focus:ring-[#b01c34]/20 transition-all outline-none max-w-xs"
+              className={`h-10 px-3 rounded-lg border text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:focus:bg-[#161B26] focus:ring-1 transition-all outline-none max-w-xs ${touched.expiry_date && errors.expiry_date ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-[#b01c34] focus:ring-[#b01c34]/20'}`}
             />
+            {touched.expiry_date && errors.expiry_date && <p className="text-xs text-red-500">{errors.expiry_date}</p>}
           </label>
         </div>
       </form>

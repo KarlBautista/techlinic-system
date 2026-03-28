@@ -5,6 +5,7 @@ import { ButtonLoader } from '../components/PageLoader'
 import { showToast } from '../components/Toast'
 import { motion } from 'framer-motion'
 import { Search, Plus, Users, X, Eye, EyeOff, ChevronRight, ChevronLeft, ChevronDown } from 'lucide-react'
+import { validatePersonnelForm, hasErrors, validateSearch, LIMITS } from '../lib/validation'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -45,6 +46,8 @@ const PersonnelList = () => {
     role: '',
     sex: ''
   });
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -101,7 +104,24 @@ const PersonnelList = () => {
   }, [search, selectedRole, rowsPerPage]);
 
   const handleChange = (e) => {
-    setPersonnel({ ...personnel, [e.target.name]: e.target.value });
+    const updated = { ...personnel, [e.target.name]: e.target.value };
+    setPersonnel(updated);
+    if (touched[e.target.name]) {
+      const formErrors = validatePersonnelForm(updated);
+      setErrors(prev => ({ ...prev, [e.target.name]: formErrors[e.target.name] }));
+    }
+  };
+
+  const handleBlur = (field) => {
+    setTouched(prev => ({ ...prev, [field]: true }));
+    const formErrors = validatePersonnelForm(personnel);
+    setErrors(prev => ({ ...prev, [field]: formErrors[field] }));
+  };
+
+  const handleSearchChange = (e) => {
+    const val = e.target.value;
+    const err = validateSearch(val);
+    if (!err) setSearch(val);
   };
 
   const resetForm = () => {
@@ -111,6 +131,8 @@ const PersonnelList = () => {
     });
     setShowPassword(false);
     setShowConfirmPassword(false);
+    setErrors({});
+    setTouched({});
   };
 
   const openModal = () => {
@@ -133,27 +155,19 @@ const PersonnelList = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isSubmitting) return;
+
+    // Validate all fields
+    const formErrors = validatePersonnelForm(personnel);
+    setErrors(formErrors);
+    const allTouched = Object.keys(personnel).reduce((acc, k) => ({ ...acc, [k]: true }), {});
+    setTouched(allTouched);
+
+    if (hasErrors(formErrors)) {
+      showToast({ title: "Validation Error", message: "Please fix the highlighted errors", type: "warning" });
+      return;
+    }
+
     setIsSubmitting(true);
-
-    if (!personnel.first_name || !personnel.last_name || !personnel.email ||
-      !personnel.password || !personnel.confirm_password ||
-      !personnel.address || !personnel.date_of_birth || !personnel.role || !personnel.sex) {
-      showToast({ title: "Missing Information", message: "Please fill in all required fields", type: "warning" });
-      setIsSubmitting(false);
-      return;
-    }
-
-    if (personnel.password.length < 8) {
-      showToast({ title: "Weak Password", message: "Password must be at least 8 characters long", type: "warning" });
-      setIsSubmitting(false);
-      return;
-    }
-
-    if (personnel.password !== personnel.confirm_password) {
-      showToast({ title: "Password Mismatch", message: "Password and Confirm Password do not match", type: "error" });
-      setIsSubmitting(false);
-      return;
-    }
 
     try {
       const response = await insertPersonnel(personnel);
@@ -312,7 +326,8 @@ const PersonnelList = () => {
                     className='outline-none w-full ml-2 text-xs text-gray-700 dark:text-gray-200 placeholder:text-gray-400 dark:placeholder:text-[#94969C] bg-transparent'
                     placeholder='Search by name or email...'
                     value={search}
-                    onChange={(e) => setSearch(e.target.value)}
+                    onChange={handleSearchChange}
+                    maxLength={LIMITS.SEARCH_MAX}
                   />
                 </div>
               </div>
@@ -467,9 +482,11 @@ const PersonnelList = () => {
                   <label className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>First Name <span className='text-red-500'>*</span></label>
                   <input
                     type="text" name="first_name" value={personnel.first_name} onChange={handleChange}
+                    onBlur={() => handleBlur('first_name')} maxLength={LIMITS.NAME_MAX}
                     placeholder="Juan" required
-                    className='px-3 py-2.5 rounded-xl border border-gray-200 dark:border-[#1F2A37] outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all'
+                    className={`px-3 py-2.5 rounded-xl border outline-none text-sm focus:ring-2 transition-all ${touched.first_name && errors.first_name ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-crimson-400 focus:ring-crimson-100 dark:ring-[#333741]'}`}
                   />
+                  {touched.first_name && errors.first_name && <p className='text-xs text-red-500'>{errors.first_name}</p>}
                 </div>
 
                 {/* Last Name */}
@@ -477,9 +494,11 @@ const PersonnelList = () => {
                   <label className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Last Name <span className='text-red-500'>*</span></label>
                   <input
                     type="text" name="last_name" value={personnel.last_name} onChange={handleChange}
+                    onBlur={() => handleBlur('last_name')} maxLength={LIMITS.NAME_MAX}
                     placeholder="Dela Cruz" required
-                    className='px-3 py-2.5 rounded-xl border border-gray-200 dark:border-[#1F2A37] outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all'
+                    className={`px-3 py-2.5 rounded-xl border outline-none text-sm focus:ring-2 transition-all ${touched.last_name && errors.last_name ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-crimson-400 focus:ring-crimson-100 dark:ring-[#333741]'}`}
                   />
+                  {touched.last_name && errors.last_name && <p className='text-xs text-red-500'>{errors.last_name}</p>}
                 </div>
 
                 {/* Email */}
@@ -487,9 +506,11 @@ const PersonnelList = () => {
                   <label className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Email Address <span className='text-red-500'>*</span></label>
                   <input
                     type="email" name="email" value={personnel.email} onChange={handleChange}
+                    onBlur={() => handleBlur('email')} maxLength={LIMITS.EMAIL_MAX}
                     placeholder="juan.delacruz@tup.edu.ph" required
-                    className='px-3 py-2.5 rounded-xl border border-gray-200 dark:border-[#1F2A37] outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all'
+                    className={`px-3 py-2.5 rounded-xl border outline-none text-sm focus:ring-2 transition-all ${touched.email && errors.email ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-crimson-400 focus:ring-crimson-100 dark:ring-[#333741]'}`}
                   />
+                  {touched.email && errors.email && <p className='text-xs text-red-500'>{errors.email}</p>}
                 </div>
 
                 {/* Password */}
@@ -498,14 +519,16 @@ const PersonnelList = () => {
                   <div className='relative'>
                     <input
                       type={showPassword ? "text" : "password"} name="password" value={personnel.password} onChange={handleChange}
+                      onBlur={() => handleBlur('password')} maxLength={LIMITS.PASSWORD_MAX}
                       placeholder="Min. 8 characters" required minLength="8"
-                      className='w-full px-3 py-2.5 pr-10 rounded-xl border border-gray-200 dark:border-[#1F2A37] outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all'
+                      className={`w-full px-3 py-2.5 pr-10 rounded-xl border outline-none text-sm focus:ring-2 transition-all ${touched.password && errors.password ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-crimson-400 focus:ring-crimson-100 dark:ring-[#333741]'}`}
                     />
                     <button type="button" onClick={() => setShowPassword(!showPassword)}
                       className='absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-[#94969C] hover:text-gray-600 dark:hover:text-gray-300'>
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
+                  {touched.password && errors.password && <p className='text-xs text-red-500'>{errors.password}</p>}
                 </div>
 
                 {/* Confirm Password */}
@@ -514,14 +537,16 @@ const PersonnelList = () => {
                   <div className='relative'>
                     <input
                       type={showConfirmPassword ? "text" : "password"} name="confirm_password" value={personnel.confirm_password} onChange={handleChange}
+                      onBlur={() => handleBlur('confirm_password')} maxLength={LIMITS.PASSWORD_MAX}
                       placeholder="Re-enter password" required minLength="8"
-                      className='w-full px-3 py-2.5 pr-10 rounded-xl border border-gray-200 dark:border-[#1F2A37] outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all'
+                      className={`w-full px-3 py-2.5 pr-10 rounded-xl border outline-none text-sm focus:ring-2 transition-all ${touched.confirm_password && errors.confirm_password ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-crimson-400 focus:ring-crimson-100 dark:ring-[#333741]'}`}
                     />
                     <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       className='absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-[#94969C] hover:text-gray-600 dark:hover:text-gray-300'>
                       {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
+                  {touched.confirm_password && errors.confirm_password && <p className='text-xs text-red-500'>{errors.confirm_password}</p>}
                 </div>
 
                 {/* Address */}
@@ -529,9 +554,11 @@ const PersonnelList = () => {
                   <label className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Address <span className='text-red-500'>*</span></label>
                   <input
                     type="text" name="address" value={personnel.address} onChange={handleChange}
+                    onBlur={() => handleBlur('address')} maxLength={LIMITS.ADDRESS_MAX}
                     placeholder="123 Main Street, Manila" required
-                    className='px-3 py-2.5 rounded-xl border border-gray-200 dark:border-[#1F2A37] outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all'
+                    className={`px-3 py-2.5 rounded-xl border outline-none text-sm focus:ring-2 transition-all ${touched.address && errors.address ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-crimson-400 focus:ring-crimson-100 dark:ring-[#333741]'}`}
                   />
+                  {touched.address && errors.address && <p className='text-xs text-red-500'>{errors.address}</p>}
                 </div>
 
                 {/* Date of Birth */}
@@ -539,35 +566,41 @@ const PersonnelList = () => {
                   <label className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Date of Birth <span className='text-red-500'>*</span></label>
                   <input
                     type="date" name="date_of_birth" value={personnel.date_of_birth} onChange={handleChange}
+                    onBlur={() => handleBlur('date_of_birth')}
                     required
-                    className='px-3 py-2.5 rounded-xl border border-gray-200 dark:border-[#1F2A37] outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all dark:[color-scheme:dark]'
+                    className={`px-3 py-2.5 rounded-xl border outline-none text-sm focus:ring-2 transition-all dark:[color-scheme:dark] ${touched.date_of_birth && errors.date_of_birth ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-crimson-400 focus:ring-crimson-100 dark:ring-[#333741]'}`}
                   />
+                  {touched.date_of_birth && errors.date_of_birth && <p className='text-xs text-red-500'>{errors.date_of_birth}</p>}
                 </div>
 
                 {/* Role */}
                 <div className='flex flex-col gap-1.5'>
                   <label className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Role <span className='text-red-500'>*</span></label>
                   <select
-                    name="role" value={personnel.role} onChange={handleChange} required
-                    className='px-3 py-2.5 rounded-xl border border-gray-200 dark:border-[#1F2A37] outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all bg-white dark:bg-[#161B26]'
+                    name="role" value={personnel.role} onChange={handleChange}
+                    onBlur={() => handleBlur('role')} required
+                    className={`px-3 py-2.5 rounded-xl border outline-none text-sm focus:ring-2 transition-all bg-white dark:bg-[#161B26] ${touched.role && errors.role ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-crimson-400 focus:ring-crimson-100 dark:ring-[#333741]'}`}
                   >
                     <option value="">Select Role</option>
                     <option value="NURSE">Nurse</option>
                     <option value="DOCTOR">Doctor</option>
                   </select>
+                  {touched.role && errors.role && <p className='text-xs text-red-500'>{errors.role}</p>}
                 </div>
 
                 {/* Sex */}
                 <div className='flex flex-col gap-1.5'>
                   <label className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Sex <span className='text-red-500'>*</span></label>
                   <select
-                    name="sex" value={personnel.sex} onChange={handleChange} required
-                    className='px-3 py-2.5 rounded-xl border border-gray-200 dark:border-[#1F2A37] outline-none text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all bg-white dark:bg-[#161B26]'
+                    name="sex" value={personnel.sex} onChange={handleChange}
+                    onBlur={() => handleBlur('sex')} required
+                    className={`px-3 py-2.5 rounded-xl border outline-none text-sm focus:ring-2 transition-all bg-white dark:bg-[#161B26] ${touched.sex && errors.sex ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-crimson-400 focus:ring-crimson-100 dark:ring-[#333741]'}`}
                   >
                     <option value="">Select Sex</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                   </select>
+                  {touched.sex && errors.sex && <p className='text-xs text-red-500'>{errors.sex}</p>}
                 </div>
               </div>
 

@@ -293,6 +293,7 @@ const newMedicine = () => {
                   placeholder='Search medicines...'
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
+                  maxLength={100}
                 />
               </div>
             </div>

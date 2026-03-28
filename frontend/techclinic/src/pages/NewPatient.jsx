@@ -14,6 +14,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { UserPlus, ClipboardList, Plus, X, FileText, StickyNote, Check, Send } from 'lucide-react'
 import Dropdown from '../components/Dropdown'
 import tupLogo from '../assets/image/TUP.png'
+import { validatePatientForm, hasErrors, validateQuantity, validateTreatment, validateNotes, validateDiseaseName, LIMITS } from '../lib/validation'
 
 const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID
 const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
@@ -284,20 +285,10 @@ const NewPatient = () => {
 
   const handleNext = () => {
     if (currentStep === 1) {
-      if (!patientInput.studentId || !patientInput.firstName || !patientInput.lastName ||
-        !patientInput.contactNumber || !patientInput.yearLevel || !patientInput.department ||
-        !patientInput.sex || !patientInput.email || !patientInput.address || !patientInput.dateOfBirth) {
-        showToast({ title: "Incomplete", message: "Please fill out all personal information fields.", type: "warning" });
-        return;
-      }
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(patientInput.email)) {
-        showToast({ title: "Invalid Email", message: "Please enter a valid email address.", type: "warning" });
-        return;
-      }
-      const contactRegex = /^[0-9+\-() ]{7,15}$/;
-      if (!contactRegex.test(patientInput.contactNumber)) {
-        showToast({ title: "Invalid Contact", message: "Please enter a valid contact number.", type: "warning" });
+      const formErrors = validatePatientForm(patientInput);
+      if (hasErrors(formErrors)) {
+        const firstError = Object.values(formErrors).find(Boolean);
+        showToast({ title: "Validation Error", message: firstError || "Please fix the highlighted errors.", type: "warning" });
         return;
       }
     }
@@ -506,25 +497,25 @@ const NewPatient = () => {
                         <div className='space-y-1.5'>
                           <label htmlFor="studentID" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Patient ID</label>
                           <input type="text" name="studentId" placeholder="Enter patient ID" id='studentID' value={patientInput.studentId} onChange={handleSetPatientInput} onBlur={handleStudentIdBlur}
-                            readOnly={isReturningPatient}
+                            readOnly={isReturningPatient} maxLength={LIMITS.STUDENT_ID_MAX}
                             className={`w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all ${isReturningPatient ? 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed opacity-70' : ''}`} />
                         </div>
                         <div className='space-y-1.5'>
                           <label htmlFor="firstName" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>First Name</label>
                           <input type="text" name="firstName" placeholder="Enter first name" id='firstName' value={patientInput.firstName} onChange={handleSetPatientInput}
-                            readOnly={isReturningPatient}
+                            readOnly={isReturningPatient} maxLength={LIMITS.NAME_MAX}
                             className={`w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all ${isReturningPatient ? 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed opacity-70' : ''}`} />
                         </div>
                         <div className='space-y-1.5'>
                           <label htmlFor="lastName" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Last Name</label>
                           <input type="text" name="lastName" placeholder="Enter last name" id='lastName' value={patientInput.lastName} onChange={handleSetPatientInput}
-                            readOnly={isReturningPatient}
+                            readOnly={isReturningPatient} maxLength={LIMITS.NAME_MAX}
                             className={`w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all ${isReturningPatient ? 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed opacity-70' : ''}`} />
                         </div>
                         <div className='space-y-1.5'>
                           <label htmlFor="contactNum" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Contact Number</label>
                           <input type="tel" inputMode="numeric" name="contactNumber" placeholder="Enter contact number" id='contactNum' value={patientInput.contactNumber} onChange={handleSetPatientInput}
-                            readOnly={isReturningPatient}
+                            readOnly={isReturningPatient} maxLength={LIMITS.CONTACT_MAX}
                             className={`w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all ${isReturningPatient ? 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed opacity-70' : ''}`} />
                         </div>
                         <div className='space-y-1.5'>
@@ -578,13 +569,13 @@ const NewPatient = () => {
                         <div className='space-y-1.5'>
                           <label htmlFor="email" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Email</label>
                           <input type="text" name="email" placeholder="Enter email address" id='email' value={patientInput.email} onChange={handleSetPatientInput}
-                            readOnly={isReturningPatient}
+                            readOnly={isReturningPatient} maxLength={LIMITS.EMAIL_MAX}
                             className={`w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all ${isReturningPatient ? 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed opacity-70' : ''}`} />
                         </div>
                         <div className='space-y-1.5'>
                           <label htmlFor="address" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Address</label>
                           <input type="text" name='address' placeholder='Enter address' id='address' value={patientInput.address} onChange={handleSetPatientInput}
-                            readOnly={isReturningPatient}
+                            readOnly={isReturningPatient} maxLength={LIMITS.ADDRESS_MAX}
                             className={`w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all ${isReturningPatient ? 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed opacity-70' : ''}`} />
                         </div>
                         <div className='space-y-1.5'>
@@ -664,6 +655,7 @@ const NewPatient = () => {
                               onChange={(e) => setNewDiseaseName(e.target.value)}
                               onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddDisease(); } }}
                               placeholder="Enter disease name..."
+                              maxLength={LIMITS.NAME_MAX}
                               className='flex-1 py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all'
                               autoFocus
                             />
@@ -688,6 +680,7 @@ const NewPatient = () => {
                           name='treatment'
                           value={patientInput.treatment}
                           onChange={handleSetPatientInput}
+                          maxLength={500}
                           className='w-full flex-1 min-h-[120px] p-3 resize-none outline-none rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all placeholder:text-gray-400 dark:placeholder:text-[#94969C] dark:text-[#94969C]'
                           placeholder='Describe the treatment plan...'
                         />
@@ -737,6 +730,7 @@ const NewPatient = () => {
                         <div className='space-y-1.5'>
                           <label htmlFor="quantity" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Quantity</label>
                           <input type="number" name="quantity" placeholder="Enter quantity" id='quantity' value={patientInput.quantity} onChange={handleSetPatientInput}
+                            min="0" max="9999"
                             className='w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all' />
                         </div>
                       </div>
@@ -750,6 +744,7 @@ const NewPatient = () => {
                           name='notes'
                           value={patientInput.notes}
                           onChange={handleSetPatientInput}
+                          maxLength={1000}
                           className='w-full flex-1 min-h-[120px] p-3 resize-none outline-none rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all placeholder:text-gray-400 dark:placeholder:text-[#94969C] dark:text-[#94969C]'
                           placeholder='Any additional observations or notes...'
                         />

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-function RegistrationInfo({ message, type = 'text', value = '', onChange, name, onClear, onBlur, showValidation = false, disabled = false, lightOnly = false }) {
+function RegistrationInfo({ message, type = 'text', value = '', onChange, name, onClear, onBlur, showValidation = false, disabled = false, lightOnly = false, maxLength, error }) {
     const [isFocused, setIsFocused] = useState(false);
 
     const handleClear = () => {
@@ -18,11 +18,13 @@ function RegistrationInfo({ message, type = 'text', value = '', onChange, name, 
         }
     };
 
-    const borderColor = showValidation && !value
-        ? 'ring-crimson-500'
-        : isFocused
-            ? 'ring-crimson-400 ring-2'
-            : lightOnly ? 'ring-gray-200' : 'ring-gray-200 dark:ring-[#1F2A37]';
+    const borderColor = error
+        ? 'ring-red-400 dark:ring-red-500'
+        : showValidation && !value
+            ? 'ring-crimson-500'
+            : isFocused
+                ? 'ring-crimson-400 ring-2'
+                : lightOnly ? 'ring-gray-200' : 'ring-gray-200 dark:ring-[#1F2A37]';
 
     return (
         <div className="w-full">
@@ -42,6 +44,7 @@ function RegistrationInfo({ message, type = 'text', value = '', onChange, name, 
                     onFocus={() => setIsFocused(true)}
                     onBlur={handleBlur}
                     disabled={disabled}
+                    maxLength={maxLength}
                     className={`w-full text-sm px-4 py-2.5 ring-1 ${borderColor} rounded-xl outline-none transition-all ${lightOnly ? 'text-gray-800' : 'text-gray-800 dark:text-white'} ${disabled ? (lightOnly ? 'bg-gray-100 cursor-not-allowed' : 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed') : (lightOnly ? 'bg-white' : 'bg-white dark:bg-[#161B26]')}`}
                 />
                 {value && !disabled && (
@@ -54,6 +57,7 @@ function RegistrationInfo({ message, type = 'text', value = '', onChange, name, 
                     </button>
                 )}
             </div>
+            {error && <p className="text-xs text-red-500 mt-1 pl-1">{error}</p>}
         </div>
     )
 }

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Check, ChevronDown } from 'lucide-react'
 
-function Dropdown({ options = [], placeholder = 'Select an option', label, value = '', onChange, name, showValidation = false, disabled = false, lightOnly = false }) {
+function Dropdown({ options = [], placeholder = 'Select an option', label, value = '', onChange, name, showValidation = false, disabled = false, lightOnly = false, error }) {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
 
@@ -30,11 +30,13 @@ function Dropdown({ options = [], placeholder = 'Select an option', label, value
         setIsOpen(false);
     };
 
-    const borderColor = showValidation && !value
-        ? 'ring-crimson-500'
-        : isOpen
-            ? 'ring-crimson-400 ring-2'
-            : lightOnly ? 'ring-gray-200' : 'ring-gray-200 dark:ring-[#1F2A37]';
+    const borderColor = error
+        ? 'ring-red-400 dark:ring-red-500'
+        : showValidation && !value
+            ? 'ring-crimson-500'
+            : isOpen
+                ? 'ring-crimson-400 ring-2'
+                : lightOnly ? 'ring-gray-200' : 'ring-gray-200 dark:ring-[#1F2A37]';
 
     return (
         <div className="w-full relative" ref={dropdownRef}>
@@ -76,6 +78,7 @@ function Dropdown({ options = [], placeholder = 'Select an option', label, value
                     })}
                 </div>
             )}
+            {error && <p className="text-xs text-red-500 mt-1 pl-1">{error}</p>}
         </div>
     )
 }

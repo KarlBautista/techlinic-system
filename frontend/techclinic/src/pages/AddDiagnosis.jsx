@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ClipboardList, Plus, X, FileText, StickyNote, Check, Send, Stethoscope, Pill } from 'lucide-react'
 import Dropdown from '../components/Dropdown'
 import tupLogo from '../assets/image/TUP.png'
+import { LIMITS } from '../lib/validation'
 
 const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
 const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
@@ -404,6 +405,7 @@ const AddDiagnosis = () => {
                           onChange={(e) => setNewDiseaseName(e.target.value)}
                           onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddDisease(); } }}
                           placeholder="Enter disease name..."
+                          maxLength={LIMITS.NAME_MAX}
                           className='flex-1 py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all'
                           autoFocus
                         />
@@ -428,6 +430,7 @@ const AddDiagnosis = () => {
                       name='treatment'
                       value={patientInput.treatment}
                       onChange={handleSetPatientInput}
+                      maxLength={500}
                       className='w-full flex-1 min-h-[120px] p-3 resize-none outline-none rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all placeholder:text-gray-400 dark:placeholder:text-[#94969C] dark:text-[#94969C]'
                       placeholder='Describe the treatment plan...'
                     />
@@ -472,6 +475,7 @@ const AddDiagnosis = () => {
                     <div className='space-y-1.5'>
                       <label htmlFor="quantity" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Quantity</label>
                       <input type="number" name="quantity" placeholder="Enter quantity" id='quantity' value={patientInput.quantity} onChange={handleSetPatientInput}
+                        min="0" max="9999"
                         className='w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all' />
                     </div>
                   </div>
@@ -485,6 +489,7 @@ const AddDiagnosis = () => {
                       name='notes'
                       value={patientInput.notes}
                       onChange={handleSetPatientInput}
+                      maxLength={1000}
                       className='w-full flex-1 min-h-[120px] p-3 resize-none outline-none rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all placeholder:text-gray-400 dark:placeholder:text-[#94969C] dark:text-[#94969C]'
                       placeholder='Any additional observations or notes...'
                     />

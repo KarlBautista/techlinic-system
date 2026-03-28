@@ -5,6 +5,7 @@ import emailjs from '@emailjs/browser'
 import supabase from '../config/supabaseClient'
 import useAuth from '../store/useAuthStore'
 import tupLogo from '../assets/image/TUP.png'
+import { validateEmail, validateExcusedDays, LIMITS } from '../lib/validation'
 
 const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID
 const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
@@ -114,7 +115,11 @@ const DiagnosisModal = ({ open = false, onClose = () => { }, patient = {}, recor
   };
 
   const sendEmail = async () => {
-    if (!emailTo.trim()) return;
+    const emailErr = validateEmail(emailTo);
+    if (emailErr) {
+      setEmailStatus('error');
+      return;
+    }
     setSending(true);
     setEmailStatus(null);
 
@@ -320,6 +325,7 @@ const DiagnosisModal = ({ open = false, onClose = () => { }, patient = {}, recor
               type="email"
               value={emailTo}
               onChange={(e) => setEmailTo(e.target.value)}
+              maxLength={LIMITS.EMAIL_MAX}
               placeholder="patient@email.com"
               className="w-full border border-gray-300 dark:border-[#333741] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 mb-4"
             />
@@ -543,6 +549,7 @@ const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime, timeDischar
               inputMode="numeric"
               value={timeDischarged}
               onChange={(e) => onTimeDischargedChange(e.target.value.replace(/[^0-9]/g, ''))}
+              maxLength={4}
               placeholder="__________"
               className="w-24 text-center font-medium underline outline-none bg-transparent"
             />
@@ -720,6 +727,9 @@ const CertificateTab = ({ patient, diagnosis, visitDate, excusedDays, onExcusedD
             inputMode="numeric"
             value={excusedDays}
             onChange={(e) => onExcusedDaysChange(e.target.value.replace(/[^0-9]/g, ''))}
+            maxLength={2}
+            min="0"
+            max="30"
             placeholder="__"
             className="w-12 text-center font-medium border-b border-gray-400 dark:border-[#94969C] outline-none bg-transparent print:border-none"
           />{' '}

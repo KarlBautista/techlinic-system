@@ -170,6 +170,7 @@ const Login = () => {
                                     onChange={handleEmailChange}
                                     onBlur={() => handleBlur('email')}
                                     placeholder="you@tup.edu.ph"
+                                    maxLength={254}
                                     className={`w-full pl-10 pr-4 py-3 rounded-xl border text-sm text-gray-800 placeholder:text-gray-400 outline-none transition-all ${
                                         touched.email && errors.email
                                             ? 'border-red-400 focus:border-red-400 focus:ring-2 focus:ring-red-100'
@@ -195,6 +196,7 @@ const Login = () => {
                                     onChange={handlePasswordChange}
                                     onBlur={() => handleBlur('password')}
                                     placeholder="Enter your password"
+                                    maxLength={128}
                                     className={`w-full pl-10 pr-10 py-3 rounded-xl border text-sm text-gray-800 placeholder:text-gray-400 outline-none transition-all ${
                                         touched.password && errors.password
                                             ? 'border-red-400 focus:border-red-400 focus:ring-2 focus:ring-red-100'

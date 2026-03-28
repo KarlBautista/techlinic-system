@@ -8,6 +8,7 @@ import axios from 'axios'
 import { showToast } from '../components/Toast'
 import { showModal } from '../components/Modal'
 import TUP from '../assets/image/TUP.png'
+import { validatePatientForm, hasErrors, LIMITS } from '../lib/validation'
 
 // Constants
 const INITIAL_FORM_DATA = {
@@ -159,59 +160,14 @@ function LandingPage() {
     const handleFormSubmit = async (e) => {
         e.preventDefault();
 
-        const trimmed = {
-            studentId: formData.studentId.trim(),
-            firstName: formData.firstName.trim(),
-            lastName: formData.lastName.trim(),
-            email: formData.email.trim(),
-            contactNumber: formData.contactNumber.trim(),
-            address: formData.address.trim(),
-        };
+        // Validate all fields using shared validation
+        const formErrors = validatePatientForm(formData);
+        setErrors(formErrors);
 
-        if (!trimmed.studentId || !trimmed.firstName || !trimmed.lastName || !trimmed.contactNumber ||
-            !formData.yearLevel || !formData.department || !formData.sex || !trimmed.email ||
-            !trimmed.address || !formData.dateOfBirth) {
+        if (hasErrors(formErrors)) {
             showToast({
-                title: "Incomplete Form",
-                message: "Please fill out all required fields before submitting.",
-                type: "warning"
-            });
-            return;
-        }
-
-        if (!PATIENT_ID_REGEX.test(trimmed.studentId)) {
-            showToast({
-                title: "Invalid Patient ID",
-                message: "Patient ID must contain only letters, numbers, and hyphens.",
-                type: "warning"
-            });
-            return;
-        }
-
-        if (!NAME_REGEX.test(trimmed.firstName) || !NAME_REGEX.test(trimmed.lastName)) {
-            showToast({
-                title: "Invalid Name",
-                message: "First Name and Last Name contain invalid characters.",
-                type: "warning"
-            });
-            return;
-        }
-
-        // Validate email format
-        if (!EMAIL_REGEX.test(trimmed.email)) {
-            showToast({
-                title: "Invalid Email",
-                message: "Please enter a valid email address.",
-                type: "warning"
-            });
-            return;
-        }
-
-        // Validate contact number
-        if (!CONTACT_REGEX.test(trimmed.contactNumber)) {
-            showToast({
-                title: "Invalid Contact Number",
-                message: "Please enter a valid contact number (7-15 digits).",
+                title: "Validation Error",
+                message: "Please fix the highlighted errors before submitting.",
                 type: "warning"
             });
             return;
@@ -452,24 +408,19 @@ function LandingPage() {
                                     className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5"
                                 >
                                     <div className="md:col-span-2">
-                                        <RegistrationInfo message="Patient ID*" name="studentId" value={formData.studentId} onChange={handleInputChange} onBlur={handleStudentIdBlur} showValidation={!!errors.studentId} disabled={isStudentConfirmed} lightOnly />
-                                        {errors.studentId && <p className="text-xs text-red-500 mt-1 pl-1">{errors.studentId}</p>}
+                                        <RegistrationInfo message="Patient ID*" name="studentId" value={formData.studentId} onChange={handleInputChange} onBlur={handleStudentIdBlur} showValidation={!!errors.studentId} error={errors.studentId} maxLength={LIMITS.STUDENT_ID_MAX} disabled={isStudentConfirmed} lightOnly />
                                     </div>
                                     <div>
-                                        <RegistrationInfo message="First Name*" name="firstName" value={formData.firstName} onChange={handleInputChange} showValidation={!!errors.firstName} disabled={isStudentConfirmed} lightOnly />
-                                        {errors.firstName && <p className="text-xs text-red-500 mt-1 pl-1">{errors.firstName}</p>}
+                                        <RegistrationInfo message="First Name*" name="firstName" value={formData.firstName} onChange={handleInputChange} showValidation={!!errors.firstName} error={errors.firstName} maxLength={LIMITS.NAME_MAX} disabled={isStudentConfirmed} lightOnly />
                                     </div>
                                     <div>
-                                        <RegistrationInfo message="Last Name*" name="lastName" value={formData.lastName} onChange={handleInputChange} showValidation={!!errors.lastName} disabled={isStudentConfirmed} lightOnly />
-                                        {errors.lastName && <p className="text-xs text-red-500 mt-1 pl-1">{errors.lastName}</p>}
+                                        <RegistrationInfo message="Last Name*" name="lastName" value={formData.lastName} onChange={handleInputChange} showValidation={!!errors.lastName} error={errors.lastName} maxLength={LIMITS.NAME_MAX} disabled={isStudentConfirmed} lightOnly />
                                     </div>
                                     <div>
-                                        <Dropdown name="sex" options={SEX_OPTIONS} placeholder="Sex*" value={formData.sex} onChange={handleInputChange} showValidation={!!errors.sex} disabled={isStudentConfirmed} lightOnly />
-                                        {errors.sex && <p className="text-xs text-red-500 mt-1 pl-1">{errors.sex}</p>}
+                                        <Dropdown name="sex" options={SEX_OPTIONS} placeholder="Sex*" value={formData.sex} onChange={handleInputChange} showValidation={!!errors.sex} error={errors.sex} disabled={isStudentConfirmed} lightOnly />
                                     </div>
                                     <div>
-                                        <RegistrationInfo type="date" message="Date of Birth*" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleInputChange} showValidation={!!errors.dateOfBirth} disabled={isStudentConfirmed} lightOnly />
-                                        {errors.dateOfBirth && <p className="text-xs text-red-500 mt-1 pl-1">{errors.dateOfBirth}</p>}
+                                        <RegistrationInfo type="date" message="Date of Birth*" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleInputChange} showValidation={!!errors.dateOfBirth} error={errors.dateOfBirth} disabled={isStudentConfirmed} lightOnly />
                                     </div>
                                 </motion.div>
                             )}
@@ -485,24 +436,19 @@ function LandingPage() {
                                     className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5"
                                 >
                                     <div>
-                                        <RegistrationInfo message="Email Address*" name="email" value={formData.email} onChange={handleInputChange} showValidation={!!errors.email} disabled={isStudentConfirmed} lightOnly />
-                                        {errors.email && <p className="text-xs text-red-500 mt-1 pl-1">{errors.email}</p>}
+                                        <RegistrationInfo message="Email Address*" name="email" value={formData.email} onChange={handleInputChange} showValidation={!!errors.email} error={errors.email} maxLength={LIMITS.EMAIL_MAX} disabled={isStudentConfirmed} lightOnly />
                                     </div>
                                     <div>
-                                        <RegistrationInfo message="Contact Number*" name="contactNumber" value={formData.contactNumber} onChange={handleInputChange} showValidation={!!errors.contactNumber} disabled={isStudentConfirmed} lightOnly />
-                                        {errors.contactNumber && <p className="text-xs text-red-500 mt-1 pl-1">{errors.contactNumber}</p>}
+                                        <RegistrationInfo message="Contact Number*" name="contactNumber" value={formData.contactNumber} onChange={handleInputChange} showValidation={!!errors.contactNumber} error={errors.contactNumber} maxLength={LIMITS.CONTACT_MAX} disabled={isStudentConfirmed} lightOnly />
                                     </div>
                                     <div className="md:col-span-2">
-                                        <RegistrationInfo message="Address*" name="address" value={formData.address} onChange={handleInputChange} showValidation={!!errors.address} disabled={isStudentConfirmed} lightOnly />
-                                        {errors.address && <p className="text-xs text-red-500 mt-1 pl-1">{errors.address}</p>}
+                                        <RegistrationInfo message="Address*" name="address" value={formData.address} onChange={handleInputChange} showValidation={!!errors.address} error={errors.address} maxLength={LIMITS.ADDRESS_MAX} disabled={isStudentConfirmed} lightOnly />
                                     </div>
                                     <div>
-                                        <Dropdown name="department" options={DEPARTMENT_OPTIONS} placeholder="Department*" value={formData.department} onChange={handleInputChange} showValidation={!!errors.department} disabled={isStudentConfirmed} lightOnly />
-                                        {errors.department && <p className="text-xs text-red-500 mt-1 pl-1">{errors.department}</p>}
+                                        <Dropdown name="department" options={DEPARTMENT_OPTIONS} placeholder="Department*" value={formData.department} onChange={handleInputChange} showValidation={!!errors.department} error={errors.department} disabled={isStudentConfirmed} lightOnly />
                                     </div>
                                     <div>
-                                        <Dropdown name="yearLevel" options={YEAR_OPTIONS} placeholder="Year Level*" value={formData.yearLevel} onChange={handleInputChange} showValidation={!!errors.yearLevel} disabled={isStudentConfirmed} lightOnly />
-                                        {errors.yearLevel && <p className="text-xs text-red-500 mt-1 pl-1">{errors.yearLevel}</p>}
+                                        <Dropdown name="yearLevel" options={YEAR_OPTIONS} placeholder="Year Level*" value={formData.yearLevel} onChange={handleInputChange} showValidation={!!errors.yearLevel} error={errors.yearLevel} disabled={isStudentConfirmed} lightOnly />
                                     </div>
                                 </motion.div>
                             )}

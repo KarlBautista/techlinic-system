@@ -261,6 +261,7 @@ const ActivityLog = () => {
                   className='outline-none w-full ml-2 text-xs text-gray-700 dark:text-[#CECFD2] placeholder:text-gray-400 dark:placeholder:text-[#94969C] bg-transparent'
                   placeholder='Search activity...'
                   onChange={(e) => setSearch(e.target.value)}
+                  maxLength={100}
                 />
               </div>
             </div>

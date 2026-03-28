@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { authenticate, authorize } = require("../middleware/auth");
+const { validateAddDisease } = require("../middleware/validate");
 
 const { getAllDiseases, getAllNumberOfDiseases, addDisease } = require("../controllers/diseasesController");
 
@@ -9,7 +10,6 @@ router.get("/get-all-diseases", authenticate, authorize("DOCTOR", "NURSE"), getA
 router.get("/get-all-number-of-diseases", authenticate, authorize("DOCTOR", "NURSE"), getAllNumberOfDiseases);
 
 // ── Only DOCTOR can add new diseases ──
-router.post("/add-disease", authenticate, authorize("DOCTOR"), addDisease);
-
+router.post("/add-disease", authenticate, authorize("DOCTOR"), validateAddDisease, addDisease);
 
 module.exports = router;

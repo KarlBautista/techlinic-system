@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { authenticate, authorize } = require("../middleware/auth");
+const { validateCustomDateRange } = require("../middleware/validate");
 
 const { getWeeklyPatients, getMonthyPatients, getQuarterlyPatient, getYearlyPatientCount, getWeeklyPatientsPerDepartment, getMonthlyPatientsPerDepartment,
 getQuarterlyPatientsPerDepartment, getYearlyPatientsPerDepartment, getWeeklyTopDiagnoses, getMonthlyTopDiagnoses, getQuarterlyTopDiagnoses, getYearlyTopDiagnoses,
@@ -21,7 +22,7 @@ router.get("/get-monthly-top-diagnoses", authenticate, authorize("DOCTOR", "NURS
 router.get("/get-quarterly-top-diagnoses", authenticate, authorize("DOCTOR", "NURSE"), getQuarterlyTopDiagnoses);
 router.get("/get-yearly-top-diagnoses", authenticate, authorize("DOCTOR", "NURSE"), getYearlyTopDiagnoses);
 router.get("/get-most-used-medicines", authenticate, authorize("DOCTOR", "NURSE"), getMostUsedMedicines);
-router.get("/get-custom-patients", authenticate, authorize("DOCTOR", "NURSE"), getCustomPatients);
-router.get("/get-custom-patients-per-department", authenticate, authorize("DOCTOR", "NURSE"), getCustomPatientsPerDepartment);
-router.get("/get-custom-top-diagnoses", authenticate, authorize("DOCTOR", "NURSE"), getCustomTopDiagnoses);
+router.get("/get-custom-patients", authenticate, authorize("DOCTOR", "NURSE"), validateCustomDateRange, getCustomPatients);
+router.get("/get-custom-patients-per-department", authenticate, authorize("DOCTOR", "NURSE"), validateCustomDateRange, getCustomPatientsPerDepartment);
+router.get("/get-custom-top-diagnoses", authenticate, authorize("DOCTOR", "NURSE"), validateCustomDateRange, getCustomTopDiagnoses);
 module.exports = router;

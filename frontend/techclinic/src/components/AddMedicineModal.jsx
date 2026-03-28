@@ -2,11 +2,14 @@ import React, { useState } from 'react'
 import { showToast } from './Toast'
 import { showModal } from './Modal'
 import useMedicine from '../store/useMedicineStore'
+import { validateMedicineForm, hasErrors } from '../lib/validation'
 
 const AddMedicineModal = ({ onClose }) => {
   const { insertMedicine } = useMedicine()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isClosing, setIsClosing] = useState(false)
+  const [errors, setErrors] = useState({})
+  const [touched, setTouched] = useState({})
   const [form, setForm] = useState({
     name: '',
     generic: '',
@@ -22,6 +25,16 @@ const AddMedicineModal = ({ onClose }) => {
   const handleChange = (e) => {
     const { name, value } = e.target
     setForm(prev => ({ ...prev, [name]: value }))
+    if (touched[name]) {
+      const allErrors = validateMedicineForm({ ...form, [name]: value })
+      setErrors(prev => ({ ...prev, [name]: allErrors[name] || '' }))
+    }
+  }
+
+  const handleBlur = (field) => {
+    setTouched(prev => ({ ...prev, [field]: true }))
+    const allErrors = validateMedicineForm(form)
+    setErrors(prev => ({ ...prev, [field]: allErrors[field] || '' }))
   }
 
   const handleClose = () => {
@@ -35,6 +48,17 @@ const AddMedicineModal = ({ onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (isSubmitting) return
+
+    // Validate all fields
+    const allErrors = validateMedicineForm(form)
+    setErrors(allErrors)
+    setTouched({ name: true, generic: true, brand: true, type: true, dosage: true, unit: true, stock: true, batch: true, expiry: true })
+
+    if (hasErrors(allErrors)) {
+      const firstError = Object.values(allErrors).find(e => e !== '')
+      showToast({ title: 'Validation Error', message: firstError, type: 'warning' })
+      return
+    }
 
     const confirmed = await showModal({
       type: "confirm",
@@ -54,6 +78,8 @@ const AddMedicineModal = ({ onClose }) => {
       }
       showToast({ title: 'Medicine Added Successfully', message: 'The new medicine has been added to inventory', type: 'success' })
       setForm({ name: '', generic: '', brand: '', type: '', dosage: '', unit: '', stock: '', batch: '', expiry: '' })
+      setErrors({})
+      setTouched({})
       handleClose()
       window.location.reload()
     } catch (err) {
@@ -105,15 +131,18 @@ const AddMedicineModal = ({ onClose }) => {
         {/* Body */}
         <div className="px-6 py-5 grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[60vh] overflow-y-auto">
           <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">Medicine Name</span>
+            <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">Medicine Name <span className="text-red-500">*</span></span>
             <input
               name="name"
               value={form.name}
               onChange={handleChange}
-              className="h-10 px-3 rounded-lg border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:bg-[#161B26] focus:border-[#b01c34] focus:ring-1 focus:ring-[#b01c34]/20 transition-all outline-none"
+              onBlur={() => handleBlur('name')}
+              maxLength={200}
+              className={`h-10 px-3 rounded-lg border text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:focus:bg-[#161B26] focus:ring-1 transition-all outline-none ${touched.name && errors.name ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-[#b01c34] focus:ring-[#b01c34]/20'}`}
               placeholder="Paracetamol"
               required
             />
+            {touched.name && errors.name && <p className="text-xs text-red-500">{errors.name}</p>}
           </label>
 
           <label className="flex flex-col gap-1.5">
@@ -122,9 +151,12 @@ const AddMedicineModal = ({ onClose }) => {
               name="generic"
               value={form.generic}
               onChange={handleChange}
-              className="h-10 px-3 rounded-lg border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:bg-[#161B26] focus:border-[#b01c34] focus:ring-1 focus:ring-[#b01c34]/20 transition-all outline-none"
+              onBlur={() => handleBlur('generic')}
+              maxLength={200}
+              className={`h-10 px-3 rounded-lg border text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:focus:bg-[#161B26] focus:ring-1 transition-all outline-none ${touched.generic && errors.generic ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-[#b01c34] focus:ring-[#b01c34]/20'}`}
               placeholder="Acetaminophen"
             />
+            {touched.generic && errors.generic && <p className="text-xs text-red-500">{errors.generic}</p>}
           </label>
 
           <label className="flex flex-col gap-1.5">
@@ -133,9 +165,12 @@ const AddMedicineModal = ({ onClose }) => {
               name="brand"
               value={form.brand}
               onChange={handleChange}
-              className="h-10 px-3 rounded-lg border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:bg-[#161B26] focus:border-[#b01c34] focus:ring-1 focus:ring-[#b01c34]/20 transition-all outline-none"
+              onBlur={() => handleBlur('brand')}
+              maxLength={200}
+              className={`h-10 px-3 rounded-lg border text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:focus:bg-[#161B26] focus:ring-1 transition-all outline-none ${touched.brand && errors.brand ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-[#b01c34] focus:ring-[#b01c34]/20'}`}
               placeholder="ABC Pharma"
             />
+            {touched.brand && errors.brand && <p className="text-xs text-red-500">{errors.brand}</p>}
           </label>
 
           <label className="flex flex-col gap-1.5">
@@ -144,66 +179,83 @@ const AddMedicineModal = ({ onClose }) => {
               name="type"
               value={form.type}
               onChange={handleChange}
-              className="h-10 px-3 rounded-lg border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:bg-[#161B26] focus:border-[#b01c34] focus:ring-1 focus:ring-[#b01c34]/20 transition-all outline-none"
+              onBlur={() => handleBlur('type')}
+              maxLength={100}
+              className={`h-10 px-3 rounded-lg border text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:focus:bg-[#161B26] focus:ring-1 transition-all outline-none ${touched.type && errors.type ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-[#b01c34] focus:ring-[#b01c34]/20'}`}
               placeholder="e.g. Tablet, Syrup, Injection"
             />
+            {touched.type && errors.type && <p className="text-xs text-red-500">{errors.type}</p>}
           </label>
 
           <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">Dosage</span>
+            <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">Dosage <span className="text-red-500">*</span></span>
             <input
               name="dosage"
               value={form.dosage}
               onChange={handleChange}
-              className="h-10 px-3 rounded-lg border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:bg-[#161B26] focus:border-[#b01c34] focus:ring-1 focus:ring-[#b01c34]/20 transition-all outline-none"
+              onBlur={() => handleBlur('dosage')}
+              maxLength={100}
+              className={`h-10 px-3 rounded-lg border text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:focus:bg-[#161B26] focus:ring-1 transition-all outline-none ${touched.dosage && errors.dosage ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-[#b01c34] focus:ring-[#b01c34]/20'}`}
               placeholder="500mg"
             />
+            {touched.dosage && errors.dosage && <p className="text-xs text-red-500">{errors.dosage}</p>}
           </label>
 
           <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">Unit of Measure</span>
+            <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">Unit of Measure <span className="text-red-500">*</span></span>
             <input
               name="unit"
               value={form.unit}
               onChange={handleChange}
-              className="h-10 px-3 rounded-lg border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:bg-[#161B26] focus:border-[#b01c34] focus:ring-1 focus:ring-[#b01c34]/20 transition-all outline-none"
+              onBlur={() => handleBlur('unit')}
+              maxLength={50}
+              className={`h-10 px-3 rounded-lg border text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:focus:bg-[#161B26] focus:ring-1 transition-all outline-none ${touched.unit && errors.unit ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-[#b01c34] focus:ring-[#b01c34]/20'}`}
               placeholder="e.g. mg, mL, IU"
             />
+            {touched.unit && errors.unit && <p className="text-xs text-red-500">{errors.unit}</p>}
           </label>
 
           <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">Stock Level</span>
+            <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">Stock Level <span className="text-red-500">*</span></span>
             <input
               name="stock"
               value={form.stock}
               onChange={handleChange}
+              onBlur={() => handleBlur('stock')}
               type="number"
               min="0"
-              className="h-10 px-3 rounded-lg border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:bg-[#161B26] focus:border-[#b01c34] focus:ring-1 focus:ring-[#b01c34]/20 transition-all outline-none"
+              max="999999"
+              className={`h-10 px-3 rounded-lg border text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:focus:bg-[#161B26] focus:ring-1 transition-all outline-none ${touched.stock && errors.stock ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-[#b01c34] focus:ring-[#b01c34]/20'}`}
               placeholder="100"
             />
+            {touched.stock && errors.stock && <p className="text-xs text-red-500">{errors.stock}</p>}
           </label>
 
           <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">Batch Number</span>
+            <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">Batch Number <span className="text-red-500">*</span></span>
             <input
               name="batch"
               value={form.batch}
               onChange={handleChange}
-              className="h-10 px-3 rounded-lg border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:bg-[#161B26] focus:border-[#b01c34] focus:ring-1 focus:ring-[#b01c34]/20 transition-all outline-none"
+              onBlur={() => handleBlur('batch')}
+              maxLength={50}
+              className={`h-10 px-3 rounded-lg border text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:focus:bg-[#161B26] focus:ring-1 transition-all outline-none ${touched.batch && errors.batch ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-[#b01c34] focus:ring-[#b01c34]/20'}`}
               placeholder="B1234"
             />
+            {touched.batch && errors.batch && <p className="text-xs text-red-500">{errors.batch}</p>}
           </label>
 
           <label className="flex flex-col gap-1.5 md:col-span-2">
-            <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">Expiry Date</span>
+            <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">Expiry Date <span className="text-red-500">*</span></span>
             <input
               name="expiry"
               value={form.expiry}
               onChange={handleChange}
+              onBlur={() => handleBlur('expiry')}
               type="date"
-              className="h-10 px-3 rounded-lg border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:bg-[#161B26] focus:border-[#b01c34] focus:ring-1 focus:ring-[#b01c34]/20 transition-all outline-none max-w-xs"
+              className={`h-10 px-3 rounded-lg border text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:focus:bg-[#161B26] focus:ring-1 transition-all outline-none max-w-xs ${touched.expiry && errors.expiry ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-[#b01c34] focus:ring-[#b01c34]/20'}`}
             />
+            {touched.expiry && errors.expiry && <p className="text-xs text-red-500">{errors.expiry}</p>}
           </label>
         </div>
 
