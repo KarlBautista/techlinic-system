@@ -132,6 +132,9 @@ const DiagnosisModal = ({ open = false, onClose = () => { }, patient = {}, recor
       to_name: `${patient?.first_name ?? ''} ${patient?.last_name ?? ''}`.trim(),
       patient_id: patient?.student_id ?? patient?.id ?? '—',
       date: visitDate,
+      time_entered: visitTime || '—',
+      diagnosis: primaryDiagnosis?.diagnosis ?? '—',
+      treatment: primaryDiagnosis?.treatment ?? '—',
       physician_name: physicianName,
       physician_role: effectivePhysician?.role === 'DOCTOR' ? 'Attending Physician' : 'Attending Personnel',
       physician_signature: effectivePhysician?.signature_url ?? '',
@@ -142,6 +145,9 @@ const DiagnosisModal = ({ open = false, onClose = () => { }, patient = {}, recor
         notes: primaryDiagnosis?.notes ?? primaryDiagnosis?.additional_notes ?? '—',
         time_discharged: timeDischarged.trim() || '__________',
       } : {
+        medication: primaryDiagnosis?.medication ?? '—',
+        quantity: primaryDiagnosis?.quantity ?? '—',
+        notes: primaryDiagnosis?.notes ?? primaryDiagnosis?.additional_notes ?? '—',
         excused_days: excusedDays || '—',
       }),
     };

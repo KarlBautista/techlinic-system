@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Medical Certificate — TechClinic</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f9fafb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f9fafb;padding:32px 0;">
+    <tr>
+      <td align="center">
+        <!-- Outer Card -->
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:8px;border:1px solid #d1d5db;overflow:hidden;">
+
+          <!-- ─── Header ─── -->
+          <tr>
+            <td style="padding:24px 24px 16px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="vertical-align:top;width:50%;">
+                    <table role="presentation" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="vertical-align:middle;padding-right:12px;">
+                          <img src="https://hvnfijudokbvnydzpvko.supabase.co/storage/v1/object/public/public-assets/tup-logo.png" alt="TUP" width="48" height="48" style="display:block;" />
+                        </td>
+                        <td style="vertical-align:middle;">
+                          <span style="font-size:18px;font-weight:bold;color:#1f2937;letter-spacing:0.05em;">MEDICAL CERTIFICATE</span>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                  <td style="vertical-align:top;text-align:right;font-size:11px;color:#374151;line-height:1.5;">
+                    Ayala Blvd, Ermita, Manila, 1000, Philippines<br />
+                    Tel No. +632-5301-3001 local 607<br />
+                    Flex No. +632-8521-4063 | Email: clinic@tup.edu.ph
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- ─── Date ─── -->
+          <tr>
+            <td style="padding:12px 24px;border-top:1px solid #d1d5db;border-bottom:1px solid #d1d5db;font-size:13px;color:#1f2937;">
+              Date: <strong style="text-decoration:underline;">{{date}}</strong>
+            </td>
+          </tr>
+
+          <!-- ─── To Whom It May Concern ─── -->
+          <tr>
+            <td style="padding:16px 24px;border-bottom:1px solid #d1d5db;font-size:13px;color:#1f2937;">
+              <p style="margin:0 0 8px;font-weight:600;">TO WHOM IT MAY CONCERN:</p>
+              <p style="margin:0;line-height:1.6;">
+                This is to certify that
+                <strong style="text-decoration:underline;">{{to_name}}</strong>
+                (ID: <strong style="text-decoration:underline;">{{patient_id}}</strong>)
+                was examined at the Medical-Dental Clinic on
+                <strong style="text-decoration:underline;">{{date}}</strong>.
+              </p>
+            </td>
+          </tr>
+
+          <!-- ─── Findings ─── -->
+          <tr>
+            <td style="padding:16px 24px;border-bottom:1px solid #d1d5db;">
+              <span style="font-size:10px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;">Findings</span>
+              <p style="margin:4px 0 0;font-size:13px;font-weight:500;color:#1f2937;">
+                {{diagnosis}}{{treatment}}
+              </p>
+            </td>
+          </tr>
+
+          <!-- ─── Medication ─── -->
+          <tr>
+            <td style="padding:16px 24px;border-bottom:1px solid #d1d5db;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="width:50%;vertical-align:top;">
+                    <span style="font-size:10px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;">Medication Prescribed</span>
+                    <p style="margin:4px 0 0;font-size:13px;font-weight:500;color:#1f2937;">{{medication}}</p>
+                  </td>
+                  <td style="width:50%;vertical-align:top;">
+                    <span style="font-size:10px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;">Quantity</span>
+                    <p style="margin:4px 0 0;font-size:13px;font-weight:500;color:#1f2937;">{{quantity}}</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- ─── Recommendation ─── -->
+          <tr>
+            <td style="padding:16px 24px;border-bottom:1px solid #d1d5db;">
+              <span style="font-size:10px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;">Recommendation</span>
+              <p style="margin:4px 0 0;font-size:13px;font-weight:500;color:#1f2937;">{{notes}}</p>
+            </td>
+          </tr>
+
+          <!-- ─── Excused Days ─── -->
+          <tr>
+            <td style="padding:16px 24px;border-bottom:1px solid #d1d5db;font-size:13px;color:#1f2937;line-height:1.6;">
+              It is recommended that the above-named patient be excused from their duties/activities for
+              <strong style="text-decoration:underline;">{{excused_days}}</strong> day(s) starting from
+              <strong>{{date}}</strong>.
+            </td>
+          </tr>
+
+          <!-- ─── Physician Signature ─── -->
+          <tr>
+            <td style="padding:24px 24px 32px;text-align:right;">
+              <div style="display:inline-block;text-align:center;">
+                {{#physician_signature}}
+                <img src="{{physician_signature}}" alt="Signature" style="max-height:60px;max-width:180px;display:block;margin:0 auto 4px;" />
+                {{/physician_signature}}
+                <div style="border-top:1px solid #1f2937;padding-top:4px;min-width:180px;">
+                  <div style="font-size:13px;font-weight:500;color:#1f2937;">{{physician_name}}</div>
+                  <div style="font-size:12px;color:#6b7280;">{{physician_role}}</div>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <!-- ─── Footer ─── -->
+          <tr>
+            <td style="background-color:#fafafa;padding:16px 24px;text-align:center;border-top:1px solid #e5e7eb;">
+              <p style="margin:0;color:#9ca3af;font-size:11px;">
+                TechClinic — Technological University of the Philippines<br />
+                This is an automated email. Please do not reply directly.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
