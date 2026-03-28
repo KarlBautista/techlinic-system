@@ -33,6 +33,26 @@ TechClinic uses **Supabase Auth** with email/password authentication.
 3. Navigates to / (landing page)
 ```
 
+### Password Recovery (Forgot Password)
+```
+1. User clicks "Forgot Password?" on /login
+2. Navigated to /forgot-password
+3. User enters their email address
+4. Frontend calls supabase.auth.resetPasswordForEmail(email, { redirectTo })
+5. Supabase sends a password reset email with a recovery link
+6. User clicks the link → redirected to /reset-password with recovery token
+7. Frontend detects PASSWORD_RECOVERY event via onAuthStateChange
+8. User enters new password + confirmation
+9. Frontend calls supabase.auth.updateUser({ password })
+10. User is signed out and redirected to /login
+```
+
+#### Key Details:
+- Uses `window.location.origin` for the redirect URL, so it works on any domain (localhost, production)
+- Recovery link expires in 1 hour (configured in Supabase)
+- Branded email template at `supabase/templates/recovery.html`
+- Invalid/expired links show a helpful error page with option to request a new link
+
 ---
 
 ## User Roles

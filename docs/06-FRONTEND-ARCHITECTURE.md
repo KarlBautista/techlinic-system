@@ -8,6 +8,8 @@ All routes are defined in `src/router/router.jsx` using `react-router-dom`'s `cr
 |------|-----------|--------|-------------|
 | `/` | `LandingPage` | Public | Student self-registration kiosk |
 | `/login` | `Login` | Public | Staff login |
+| `/forgot-password` | `ForgotPassword` | Public | Password reset request |
+| `/reset-password` | `ResetPassword` | Public | Set new password (from email link) |
 | `/dashboard` | `newDashboard` | Staff | Main dashboard with stats |
 | `/new-patient` | `NewPatient` | Nurse | Add new patient form |
 | `/patient-record` | `PatientRecord` | Staff | All patient records list |

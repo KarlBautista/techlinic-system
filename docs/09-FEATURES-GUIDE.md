@@ -52,6 +52,34 @@ Detailed breakdown of every feature in the TechClinic system.
 
 ---
 
+## Feature 2.5: Password Recovery (Forgot Password)
+
+**Pages:** ForgotPassword (`/forgot-password`), ResetPassword (`/reset-password`)  
+**Who uses it:** Nurses, Doctors  
+**Files:** `pages/ForgotPassword.jsx`, `pages/ResetPassword.jsx`
+
+### How it works:
+1. User clicks **"Forgot Password?"** link on the Login page
+2. Enters their email address on `/forgot-password`
+3. System sends a password reset email via Supabase Auth
+4. User clicks the link in their email → taken to `/reset-password`
+5. Enters a new password (with confirmation)
+6. Password is updated via `supabase.auth.updateUser()`
+7. User is signed out and redirected to `/login`
+
+### Email Template:
+- Branded TechClinic template with crimson theme
+- Located at `supabase/templates/recovery.html`
+- Uses Supabase template variables: `{{ .Email }}`, `{{ .ConfirmationURL }}`
+- Must be configured in Supabase Dashboard → Auth → Email Templates → Reset Password
+
+### Error Handling:
+- Invalid/expired recovery links show an error page with "Request New Link" button
+- Email validation before sending reset request
+- Loading states during email send and password update
+
+---
+
 ## Feature 3: Dashboard
 
 **Page:** Dashboard (`/dashboard`)  
