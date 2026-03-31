@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import SignatureCanvas from 'react-signature-canvas';
+import { validateFileUpload } from '../lib/validation';
 
 // Manual canvas trimming to avoid trim-canvas ESM/CJS issue with Vite
 function trimCanvas(canvas) {
@@ -77,15 +78,9 @@ const SignaturePad = ({ onSave, existingSignature = null, onClear }) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      alert('Please upload an image file (PNG, JPG, etc.)');
-      return;
-    }
-
-    // Validate file size (max 2MB)
-    if (file.size > 2 * 1024 * 1024) {
-      alert('File size must be less than 2MB');
+    const error = validateFileUpload(file, { maxSizeMB: 2, allowedTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'] });
+    if (error) {
+      alert(error);
       return;
     }
 

@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { showToast } from '../components/Toast'
 import supabase from '../config/supabaseClient'
 import TUP from '../assets/image/TUP.png'
+import { validateEmail as sharedValidateEmail } from '../lib/validation'
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('')
@@ -15,9 +16,7 @@ const ForgotPassword = () => {
     const navigate = useNavigate()
 
     const validateEmail = (value) => {
-        if (!value.trim()) return 'Email is required.'
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Please enter a valid email address.'
-        return ''
+        return sharedValidateEmail(value)
     }
 
     const handleEmailChange = (e) => {

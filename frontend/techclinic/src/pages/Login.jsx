@@ -5,6 +5,7 @@ import useAuth from '../store/useAuthStore';
 import TUP from "../assets/image/TUP.png"
 import { useNavigate, useLocation } from 'react-router-dom';
 import { showToast } from '../components/Toast'
+import { validateEmail as sharedValidateEmail, validatePassword as sharedValidatePassword } from '../lib/validation'
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -38,14 +39,12 @@ const Login = () => {
     }, [authenticatedUser, isSessionVerified, navigate, from]);
 
     const validateEmail = (value) => {
-        if (!value.trim()) return 'Email is required.';
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Please enter a valid email address.';
-        return '';
+        return sharedValidateEmail(value);
     };
 
     const validatePassword = (value) => {
         if (!value) return 'Password is required.';
-        if (value.length < 6) return 'Password must be at least 6 characters.';
+        if (value.length < 8) return 'Password must be at least 8 characters.';
         return '';
     };
 

@@ -405,7 +405,7 @@ const AddDiagnosis = () => {
                           onChange={(e) => setNewDiseaseName(e.target.value)}
                           onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddDisease(); } }}
                           placeholder="Enter disease name..."
-                          maxLength={LIMITS.NAME_MAX}
+                          maxLength={LIMITS.DISEASE_NAME_MAX}
                           className='flex-1 py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all'
                           autoFocus
                         />
@@ -430,7 +430,7 @@ const AddDiagnosis = () => {
                       name='treatment'
                       value={patientInput.treatment}
                       onChange={handleSetPatientInput}
-                      maxLength={500}
+                      maxLength={LIMITS.TREATMENT_MAX}
                       className='w-full flex-1 min-h-[120px] p-3 resize-none outline-none rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all placeholder:text-gray-400 dark:placeholder:text-[#94969C] dark:text-[#94969C]'
                       placeholder='Describe the treatment plan...'
                     />
@@ -489,7 +489,7 @@ const AddDiagnosis = () => {
                       name='notes'
                       value={patientInput.notes}
                       onChange={handleSetPatientInput}
-                      maxLength={1000}
+                      maxLength={LIMITS.NOTES_MAX}
                       className='w-full flex-1 min-h-[120px] p-3 resize-none outline-none rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all placeholder:text-gray-400 dark:placeholder:text-[#94969C] dark:text-[#94969C]'
                       placeholder='Any additional observations or notes...'
                     />

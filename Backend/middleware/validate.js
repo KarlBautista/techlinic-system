@@ -38,7 +38,14 @@ const LIMITS = {
 const ENUMS = {
   SEX: ['Male', 'Female'],
   ROLE: ['DOCTOR', 'NURSE'],
-  DEPARTMENT: ['CAFA', 'CIE', 'CIT', 'CLA', 'COE', 'COS'],
+  DEPARTMENT: [
+    'College of Science',
+    'College of Engineering',
+    'College of Industrial Technology',
+    'College of Architecture and Fine Arts',
+    'College of Industrial Education',
+    'College of Liberal Arts',
+  ],
   YEAR_LEVEL: ['1st year', '2nd year', '3rd year', '4th year', '1', '2', '3', '4'],
 };
 

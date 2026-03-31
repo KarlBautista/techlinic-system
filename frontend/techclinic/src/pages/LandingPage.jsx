@@ -8,7 +8,7 @@ import axios from 'axios'
 import { showToast } from '../components/Toast'
 import { showModal } from '../components/Modal'
 import TUP from '../assets/image/TUP.png'
-import { validatePatientForm, hasErrors, LIMITS } from '../lib/validation'
+import { validatePatientForm, hasErrors, LIMITS, ENUMS } from '../lib/validation'
 
 // Constants
 const INITIAL_FORM_DATA = {
@@ -35,11 +35,6 @@ const DEPARTMENT_OPTIONS = [
 ];
 const SEX_OPTIONS = ['Male', 'Female'];
 const PRIMARY_COLOR = "#B22222";
-const REQUIRED_FIELDS = ['studentId', 'firstName', 'lastName', 'contactNumber', 'yearLevel', 'department', 'sex', 'email', 'address', 'dateOfBirth'];
-const PATIENT_ID_REGEX = /^[A-Z0-9-]+$/;
-const NAME_REGEX = /^[A-Za-zÑñ][A-Za-zÑñ\s'.-]*$/;
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const CONTACT_REGEX = /^[0-9+\-() ]{7,15}$/;
 
 const STEPS = [
     { number: 1, label: 'Personal Details' },
@@ -272,33 +267,23 @@ function LandingPage() {
     }
 
     const validateStep = (step) => {
-        const newErrors = {};
+        const allErrors = validatePatientForm(formData);
+        const stepErrors = {};
+
         if (step === 1) {
-            if (!formData.studentId.trim()) newErrors.studentId = 'Patient ID is required';
-            else if (!PATIENT_ID_REGEX.test(formData.studentId.trim())) newErrors.studentId = 'Patient ID must contain only letters, numbers, and hyphens';
-
-            if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
-            else if (!NAME_REGEX.test(formData.firstName.trim())) newErrors.firstName = 'First name contains invalid characters';
-
-            if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
-            else if (!NAME_REGEX.test(formData.lastName.trim())) newErrors.lastName = 'Last name contains invalid characters';
-
-            if (!formData.sex) newErrors.sex = 'Please select sex';
-            if (!formData.dateOfBirth) newErrors.dateOfBirth = 'Please enter date of birth';
+            ['studentId', 'firstName', 'lastName', 'sex', 'dateOfBirth'].forEach(field => {
+                if (allErrors[field]) stepErrors[field] = allErrors[field];
+            });
         }
         if (step === 2) {
-            if (!formData.email.trim()) newErrors.email = 'Email is required';
-            else if (!EMAIL_REGEX.test(formData.email.trim())) newErrors.email = 'Please enter a valid email';
-
-            if (!formData.contactNumber.trim()) newErrors.contactNumber = 'Contact number is required';
-            else if (!CONTACT_REGEX.test(formData.contactNumber.trim())) newErrors.contactNumber = 'Please enter a valid contact number';
-
-            if (!formData.address.trim()) newErrors.address = 'Address is required';
-            if (!formData.department) newErrors.department = 'Please select a department';
-            if (!formData.yearLevel) newErrors.yearLevel = 'Please select a year level';
+            ['email', 'contactNumber', 'address', 'department', 'yearLevel'].forEach(field => {
+                if (allErrors[field]) stepErrors[field] = allErrors[field];
+            });
+            // Address is required on LandingPage
+            if (!formData.address || !formData.address.trim()) stepErrors.address = 'Address is required.';
         }
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
+        setErrors(stepErrors);
+        return Object.keys(stepErrors).length === 0;
     };
 
     const handleNext = () => {

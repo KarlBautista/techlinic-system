@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { showToast } from '../components/Toast'
 import supabase from '../config/supabaseClient'
 import TUP from '../assets/image/TUP.png'
+import { validatePassword as sharedValidatePassword } from '../lib/validation'
 
 const ResetPassword = () => {
     const [password, setPassword] = useState('')
@@ -41,9 +42,7 @@ const ResetPassword = () => {
     }, [])
 
     const validatePassword = (value) => {
-        if (!value) return 'Password is required.'
-        if (value.length < 6) return 'Password must be at least 6 characters.'
-        return ''
+        return sharedValidatePassword(value, { requireStrength: true })
     }
 
     const validateConfirmPassword = (value) => {

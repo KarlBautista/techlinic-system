@@ -22,7 +22,7 @@ const api = axios.create({
     },
 });
 
-// Request interceptor — attach Supabase JWT to every outgoing request
+
 api.interceptors.request.use(
     async (config) => {
         try {
@@ -41,7 +41,7 @@ api.interceptors.request.use(
     }
 );
 
-// Response interceptor — handle 401/403 errors globally
+
 api.interceptors.response.use(
     (response) => response,
     (error) => {
