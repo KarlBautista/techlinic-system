@@ -177,7 +177,31 @@ const useData = create(
                     _lastFetchedRecords: null,
                     _lastFetchedPatients: null
                 });
-            }
+            },
+
+            deactivateUser: async (userId) => {
+                try {
+                    const response = await api.patch(`/deactivate-user/${userId}`);
+                    if (response.data?.success) {
+                        return { success: true, message: response.data.message };
+                    }
+                    return { success: false, error: response.data?.error || "Failed to deactivate user" };
+                } catch (err) {
+                    return { success: false, error: err.response?.data?.error || err.message };
+                }
+            },
+
+            reactivateUser: async (userId) => {
+                try {
+                    const response = await api.patch(`/reactivate-user/${userId}`);
+                    if (response.data?.success) {
+                        return { success: true, message: response.data.message };
+                    }
+                    return { success: false, error: response.data?.error || "Failed to reactivate user" };
+                } catch (err) {
+                    return { success: false, error: err.response?.data?.error || err.message };
+                }
+            },
         }),
         {
             name: 'data-storage',

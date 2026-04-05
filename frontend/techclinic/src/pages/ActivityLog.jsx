@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, ScrollText, User, Pill, X, Clock, Tag, FileText, Hash, ChevronRight, ChevronLeft, ChevronDown, UserPlus, Stethoscope, Users } from 'lucide-react'
+import { Search, ScrollText, User, Pill, X, Clock, Tag, FileText, Hash, ChevronRight, ChevronLeft, ChevronDown, UserPlus, Stethoscope, Users, UserX, UserCheck } from 'lucide-react'
 import useAuditTrail from '../store/useAuditTrailStore'
 
 const ACTION_LABELS = {
@@ -11,6 +11,8 @@ const ACTION_LABELS = {
   patient_record_created: 'Created Patient Record',
   diagnosis_added: 'Added Diagnosis',
   personnel_added: 'Added Personnel',
+  personnel_deactivated: 'Deactivated Personnel',
+  personnel_reactivated: 'Reactivated Personnel',
 }
 
 const ENTITY_ICONS = {
@@ -27,6 +29,8 @@ const ACTION_COLORS = {
   patient_record_created: 'bg-blue-50 text-blue-700 ring-blue-100 dark:bg-blue-950/40 dark:text-blue-300 dark:ring-blue-900/60',
   diagnosis_added: 'bg-violet-50 text-violet-700 ring-violet-100 dark:bg-violet-950/40 dark:text-violet-300 dark:ring-violet-900/60',
   personnel_added: 'bg-teal-50 text-teal-700 ring-teal-100 dark:bg-teal-950/40 dark:text-teal-300 dark:ring-teal-900/60',
+  personnel_deactivated: 'bg-red-50 text-red-700 ring-red-100 dark:bg-red-950/40 dark:text-red-300 dark:ring-red-900/60',
+  personnel_reactivated: 'bg-emerald-50 text-emerald-700 ring-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-300 dark:ring-emerald-900/60',
 }
 
 const ROLE_COLORS = {

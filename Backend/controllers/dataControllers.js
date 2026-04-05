@@ -482,7 +482,152 @@ const insertPersonnel = async (req, res) => {
 };
 
 
+const deactivateUser = async (req, res) => {
+    const { userId } = req.params;
+
+    if (!userId) {
+        return res.status(400).json({ success: false, error: "User ID is required." });
+    }
+
+    // Prevent admin from deactivating themselves
+    if (userId === req.userProfile.id) {
+        return res.status(400).json({ success: false, error: "You cannot deactivate your own account." });
+    }
+
+    try {
+        // Check the target user exists and is currently active
+        const { data: targetUser, error: fetchError } = await supabaseAdmin
+            .from("users")
+            .select("id, first_name, last_name, email, role, is_active")
+            .eq("id", userId)
+            .single();
+
+        if (fetchError || !targetUser) {
+            return res.status(404).json({ success: false, error: "User not found." });
+        }
+
+        if (!targetUser.is_active) {
+            return res.status(400).json({ success: false, error: "User is already deactivated." });
+        }
+
+        // Prevent deactivating other admins
+        if (targetUser.role === "ADMIN") {
+            return res.status(403).json({ success: false, error: "Cannot deactivate an admin account." });
+        }
+
+        // Soft delete: mark as inactive in users table
+        const { error: updateError } = await supabaseAdmin
+            .from("users")
+            .update({ is_active: false, deactivated_at: new Date().toISOString() })
+            .eq("id", userId);
+
+        if (updateError) {
+            console.error(`Error deactivating user: ${updateError.message}`);
+            return res.status(500).json({ success: false, error: updateError.message });
+        }
+
+        // Disable the auth user so they can't sign in
+        const { error: authError } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+            ban_duration: "876600h", // ~100 years
+        });
+
+        if (authError) {
+            console.error(`Error banning auth user: ${authError.message}`);
+            // Revert the soft delete if auth ban fails
+            await supabaseAdmin.from("users").update({ is_active: true, deactivated_at: null }).eq("id", userId);
+            return res.status(500).json({ success: false, error: "Failed to disable authentication." });
+        }
+
+        // Audit trail
+        const profile = req.userProfile;
+        logActivity({
+            actor_id: profile.id,
+            actor_name: `${profile.first_name} ${profile.last_name}`,
+            actor_role: profile.role,
+            action: "personnel_deactivated",
+            entity_type: "personnel",
+            entity_id: userId,
+            description: `Deactivated account: ${targetUser.first_name} ${targetUser.last_name} (${targetUser.role})`,
+            metadata: { email: targetUser.email, role: targetUser.role, full_name: `${targetUser.first_name} ${targetUser.last_name}` },
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: `Account for ${targetUser.first_name} ${targetUser.last_name} has been deactivated.`,
+        });
+    } catch (err) {
+        console.error(`Error deactivating user: ${err.message}`);
+        return res.status(500).json({ success: false, error: err.message });
+    }
+};
+
+const reactivateUser = async (req, res) => {
+    const { userId } = req.params;
+
+    if (!userId) {
+        return res.status(400).json({ success: false, error: "User ID is required." });
+    }
+
+    try {
+        // Check the target user exists and is currently inactive
+        const { data: targetUser, error: fetchError } = await supabaseAdmin
+            .from("users")
+            .select("id, first_name, last_name, email, role, is_active")
+            .eq("id", userId)
+            .single();
+
+        if (fetchError || !targetUser) {
+            return res.status(404).json({ success: false, error: "User not found." });
+        }
+
+        if (targetUser.is_active) {
+            return res.status(400).json({ success: false, error: "User is already active." });
+        }
+
+        // Reactivate in users table
+        const { error: updateError } = await supabaseAdmin
+            .from("users")
+            .update({ is_active: true, deactivated_at: null })
+            .eq("id", userId);
+
+        if (updateError) {
+            console.error(`Error reactivating user: ${updateError.message}`);
+            return res.status(500).json({ success: false, error: updateError.message });
+        }
+
+        // Unban the auth user
+        const { error: authError } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+            ban_duration: "none",
+        });
+
+        if (authError) {
+            console.error(`Error unbanning auth user: ${authError.message}`);
+            await supabaseAdmin.from("users").update({ is_active: false, deactivated_at: new Date().toISOString() }).eq("id", userId);
+            return res.status(500).json({ success: false, error: "Failed to re-enable authentication." });
+        }
+
+        // Audit trail
+        const profile = req.userProfile;
+        logActivity({
+            actor_id: profile.id,
+            actor_name: `${profile.first_name} ${profile.last_name}`,
+            actor_role: profile.role,
+            action: "personnel_reactivated",
+            entity_type: "personnel",
+            entity_id: userId,
+            description: `Reactivated account: ${targetUser.first_name} ${targetUser.last_name} (${targetUser.role})`,
+            metadata: { email: targetUser.email, role: targetUser.role, full_name: `${targetUser.first_name} ${targetUser.last_name}` },
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: `Account for ${targetUser.first_name} ${targetUser.last_name} has been reactivated.`,
+        });
+    } catch (err) {
+        console.error(`Error reactivating user: ${err.message}`);
+        return res.status(500).json({ success: false, error: err.message });
+    }
+};
 
 
-
-module.exports = { insertRecord, getRecords, getRecord, getRecordsFromExisitingPatients, getPatients, getRecordToDiagnose, addDiagnosis, getAllUsers, insertPersonnel}
+module.exports = { insertRecord, getRecords, getRecord, getRecordsFromExisitingPatients, getPatients, getRecordToDiagnose, addDiagnosis, getAllUsers, insertPersonnel, deactivateUser, reactivateUser }

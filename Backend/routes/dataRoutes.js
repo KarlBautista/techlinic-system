@@ -3,7 +3,7 @@ const router = express.Router();
 const { authenticate, authorize } = require("../middleware/auth");
 const { validateInsertRecord, validateAddDiagnosis, validateInsertPersonnel, validateStudentIdParam, validateIdParam } = require("../middleware/validate");
 
-const { insertRecord, getRecords, getRecord, getRecordsFromExisitingPatients, getPatients, getRecordToDiagnose, addDiagnosis, getAllUsers, insertPersonnel } = require("../controllers/dataControllers");
+const { insertRecord, getRecords, getRecord, getRecordsFromExisitingPatients, getPatients, getRecordToDiagnose, addDiagnosis, getAllUsers, insertPersonnel, deactivateUser, reactivateUser } = require("../controllers/dataControllers");
 
 // ── Both DOCTOR and NURSE can read records/patients ──
 router.get("/get-records", authenticate, authorize("DOCTOR", "NURSE", "ADMIN"), getRecords);
@@ -21,5 +21,9 @@ router.put("/insert-diagnosis", authenticate, authorize("DOCTOR"), validateAddDi
 
 // ── DOCTOR and ADMIN can manage personnel ──
 router.post("/insert-personnel", authenticate, authorize("DOCTOR", "ADMIN"), validateInsertPersonnel, insertPersonnel);
+
+// ── ADMIN-only: soft delete (deactivate/reactivate) ──
+router.patch("/deactivate-user/:userId", authenticate, authorize("ADMIN"), deactivateUser);
+router.patch("/reactivate-user/:userId", authenticate, authorize("ADMIN"), reactivateUser);
 
 module.exports = router;

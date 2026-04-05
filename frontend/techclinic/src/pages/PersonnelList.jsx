@@ -4,7 +4,7 @@ import useData from '../store/useDataStore'
 import { ButtonLoader } from '../components/PageLoader'
 import { showToast } from '../components/Toast'
 import { motion } from 'framer-motion'
-import { Search, Plus, Users, X, Eye, EyeOff, ChevronRight, ChevronLeft, ChevronDown } from 'lucide-react'
+import { Search, Plus, Users, X, Eye, EyeOff, ChevronRight, ChevronLeft, ChevronDown, UserX, UserCheck, AlertTriangle } from 'lucide-react'
 import { validatePersonnelForm, hasErrors, validateSearch, LIMITS } from '../lib/validation'
 
 const containerVariants = {
@@ -20,8 +20,8 @@ const ROWS_OPTIONS = [5, 10, 20, 50];
 
 const PersonnelList = () => {
   const [search, setSearch] = useState("");
-  const { allUsers, getAllUsers, isLoadingUsers } = useAuth();
-  const { insertPersonnel } = useData();
+  const { allUsers, getAllUsers, isLoadingUsers, userProfile } = useAuth();
+  const { insertPersonnel, deactivateUser, reactivateUser } = useData();
   const [initialLoading, setInitialLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -48,6 +48,34 @@ const PersonnelList = () => {
   });
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
+
+  // Deactivation/reactivation state
+  const [confirmAction, setConfirmAction] = useState(null); // { type: 'deactivate'|'reactivate', user }
+  const [isActionLoading, setIsActionLoading] = useState(false);
+
+  const isAdmin = userProfile?.role === 'ADMIN';
+
+  const handleDeactivate = async () => {
+    if (!confirmAction || isActionLoading) return;
+    setIsActionLoading(true);
+    try {
+      const result = confirmAction.type === 'deactivate'
+        ? await deactivateUser(confirmAction.user.id)
+        : await reactivateUser(confirmAction.user.id);
+
+      if (result.success) {
+        showToast({ title: "Success", message: result.message, type: "success" });
+        await getAllUsers(true);
+      } else {
+        showToast({ title: "Error", message: result.error, type: "error" });
+      }
+    } catch (err) {
+      showToast({ title: "Error", message: "An unexpected error occurred", type: "error" });
+    } finally {
+      setIsActionLoading(false);
+      setConfirmAction(null);
+    }
+  };
 
   // Auto-generate password from first name + random number
   const generatePassword = (firstName) => {
@@ -360,21 +388,22 @@ const PersonnelList = () => {
                         <th className='text-left text-xs font-semibold text-gray-500 dark:text-[#94969C] uppercase tracking-wider px-5 py-3'>Role</th>
                         <th className='text-left text-xs font-semibold text-gray-500 dark:text-[#94969C] uppercase tracking-wider px-5 py-3 hidden md:table-cell'>Email</th>
                         <th className='text-left text-xs font-semibold text-gray-500 dark:text-[#94969C] uppercase tracking-wider px-5 py-3 hidden lg:table-cell'>Sex</th>
-                        <th className='text-left text-xs font-semibold text-gray-500 dark:text-[#94969C] uppercase tracking-wider px-5 py-3 hidden sm:table-cell'>Date of Birth</th>
+                        <th className='text-left text-xs font-semibold text-gray-500 dark:text-[#94969C] uppercase tracking-wider px-5 py-3 hidden sm:table-cell'>Status</th>
+                        {isAdmin && <th className='text-left text-xs font-semibold text-gray-500 dark:text-[#94969C] uppercase tracking-wider px-5 py-3'>Actions</th>}
                       </tr>
                     </thead>
                     <tbody className='divide-y divide-gray-50 dark:divide-[#1F2A37]'>
                       {paginatedUsers.map((user) => (
                         <tr
                           key={user.id}
-                          className='hover:bg-crimson-50/40 dark:hover:bg-[#293040] transition-colors group'
+                          className={`hover:bg-crimson-50/40 dark:hover:bg-[#293040] transition-colors group ${user.is_active === false ? 'opacity-50' : ''}`}
                         >
                           <td className='px-5 py-3.5'>
                             <div className='flex items-center gap-3'>
-                              <div className='w-8 h-8 rounded-full bg-linear-to-br from-crimson-100 to-crimson-50 flex items-center justify-center text-xs font-bold text-crimson-600 shrink-0 ring-1 ring-crimson-100 dark:ring-[#333741]'>
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ring-1 ${user.is_active === false ? 'bg-gray-100 text-gray-400 ring-gray-200 dark:bg-gray-800 dark:text-gray-500 dark:ring-gray-700' : 'bg-linear-to-br from-crimson-100 to-crimson-50 text-crimson-600 ring-crimson-100 dark:ring-[#333741]'}`}>
                                 {user.first_name?.[0]}{user.last_name?.[0]}
                               </div>
-                              <span className='text-sm font-medium text-gray-900 dark:text-white group-hover:text-crimson-600 dark:group-hover:text-crimson-300 transition-colors'>
+                              <span className={`text-sm font-medium transition-colors ${user.is_active === false ? 'text-gray-400 dark:text-gray-500 line-through' : 'text-gray-900 dark:text-white group-hover:text-crimson-600 dark:group-hover:text-crimson-300'}`}>
                                 {`${user.first_name} ${user.last_name}`}
                               </span>
                             </div>
@@ -400,8 +429,38 @@ const PersonnelList = () => {
                             <span className='text-sm text-gray-600 dark:text-[#94969C]'>{user.sex}</span>
                           </td>
                           <td className='px-5 py-3.5 hidden sm:table-cell'>
-                            <span className='text-sm text-gray-600 dark:text-[#94969C]'>{formatDate(user.date_of_birth)}</span>
+                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ring-1 ${
+                              user.is_active === false
+                                ? 'bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 ring-red-100 dark:ring-red-900/60'
+                                : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 ring-emerald-100 dark:ring-emerald-900/60'
+                            }`}>
+                              <span className={`w-1.5 h-1.5 rounded-full ${user.is_active === false ? 'bg-red-500' : 'bg-emerald-500'}`} />
+                              {user.is_active === false ? 'Inactive' : 'Active'}
+                            </span>
                           </td>
+                          {isAdmin && (
+                            <td className='px-5 py-3.5'>
+                              {user.role !== 'ADMIN' && (
+                                user.is_active === false ? (
+                                  <button
+                                    onClick={() => setConfirmAction({ type: 'reactivate', user })}
+                                    className='inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 transition-colors cursor-pointer'
+                                  >
+                                    <UserCheck className="w-3.5 h-3.5" />
+                                    Reactivate
+                                  </button>
+                                ) : (
+                                  <button
+                                    onClick={() => setConfirmAction({ type: 'deactivate', user })}
+                                    className='inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors cursor-pointer'
+                                  >
+                                    <UserX className="w-3.5 h-3.5" />
+                                    Deactivate
+                                  </button>
+                                )
+                              )}
+                            </td>
+                          )}
                         </tr>
                       ))}
                     </tbody>
@@ -635,6 +694,61 @@ const PersonnelList = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* ─── Confirm Deactivate/Reactivate Modal ─── */}
+      {confirmAction && (
+        <div className='fixed inset-0 z-50 flex items-center justify-center'>
+          <div className='absolute inset-0 bg-black/50 modal-backdrop-enter' onClick={() => !isActionLoading && setConfirmAction(null)} />
+          <div className='relative z-10 bg-white dark:bg-[#161B26] rounded-xl shadow-xl w-full max-w-md mx-4 p-6 modal-content-enter'>
+            <div className='flex items-center gap-3 mb-4'>
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                confirmAction.type === 'deactivate'
+                  ? 'bg-red-50 dark:bg-red-950/40'
+                  : 'bg-emerald-50 dark:bg-emerald-950/40'
+              }`}>
+                {confirmAction.type === 'deactivate'
+                  ? <AlertTriangle className="w-5 h-5 text-red-500" />
+                  : <UserCheck className="w-5 h-5 text-emerald-500" />
+                }
+              </div>
+              <div>
+                <h3 className='text-lg font-bold text-gray-800 dark:text-white'>
+                  {confirmAction.type === 'deactivate' ? 'Deactivate Account' : 'Reactivate Account'}
+                </h3>
+                <p className='text-xs text-gray-400 dark:text-[#94969C]'>This action can be reversed</p>
+              </div>
+            </div>
+
+            <p className='text-sm text-gray-600 dark:text-[#94969C] mb-6'>
+              {confirmAction.type === 'deactivate'
+                ? <>Are you sure you want to deactivate <strong className='text-gray-800 dark:text-white'>{confirmAction.user.first_name} {confirmAction.user.last_name}</strong>'s account? They will no longer be able to log in.</>
+                : <>Are you sure you want to reactivate <strong className='text-gray-800 dark:text-white'>{confirmAction.user.first_name} {confirmAction.user.last_name}</strong>'s account? They will be able to log in again.</>
+              }
+            </p>
+
+            <div className='flex justify-end gap-3'>
+              <button
+                onClick={() => setConfirmAction(null)}
+                disabled={isActionLoading}
+                className='px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 dark:text-[#94969C] hover:bg-gray-100 dark:hover:bg-[#1F242F] transition-colors cursor-pointer disabled:opacity-50'
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeactivate}
+                disabled={isActionLoading}
+                className={`px-5 py-2.5 rounded-xl text-white text-sm font-medium transition-colors inline-flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed shadow-sm cursor-pointer ${
+                  confirmAction.type === 'deactivate'
+                    ? 'bg-red-600 hover:bg-red-700'
+                    : 'bg-emerald-600 hover:bg-emerald-700'
+                }`}
+              >
+                {isActionLoading ? <><ButtonLoader /> Processing...</> : confirmAction.type === 'deactivate' ? 'Deactivate' : 'Reactivate'}
+              </button>
+            </div>
           </div>
         </div>
       )}

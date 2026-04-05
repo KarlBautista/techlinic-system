@@ -45,7 +45,7 @@ const authenticate = async (req, res, next) => {
         // Fetch the user profile (with role) from the public.users table
         const { data: userProfile, error: profileError } = await supabaseAdmin
             .from("users")
-            .select("id, first_name, last_name, email, role, sex, address, date_of_birth, signature_url")
+            .select("id, first_name, last_name, email, role, sex, address, date_of_birth, signature_url, is_active")
             .eq("id", authUser.id)
             .single();
 
@@ -54,6 +54,14 @@ const authenticate = async (req, res, next) => {
             return res.status(403).json({
                 success: false,
                 error: "User profile not found. Contact an administrator."
+            });
+        }
+
+        // Block deactivated users
+        if (userProfile.is_active === false) {
+            return res.status(403).json({
+                success: false,
+                error: "Your account has been deactivated. Contact an administrator."
             });
         }
 
