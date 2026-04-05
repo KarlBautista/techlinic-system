@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { showToast } from '../components/Toast'
-import useAuth from '../store/useAuthStore'
 import useNotificationStore, { requestNotificationPermission } from '../store/useNotificationStore'
 import { motion } from 'framer-motion'
 import { Bell, BellOff, AlertTriangle, Pill, Info, Trash2 } from 'lucide-react'
@@ -18,7 +17,6 @@ const getNotifStyle = (title = '') => {
 };
 
 const Notifications = () => {
-    const { authenticatedUser } = useAuth();
     const {
         notifications,
         unreadCount,
@@ -31,17 +29,14 @@ const Notifications = () => {
         deleteAllNotifications
     } = useNotificationStore();
 
-    // Request notification permission on mount
     useEffect(() => {
         requestNotificationPermission();
     }, []);
 
     useEffect(() => {
-        if (!authenticatedUser?.id) return;
-
         // Refresh once on mount — Navigation handles ongoing polling
-        fetchNotifications(authenticatedUser.id);
-    }, [authenticatedUser?.id]);
+        fetchNotifications();
+    }, []);
 
     const handleMarkAsRead = async (notificationId) => {
         await markAsRead(notificationId);
@@ -65,7 +60,7 @@ const Notifications = () => {
     };
 
     const handleMarkAllAsRead = async () => {
-        const result = await markAllAsRead(authenticatedUser.id);
+        const result = await markAllAsRead();
         if (result?.success) {
             showToast({
                 title: 'All caught up!',
@@ -85,7 +80,7 @@ const Notifications = () => {
             return;
         }
         setConfirmClear(false);
-        const response = await deleteAllNotifications(authenticatedUser.id);
+        const response = await deleteAllNotifications();
         if (response?.success) {
             showToast({
                 title: 'Notifications cleared',

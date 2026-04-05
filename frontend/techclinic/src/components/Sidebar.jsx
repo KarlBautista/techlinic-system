@@ -204,9 +204,9 @@ export default function Sidebar() {
     useEffect(() => {
         if (!authenticatedUser?.id) return
         requestNotificationPermission()
-        fetchNotifications(authenticatedUser.id)
+        fetchNotifications()
         const interval = setInterval(() => {
-            checkForAlerts(authenticatedUser.id)
+            checkForAlerts()
         }, 30000)
         return () => clearInterval(interval)
     }, [authenticatedUser?.id])

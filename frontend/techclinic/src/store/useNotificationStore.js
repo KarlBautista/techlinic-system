@@ -60,9 +60,8 @@ const useNotificationStore = create((set, get) => ({
     lastChecked: null,
     _isFetching: false,
 
-    // Fetch notifications for a user
-    fetchNotifications: async (userId, force = false) => {
-        if (!userId) return;
+    // Fetch all system notifications (centralized — same for all users)
+    fetchNotifications: async (force = false) => {
         if (get()._isFetching) return; // Prevent concurrent fetches
 
         // Cache check — skip fetch if data is fresh
@@ -74,7 +73,7 @@ const useNotificationStore = create((set, get) => ({
         set({ _isFetching: true, isLoading: !get().notifications.length, error: null });
         
         try {
-            const response = await api.get(`${API_BASE}/user/${userId}`);
+            const response = await api.get(`${API_BASE}/all`);
             
             if (response.data.success) {
                 const prevUnreadCount = get().unreadCount;
@@ -102,8 +101,8 @@ const useNotificationStore = create((set, get) => ({
         }
     },
 
-    // Check for new alerts
-    checkForAlerts: async (userId) => {
+    // Check for new alerts (system-wide)
+    checkForAlerts: async () => {
         try {
             const response = await api.post(`${API_BASE}/check-alerts`);
             
@@ -111,15 +110,13 @@ const useNotificationStore = create((set, get) => ({
             if (response.data.success && response.data.notifications?.length > 0) {
                 const firstNotif = response.data.notifications[0];
                 showBrowserNotification(
-                    '⚠️ New Disease Alert',
-                    firstNotif.message || 'New health alert detected. Click to view details.'
+                    '⚠️ New Alert',
+                    firstNotif.message || 'New system alert detected. Click to view details.'
                 );
             }
             
             // Refresh notifications list
-            if (userId) {
-                await get().fetchNotifications(userId);
-            }
+            await get().fetchNotifications(true);
             
             return response.data;
         } catch (err) {
@@ -128,7 +125,7 @@ const useNotificationStore = create((set, get) => ({
         }
     },
 
-    // Mark notification as read
+    // Mark notification as read (system-wide)
     markAsRead: async (notificationId) => {
         try {
             const response = await api.patch(`${API_BASE}/${notificationId}/read`);
@@ -148,10 +145,10 @@ const useNotificationStore = create((set, get) => ({
         }
     },
 
-    // Mark all as read for a user
-    markAllAsRead: async (userId) => {
+    // Mark all as read (system-wide)
+    markAllAsRead: async () => {
         try {
-            const response = await api.patch(`${API_BASE}/user/${userId}/read-all`);
+            const response = await api.patch(`${API_BASE}/read-all`);
             
             if (response.data.success) {
                 set(state => ({
@@ -186,10 +183,10 @@ const useNotificationStore = create((set, get) => ({
         }
     },
 
-    // Delete all notifications for a user
-    deleteAllNotifications: async (userId) => {
+    // Delete all notifications (system-wide)
+    deleteAllNotifications: async () => {
         try {
-            const response = await api.delete(`${API_BASE}/user/${userId}/all`);
+            const response = await api.delete(`${API_BASE}/all`);
             
             if (response.data.success) {
                 set({ notifications: [], unreadCount: 0 });

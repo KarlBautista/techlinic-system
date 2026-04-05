@@ -1,5 +1,6 @@
 const supabase = require("../config/supabaseAdmin");
-const supabaseAdmin = require("../config/supabaseAdmin")
+const supabaseAdmin = require("../config/supabaseAdmin");
+const { logActivity } = require("./auditTrailController");
 
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const isValidStudentId = (id) => /^[A-Z0-9-]+$/i.test(id) && id.length <= 20;
@@ -154,6 +155,19 @@ const insertRecord = async (req, res) => {
                 }
             }
         }
+
+        // Audit trail (fire-and-forget)
+        const profile = req.userProfile;
+        logActivity({
+            actor_id: profile.id,
+            actor_name: `${profile.first_name} ${profile.last_name}`,
+            actor_role: profile.role,
+            action: "patient_record_created",
+            entity_type: "patient",
+            entity_id: String(recordId),
+            description: `Created patient record for ${clean(firstName)} ${clean(lastName)} (${clean(studentId)})`,
+            metadata: { student_id: studentId, first_name: firstName, last_name: lastName, department, status: diagnosisData ? "COMPLETE" : "INCOMPLETE" },
+        });
 
         return res.status(200).json({ 
             success: true, 
@@ -332,6 +346,19 @@ const addDiagnosis = async (req, res) => {
             }
         }
 
+        // Audit trail (fire-and-forget)
+        const profile = req.userProfile;
+        logActivity({
+            actor_id: profile.id,
+            actor_name: `${profile.first_name} ${profile.last_name}`,
+            actor_role: profile.role,
+            action: "diagnosis_added",
+            entity_type: "diagnosis",
+            entity_id: String(id),
+            description: `Added diagnosis for ${firstName} ${lastName} (${studentId}): ${diagnosis}`,
+            metadata: { record_id: id, student_id: studentId, diagnosis, medication: medication?.medicine_name || null },
+        });
+
         return res.status(200).json({ success: true, message: "success diagnosis"});
     } catch (err) {
         console.error(`Something went wrong adding diagnosis: ${err.message}`);
@@ -421,6 +448,19 @@ const insertPersonnel = async (req, res) => {
         }
 
        
+        // Audit trail (fire-and-forget)
+        const profile = req.userProfile;
+        logActivity({
+            actor_id: profile.id,
+            actor_name: `${profile.first_name} ${profile.last_name}`,
+            actor_role: profile.role,
+            action: "personnel_added",
+            entity_type: "personnel",
+            entity_id: String(userData.id),
+            description: `Added personnel: ${first_name} ${last_name} (${role})`,
+            metadata: { email, role, full_name: `${first_name} ${last_name}` },
+        });
+
         return res.status(201).json({ 
             success: true, 
             message: "Personnel added successfully",

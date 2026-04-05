@@ -46,11 +46,11 @@ const NewNavigation = () => {
         requestNotificationPermission();
         
         // Initial fetch only (no checkForAlerts on mount — interval handles it)
-        fetchNotifications(authenticatedUser.id);
+        fetchNotifications();
         
         // Poll every 30 seconds
         const intervalId = setInterval(() => {
-            checkForAlerts(authenticatedUser.id);
+            checkForAlerts();
         }, 30000);
         
         return () => clearInterval(intervalId);

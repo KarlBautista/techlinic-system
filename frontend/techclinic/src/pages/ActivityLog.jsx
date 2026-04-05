@@ -1,28 +1,38 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, ScrollText, User, Pill, X, Clock, Tag, FileText, Hash, ChevronRight, ChevronLeft, ChevronDown } from 'lucide-react'
+import { Search, ScrollText, User, Pill, X, Clock, Tag, FileText, Hash, ChevronRight, ChevronLeft, ChevronDown, UserPlus, Stethoscope, Users } from 'lucide-react'
 import useAuditTrail from '../store/useAuditTrailStore'
 
 const ACTION_LABELS = {
   medicine_added: 'Added Medicine',
   medicine_updated: 'Updated Medicine',
   medicine_deleted: 'Deleted Medicine',
+  patient_record_created: 'Created Patient Record',
+  diagnosis_added: 'Added Diagnosis',
+  personnel_added: 'Added Personnel',
 }
 
 const ENTITY_ICONS = {
   medicine: Pill,
+  patient: UserPlus,
+  diagnosis: Stethoscope,
+  personnel: Users,
 }
 
 const ACTION_COLORS = {
   medicine_added: 'bg-emerald-50 text-emerald-700 ring-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-300 dark:ring-emerald-900/60',
   medicine_updated: 'bg-amber-50 text-amber-700 ring-amber-100 dark:bg-amber-950/40 dark:text-amber-300 dark:ring-amber-900/60',
   medicine_deleted: 'bg-red-50 text-red-700 ring-red-100 dark:bg-red-950/40 dark:text-red-300 dark:ring-red-900/60',
+  patient_record_created: 'bg-blue-50 text-blue-700 ring-blue-100 dark:bg-blue-950/40 dark:text-blue-300 dark:ring-blue-900/60',
+  diagnosis_added: 'bg-violet-50 text-violet-700 ring-violet-100 dark:bg-violet-950/40 dark:text-violet-300 dark:ring-violet-900/60',
+  personnel_added: 'bg-teal-50 text-teal-700 ring-teal-100 dark:bg-teal-950/40 dark:text-teal-300 dark:ring-teal-900/60',
 }
 
 const ROLE_COLORS = {
   DOCTOR: 'bg-blue-50 text-blue-700 ring-blue-100 dark:bg-blue-950/40 dark:text-blue-300 dark:ring-blue-900/60',
-  NURSE: 'bg-[#b01c34]/10 text-[#b01c34] ring-[#b01c34]/20 dark:bg-[#b01c34]/20 dark:text-red-300',
+  NURSE: 'bg-emerald-50 text-emerald-700 ring-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-300 dark:ring-emerald-900/60',
+  ADMIN: 'bg-crimson-50 text-crimson-700 ring-crimson-100 dark:bg-crimson-950/40 dark:text-crimson-300 dark:ring-crimson-900/60',
 }
 
 const containerVariants = {
@@ -168,7 +178,7 @@ const ActivityLog = () => {
               <div>
                 <h1 className='text-2xl font-bold text-gray-800 dark:text-white'>Activity Log</h1>
                 <p className='text-sm text-gray-400 dark:text-[#94969C] mt-0.5'>
-                  Track all medicine actions performed by staff
+                  Track all system actions performed by staff
                 </p>
               </div>
             </div>
@@ -194,6 +204,7 @@ const ActivityLog = () => {
                       { value: 'ALL', label: 'All Roles' },
                       { value: 'DOCTOR', label: 'Doctor' },
                       { value: 'NURSE', label: 'Nurse' },
+                      { value: 'ADMIN', label: 'Admin' },
                     ].map(opt => (
                       <button
                         key={opt.value}
@@ -221,8 +232,8 @@ const ActivityLog = () => {
                   onClick={() => { setEntityOpen(!entityOpen); setRoleOpen(false); }}
                   className='inline-flex items-center gap-2 h-10 px-4 rounded-full bg-white dark:bg-[#161B26] ring-1 ring-gray-200 dark:ring-[#1F2A37] text-xs font-medium text-gray-600 dark:text-[#CECFD2] hover:ring-gray-300 dark:hover:ring-[#4B5563] dark:hover:bg-[#1F242F] transition-all cursor-pointer'
                 >
-                  <Pill className="w-4 h-4 text-gray-400 dark:text-[#94969C]" />
-                  <span>{entityFilter === 'ALL' ? 'All Categories' : entityFilter}</span>
+                  <Tag className="w-4 h-4 text-gray-400 dark:text-[#94969C]" />
+                  <span>{entityFilter === 'ALL' ? 'All Categories' : { medicine: 'Medicine', patient: 'Patient Record', diagnosis: 'Diagnosis', personnel: 'Personnel' }[entityFilter] || entityFilter}</span>
                   <ChevronDown className={`w-4 h-4 text-gray-400 dark:text-[#94969C] transition-transform ${entityOpen ? 'rotate-180' : ''}`} />
                 </button>
                 {entityOpen && (
@@ -230,14 +241,19 @@ const ActivityLog = () => {
                     {[
                       { value: 'ALL', label: 'All Categories' },
                       { value: 'medicine', label: 'Medicine' },
-                    ].map(opt => (
+                      { value: 'patient', label: 'Patient Record' },
+                      { value: 'diagnosis', label: 'Diagnosis' },
+                      { value: 'personnel', label: 'Personnel' },
+                    ].map(opt => {
+                      const OptIcon = ENTITY_ICONS[opt.value] || Tag
+                      return (
                       <button
                         key={opt.value}
                         onClick={() => { setEntityFilter(opt.value); setEntityOpen(false); }}
                         className='w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-[#293040] transition-colors cursor-pointer'
                       >
                         <div className='flex items-center gap-3'>
-                          <Pill className="w-4 h-4 text-gray-400 dark:text-[#94969C]" />
+                          <OptIcon className="w-4 h-4 text-gray-400 dark:text-[#94969C]" />
                           <span className={`text-sm font-medium ${entityFilter === opt.value ? 'text-crimson-600' : 'text-gray-700 dark:text-[#CECFD2]'}`}>{opt.label}</span>
                         </div>
                         <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${entityFilter === opt.value ? 'border-crimson-600 bg-crimson-600' : 'border-gray-300 dark:border-[#333741]'}`}>
@@ -246,7 +262,7 @@ const ActivityLog = () => {
                           )}
                         </div>
                       </button>
-                    ))}
+                    )})}
                   </div>
                 )}
               </div>

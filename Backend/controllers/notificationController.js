@@ -1,5 +1,32 @@
 const supabase = require("../config/supabaseAdmin");
 
+// ── In-memory notification cache (centralized — same data for all users) ──
+let _notifCache = null;
+let _notifCacheTime = 0;
+const CACHE_TTL = 30 * 1000; // 30 seconds
+
+const invalidateCache = () => {
+    _notifCache = null;
+    _notifCacheTime = 0;
+};
+
+const getCachedNotifications = async () => {
+    if (_notifCache && (Date.now() - _notifCacheTime < CACHE_TTL)) {
+        return _notifCache;
+    }
+
+    const { data, error } = await supabase
+        .from('notifications')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    _notifCache = data;
+    _notifCacheTime = Date.now();
+    return data;
+};
+
 // Get all disease statistics and create notifications for alerts
 const checkAndCreateAlerts = async (req, res) => {
     try {
@@ -75,60 +102,47 @@ const checkAndCreateAlerts = async (req, res) => {
         // 6️⃣ Filter diseases that need alerts
         const alertDiseases = stats.filter(d => d.alert);
 
-        // 7️⃣ Fetch all users (needed for both disease and stock alerts)
-        const { data: users, error: usersError } = await supabase
-            .from('users')
-            .select('id');
-
-        if (usersError) {
-            console.error('Error fetching users:', usersError);
-            return res.status(500).json({ success: false, error: usersError.message });
-        }
-
         const allCreatedNotifications = [];
-        const newNotifications = [];
 
-        // 8️⃣ Create notifications for each alert disease
+        // 7️⃣ Create ONE centralized notification per alert disease
         if (alertDiseases.length > 0) {
-        for (const disease of alertDiseases) {
-            const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+            const newNotifications = [];
 
-            // Check if notification was already created in the last hour
-            const { data: existingNotif } = await supabase
-                .from('notifications')
-                .select('id')
-                .eq('title', `Disease Alert: ${disease.disease_name}`)
-                .gte('created_at', oneHourAgo)
-                .limit(1);
+            for (const disease of alertDiseases) {
+                const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
 
-            if (existingNotif && existingNotif.length > 0) continue; // Skip duplicates
+                // Check if notification was already created in the last hour
+                const { data: existingNotif } = await supabase
+                    .from('notifications')
+                    .select('id')
+                    .eq('title', `Disease Alert: ${disease.disease_name}`)
+                    .gte('created_at', oneHourAgo)
+                    .limit(1);
 
-            // Create notification for each user
-            for (const user of users) {
+                if (existingNotif && existingNotif.length > 0) continue; // Skip duplicates
+
+                // Create ONE system-wide notification (no user_id)
                 newNotifications.push({
-                    user_id: user.id,
                     title: `Disease Alert: ${disease.disease_name}`,
                     message: `${disease.total_cases} cases detected (${disease.percentage}% of population). Immediate attention required.`,
                     is_read: false
                 });
             }
-        }
 
-        // 9️⃣ Bulk insert disease alert notifications
-        if (newNotifications.length > 0) {
-            const { data: insertedNotifs, error: insertError } = await supabase
-                .from('notifications')
-                .insert(newNotifications)
-                .select();
+            // Bulk insert disease alert notifications
+            if (newNotifications.length > 0) {
+                const { data: insertedNotifs, error: insertError } = await supabase
+                    .from('notifications')
+                    .insert(newNotifications)
+                    .select();
 
-            if (insertError) {
-                console.error('Error inserting notifications:', insertError);
-                // Continue — don't return, still need to check stock
-            } else {
-                allCreatedNotifications.push(...(insertedNotifs || []));
+                if (insertError) {
+                    console.error('Error inserting notifications:', insertError);
+                } else {
+                    allCreatedNotifications.push(...(insertedNotifs || []));
+                }
             }
         }
-        } // end if (alertDiseases.length > 0)
 
         // ══════════════════════════════════════════════════════════════
         // 🔟 LOW STOCK MEDICINE ALERTS
@@ -144,8 +158,6 @@ const checkAndCreateAlerts = async (req, res) => {
         }
 
         if (lowStockMeds && lowStockMeds.length > 0) {
-            // Ensure we have users list
-            const usersList = users || [];
             const stockNotifications = [];
 
             for (const med of lowStockMeds) {
@@ -165,14 +177,12 @@ const checkAndCreateAlerts = async (req, res) => {
                     ? `${med.medicine_name} is out of stock. Please reorder immediately.`
                     : `${med.medicine_name} is running low with only ${med.stock_level} unit(s) remaining. Please reorder soon.`;
 
-                for (const user of usersList) {
-                    stockNotifications.push({
-                        user_id: user.id,
-                        title: `Low Stock Alert: ${med.medicine_name}`,
-                        message: stockMsg,
-                        is_read: false
-                    });
-                }
+                // Create ONE system-wide notification (no user_id)
+                stockNotifications.push({
+                    title: `Low Stock Alert: ${med.medicine_name}`,
+                    message: stockMsg,
+                    is_read: false
+                });
             }
 
             if (stockNotifications.length > 0) {
@@ -191,6 +201,7 @@ const checkAndCreateAlerts = async (req, res) => {
 
         // Final response
         if (allCreatedNotifications.length > 0) {
+            invalidateCache();
             return res.json({
                 success: true,
                 message: `Created ${allCreatedNotifications.length} notifications`,
@@ -206,21 +217,10 @@ const checkAndCreateAlerts = async (req, res) => {
     }
 };
 
-// Get notifications for a specific user
-const getUserNotifications = async (req, res) => {
-    const { userId } = req.params;
-
+// Get all notifications (centralized — cached)
+const getAllNotifications = async (req, res) => {
     try {
-        const { data: notifications, error } = await supabase
-            .from('notifications')
-            .select('*')
-            .eq('user_id', userId)
-            .order('created_at', { ascending: false });
-
-        if (error) {
-            console.error('Error fetching notifications:', error);
-            return res.status(500).json({ success: false, error: error.message });
-        }
+        const notifications = await getCachedNotifications();
 
         return res.json({ 
             success: true, 
@@ -229,7 +229,7 @@ const getUserNotifications = async (req, res) => {
         });
 
     } catch (err) {
-        console.error('Error in getUserNotifications:', err);
+        console.error('Error in getAllNotifications:', err);
         return res.status(500).json({ success: false, error: err.message });
     }
 };
@@ -250,6 +250,7 @@ const markAsRead = async (req, res) => {
             return res.status(500).json({ success: false, error: error.message });
         }
 
+        invalidateCache();
         return res.json({ success: true, notification: data[0] });
 
     } catch (err) {
@@ -258,15 +259,12 @@ const markAsRead = async (req, res) => {
     }
 };
 
-// Mark all notifications as read for a user
+// Mark all notifications as read (system-wide)
 const markAllAsRead = async (req, res) => {
-    const { userId } = req.params;
-
     try {
         const { data, error } = await supabase
             .from('notifications')
             .update({ is_read: true })
-            .eq('user_id', userId)
             .eq('is_read', false)
             .select();
 
@@ -275,6 +273,7 @@ const markAllAsRead = async (req, res) => {
             return res.status(500).json({ success: false, error: error.message });
         }
 
+        invalidateCache();
         return res.json({ 
             success: true, 
             message: `Marked ${data.length} notifications as read`,
@@ -302,6 +301,7 @@ const deleteNotification = async (req, res) => {
             return res.status(500).json({ success: false, error: error.message });
         }
 
+        invalidateCache();
         return res.json({ success: true, message: 'Notification deleted' });
 
     } catch (err) {
@@ -310,21 +310,20 @@ const deleteNotification = async (req, res) => {
     }
 };
 
-// Delete all notifications for a user
+// Delete all notifications (system-wide)
 const deleteAllNotifications = async (req, res) => {
-    const { userId } = req.params;
-
     try {
         const { error } = await supabase
             .from('notifications')
             .delete()
-            .eq('user_id', userId);
+            .neq('id', '00000000-0000-0000-0000-000000000000'); // delete all rows
 
         if (error) {
             console.error('Error deleting all notifications:', error);
             return res.status(500).json({ success: false, error: error.message });
         }
 
+        invalidateCache();
         return res.json({ success: true, message: 'All notifications deleted' });
 
     } catch (err) {
@@ -335,7 +334,7 @@ const deleteAllNotifications = async (req, res) => {
 
 module.exports = {
     checkAndCreateAlerts,
-    getUserNotifications,
+    getAllNotifications,
     markAsRead,
     markAllAsRead,
     deleteNotification,

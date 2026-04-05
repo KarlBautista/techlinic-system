@@ -4,7 +4,7 @@ const { authenticate, authorize } = require("../middleware/auth");
 const { validateIdParam } = require("../middleware/validate");
 const {
     checkAndCreateAlerts,
-    getUserNotifications,
+    getAllNotifications,
     markAsRead,
     markAllAsRead,
     deleteNotification,
@@ -13,10 +13,10 @@ const {
 
 // ── All notification endpoints require authentication, all roles ──
 router.post('/check-alerts', authenticate, authorize("DOCTOR", "NURSE", "ADMIN"), checkAndCreateAlerts);
-router.get('/user/:userId', authenticate, authorize("DOCTOR", "NURSE", "ADMIN"), validateIdParam('userId'), getUserNotifications);
+router.get('/all', authenticate, authorize("DOCTOR", "NURSE", "ADMIN"), getAllNotifications);
+router.patch('/read-all', authenticate, authorize("DOCTOR", "NURSE", "ADMIN"), markAllAsRead);
 router.patch('/:notificationId/read', authenticate, authorize("DOCTOR", "NURSE", "ADMIN"), validateIdParam('notificationId'), markAsRead);
-router.patch('/user/:userId/read-all', authenticate, authorize("DOCTOR", "NURSE", "ADMIN"), validateIdParam('userId'), markAllAsRead);
+router.delete('/all', authenticate, authorize("DOCTOR", "NURSE", "ADMIN"), deleteAllNotifications);
 router.delete('/:notificationId', authenticate, authorize("DOCTOR", "NURSE", "ADMIN"), validateIdParam('notificationId'), deleteNotification);
-router.delete('/user/:userId/all', authenticate, authorize("DOCTOR", "NURSE", "ADMIN"), validateIdParam('userId'), deleteAllNotifications);
 
 module.exports = router;

@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import { showToast } from './Toast'
-import useAuth from '../store/useAuthStore'
 import useNotificationStore, { requestNotificationPermission } from '../store/useNotificationStore'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Bell, BellOff, AlertTriangle, Pill, Info, Trash2, X, CheckCheck, Search } from 'lucide-react'
@@ -53,7 +52,6 @@ const TABS = [
 ]
 
 const NotificationModal = ({ isOpen, onClose }) => {
-    const { authenticatedUser } = useAuth()
     const {
         notifications,
         unreadCount,
@@ -70,15 +68,15 @@ const NotificationModal = ({ isOpen, onClose }) => {
     const [searchQuery, setSearchQuery] = useState('')
 
     useEffect(() => {
-        if (isOpen && authenticatedUser?.id) {
+        if (isOpen) {
             requestNotificationPermission()
-            fetchNotifications(authenticatedUser.id, true)
+            fetchNotifications(true)
         }
         if (!isOpen) {
             setActiveTab('all')
             setSearchQuery('')
         }
-    }, [isOpen, authenticatedUser?.id])
+    }, [isOpen])
 
     useEffect(() => {
         if (!isOpen) return
@@ -128,7 +126,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
     }
 
     const handleMarkAllAsRead = async () => {
-        const result = await markAllAsRead(authenticatedUser.id)
+        const result = await markAllAsRead()
         if (result?.success) {
             showToast({ title: 'All caught up!', message: 'All notifications have been marked as read.', type: 'success' })
         }
@@ -141,7 +139,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
             return
         }
         setConfirmClear(false)
-        const response = await deleteAllNotifications(authenticatedUser.id)
+        const response = await deleteAllNotifications()
         if (response?.success) {
             showToast({ title: 'Notifications cleared', message: 'All notifications have been removed.', type: 'success' })
         } else {
