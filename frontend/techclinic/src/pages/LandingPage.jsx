@@ -44,7 +44,7 @@ const STEPS = [
 
 function LandingPage() {
     const navigate = useNavigate();
-    const API_BASE = 'http://localhost:3500/api';
+    const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3500/api';
 
     const [formData, setFormData] = useState(INITIAL_FORM_DATA);
     const [isStudentConfirmed, setIsStudentConfirmed] = useState(false);
