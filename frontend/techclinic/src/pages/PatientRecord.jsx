@@ -46,6 +46,7 @@ const PatientRecord = () => {
       setInitialLoading(false);
     };
     fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const filteredRecords = useMemo(() => {
@@ -84,7 +85,7 @@ const PatientRecord = () => {
   const handleIndividualRecord = (studentId) => {
     try {
       navigate(`/individual-record/${studentId}`);
-    } catch (err) {
+    } catch (_err) {
       console.error(`Something went wrong navigating to individual record: ${studentId}`);
     }
   }
@@ -292,7 +293,7 @@ const PatientRecord = () => {
                     </tr>
                   </thead>
                   <tbody className='divide-y divide-gray-50 dark:divide-[#1F2A37]'>
-                    {paginatedRecords.map((patient, idx) => (
+                    {paginatedRecords.map((patient) => (
                       <tr
                         key={patient.id}
                         className='cursor-pointer hover:bg-crimson-50/40 dark:hover:bg-[#293040] transition-colors group'

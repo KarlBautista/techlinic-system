@@ -20,6 +20,7 @@ const getNotifStyle = (title = '') => {
     return { Icon: Info, color: 'text-blue-600', bg: 'bg-blue-50', ring: 'ring-blue-200', dot: 'bg-emerald-500' }
 }
 
+// eslint-disable-next-line no-misleading-character-class
 const cleanTitle = (title) => title?.replace(/[\u{1F600}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{FE00}-\u{FE0F}\u{1F000}-\u{1F02F}\u{1F0A0}-\u{1F0FF}\u{1F100}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{200D}\u{20E3}]/gu, '').trim() || title
 
 const formatRelativeTime = (dateString) => {
@@ -76,6 +77,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
             setActiveTab('all')
             setSearchQuery('')
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen])
 
     useEffect(() => {

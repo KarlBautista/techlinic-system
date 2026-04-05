@@ -21,7 +21,7 @@ const ResetPassword = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, _session) => {
             if (event === 'PASSWORD_RECOVERY') {
                 setIsValidSession(true)
                 setIsChecking(false)

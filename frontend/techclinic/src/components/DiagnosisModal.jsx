@@ -537,11 +537,8 @@ const RecordTab = ({ patient, record, diagnoses, visitDate }) => {
 };
 
 /* ────────────────────────── Prescription Tab ────────────────────────── */
-const PrescriptionTab = ({ patient: _patient, diagnosis, visitDate, visitTime, timeDischarged, onTimeDischargedChange, physicianData, attendingPhysician, showSignature }) => {
-  const physicianName = physicianData
-    ? `${physicianData.first_name || ''} ${physicianData.last_name || ''}`.trim()
-    : attendingPhysician || '';
-
+// eslint-disable-next-line no-unused-vars
+const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime, timeDischarged, onTimeDischargedChange, physicianData, attendingPhysician, showSignature }) => {
   return (
     <div className="bg-white dark:bg-white text-gray-800 dark:text-gray-800 max-w-2xl w-full mx-auto rounded-lg border border-gray-300 dark:border-gray-300">
       {/* Prescription Header */}

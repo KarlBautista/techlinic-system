@@ -52,6 +52,7 @@ const PatientCountsChart = () => {
 
   useEffect(() => {
     getWeeklyPatientCount();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
@@ -95,6 +96,7 @@ const PatientCountsChart = () => {
         }
       }));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [monthlyPatientCount, selectedCategory]);
 
   useEffect(() => {
@@ -140,6 +142,7 @@ const PatientCountsChart = () => {
         }
       }));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quarterlyPatientCount, selectedCategory]);
 
 

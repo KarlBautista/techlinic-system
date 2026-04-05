@@ -5,7 +5,7 @@ import useAuth from '../store/useAuthStore';
 import TUP from "../assets/image/TUP.png"
 import { useNavigate, useLocation } from 'react-router-dom';
 import { showToast } from '../components/Toast'
-import { validateEmail as sharedValidateEmail, validatePassword as sharedValidatePassword } from '../lib/validation'
+import { validateEmail as sharedValidateEmail } from '../lib/validation'
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -67,6 +67,7 @@ const Login = () => {
         if (field === 'password') setErrors(prev => ({ ...prev, password: validatePassword(password) }));
     };
 
+    // eslint-disable-next-line no-unused-vars
     const handleSignInWithGoogle = async () => {
         try {
             setIsLoading(true);

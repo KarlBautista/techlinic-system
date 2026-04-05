@@ -19,6 +19,7 @@ const COLORS = {
 let toastId = 0
 let addToastGlobal = null
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function showToast({ title, message, type = 'success', duration = 3000, action }) {
     if (addToastGlobal) {
         addToastGlobal({ id: ++toastId, title, message, type, duration, action })

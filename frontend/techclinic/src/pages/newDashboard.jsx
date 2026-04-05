@@ -3,7 +3,6 @@ import useAuth from '../store/useAuthStore';
 import useData from '../store/useDataStore';
 import useMedicine from '../store/useMedicineStore';
 import usePresenceStore from '../store/usePresenceStore';
-import useChart from '../store/useChartStore';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { showToast } from '../components/Toast';
@@ -52,7 +51,7 @@ const NewDashboard = () => {
     const { authenticatedUser, userProfile, allUsers, getAllUsers } = useAuth();
     const { onlineUserIds } = usePresenceStore();
     const { patientRecords, patientsData, getRecords } = useData();
-    const records = patientRecords?.data ?? [];
+    const records = useMemo(() => patientRecords?.data ?? [], [patientRecords?.data]);
     const { medicines, getMedicines } = useMedicine();
     const navigate = useNavigate();
     const refreshIntervalRef = useRef(null);
@@ -121,17 +120,6 @@ const NewDashboard = () => {
         };
     }, [getRecords, getMedicines, getAllUsers]);
 
-    function formatDate(dateString) {
-        if (!dateString) return "";
-        const date = new Date(dateString);
-        return date.toLocaleDateString("en-US", {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-        });
-    }
-
     function formatTime(dateString) {
         if (!dateString) return "";
         const date = new Date(dateString);
@@ -194,39 +182,18 @@ const NewDashboard = () => {
         return [...records].reverse().filter(patient => isToday(patient.created_at));
     }, [records]);
 
-    const pendingCount = useMemo(() => {
-        return todayRecords.filter(r => r.status === "INCOMPLETE").length;
-    }, [todayRecords]);
-
-    const completedCount = useMemo(() => {
-        return todayRecords.filter(r => r.status === "COMPLETE").length;
-    }, [todayRecords]);
-
     const pendingRecords = useMemo(() => {
         if (!records?.length) return [];
         return [...records].reverse().filter(r => r.status === "INCOMPLETE");
     }, [records]);
 
     const [tableFilter, setTableFilter] = useState('today');
-    const [currentPage, setCurrentPage] = useState(1);
     const [showChartsModal, setShowChartsModal] = useState(false);
-
-    const rowsPerPage = 5;
 
     const filteredTableRecords = useMemo(() => {
         if (tableFilter === 'pending') return pendingRecords;
         return todayRecords;
     }, [tableFilter, todayRecords, pendingRecords]);
-
-    const totalPages = Math.ceil((filteredTableRecords?.length || 0) / rowsPerPage);
-    const paginatedTableRecords = useMemo(() => {
-        const start = (currentPage - 1) * rowsPerPage;
-        return filteredTableRecords.slice(start, start + rowsPerPage);
-    }, [filteredTableRecords, currentPage, rowsPerPage]);
-
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [tableFilter]);
 
     /* ───── Active personnel (all staff) ───── */
     const activePersonnel = useMemo(() => {

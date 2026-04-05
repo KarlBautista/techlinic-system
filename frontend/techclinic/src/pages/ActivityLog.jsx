@@ -77,6 +77,7 @@ const ActivityLog = () => {
 
   useEffect(() => {
     getAuditTrail()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const filteredLogs = useMemo(() => {

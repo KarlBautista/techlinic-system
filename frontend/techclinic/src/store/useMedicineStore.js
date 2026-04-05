@@ -74,7 +74,7 @@ const useMedicine = create((set, get) => ({
             }
         } catch (err) {
             console.error(`Something went wrong deleting medicine: ${err.message}`);
-            return { success: false, error: response.data.error };
+            return { success: false, error: err.message };
         }
     }
 }))

@@ -4,7 +4,7 @@ import React from 'react';
  * Full-page skeleton loader - covers the main content area
  * Mimics a generic page layout with header, cards, and content
  */
-export const PageLoader = ({ message }) => (
+export const PageLoader = ({ message: _message }) => (
   <div className="w-full h-full flex flex-col gap-5 animate-pulse min-h-[60vh]">
     {/* Skeleton Header */}
     <div>

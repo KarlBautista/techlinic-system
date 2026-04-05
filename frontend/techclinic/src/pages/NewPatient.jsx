@@ -14,7 +14,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { UserPlus, ClipboardList, Plus, X, FileText, StickyNote, Check, Send } from 'lucide-react'
 import Dropdown from '../components/Dropdown'
 import tupLogo from '../assets/image/TUP.png'
-import { validatePatientForm, hasErrors, validateQuantity, validateTreatment, validateNotes, validateDiseaseName, LIMITS } from '../lib/validation'
+import { validatePatientForm, hasErrors, LIMITS } from '../lib/validation'
 
 const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID
 const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
@@ -91,7 +91,7 @@ const NewPatient = () => {
       const d = new Date(val);
       if (isNaN(d)) return '';
       return d.toISOString().slice(0, 10);
-    } catch (e) {
+    } catch (_e) {
       return '';
     }
   }

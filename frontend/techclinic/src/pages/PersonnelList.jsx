@@ -23,12 +23,14 @@ const PersonnelList = () => {
   const { allUsers, getAllUsers, isLoadingUsers, userProfile } = useAuth();
   const { insertPersonnel, deactivateUser, reactivateUser } = useData();
   const [initialLoading, setInitialLoading] = useState(true);
+  // eslint-disable-next-line no-unused-vars
   const [showModal, setShowModal] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isModalClosing, setIsModalClosing] = useState(false);
   const [selectedRole, setSelectedRole] = useState("All Roles");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -69,7 +71,7 @@ const PersonnelList = () => {
       } else {
         showToast({ title: "Error", message: result.error, type: "error" });
       }
-    } catch (err) {
+    } catch (_err) {
       showToast({ title: "Error", message: "An unexpected error occurred", type: "error" });
     } finally {
       setIsActionLoading(false);
@@ -103,8 +105,10 @@ const PersonnelList = () => {
       }
     };
     getAllUsersData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // eslint-disable-next-line no-unused-vars
   function formatDate(dateString) {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -307,13 +311,15 @@ const PersonnelList = () => {
                   </p>
                 </div>
               </div>
-              <button
-                onClick={openModal}
-                className='inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-crimson-600 text-white text-xs font-medium hover:bg-crimson-700 transition-colors shadow-sm cursor-pointer'
-              >
-                <Plus className="w-4 h-4" />
-                Add Personnel
-              </button>
+              {isAdmin && (
+                <button
+                  onClick={openModal}
+                  className='inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-crimson-600 text-white text-xs font-medium hover:bg-crimson-700 transition-colors shadow-sm cursor-pointer'
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Personnel
+                </button>
+              )}
             </motion.div>
 
             {/* ─── Filters & Search ─── */}

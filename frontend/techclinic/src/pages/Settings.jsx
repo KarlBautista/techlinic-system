@@ -9,8 +9,8 @@ import { validateName, validateAddress, validateDateOfBirth, validatePassword, L
 import { showToast } from '../components/Toast';
 
 const Settings = () => {
-  const { authenticatedUser, userProfile, password, updateProfile, uploadSignature, changePassword, changeEmail } = useAuth();
-  const fullName = `${userProfile?.first_name || ''} ${userProfile?.last_name || ''}`.trim() || 'N/A';
+  const { authenticatedUser, userProfile, updateProfile, uploadSignature, changePassword } = useAuth();
+  const _fullName = `${userProfile?.first_name || ''} ${userProfile?.last_name || ''}`.trim() || 'N/A';
 
   const formatDateForInput = (val) => {
     if (!val) return '';
@@ -18,12 +18,12 @@ const Settings = () => {
       const d = new Date(val);
       if (isNaN(d)) return '';
       return d.toISOString().slice(0, 10);
-    } catch (e) {
+    } catch (_e) {
       return '';
     }
   };
 
- const maskPassword = (password) => {
+ const _maskPassword = (password) => {
     return password ? '*'.repeat(password.length) : '********';
   };
 
@@ -68,6 +68,7 @@ const getInitials = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  // eslint-disable-next-line no-unused-vars
   const [editMode, setEditMode] = useState(false);
   const [saving, setSaving] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -85,6 +86,7 @@ const getInitials = () => {
   const [address, setAddress] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [role, setRole] = useState('');
+  // eslint-disable-next-line no-unused-vars
   const [email, setEmail] = useState('');
   const [profileMessage, setProfileMessage] = useState('');
   const [profileErrors, setProfileErrors] = useState({});
@@ -114,7 +116,7 @@ const getInitials = () => {
     setShowProfileModal(true);
   };
 
-  const handleCancelEdit = () => {
+  const _handleCancelEdit = () => {
     // reset values to store values
     setFirstName(userProfile?.first_name || '');
     setLastName(userProfile?.last_name || '');

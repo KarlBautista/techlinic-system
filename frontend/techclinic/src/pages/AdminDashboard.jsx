@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import useAuth from '../store/useAuthStore'
 import useData from '../store/useDataStore'
 import useMedicine from '../store/useMedicineStore'
-import useChart from '../store/useChartStore'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import AnimateNumber from '../components/AnimateNumber'
@@ -47,7 +46,7 @@ const cardHover = {
 const AdminDashboard = () => {
     const { authenticatedUser, userProfile, allUsers, getAllUsers } = useAuth()
     const { patientRecords, patientsData, getRecords } = useData()
-    const records = patientRecords?.data ?? []
+    const records = useMemo(() => patientRecords?.data ?? [], [patientRecords?.data])
     const { medicines, getMedicines } = useMedicine()
     const navigate = useNavigate()
     const refreshIntervalRef = useRef(null)

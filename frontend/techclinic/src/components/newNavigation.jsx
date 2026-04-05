@@ -54,6 +54,7 @@ const NewNavigation = () => {
         }, 30000);
         
         return () => clearInterval(intervalId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [authenticatedUser?.id]);
 
     const handleSignOut = async () => {

@@ -66,7 +66,7 @@ const useAuth = create(
     },
     
     signUp: async (registerData) => {
-        const { firstName, lastName, email, password } = registerData;
+        const { email, password } = registerData;
         try {
             const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
                 email, 
@@ -321,8 +321,7 @@ const useAuth = create(
 
             const fileName = `${userId}.png`;
 
-            // Upload to Supabase Storage (upsert to overwrite existing)
-            const { data: uploadData, error: uploadError } = await supabase.storage
+            const { error: uploadError } = await supabase.storage
                 .from("signatures")
                 .upload(fileName, blob, {
                     contentType: "image/png",

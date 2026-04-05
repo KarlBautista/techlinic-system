@@ -17,7 +17,7 @@ const itemVariants = {
 
 const ROWS_OPTIONS = [5, 10, 20, 50];
 
-const newMedicine = () => {
+const NewMedicine = () => {
   const { medicines, updateMedicine, deleteMedicine, isLoading } = useMedicine();
   const { userProfile } = useAuth();
   const isAdmin = userProfile?.role === 'ADMIN';
@@ -468,4 +468,4 @@ const newMedicine = () => {
   );
 };
 
-export default newMedicine
+export default NewMedicine

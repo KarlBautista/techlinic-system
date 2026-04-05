@@ -209,6 +209,7 @@ export default function Sidebar() {
             checkForAlerts()
         }, 30000)
         return () => clearInterval(interval)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [authenticatedUser?.id])
 
     // ── Helpers ──

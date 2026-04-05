@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, createContext, useContext } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Trash2, AlertTriangle, CheckCircle2, X } from 'lucide-react'
 
@@ -54,6 +54,7 @@ let showModalGlobal = null
  * @param {boolean} [options.showCancel=true] - Show cancel button
  * @returns {Promise<boolean>} - Resolves true if confirmed, false if cancelled
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export function showModal({ type = 'warning', title, message, confirmLabel = 'Confirm', cancelLabel = 'Cancel', showCancel = true }) {
     return new Promise((resolve) => {
         if (showModalGlobal) {
@@ -85,6 +86,7 @@ function ModalContent({ modal, onClose }) {
         }
         document.addEventListener('keydown', handler)
         return () => document.removeEventListener('keydown', handler)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import useData from '../store/useDataStore'
 import useAuth from '../store/useAuthStore'
 import { showToast } from '../components/Toast'
@@ -70,7 +70,7 @@ const AddDiagnosis = () => {
       const d = new Date(val);
       if (isNaN(d)) return '';
       return d.toISOString().slice(0, 10);
-    } catch (e) {
+    } catch (_e) {
       return '';
     }
   };
@@ -106,6 +106,7 @@ const AddDiagnosis = () => {
       }
     };
     getRecord();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
