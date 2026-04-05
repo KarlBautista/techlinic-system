@@ -2,6 +2,7 @@ import MedicineForm from '../components/MedicineForm.jsx'
 import AddMedicineModal from '../components/AddMedicineModal.jsx'
 import React, { useState, useMemo, useEffect, useRef } from 'react'
 import useMedicine from '../store/useMedicineStore'
+import useAuth from '../store/useAuthStore'
 import { motion } from 'framer-motion'
 import { Search, Plus, Pill, ChevronRight, ChevronLeft, ChevronDown, Beaker, BarChart3 } from 'lucide-react'
 
@@ -18,6 +19,8 @@ const ROWS_OPTIONS = [5, 10, 20, 50];
 
 const newMedicine = () => {
   const { medicines, updateMedicine, deleteMedicine, isLoading } = useMedicine();
+  const { userProfile } = useAuth();
+  const isAdmin = userProfile?.role === 'ADMIN';
   const [showForm, setShowForm] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
   const [medicineFormData, setMedicineFormData] = useState({});
@@ -185,7 +188,7 @@ const newMedicine = () => {
               </button>
               <button
                 onClick={() => handleAddMedicine()}
-                className='inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-crimson-600 text-white text-xs font-medium hover:bg-crimson-700 transition-colors shadow-sm cursor-pointer print:hidden'
+                className={`inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-crimson-600 text-white text-xs font-medium hover:bg-crimson-700 transition-colors shadow-sm cursor-pointer print:hidden ${isAdmin ? 'hidden' : ''}`}
               >
                 <Plus className="w-4 h-4" />
                 Add Medicine
@@ -320,8 +323,8 @@ const newMedicine = () => {
                     {paginatedMedicines.map((medicine) => (
                       <tr
                         key={medicine.id}
-                        className='cursor-pointer hover:bg-crimson-50/40 dark:hover:bg-[#293040] transition-colors group'
-                        onClick={() => handleUpdateMedicine(medicine)}
+                        className={`${isAdmin ? '' : 'cursor-pointer'} hover:bg-crimson-50/40 dark:hover:bg-[#293040] transition-colors group`}
+                        onClick={() => !isAdmin && handleUpdateMedicine(medicine)}
                       >
                         <td className='px-5 py-3.5'>
                           <span className='text-sm font-medium text-gray-900 dark:text-white group-hover:text-crimson-600 dark:group-hover:text-crimson-300 transition-colors'>

@@ -49,6 +49,13 @@ const PersonnelList = () => {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
 
+  // Auto-generate password from first name + random number
+  const generatePassword = (firstName) => {
+    if (!firstName || firstName.trim().length < 2) return '';
+    const num = Math.floor(1000 + Math.random() * 9000); // 4-digit random
+    return `${firstName.trim().toLowerCase()}${num}`;
+  };
+
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (roleRef.current && !roleRef.current.contains(e.target)) setRoleOpen(false);
@@ -104,11 +111,17 @@ const PersonnelList = () => {
   }, [search, selectedRole, rowsPerPage]);
 
   const handleChange = (e) => {
-    const updated = { ...personnel, [e.target.name]: e.target.value };
+    const { name, value } = e.target;
+    let updated = { ...personnel, [name]: value };
+    // Auto-generate password when first name changes
+    if (name === 'first_name') {
+      const pwd = generatePassword(value);
+      updated = { ...updated, password: pwd, confirm_password: pwd };
+    }
     setPersonnel(updated);
-    if (touched[e.target.name]) {
+    if (touched[name]) {
       const formErrors = validatePersonnelForm(updated);
-      setErrors(prev => ({ ...prev, [e.target.name]: formErrors[e.target.name] }));
+      setErrors(prev => ({ ...prev, [name]: formErrors[name] }));
     }
   };
 
@@ -367,12 +380,17 @@ const PersonnelList = () => {
                             </div>
                           </td>
                           <td className='px-5 py-3.5'>
-                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ring-1 ${user.role === 'DOCTOR'
-                              ? 'bg-blue-50 text-blue-700 ring-blue-100'
-                              : 'bg-emerald-50 text-emerald-700 ring-emerald-100'
+                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ring-1 ${
+                              user.role === 'DOCTOR'
+                                ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 ring-blue-100 dark:ring-blue-900/60'
+                                : user.role === 'ADMIN'
+                                ? 'bg-crimson-50 dark:bg-crimson-950/40 text-crimson-700 dark:text-crimson-300 ring-crimson-100 dark:ring-crimson-900/60'
+                                : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 ring-emerald-100 dark:ring-emerald-900/60'
                               }`}>
-                              <span className={`w-1.5 h-1.5 rounded-full ${user.role === 'DOCTOR' ? 'bg-blue-500' : 'bg-emerald-500'}`} />
-                              {user.role === 'DOCTOR' ? 'Doctor' : 'Nurse'}
+                              <span className={`w-1.5 h-1.5 rounded-full ${
+                                user.role === 'DOCTOR' ? 'bg-blue-500' : user.role === 'ADMIN' ? 'bg-crimson-500' : 'bg-emerald-500'
+                              }`} />
+                              {user.role === 'DOCTOR' ? 'Doctor' : user.role === 'ADMIN' ? 'Admin' : 'Nurse'}
                             </span>
                           </td>
                           <td className='px-5 py-3.5 hidden md:table-cell'>
@@ -513,40 +531,35 @@ const PersonnelList = () => {
                   {touched.email && errors.email && <p className='text-xs text-red-500'>{errors.email}</p>}
                 </div>
 
-                {/* Password */}
-                <div className='flex flex-col gap-1.5'>
-                  <label className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Password <span className='text-red-500'>*</span></label>
+                {/* Auto-Generated Password */}
+                <div className='flex flex-col gap-1.5 md:col-span-2'>
+                  <label className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Auto-Generated Password</label>
                   <div className='relative'>
                     <input
-                      type={showPassword ? "text" : "password"} name="password" value={personnel.password} onChange={handleChange}
-                      onBlur={() => handleBlur('password')} maxLength={LIMITS.PASSWORD_MAX}
-                      placeholder="Min. 8 characters" required minLength="8"
-                      className={`w-full px-3 py-2.5 pr-10 rounded-xl border outline-none text-sm focus:ring-2 transition-all ${touched.password && errors.password ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-crimson-400 focus:ring-crimson-100 dark:ring-[#333741]'}`}
+                      type={showPassword ? "text" : "password"} name="password" value={personnel.password} readOnly
+                      className='w-full px-3 py-2.5 pr-20 rounded-xl border border-gray-200 dark:border-[#1F2A37] outline-none text-sm bg-gray-50 dark:bg-[#1F242F] text-gray-600 dark:text-gray-300 cursor-default'
+                      placeholder="Enter first name to generate"
                     />
-                    <button type="button" onClick={() => setShowPassword(!showPassword)}
-                      className='absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-[#94969C] hover:text-gray-600 dark:hover:text-gray-300'>
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
+                    <div className='absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1'>
+                      <button type="button" onClick={() => setShowPassword(!showPassword)}
+                        className='p-1 text-gray-400 dark:text-[#94969C] hover:text-gray-600 dark:hover:text-gray-300 cursor-pointer'>
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                      <button type="button" onClick={() => {
+                        const pwd = generatePassword(personnel.first_name);
+                        setPersonnel(prev => ({ ...prev, password: pwd, confirm_password: pwd }));
+                      }}
+                        className='px-2 py-0.5 text-[10px] font-medium text-crimson-600 dark:text-crimson-300 hover:bg-crimson-50 dark:hover:bg-crimson-950/30 rounded-md transition-colors cursor-pointer'
+                      >
+                        Regenerate
+                      </button>
+                    </div>
                   </div>
-                  {touched.password && errors.password && <p className='text-xs text-red-500'>{errors.password}</p>}
-                </div>
-
-                {/* Confirm Password */}
-                <div className='flex flex-col gap-1.5'>
-                  <label className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Confirm Password <span className='text-red-500'>*</span></label>
-                  <div className='relative'>
-                    <input
-                      type={showConfirmPassword ? "text" : "password"} name="confirm_password" value={personnel.confirm_password} onChange={handleChange}
-                      onBlur={() => handleBlur('confirm_password')} maxLength={LIMITS.PASSWORD_MAX}
-                      placeholder="Re-enter password" required minLength="8"
-                      className={`w-full px-3 py-2.5 pr-10 rounded-xl border outline-none text-sm focus:ring-2 transition-all ${touched.confirm_password && errors.confirm_password ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-crimson-400 focus:ring-crimson-100 dark:ring-[#333741]'}`}
-                    />
-                    <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className='absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-[#94969C] hover:text-gray-600 dark:hover:text-gray-300'>
-                      {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
-                  </div>
-                  {touched.confirm_password && errors.confirm_password && <p className='text-xs text-red-500'>{errors.confirm_password}</p>}
+                  {personnel.password && (
+                    <p className='text-[10px] text-gray-400 dark:text-gray-500'>
+                      Password: <span className='font-mono text-gray-600 dark:text-gray-300'>{showPassword ? personnel.password : '••••••••'}</span> — Personnel can change this in Settings after logging in.
+                    </p>
+                  )}
                 </div>
 
                 {/* Address */}

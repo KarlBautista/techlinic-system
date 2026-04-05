@@ -88,7 +88,7 @@ const NAV_SECTIONS = {
             items: [
                 { label: 'Personnel', path: '/personnel-list', icon: Users },
                 { label: 'Patient Record', path: '/patient-record', icon: ClipboardList, matchPrefix: ['/individual-record'] },
-                { label: 'Medicine', path: '/medicine-inventory', icon: Pill, matchPrefix: ['/add-medicine'] },
+                { label: 'Medicine', path: '/medicine-inventory', icon: Pill },
             ],
         },
         {

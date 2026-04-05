@@ -1,8 +1,112 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { showToast } from './Toast'
 import { showModal } from './Modal'
 import useMedicine from '../store/useMedicineStore'
 import { validateMedicineForm, hasErrors } from '../lib/validation'
+import { ChevronDown } from 'lucide-react'
+
+const DOSAGE_OPTIONS = [
+  '5mg', '10mg', '25mg', '50mg', '100mg', '200mg', '250mg', '500mg', '1g',
+  '5mL', '10mL', '15mL', '20mL', '50mL', '100mL', '250mL', '500mL', '1L',
+  '1 unit', '2 units', '5 units', '10 units'
+]
+
+const UNIT_OPTIONS = [
+  { value: 'mg', label: 'mg (milligrams)' },
+  { value: 'g', label: 'g (grams)' },
+  { value: 'mcg', label: 'mcg (micrograms)' },
+  { value: 'mL', label: 'mL (milliliters)' },
+  { value: 'L', label: 'L (liters)' },
+  { value: 'IU', label: 'IU (international units)' },
+  { value: 'tablet', label: 'Tablet' },
+  { value: 'capsule', label: 'Capsule' },
+  { value: 'vial', label: 'Vial' },
+  { value: 'ampule', label: 'Ampule' },
+  { value: 'sachet', label: 'Sachet' },
+  { value: 'patch', label: 'Patch' },
+  { value: 'suppository', label: 'Suppository' },
+  { value: 'drop', label: 'Drop' },
+  { value: 'puff', label: 'Puff' },
+  { value: 'piece', label: 'Piece' },
+  { value: 'bottle', label: 'Bottle' },
+  { value: 'tube', label: 'Tube' },
+  { value: 'box', label: 'Box' },
+]
+
+/* Reusable animated dropdown */
+const AnimatedDropdown = ({ name, label, required, placeholder, value, options, onChange, onBlur, hasError, errorText }) => {
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+
+  useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  const displayValue = typeof options[0] === 'string'
+    ? value || placeholder
+    : (options.find(o => o.value === value)?.label || placeholder)
+
+  return (
+    <div className="flex flex-col gap-1.5" ref={ref}>
+      <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">
+        {label} {required && <span className="text-red-500">*</span>}
+      </span>
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => setOpen(!open)}
+          className={`w-full h-10 px-3 pr-8 rounded-lg border text-sm text-left bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:focus:bg-[#161B26] focus:ring-1 transition-all outline-none cursor-pointer flex items-center ${
+            hasError
+              ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200'
+              : 'border-gray-200 dark:border-[#1F2A37] focus:border-crimson-600 focus:ring-crimson-600/20'
+          } ${value ? 'text-gray-800 dark:text-white' : 'text-gray-400 dark:text-gray-500'}`}
+        >
+          <span className="truncate">{displayValue}</span>
+          <ChevronDown className={`absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+        </button>
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              initial={{ opacity: 0, y: -4, scaleY: 0.95 }}
+              animate={{ opacity: 1, y: 0, scaleY: 1 }}
+              exit={{ opacity: 0, y: -4, scaleY: 0.95 }}
+              transition={{ duration: 0.15, ease: 'easeOut' }}
+              style={{ transformOrigin: 'top' }}
+              className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-[#1F242F] rounded-lg border border-gray-200 dark:border-[#333741] shadow-lg z-50 max-h-48 overflow-auto"
+            >
+              {options.map((opt) => {
+                const optValue = typeof opt === 'string' ? opt : opt.value
+                const optLabel = typeof opt === 'string' ? opt : opt.label
+                return (
+                  <button
+                    key={optValue}
+                    type="button"
+                    onClick={() => {
+                      onChange({ target: { name, value: optValue } })
+                      setOpen(false)
+                      if (onBlur) onBlur()
+                    }}
+                    className={`w-full text-left px-3 py-2 text-sm transition-colors cursor-pointer ${
+                      value === optValue
+                        ? 'bg-crimson-50 dark:bg-crimson-950/30 text-crimson-700 dark:text-crimson-300 font-medium'
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#293040]'
+                    }`}
+                  >
+                    {optLabel}
+                  </button>
+                )
+              })}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+      {hasError && errorText && <p className="text-xs text-red-500">{errorText}</p>}
+    </div>
+  )
+}
 
 const AddMedicineModal = ({ onClose }) => {
   const { insertMedicine } = useMedicine()
@@ -187,33 +291,31 @@ const AddMedicineModal = ({ onClose }) => {
             {touched.type && errors.type && <p className="text-xs text-red-500">{errors.type}</p>}
           </label>
 
-          <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">Dosage <span className="text-red-500">*</span></span>
-            <input
-              name="dosage"
-              value={form.dosage}
-              onChange={handleChange}
-              onBlur={() => handleBlur('dosage')}
-              maxLength={100}
-              className={`h-10 px-3 rounded-lg border text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:focus:bg-[#161B26] focus:ring-1 transition-all outline-none ${touched.dosage && errors.dosage ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-[#b01c34] focus:ring-[#b01c34]/20'}`}
-              placeholder="500mg"
-            />
-            {touched.dosage && errors.dosage && <p className="text-xs text-red-500">{errors.dosage}</p>}
-          </label>
+          <AnimatedDropdown
+            name="dosage"
+            label="Dosage"
+            required
+            placeholder="Select dosage"
+            value={form.dosage}
+            options={DOSAGE_OPTIONS}
+            onChange={handleChange}
+            onBlur={() => handleBlur('dosage')}
+            hasError={touched.dosage && errors.dosage}
+            errorText={errors.dosage}
+          />
 
-          <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">Unit of Measure <span className="text-red-500">*</span></span>
-            <input
-              name="unit"
-              value={form.unit}
-              onChange={handleChange}
-              onBlur={() => handleBlur('unit')}
-              maxLength={50}
-              className={`h-10 px-3 rounded-lg border text-sm text-gray-800 dark:text-white bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:focus:bg-[#161B26] focus:ring-1 transition-all outline-none ${touched.unit && errors.unit ? 'border-red-400 dark:border-red-500 focus:border-red-400 focus:ring-red-200' : 'border-gray-200 dark:border-[#1F2A37] focus:border-[#b01c34] focus:ring-[#b01c34]/20'}`}
-              placeholder="e.g. mg, mL, IU"
-            />
-            {touched.unit && errors.unit && <p className="text-xs text-red-500">{errors.unit}</p>}
-          </label>
+          <AnimatedDropdown
+            name="unit"
+            label="Unit of Measure"
+            required
+            placeholder="Select unit"
+            value={form.unit}
+            options={UNIT_OPTIONS}
+            onChange={handleChange}
+            onBlur={() => handleBlur('unit')}
+            hasError={touched.unit && errors.unit}
+            errorText={errors.unit}
+          />
 
           <label className="flex flex-col gap-1.5">
             <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">Stock Level <span className="text-red-500">*</span></span>

@@ -1,7 +1,6 @@
 import React from "react";
 import { createBrowserRouter } from "react-router-dom";
 import Dashboard from "../pages/newDashboard";
-import AdminDashboard from "../pages/AdminDashboard";
 import Login from "../pages/Login";
 import NewPatient from "../pages/NewPatient";
 import MedicineInventory from "../pages/newMedicine";
@@ -36,10 +35,17 @@ const router = createBrowserRouter([
       { path: "/patient-record", element: <PatientRecord /> },
       { path: "/medicine-inventory", element: <MedicineInventory /> },
       { path: "/individual-record/:studentId", element: <IndividualRecord /> },
-      { path: "/add-medicine", element: <AddMedicine /> },
       { path: "/activity-log", element: <ActivityLog /> },
       { path: "/notifications", element: <Notifications /> },
       { path: "/settings", element: <Settings /> },
+    ],
+  },
+
+  // ── DOCTOR and NURSE only (not ADMIN) ──
+  {
+    element: <ProtectedRoute allowedRoles={["DOCTOR", "NURSE"]}><AppLayout /></ProtectedRoute>,
+    children: [
+      { path: "/add-medicine", element: <AddMedicine /> },
       { path: "/new-patient", element: <NewPatient /> },
     ],
   },
@@ -56,7 +62,7 @@ const router = createBrowserRouter([
   {
     element: <ProtectedRoute allowedRoles={["ADMIN"]}><AppLayout /></ProtectedRoute>,
     children: [
-      { path: "/admin-dashboard", element: <AdminDashboard /> },
+      { path: "/admin-dashboard", element: <Dashboard /> },
     ],
   },
 
