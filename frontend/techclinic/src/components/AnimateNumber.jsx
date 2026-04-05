@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 const AnimateNumber = ({ value, duration = 200}) => {
     const [display, setDisplay] = useState(0);
     useEffect(() => {
-      let start = 0;
       const startTime = performance.now();
       const animate = (time) => {
         const progress = Math.min((time - startTime) / duration, 1);

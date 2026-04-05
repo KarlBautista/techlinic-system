@@ -5,7 +5,7 @@ import emailjs from '@emailjs/browser'
 import supabase from '../config/supabaseClient'
 import useAuth from '../store/useAuthStore'
 import tupLogo from '../assets/image/TUP.png'
-import { validateEmail, validateExcusedDays, LIMITS } from '../lib/validation'
+import { validateEmail, LIMITS } from '../lib/validation'
 
 const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID
 const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
@@ -24,7 +24,7 @@ const DiagnosisModal = ({ open = false, onClose = () => { }, patient = {}, recor
   const [emailTo, setEmailTo] = useState('');
   const [sending, setSending] = useState(false);
   const [emailStatus, setEmailStatus] = useState(null); // 'success' | 'error' | null
-  const [showSignature, setShowSignature] = useState(true);
+  const [showSignature] = useState(true);
   const [timeDischarged, setTimeDischarged] = useState('');
   const [excusedDays, setExcusedDays] = useState('');
 
@@ -154,7 +154,7 @@ const DiagnosisModal = ({ open = false, onClose = () => { }, patient = {}, recor
 
     // Save document to shared_documents for patient download link
     try {
-      const { to_email, ...docData } = templateParams;
+      const { to_email: _email, ...docData } = templateParams;
       const { data: savedDoc, error: saveErr } = await supabase
         .from('shared_documents')
         .insert({ type: activeTab, data: docData })
@@ -537,7 +537,7 @@ const RecordTab = ({ patient, record, diagnoses, visitDate }) => {
 };
 
 /* ────────────────────────── Prescription Tab ────────────────────────── */
-const PrescriptionTab = ({ patient, diagnosis, visitDate, visitTime, timeDischarged, onTimeDischargedChange, physicianData, attendingPhysician, showSignature }) => {
+const PrescriptionTab = ({ patient: _patient, diagnosis, visitDate, visitTime, timeDischarged, onTimeDischargedChange, physicianData, attendingPhysician, showSignature }) => {
   const physicianName = physicianData
     ? `${physicianData.first_name || ''} ${physicianData.last_name || ''}`.trim()
     : attendingPhysician || '';

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 import { showToast } from './Toast'
 import { showModal } from './Modal'
 import useMedicine from '../store/useMedicineStore'
@@ -38,26 +38,12 @@ const UNIT_OPTIONS = [
 const AnimatedDropdown = ({ name, label, required, placeholder, value, options, onChange, onBlur, hasError, errorText }) => {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
-  const buttonRef = useRef(null)
-  const [dropdownStyle, setDropdownStyle] = useState({})
 
   useEffect(() => {
     const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
   }, [])
-
-  useEffect(() => {
-    if (open && buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect()
-      setDropdownStyle({
-        position: 'fixed',
-        top: rect.bottom + 4,
-        left: rect.left,
-        width: rect.width,
-      })
-    }
-  }, [open])
 
   const displayValue = typeof options[0] === 'string'
     ? value || placeholder
@@ -70,7 +56,6 @@ const AnimatedDropdown = ({ name, label, required, placeholder, value, options, 
       </span>
       <div className="relative">
         <button
-          ref={buttonRef}
           type="button"
           onClick={() => setOpen(!open)}
           className={`w-full h-10 px-3 pr-8 rounded-lg border text-sm text-left bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:focus:bg-[#161B26] focus:ring-1 transition-all outline-none cursor-pointer flex items-center ${
