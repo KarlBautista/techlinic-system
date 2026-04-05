@@ -38,9 +38,10 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
             return <SessionSkeleton />;
         }
         
-        // If user's role is not in the allowed list, redirect to dashboard with a message
+        // If user's role is not in the allowed list, redirect to their home with a message
         if (!userRole || !allowedRoles.includes(userRole)) {
-            return <Navigate to="/dashboard" replace state={{ 
+            const homePath = userRole === 'ADMIN' ? '/admin-dashboard' : '/dashboard';
+            return <Navigate to={homePath} replace state={{ 
                 accessDenied: true, 
                 message: `This page requires ${allowedRoles.join(' or ')} access.` 
             }} />;

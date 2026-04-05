@@ -6,8 +6,10 @@ import SignaturePad from '../components/SignaturePad';
 import { validateName, validateAddress, validateDateOfBirth, validatePassword, LIMITS } from '../lib/validation';
 
 
+import { showToast } from '../components/Toast';
+
 const Settings = () => {
-  const { authenticatedUser, userProfile, password, updateProfile, uploadSignature } = useAuth();
+  const { authenticatedUser, userProfile, password, updateProfile, uploadSignature, changePassword, changeEmail } = useAuth();
   const fullName = `${userProfile?.first_name || ''} ${userProfile?.last_name || ''}`.trim() || 'N/A';
 
   const formatDateForInput = (val) => {
@@ -26,14 +28,15 @@ const Settings = () => {
   };
 
    const getDisplayName = () => {
+    const prefix = userProfile?.role === 'DOCTOR' ? 'Dr. ' : '';
     if (userProfile?.first_name && userProfile?.last_name) {
-      return `Dr. ${userProfile.first_name} ${userProfile.last_name}`;
+      return `${prefix}${userProfile.first_name} ${userProfile.last_name}`;
     }
     if (authenticatedUser?.user_metadata?.full_name) {
-      return `Dr. ${authenticatedUser.user_metadata.full_name}`;
+      return `${prefix}${authenticatedUser.user_metadata.full_name}`;
     }
     if (authenticatedUser?.user_metadata?.name) {
-      return `Dr. ${authenticatedUser.user_metadata.name}`;
+      return `${prefix}${authenticatedUser.user_metadata.name}`;
     }
     if (authenticatedUser?.email) {
       return authenticatedUser.email.split('@')[0];
@@ -186,7 +189,7 @@ const getInitials = () => {
     }
   };
 
-  const handleSavePassword = (e) => {
+  const handleSavePassword = async (e) => {
     e.preventDefault();
     if (!currentPassword || !newPassword || !confirmPassword) {
       setError('All fields are required.');
@@ -201,9 +204,17 @@ const getInitials = () => {
       setError('New password and confirmation do not match.');
       return;
     }
-    // UI-only: no backend call here. You can wire this to your API later.
-    console.log('Password change (UI-only)', { currentPassword, newPassword });
-    setShowModal(false);
+    const result = await changePassword(newPassword);
+    if (result.success) {
+      showToast({ title: 'Success', message: 'Password changed successfully.', type: 'success' });
+      setShowModal(false);
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      setError('');
+    } else {
+      setError(result.error || 'Failed to change password.');
+    }
   };
 
   const handleCloseModal = () => {
@@ -317,7 +328,8 @@ const getInitials = () => {
           </div>
         </div>
 
-        {/* ─── Digital Signature Section ─── */}
+        {/* ─── Digital Signature Section (not for ADMIN) ─── */}
+        {userProfile?.role !== 'ADMIN' && (
         <div className='px-5 pb-5'>
           <h3 className='text-lg font-bold text-gray-900 dark:text-white border-t border-gray-200 dark:border-[#1F2A37] pt-5 mb-3'>Digital Signature</h3>
           <p className='text-xs text-gray-400 dark:text-[#85888E] mt-1'>Used on prescriptions and medical certificates</p>
@@ -361,6 +373,7 @@ const getInitials = () => {
             )}
           </div>
         </div>
+        )}
       </motion.div>
 
     {/* Change Password Modal */}

@@ -357,6 +357,49 @@ const useAuth = create(
         }
     },
 
+    // Change password via Supabase Auth
+    changePassword: async (newPassword) => {
+        try {
+            const { data, error } = await supabase.auth.updateUser({
+                password: newPassword
+            });
+            if (error) {
+                console.error("Error changing password:", error.message);
+                return { success: false, error: error.message };
+            }
+            return { success: true, data };
+        } catch (err) {
+            console.error("Error changing password:", err);
+            return { success: false, error: err.message };
+        }
+    },
+
+    // Change email via Supabase Auth
+    changeEmail: async (newEmail) => {
+        try {
+            const { data, error } = await supabase.auth.updateUser({
+                email: newEmail
+            });
+            if (error) {
+                console.error("Error changing email:", error.message);
+                return { success: false, error: error.message };
+            }
+            // Also update in users table
+            const userId = get().authenticatedUser?.id;
+            if (userId) {
+                await supabase.from("users").update({ email: newEmail }).eq("id", userId);
+                const currentProfile = get().userProfile;
+                if (currentProfile) {
+                    set({ userProfile: { ...currentProfile, email: newEmail } });
+                }
+            }
+            return { success: true, data };
+        } catch (err) {
+            console.error("Error changing email:", err);
+            return { success: false, error: err.message };
+        }
+    },
+
     signOut: async () => {
         try {
             console.log("🚪 Signing out...");

@@ -67,7 +67,7 @@ const authenticate = async (req, res, next) => {
         // Attach user data to the request object
         req.user = authUser;           // Supabase auth user (id, email, etc.)
         req.userProfile = userProfile; // DB profile (id, role, first_name, etc.)
-        req.userRole = userProfile.role; // Convenience: "DOCTOR" or "NURSE"
+        req.userRole = userProfile.role; // Convenience: "DOCTOR", "NURSE", or "ADMIN"
 
         next();
     } catch (err) {

@@ -66,7 +66,7 @@ const IndividualRecord = () => {
 
   const tabs = [
     { key: 'info', label: 'Patient Information', icon: <User className="w-4 h-4" /> },
-    { key: 'medical', label: 'Medical Record', icon: <FileText className="w-4 h-4" /> },
+  { key: 'medical', label: 'Medical Record', icon: <FileText className="w-4 h-4" /> },
   ];
 
   return (

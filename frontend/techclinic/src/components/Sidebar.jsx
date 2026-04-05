@@ -16,6 +16,7 @@ import {
     ScrollText,
     Moon,
     Sun,
+    Shield,
 } from 'lucide-react'
 import { showToast } from './Toast'
 import { showModal } from './Modal'
@@ -75,6 +76,29 @@ const NAV_SECTIONS = {
             ],
         },
     ],
+    ADMIN: [
+        {
+            title: 'Main',
+            items: [
+                { label: 'Dashboard', path: '/admin-dashboard', icon: LayoutDashboard },
+            ],
+        },
+        {
+            title: 'Management',
+            items: [
+                { label: 'Personnel', path: '/personnel-list', icon: Users },
+                { label: 'Patient Record', path: '/patient-record', icon: ClipboardList, matchPrefix: ['/individual-record'] },
+                { label: 'Medicine', path: '/medicine-inventory', icon: Pill, matchPrefix: ['/add-medicine'] },
+            ],
+        },
+        {
+            title: 'System',
+            items: [
+                { label: 'Activity Log', path: '/activity-log', icon: ScrollText },
+                { label: 'Notifications', path: '/notifications', icon: Bell, hasBadge: true },
+            ],
+        },
+    ],
 }
 
 // ── Mobile bottom nav (shared between roles, simplified) ──
@@ -88,6 +112,13 @@ const MOBILE_NAV = {
     ],
     DOCTOR: [
         { label: 'Home', path: '/dashboard', icon: LayoutDashboard },
+        { label: 'Team', path: '/personnel-list', icon: Users },
+        { label: 'Records', path: '/patient-record', icon: ClipboardList },
+        { label: 'Meds', path: '/medicine-inventory', icon: Pill },
+        { label: 'More', path: '/notifications', icon: Bell, hasBadge: true },
+    ],
+    ADMIN: [
+        { label: 'Home', path: '/admin-dashboard', icon: Shield },
         { label: 'Team', path: '/personnel-list', icon: Users },
         { label: 'Records', path: '/patient-record', icon: ClipboardList },
         { label: 'Meds', path: '/medicine-inventory', icon: Pill },
@@ -425,7 +456,7 @@ export default function Sidebar() {
                                         {role === 'DOCTOR' ? 'Dr. ' : ''}{getDisplayName()}
                                     </p>
                                     <p className="text-[0.65rem] text-gray-400 dark:text-[#94969C] font-medium">
-                                        {role === 'DOCTOR' ? 'Physician' : 'Personnel'}
+                                        {role === 'DOCTOR' ? 'Physician' : role === 'ADMIN' ? 'Administrator' : 'Personnel'}
                                     </p>
                                 </motion.div>
                             )}

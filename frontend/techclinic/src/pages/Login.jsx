@@ -14,12 +14,12 @@ const Login = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState({ email: '', password: '' });
     const [touched, setTouched] = useState({ email: false, password: false });
-    const { signInWithGoogle, authenticatedUser, signIn, isSessionVerified } = useAuth();
+    const { signInWithGoogle, authenticatedUser, signIn, isSessionVerified, userProfile } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
     
    
-    const from = location.state?.from?.pathname || "/dashboard";
+    const from = location.state?.from?.pathname || null;
 
     // Apply theme: respect saved preference, default to light
     useEffect(() => {
@@ -33,10 +33,11 @@ const Login = () => {
     
     useEffect(() => {
         if (isSessionVerified && authenticatedUser) {
-            console.log("✅ User has valid session, redirecting to:", from);
-            navigate(from, { replace: true });
+            const target = from || (userProfile?.role === 'ADMIN' ? '/admin-dashboard' : '/dashboard');
+            console.log("✅ User has valid session, redirecting to:", target);
+            navigate(target, { replace: true });
         }
-    }, [authenticatedUser, isSessionVerified, navigate, from]);
+    }, [authenticatedUser, isSessionVerified, userProfile, navigate, from]);
 
     const validateEmail = (value) => {
         return sharedValidateEmail(value);
@@ -107,8 +108,11 @@ const Login = () => {
                 console.error(`Error signing in:`, response.error);
                 showToast({ title: 'Sign In Error', message: response.error.message || String(response.error), type: 'error' });
             } else {
-                console.log("✅ Sign-in successful! Navigating to:", from);
-                navigate(from, { replace: true });
+                // Determine redirect target based on role
+                const profile = useAuth.getState().userProfile;
+                const target = from || (profile?.role === 'ADMIN' ? '/admin-dashboard' : '/dashboard');
+                console.log("✅ Sign-in successful! Navigating to:", target);
+                navigate(target, { replace: true });
             }
         } catch (err) {
             console.error("Sign-in error:", err);

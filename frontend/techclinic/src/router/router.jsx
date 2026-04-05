@@ -1,6 +1,7 @@
 import React from "react";
 import { createBrowserRouter } from "react-router-dom";
 import Dashboard from "../pages/newDashboard";
+import AdminDashboard from "../pages/AdminDashboard";
 import Login from "../pages/Login";
 import NewPatient from "../pages/NewPatient";
 import MedicineInventory from "../pages/newMedicine";
@@ -47,8 +48,23 @@ const router = createBrowserRouter([
   {
     element: <ProtectedRoute allowedRoles={["DOCTOR"]}><AppLayout /></ProtectedRoute>,
     children: [
-      { path: "/personnel-list", element: <PersonnelList /> },
       { path: "/add-diagnosis/:recordId", element: <AddDiagnosis /> },
+    ],
+  },
+
+  // ── ADMIN only (with AppLayout) ──
+  {
+    element: <ProtectedRoute allowedRoles={["ADMIN"]}><AppLayout /></ProtectedRoute>,
+    children: [
+      { path: "/admin-dashboard", element: <AdminDashboard /> },
+    ],
+  },
+
+  // ── DOCTOR and ADMIN can manage personnel ──
+  {
+    element: <ProtectedRoute allowedRoles={["DOCTOR", "ADMIN"]}><AppLayout /></ProtectedRoute>,
+    children: [
+      { path: "/personnel-list", element: <PersonnelList /> },
     ],
   },
 ]);

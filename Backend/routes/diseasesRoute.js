@@ -6,10 +6,10 @@ const { validateAddDisease } = require("../middleware/validate");
 const { getAllDiseases, getAllNumberOfDiseases, addDisease } = require("../controllers/diseasesController");
 
 // ── Both roles can view diseases ──
-router.get("/get-all-diseases", authenticate, authorize("DOCTOR", "NURSE"), getAllDiseases);
-router.get("/get-all-number-of-diseases", authenticate, authorize("DOCTOR", "NURSE"), getAllNumberOfDiseases);
+router.get("/get-all-diseases", authenticate, authorize("DOCTOR", "NURSE", "ADMIN"), getAllDiseases);
+router.get("/get-all-number-of-diseases", authenticate, authorize("DOCTOR", "NURSE", "ADMIN"), getAllNumberOfDiseases);
 
-// ── Only DOCTOR can add new diseases ──
-router.post("/add-disease", authenticate, authorize("DOCTOR"), validateAddDisease, addDisease);
+// ── DOCTOR and ADMIN can add new diseases ──
+router.post("/add-disease", authenticate, authorize("DOCTOR", "ADMIN"), validateAddDisease, addDisease);
 
 module.exports = router;
