@@ -262,6 +262,29 @@ const IndividualRecord = () => {
                   </div>
                 </div>
 
+                {/* Vitals */}
+                {(patientRecord?.temperature || patientRecord?.blood_pressure || patientRecord?.height || patientRecord?.weight) && (
+                  <div className='bg-white dark:bg-[#161B26] rounded-xl shadow-sm ring-1 ring-gray-100 dark:ring-[#1F2A37] p-6'>
+                    <div className='flex items-center gap-2.5 mb-5'>
+                      <div className='w-1 h-5 bg-crimson-600 rounded-full' />
+                      <h3 className='text-sm font-semibold text-gray-800 dark:text-white uppercase tracking-wide'>Vitals</h3>
+                    </div>
+                    <div className='grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-5'>
+                      {[
+                        { label: 'Temperature', value: patientRecord?.temperature ? `${patientRecord.temperature}°C` : null },
+                        { label: 'Blood Pressure', value: patientRecord?.blood_pressure },
+                        { label: 'Height', value: patientRecord?.height ? `${patientRecord.height} cm` : null },
+                        { label: 'Weight', value: patientRecord?.weight ? `${patientRecord.weight} kg` : null },
+                      ].map((field, idx) => (
+                        <div key={idx}>
+                          <p className='text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider'>{field.label}</p>
+                          <p className='text-sm font-semibold text-gray-800 dark:text-white mt-1'>{field.value || '—'}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Quick Stats */}
                 <div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
                   <div className='bg-white dark:bg-[#161B26] rounded-xl shadow-sm ring-1 ring-gray-100 dark:ring-[#1F2A37] p-5 flex items-center gap-4'>
