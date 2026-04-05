@@ -231,8 +231,8 @@ const NewDashboard = () => {
     /* ───── Active personnel (all staff) ───── */
     const activePersonnel = useMemo(() => {
         if (!allUsers) return [];
-        return allUsers;
-    }, [allUsers]);
+        return allUsers.filter(u => u.id !== authenticatedUser?.id);
+    }, [allUsers, authenticatedUser]);
 
     /* ───── Stat card config ───── */
     const statCards = [

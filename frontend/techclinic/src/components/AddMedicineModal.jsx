@@ -38,12 +38,26 @@ const UNIT_OPTIONS = [
 const AnimatedDropdown = ({ name, label, required, placeholder, value, options, onChange, onBlur, hasError, errorText }) => {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
+  const buttonRef = useRef(null)
+  const [dropdownStyle, setDropdownStyle] = useState({})
 
   useEffect(() => {
     const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
   }, [])
+
+  useEffect(() => {
+    if (open && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect()
+      setDropdownStyle({
+        position: 'fixed',
+        top: rect.bottom + 4,
+        left: rect.left,
+        width: rect.width,
+      })
+    }
+  }, [open])
 
   const displayValue = typeof options[0] === 'string'
     ? value || placeholder
@@ -56,6 +70,7 @@ const AnimatedDropdown = ({ name, label, required, placeholder, value, options, 
       </span>
       <div className="relative">
         <button
+          ref={buttonRef}
           type="button"
           onClick={() => setOpen(!open)}
           className={`w-full h-10 px-3 pr-8 rounded-lg border text-sm text-left bg-gray-50 dark:bg-[#1F242F] focus:bg-white dark:focus:bg-[#161B26] focus:ring-1 transition-all outline-none cursor-pointer flex items-center ${
@@ -75,7 +90,7 @@ const AnimatedDropdown = ({ name, label, required, placeholder, value, options, 
               exit={{ opacity: 0, y: -4, scaleY: 0.95 }}
               transition={{ duration: 0.15, ease: 'easeOut' }}
               style={{ transformOrigin: 'top' }}
-              className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-[#1F242F] rounded-lg border border-gray-200 dark:border-[#333741] shadow-lg z-50 max-h-48 overflow-auto"
+              className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-[#1F242F] rounded-lg border border-gray-200 dark:border-[#333741] shadow-lg z-[9999] max-h-48 overflow-auto"
             >
               {options.map((opt) => {
                 const optValue = typeof opt === 'string' ? opt : opt.value
@@ -204,7 +219,7 @@ const AddMedicineModal = ({ onClose }) => {
       {/* Modal */}
       <form
         onSubmit={handleSubmit}
-        className={`relative z-10 w-[min(640px,92%)] bg-white dark:bg-[#161B26] rounded-2xl shadow-2xl overflow-hidden ${isClosing ? 'modal-content-exit' : 'modal-content-enter'}`}
+        className={`relative z-10 w-[min(640px,92%)] bg-white dark:bg-[#161B26] rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto ${isClosing ? 'modal-content-exit' : 'modal-content-enter'}`}
         role="dialog"
         aria-modal="true"
       >
@@ -233,7 +248,7 @@ const AddMedicineModal = ({ onClose }) => {
         </div>
 
         {/* Body */}
-        <div className="px-6 py-5 grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[60vh] overflow-y-auto">
+        <div className="px-6 py-5 grid grid-cols-1 md:grid-cols-2 gap-4">
           <label className="flex flex-col gap-1.5">
             <span className="text-xs font-medium text-gray-600 dark:text-[#94969C] uppercase tracking-wide">Medicine Name <span className="text-red-500">*</span></span>
             <input
