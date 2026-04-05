@@ -10,7 +10,6 @@ import { FormSkeleton, ButtonLoader } from '../components/PageLoader'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ClipboardList, Plus, X, FileText, StickyNote, Check, Send, Stethoscope, Pill } from 'lucide-react'
 import Dropdown from '../components/Dropdown'
-import tupLogo from '../assets/image/TUP.png'
 import { LIMITS } from '../lib/validation'
 
 const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
@@ -520,72 +519,13 @@ const AddDiagnosis = () => {
                   transition={{ duration: 0.25 }}
                   className='flex-1 flex flex-col min-h-0'
                 >
-                  {/* Step 4 Navigation — on top */}
-                  <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-100 dark:border-[#1F2A37] shrink-0">
-                    <motion.button whileTap={{ scale: 0.97 }} type="button" onClick={handleBack}
-                      className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 dark:text-[#94969C] hover:bg-gray-100 dark:hover:bg-[#1F242F] dark:bg-[#1F242F] transition-colors cursor-pointer">
-                      Back
-                    </motion.button>
-                    <div className="flex items-center gap-3">
-                      <motion.button
-                        whileTap={{ scale: 0.97 }}
-                        type="submit"
-                        disabled={isSubmitting || isSendingEmail}
-                        className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-crimson-600 text-white text-sm font-medium tracking-wider hover:bg-crimson-700 transition-colors shadow-sm cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-                      >
-                        {isSubmitting ? <><ButtonLoader /> Submitting...</> : "Insert Diagnosis"}
-                      </motion.button>
-                      {patientInput.email && (
-                        <motion.button
-                          whileTap={{ scale: 0.97 }}
-                          type="button"
-                          disabled={isSubmitting || isSendingEmail}
-                          onClick={async () => {
-                            setIsSendingEmail(true);
-                            try {
-                              const success = await insertDiagnosis();
-                              if (!success) return;
-
-                              const templateParams = {
-                                to_email: patientInput.email.trim(),
-                                to_name: `${patientInput.firstName} ${patientInput.lastName}`.trim(),
-                                patient_id: patientInput.studentId || '\u2014',
-                                date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-                                physician_name: patientInput.attendingPhysician || 'N/A',
-                                physician_role: 'Attending Physician',
-                                physician_signature: userProfile?.signature_url ?? '',
-                                medication: patientInput.medication?.medicine_name ?? '\u2014',
-                                dosage: patientInput.medication?.dosage ?? '\u2014',
-                                quantity: patientInput.quantity ?? '\u2014',
-                                notes: patientInput.notes ?? '\u2014',
-                              };
-
-                              await emailjs.send(SERVICE_ID, PRESC_TMPL, templateParams, PUBLIC_KEY);
-                              showToast({ title: "Diagnosis Inserted & Email Sent", message: `Prescription sent to ${patientInput.email}`, type: "success" });
-                              navigate(`/individual-record/${patientInput.studentId}`);
-                            } catch (err) {
-                              console.error('Send & Insert error:', err);
-                              showToast({ title: "Email Failed", message: "Diagnosis may have been inserted but email failed.", type: "warning" });
-                            } finally {
-                              setIsSendingEmail(false);
-                            }
-                          }}
-                          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-crimson-600 text-white text-sm font-medium tracking-wider hover:bg-crimson-700 transition-colors shadow-sm cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-                        >
-                          {isSendingEmail ? <><ButtonLoader /> Sending...</> : <><Send className="w-4 h-4" /> Send & Insert Diagnosis</>}
-                        </motion.button>
-                      )}
-                    </div>
-                  </div>
-
                   {/* Prescription Card — scrollable */}
-                  <div className="flex-1 min-h-0 overflow-y-auto rounded-lg border border-gray-300 dark:border-[#333741]">
-                    <div className="bg-white dark:bg-[#161B26] max-w-2xl w-full mx-auto">
+                  <div className="flex-1 min-h-0 overflow-y-auto">
+                    <div className="bg-white dark:bg-[#161B26] max-w-2xl mx-auto rounded-lg border border-gray-300 dark:border-[#333741]">
                       {/* Prescription Header */}
                       <div className="p-6 pb-4">
                         <div className="flex items-start justify-between">
                           <div className="flex items-center gap-3">
-                            <img src={tupLogo} alt="TUP Logo" className="w-12 h-12 object-contain" />
                             <span className="text-5xl font-serif font-bold text-gray-800 dark:text-white leading-none">R<sub className="text-3xl">x</sub></span>
                           </div>
                           <div className="text-right text-sm text-gray-600 dark:text-[#94969C] space-y-0.5">
@@ -608,7 +548,7 @@ const AddDiagnosis = () => {
                             </p>
                           </div>
                           <div className="w-28">
-                            <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Age/Sex</span>
+                            <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Sex</span>
                             <p className="text-sm font-medium text-gray-800 dark:text-white border-b border-dotted border-gray-300 dark:border-[#333741] pb-1">
                               {patientInput.sex || 'N/A'}
                             </p>
@@ -711,12 +651,70 @@ const AddDiagnosis = () => {
                           ) : (
                             <div className="w-48 border-b border-gray-300 dark:border-[#333741] mb-1" />
                           )}
-                          <div className="border-t border-gray-300 dark:border-[#333741] pt-1 px-4">
-                            <p className="text-xs font-medium text-gray-700 dark:text-gray-200">{patientInput.attendingPhysician || 'N/A'}</p>
-                            <p className="text-xs text-gray-500 dark:text-[#94969C]">Attending Physician</p>
-                          </div>
+                          <p className="text-xs text-gray-500 dark:text-[#94969C]">Attending Physician&apos;s Signature</p>
+                          <p className="text-xs font-medium text-gray-700 dark:text-gray-200">{patientInput.attendingPhysician || 'N/A'}</p>
                         </div>
                       </div>
+                    </div>
+                  </div>
+
+                  {/* Step 4 Navigation */}
+                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100 dark:border-[#1F2A37]">
+                    <motion.button whileTap={{ scale: 0.97 }} type="button" onClick={handleBack}
+                      className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 dark:text-[#94969C] hover:bg-gray-100 dark:hover:bg-[#1F242F] dark:bg-[#1F242F] transition-colors cursor-pointer">
+                      Back
+                    </motion.button>
+                    <div className="flex items-center gap-3">
+                      <motion.button
+                        whileTap={{ scale: 0.97 }}
+                        type="submit"
+                        disabled={isSubmitting || isSendingEmail}
+                        className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-crimson-600 text-white text-sm font-medium tracking-wider hover:bg-crimson-700 transition-colors shadow-sm cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                      >
+                        {isSubmitting ? <><ButtonLoader /> Submitting...</> : "Confirm & Insert Diagnosis"}
+                      </motion.button>
+                      {patientInput.email && (
+                        <motion.button
+                          whileTap={{ scale: 0.97 }}
+                          type="button"
+                          disabled={isSubmitting || isSendingEmail}
+                          onClick={async () => {
+                            setIsSendingEmail(true);
+                            try {
+                              const success = await insertDiagnosis();
+                              if (!success) return;
+
+                              const templateParams = {
+                                to_email: patientInput.email.trim(),
+                                to_name: `${patientInput.firstName} ${patientInput.lastName}`.trim(),
+                                patient_id: patientInput.studentId || '\u2014',
+                                date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+                                physician_name: patientInput.attendingPhysician || 'N/A',
+                                physician_role: 'Attending Physician',
+                                physician_signature: userProfile?.signature_url ?? '',
+                                diagnosis: patientInput.diagnosis ?? '\u2014',
+                                treatment: patientInput.treatment ?? '\u2014',
+                                medication: patientInput.medication?.medicine_name ?? '\u2014',
+                                dosage: patientInput.medication?.dosage ?? '\u2014',
+                                quantity: patientInput.quantity ?? '\u2014',
+                                notes: patientInput.notes ?? '\u2014',
+                              };
+
+                              await emailjs.send(SERVICE_ID, PRESC_TMPL, templateParams, PUBLIC_KEY);
+                              showToast({ title: "Diagnosis Inserted & Email Sent", message: `Prescription sent to ${patientInput.email}`, type: "success" });
+                              navigate(`/individual-record/${patientInput.studentId}`);
+                            } catch (err) {
+                              console.error('Send & Insert error:', err);
+                              showToast({ title: "Email Failed", message: "Diagnosis may have been inserted but email failed.", type: "warning" });
+                            } finally {
+                              setIsSendingEmail(false);
+                            }
+                          }}
+                          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-crimson-600 text-white text-sm font-medium tracking-wider hover:bg-crimson-700 transition-colors shadow-sm cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                        >
+                          {isSendingEmail ? <><ButtonLoader /> Sending...</> : <><Send className="w-4 h-4" /> Send & Insert Diagnosis</>}
+                        </motion.button>
+                      )}
                     </div>
                   </div>
                 </motion.div>

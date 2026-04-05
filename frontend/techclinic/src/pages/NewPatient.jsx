@@ -65,6 +65,7 @@ const NewPatient = () => {
 
   // Pre-fill patient data from navigation state (e.g., from "Create Appointment" button)
   const isReturningPatient = !!location.state?.patientData;
+  const isAutoFilled = !!studentInformation;
   useEffect(() => {
     const passedData = location.state?.patientData;
     if (passedData) {
@@ -491,7 +492,7 @@ const NewPatient = () => {
                       className='flex-1 flex flex-col min-h-0'
                     >
                       <p className='text-xs text-gray-400 dark:text-[#94969C] mb-4'>
-                        {isReturningPatient ? 'Patient information is pre-filled from existing records' : 'Enter the patient ID to auto-fill existing records'}
+                        {studentInformation ? 'Patient information is pre-filled from existing records' : 'Enter the patient ID to auto-fill existing records'}
                       </p>
                       <div className='grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4'>
                         <div className='space-y-1.5'>
@@ -503,20 +504,20 @@ const NewPatient = () => {
                         <div className='space-y-1.5'>
                           <label htmlFor="firstName" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>First Name</label>
                           <input type="text" name="firstName" placeholder="Enter first name" id='firstName' value={patientInput.firstName} onChange={handleSetPatientInput}
-                            readOnly={isReturningPatient} maxLength={LIMITS.NAME_MAX}
-                            className={`w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all ${isReturningPatient ? 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed opacity-70' : ''}`} />
+                            readOnly={isAutoFilled} maxLength={LIMITS.NAME_MAX}
+                            className={`w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all ${isAutoFilled ? 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed opacity-70' : ''}`} />
                         </div>
                         <div className='space-y-1.5'>
                           <label htmlFor="lastName" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Last Name</label>
                           <input type="text" name="lastName" placeholder="Enter last name" id='lastName' value={patientInput.lastName} onChange={handleSetPatientInput}
-                            readOnly={isReturningPatient} maxLength={LIMITS.NAME_MAX}
-                            className={`w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all ${isReturningPatient ? 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed opacity-70' : ''}`} />
+                            readOnly={isAutoFilled} maxLength={LIMITS.NAME_MAX}
+                            className={`w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all ${isAutoFilled ? 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed opacity-70' : ''}`} />
                         </div>
                         <div className='space-y-1.5'>
                           <label htmlFor="contactNum" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Contact Number</label>
                           <input type="tel" inputMode="numeric" name="contactNumber" placeholder="Enter contact number" id='contactNum' value={patientInput.contactNumber} onChange={handleSetPatientInput}
-                            readOnly={isReturningPatient} maxLength={LIMITS.CONTACT_MAX}
-                            className={`w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all ${isReturningPatient ? 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed opacity-70' : ''}`} />
+                            readOnly={isAutoFilled} maxLength={LIMITS.CONTACT_MAX}
+                            className={`w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all ${isAutoFilled ? 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed opacity-70' : ''}`} />
                         </div>
                         <div className='space-y-1.5'>
                           <Dropdown
@@ -531,7 +532,7 @@ const NewPatient = () => {
                             ]}
                             value={patientInput.yearLevel}
                             onChange={handleSetPatientInput}
-                            disabled={isReturningPatient}
+                            disabled={isAutoFilled}
                           />
                         </div>
                         <div className='space-y-1.5'>
@@ -549,7 +550,7 @@ const NewPatient = () => {
                             ]}
                             value={patientInput.department}
                             onChange={handleSetPatientInput}
-                            disabled={isReturningPatient}
+                            disabled={isAutoFilled}
                           />
                         </div>
                         <div className='space-y-1.5'>
@@ -563,31 +564,31 @@ const NewPatient = () => {
                             ]}
                             value={patientInput.sex}
                             onChange={handleSetPatientInput}
-                            disabled={isReturningPatient}
+                            disabled={isAutoFilled}
                           />
                         </div>
                         <div className='space-y-1.5'>
                           <label htmlFor="email" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Email</label>
                           <input type="text" name="email" placeholder="Enter email address" id='email' value={patientInput.email} onChange={handleSetPatientInput}
-                            readOnly={isReturningPatient} maxLength={LIMITS.EMAIL_MAX}
-                            className={`w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all ${isReturningPatient ? 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed opacity-70' : ''}`} />
+                            readOnly={isAutoFilled} maxLength={LIMITS.EMAIL_MAX}
+                            className={`w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all ${isAutoFilled ? 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed opacity-70' : ''}`} />
                         </div>
                         <div className='space-y-1.5'>
                           <label htmlFor="address" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Address</label>
                           <input type="text" name='address' placeholder='Enter address' id='address' value={patientInput.address} onChange={handleSetPatientInput}
-                            readOnly={isReturningPatient} maxLength={LIMITS.ADDRESS_MAX}
-                            className={`w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all ${isReturningPatient ? 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed opacity-70' : ''}`} />
+                            readOnly={isAutoFilled} maxLength={LIMITS.ADDRESS_MAX}
+                            className={`w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all ${isAutoFilled ? 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed opacity-70' : ''}`} />
                         </div>
                         <div className='space-y-1.5'>
                           <label htmlFor="dateOfBirth" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Date of Birth</label>
                           <input type="date" name='dateOfBirth' id='dateOfBirth' value={patientInput.dateOfBirth} onChange={handleSetPatientInput}
-                            readOnly={isReturningPatient}
-                            className={`w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all ${isReturningPatient ? 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed opacity-70' : ''}`} />
+                            readOnly={isAutoFilled}
+                            className={`w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all ${isAutoFilled ? 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed opacity-70' : ''}`} />
                         </div>
                       </div>
 
                       {/* Step 1 Navigation */}
-                      <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100 dark:border-[#1F2A37]">
+                      <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100 dark:border-[#1F2A37]">
                         <motion.button
                           whileTap={{ scale: 0.97 }}
                           type="button"
@@ -671,7 +672,7 @@ const NewPatient = () => {
                         )}
                         </div>
 
-                      <div className='flex-1 flex flex-col'>
+                      <div className='flex-1 flex flex-col mt-4'>
                         <label className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider mb-1.5 flex items-center gap-1.5'>
                           <FileText className="w-3 h-3 text-gray-400 dark:text-[#94969C]" />
                           Treatment
@@ -687,7 +688,7 @@ const NewPatient = () => {
                       </div>
 
                       {/* Step 2 Navigation */}
-                      <div className="flex items-center justify-between mt-2 pt-4 border-t border-gray-100 dark:border-[#1F2A37]">
+                      <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100 dark:border-[#1F2A37]">
                         <motion.button
                           whileTap={{ scale: 0.97 }}
                           type="button"
@@ -735,7 +736,7 @@ const NewPatient = () => {
                         </div>
                       </div>
 
-                      <div className='flex-1 flex flex-col'>
+                      <div className='flex-1 flex flex-col mt-4'>
                         <label className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider mb-1.5 flex items-center gap-1.5'>
                           <StickyNote className="w-3 h-3 text-gray-400 dark:text-[#94969C]" />
                           Additional Notes
@@ -751,7 +752,7 @@ const NewPatient = () => {
                       </div>
 
                       {/* Step 3 Navigation */}
-                      <div className="flex items-center justify-between mt-2 pt-4 border-t border-gray-100 dark:border-[#1F2A37]">
+                      <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100 dark:border-[#1F2A37]">
                         <motion.button
                           whileTap={{ scale: 0.97 }}
                           type="button"
@@ -782,103 +783,15 @@ const NewPatient = () => {
                       transition={{ duration: 0.25 }}
                       className='flex-1 flex flex-col min-h-0'
                     >
-                      {/* Step 4 Navigation — on top */}
-                      <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-100 dark:border-[#1F2A37] shrink-0">
-                        <motion.button
-                          whileTap={{ scale: 0.97 }}
-                          type="button"
-                          onClick={handleBack}
-                          className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 dark:text-[#94969C] hover:bg-gray-100 dark:hover:bg-[#1F242F] dark:bg-[#1F242F] transition-colors cursor-pointer"
-                        >
-                          Back
-                        </motion.button>
-                        <div className="flex items-center gap-3">
-                          <motion.button
-                            whileTap={{ scale: 0.97 }}
-                            type="submit"
-                            disabled={isSubmitting || isSendingEmail}
-                            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-crimson-600 text-white text-sm font-medium tracking-wider hover:bg-crimson-700 transition-colors shadow-sm cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-                          >
-                            {isSubmitting ? <><ButtonLoader /> Submitting...</> : (
-                              patientInput.diagnosis && patientInput.diagnosis.trim()
-                                ? "Insert Record"
-                                : "Send for Diagnosis"
-                            )}
-                          </motion.button>
-                          {patientInput.diagnosis && patientInput.diagnosis.trim() && patientInput.email && (
-                            <motion.button
-                              whileTap={{ scale: 0.97 }}
-                              type="button"
-                              disabled={isSubmitting || isSendingEmail}
-                              onClick={async () => {
-                                setIsSendingEmail(true);
-                                try {
-                                  const response = await insertRecord(patientInput);
-                                  if (!response.success) {
-                                    const msg = response.error || 'Failed inserting record';
-                                    showToast({ title: "Something went wrong", message: msg, type: "error" });
-                                    return;
-                                  }
-
-                                  const physicianName = patientInput.attendingPhysician || 'N/A';
-                                  const templateParams = {
-                                    to_email: patientInput.email.trim(),
-                                    to_name: `${patientInput.firstName} ${patientInput.lastName}`.trim(),
-                                    patient_id: patientInput.studentId || '\u2014',
-                                    date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-                                    physician_name: physicianName,
-                                    physician_role: userProfile?.role === 'DOCTOR' ? 'Attending Physician' : 'Attending Personnel',
-                                    physician_signature: userProfile?.signature_url ?? '',
-                                    medication: patientInput.medication?.medicine_name ?? '\u2014',
-                                    dosage: patientInput.medication?.dosage ?? '\u2014',
-                                    quantity: patientInput.quantity ?? '\u2014',
-                                    notes: patientInput.notes ?? '\u2014',
-                                  };
-
-                                  await emailjs.send(SERVICE_ID, PRESC_TMPL, templateParams, PUBLIC_KEY);
-
-                                  showToast({
-                                    title: "Record Inserted & Email Sent",
-                                    message: `Prescription sent to ${patientInput.email}`,
-                                    type: "success",
-                                  });
-
-                                  setPatientInput({
-                                    firstName: "", lastName: "", studentId: "", contactNumber: "",
-                                    yearLevel: "", department: "", sex: "", email: "",
-                                    dateOfBirth: "", address: "", diseaseId: "", diagnosis: "",
-                                    medication: null, quantity: "", treatment: "", notes: "",
-                                    attendingPhysician: userProfile ? `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim() : authenticatedUser?.user_metadata?.full_name,
-                                    attendingPhysicianId: authenticatedUser?.id || null,
-                                    physicianSignatureUrl: userProfile?.signature_url || null,
-                                  });
-                                  setCurrentStep(1);
-                                  getRecords();
-                                } catch (err) {
-                                  console.error('Send & Insert error:', err);
-                                  showToast({ title: "Email Failed", message: "Record may have been inserted but email failed to send.", type: "warning" });
-                                } finally {
-                                  setIsSendingEmail(false);
-                                }
-                              }}
-                              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-crimson-600 text-white text-sm font-medium tracking-wider hover:bg-crimson-700 transition-colors shadow-sm cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-                            >
-                              {isSendingEmail ? <><ButtonLoader /> Sending...</> : <><Send className="w-4 h-4" /> Send & Insert Record</>}
-                            </motion.button>
-                          )}
-                        </div>
-                      </div>
-
                       {/* Content — depends on whether diagnosis exists */}
                       {patientInput.diagnosis && patientInput.diagnosis.trim() ? (
                       /* ── Prescription Card (with diagnosis) ── */
-                      <div className="flex-1 min-h-0 overflow-y-auto rounded-lg border border-gray-300 dark:border-[#333741]">
-                        <div className="bg-white dark:bg-[#161B26] max-w-2xl w-full mx-auto">
+                      <div className="flex-1 min-h-0 overflow-y-auto">
+                        <div className="bg-white dark:bg-[#161B26] max-w-2xl mx-auto rounded-lg border border-gray-300 dark:border-[#333741]">
                         {/* Prescription Header */}
                         <div className="p-6 pb-4">
                           <div className="flex items-start justify-between">
                             <div className="flex items-center gap-3">
-                              <img src={tupLogo} alt="TUP Logo" className="w-12 h-12 object-contain" />
                               <span className="text-5xl font-serif font-bold text-gray-800 dark:text-white leading-none">R<sub className="text-3xl">x</sub></span>
                             </div>
                             <div className="text-right text-sm text-gray-600 dark:text-[#94969C] space-y-0.5">
@@ -901,7 +814,7 @@ const NewPatient = () => {
                               </p>
                             </div>
                             <div className="w-28">
-                              <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Age/Sex</span>
+                              <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Sex</span>
                               <p className="text-sm font-medium text-gray-800 dark:text-white border-b border-dotted border-gray-300 dark:border-[#333741] pb-1">
                                 {patientInput.sex || 'N/A'}
                               </p>
@@ -1006,12 +919,10 @@ const NewPatient = () => {
                             ) : (
                               <div className="w-48 border-b border-gray-300 dark:border-[#333741] mb-1" />
                             )}
-                            <div className="border-t border-gray-300 dark:border-[#333741] pt-1 px-4">
-                              <p className="text-xs font-medium text-gray-700 dark:text-gray-200">{patientInput.attendingPhysician || 'N/A'}</p>
-                              <p className="text-xs text-gray-500 dark:text-[#94969C]">
-                                {userProfile?.role === 'DOCTOR' ? 'Attending Physician' : 'Attending Personnel'}
-                              </p>
-                            </div>
+                            <p className="text-xs text-gray-500 dark:text-[#94969C]">
+                              {userProfile?.role === 'DOCTOR' ? "Attending Physician's Signature" : "Attending Personnel's Signature"}
+                            </p>
+                            <p className="text-xs font-medium text-gray-700 dark:text-gray-200">{patientInput.attendingPhysician || 'N/A'}</p>
                           </div>
                         </div>
                         </div>
@@ -1130,6 +1041,95 @@ const NewPatient = () => {
                         </div>
                       </div>
                       )}
+
+                      {/* Step 4 Navigation */}
+                      <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100 dark:border-[#1F2A37]">
+                        <motion.button
+                          whileTap={{ scale: 0.97 }}
+                          type="button"
+                          onClick={handleBack}
+                          className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 dark:text-[#94969C] hover:bg-gray-100 dark:hover:bg-[#1F242F] dark:bg-[#1F242F] transition-colors cursor-pointer"
+                        >
+                          Back
+                        </motion.button>
+                        <div className="flex items-center gap-3">
+                          <motion.button
+                            whileTap={{ scale: 0.97 }}
+                            type="submit"
+                            disabled={isSubmitting || isSendingEmail}
+                            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-crimson-600 text-white text-sm font-medium tracking-wider hover:bg-crimson-700 transition-colors shadow-sm cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                          >
+                            {isSubmitting ? <><ButtonLoader /> Submitting...</> : (
+                              patientInput.diagnosis && patientInput.diagnosis.trim()
+                                ? "Confirm & Insert Record"
+                                : "Send for Diagnosis"
+                            )}
+                          </motion.button>
+                          {patientInput.diagnosis && patientInput.diagnosis.trim() && patientInput.email && (
+                            <motion.button
+                              whileTap={{ scale: 0.97 }}
+                              type="button"
+                              disabled={isSubmitting || isSendingEmail}
+                              onClick={async () => {
+                                setIsSendingEmail(true);
+                                try {
+                                  const response = await insertRecord(patientInput);
+                                  if (!response.success) {
+                                    const msg = response.error || 'Failed inserting record';
+                                    showToast({ title: "Something went wrong", message: msg, type: "error" });
+                                    return;
+                                  }
+
+                                  const physicianName = patientInput.attendingPhysician || 'N/A';
+                                  const templateParams = {
+                                    to_email: patientInput.email.trim(),
+                                    to_name: `${patientInput.firstName} ${patientInput.lastName}`.trim(),
+                                    patient_id: patientInput.studentId || '\u2014',
+                                    date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+                                    physician_name: physicianName,
+                                    physician_role: userProfile?.role === 'DOCTOR' ? 'Attending Physician' : 'Attending Personnel',
+                                    physician_signature: userProfile?.signature_url ?? '',
+                                    diagnosis: patientInput.diagnosis ?? '\u2014',
+                                    treatment: patientInput.treatment ?? '\u2014',
+                                    medication: patientInput.medication?.medicine_name ?? '\u2014',
+                                    dosage: patientInput.medication?.dosage ?? '\u2014',
+                                    quantity: patientInput.quantity ?? '\u2014',
+                                    notes: patientInput.notes ?? '\u2014',
+                                  };
+
+                                  await emailjs.send(SERVICE_ID, PRESC_TMPL, templateParams, PUBLIC_KEY);
+
+                                  showToast({
+                                    title: "Record Inserted & Email Sent",
+                                    message: `Prescription sent to ${patientInput.email}`,
+                                    type: "success",
+                                  });
+
+                                  setPatientInput({
+                                    firstName: "", lastName: "", studentId: "", contactNumber: "",
+                                    yearLevel: "", department: "", sex: "", email: "",
+                                    dateOfBirth: "", address: "", diseaseId: "", diagnosis: "",
+                                    medication: null, quantity: "", treatment: "", notes: "",
+                                    attendingPhysician: userProfile ? `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim() : authenticatedUser?.user_metadata?.full_name,
+                                    attendingPhysicianId: authenticatedUser?.id || null,
+                                    physicianSignatureUrl: userProfile?.signature_url || null,
+                                  });
+                                  setCurrentStep(1);
+                                  getRecords();
+                                } catch (err) {
+                                  console.error('Send & Insert error:', err);
+                                  showToast({ title: "Email Failed", message: "Record may have been inserted but email failed to send.", type: "warning" });
+                                } finally {
+                                  setIsSendingEmail(false);
+                                }
+                              }}
+                              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-crimson-600 text-white text-sm font-medium tracking-wider hover:bg-crimson-700 transition-colors shadow-sm cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                            >
+                              {isSendingEmail ? <><ButtonLoader /> Sending...</> : <><Send className="w-4 h-4" /> Send & Insert Record</>}
+                            </motion.button>
+                          )}
+                        </div>
+                      </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
