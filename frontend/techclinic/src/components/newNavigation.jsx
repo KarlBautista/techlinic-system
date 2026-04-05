@@ -7,7 +7,6 @@ import RecordImage from '../assets/componentImage/record.svg'
 import TUP from '../assets/image/TUP.png'
 import Settings from '../assets/image/settings.svg'
 import Logout from '../assets/image/logout.svg'
-import Analytics from '../assets/componentImage/analytics.svg'
 import Notification from '../assets/componentImage/notification.svg'
 import useAuth from '../store/useAuthStore'
 import useNotificationStore, { requestNotificationPermission } from '../store/useNotificationStore'
@@ -162,9 +161,6 @@ const getInitials = () => {
                 <Link to={'/dashboard'} className='navigationContainer'>
                     <img src={DashboardImage} alt="Dashboard" />
                 </Link>
-                <Link to={'/analytics'} className='navigationContainer'>
-                    <img src={Analytics} alt="Analytics" />
-                </Link>
                 <Link to={'/new-patient'} className='navigationContainer'>
                     <img src={PatientImage} alt="New Patient" />
                 </Link>
@@ -188,14 +184,6 @@ const getInitials = () => {
                     >
                         <img src={DashboardImage} alt="Dashboard" />
                         <p>DASHBOARD</p>
-                    </Link>
-                    
-                    <Link 
-                        to={'/analytics'}
-                        className={`${currentPath === '/analytics' ? 'inPage' : 'notPage'} mainNavigation`}
-                    >
-                        <img src={Analytics} alt="Analytics" />
-                        <p>ANALYTICS</p>
                     </Link>
                     
                     <Link 
@@ -245,14 +233,6 @@ const getInitials = () => {
                     >
                         <img src={DashboardImage} alt="Dashboard" />
                         <p>DASHBOARD</p>
-                    </Link>
-                    
-                    <Link 
-                        to={'/analytics'}
-                        className={`${currentPath === '/analytics' ? 'inPage' : 'notPage'} mainNavigation`}
-                    >
-                        <img src={Analytics} alt="Analytics" />
-                        <p>ANALYTICS</p>
                     </Link>
                     
                     <Link 

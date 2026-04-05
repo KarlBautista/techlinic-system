@@ -34,7 +34,6 @@ const NAV_SECTIONS = {
             title: 'Main',
             items: [
                 { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-                { label: 'Analytics', path: '/analytics', icon: BarChart3 },
             ],
         },
         {
@@ -58,7 +57,6 @@ const NAV_SECTIONS = {
             title: 'Main',
             items: [
                 { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-                { label: 'Analytics', path: '/analytics', icon: BarChart3 },
             ],
         },
         {

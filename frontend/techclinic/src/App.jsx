@@ -3,6 +3,7 @@ import './App.css'
 import { RouterProvider } from 'react-router-dom'
 import router from "./router/router"
 import useAuth from './store/useAuthStore'
+import usePresenceStore from './store/usePresenceStore'
 import useData from './store/useDataStore'
 import useMedicine from './store/useMedicineStore'
 import ToastContainer from './components/Toast'
@@ -10,6 +11,7 @@ import ModalContainer from './components/Modal'
 
 function App() {
     const { authListener, getUser, getAllUsers } = useAuth();
+    const { startTracking, stopTracking } = usePresenceStore();
     const { getRecords, getPatients } = useData();
     const { getMedicines } = useMedicine();
     
@@ -25,6 +27,7 @@ function App() {
             // Only load app data if user is authenticated
             const { authenticatedUser } = useAuth.getState();
             if (authenticatedUser) {
+                startTracking(authenticatedUser.id);
                 await Promise.all([
                     getRecords(),
                     getPatients(),
@@ -37,6 +40,7 @@ function App() {
         initialize();
         
         return () => {
+            stopTracking();
             if (unsubscribe && typeof unsubscribe === "function") {
                 unsubscribe();
             }

@@ -7,7 +7,6 @@ import MedicineInventory from "../pages/newMedicine";
 import PatientRecord from "../pages/PatientRecord";
 import IndividualRecord from "../pages/IndividualRecord";
 import AddMedicine from "../pages/AddMedicine";
-import Analytics from "../pages/newAnalytics";
 import Notifications from "../pages/Notifications";
 import PersonnelList from "../pages/PersonnelList"
 import Settings from "../pages/Settings";
@@ -37,7 +36,6 @@ const router = createBrowserRouter([
       { path: "/medicine-inventory", element: <MedicineInventory /> },
       { path: "/individual-record/:studentId", element: <IndividualRecord /> },
       { path: "/add-medicine", element: <AddMedicine /> },
-      { path: "/analytics", element: <Analytics /> },
       { path: "/activity-log", element: <ActivityLog /> },
       { path: "/notifications", element: <Notifications /> },
       { path: "/settings", element: <Settings /> },
