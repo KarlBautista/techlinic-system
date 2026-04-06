@@ -61,6 +61,10 @@ const NewPatient = () => {
     attendingPhysician: userProfile ? `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim() : authenticatedUser?.user_metadata?.full_name,
     attendingPhysicianId: authenticatedUser?.id || null,
     physicianSignatureUrl: userProfile?.signature_url || null,
+    temperature: "",
+    height: "",
+    weight: "",
+    bloodPressure: "",
   });
 
   // Pre-fill patient data from navigation state (e.g., from "Create Appointment" button)
@@ -412,6 +416,10 @@ const NewPatient = () => {
       attendingPhysician: userProfile ? `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim() : authenticatedUser?.user_metadata?.full_name,
       attendingPhysicianId: authenticatedUser?.id || null,
       physicianSignatureUrl: userProfile?.signature_url || null,
+      temperature: "",
+      height: "",
+      weight: "",
+      bloodPressure: "",
     });
     setStudentInformation(null);
     setCurrentStep(1);
@@ -585,10 +593,36 @@ const NewPatient = () => {
                             readOnly={isAutoFilled}
                             className={`w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all ${isAutoFilled ? 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed opacity-70' : ''}`} />
                         </div>
+
+                        {/* ── Vitals ── */}
+                        <div className='md:col-span-2 mt-2 mb-1'>
+                          <p className='text-xs font-semibold text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Vitals</p>
+                        </div>
+                        <div className='space-y-1.5'>
+                          <label htmlFor="temperature" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Temperature (°C)</label>
+                          <input type="number" step="0.1" name="temperature" placeholder="e.g. 36.5" id='temperature' value={patientInput.temperature} onChange={handleSetPatientInput}
+                            className='w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all' />
+                        </div>
+                        <div className='space-y-1.5'>
+                          <label htmlFor="bloodPressure" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Blood Pressure</label>
+                          <input type="text" name="bloodPressure" placeholder="e.g. 120/80" id='bloodPressure' value={patientInput.bloodPressure} onChange={handleSetPatientInput}
+                            maxLength={10}
+                            className='w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all' />
+                        </div>
+                        <div className='space-y-1.5'>
+                          <label htmlFor="height" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Height (cm)</label>
+                          <input type="number" step="0.1" name="height" placeholder="e.g. 170" id='height' value={patientInput.height} onChange={handleSetPatientInput}
+                            className='w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all' />
+                        </div>
+                        <div className='space-y-1.5'>
+                          <label htmlFor="weight" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Weight (kg)</label>
+                          <input type="number" step="0.1" name="weight" placeholder="e.g. 65" id='weight' value={patientInput.weight} onChange={handleSetPatientInput}
+                            className='w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all' />
+                        </div>
                       </div>
 
                       {/* Step 1 Navigation */}
-                      <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100 dark:border-[#1F2A37]">
+                      <div className="flex items-center justify-between mt-auto pt-3 pb-1 border-t border-gray-100 dark:border-[#1F2A37]">
                         <motion.button
                           whileTap={{ scale: 0.97 }}
                           type="button"
@@ -848,6 +882,35 @@ const NewPatient = () => {
                               </p>
                             </div>
                           </div>
+                          {/* Vitals Row */}
+                          {(patientInput.temperature || patientInput.bloodPressure || patientInput.height || patientInput.weight) && (
+                            <div className="flex items-center gap-4 flex-wrap">
+                              {patientInput.temperature && (
+                                <div>
+                                  <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Temp</span>
+                                  <p className="text-sm font-medium text-gray-800 dark:text-white">{patientInput.temperature}°C</p>
+                                </div>
+                              )}
+                              {patientInput.bloodPressure && (
+                                <div>
+                                  <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">BP</span>
+                                  <p className="text-sm font-medium text-gray-800 dark:text-white">{patientInput.bloodPressure}</p>
+                                </div>
+                              )}
+                              {patientInput.height && (
+                                <div>
+                                  <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Height</span>
+                                  <p className="text-sm font-medium text-gray-800 dark:text-white">{patientInput.height} cm</p>
+                                </div>
+                              )}
+                              {patientInput.weight && (
+                                <div>
+                                  <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Weight</span>
+                                  <p className="text-sm font-medium text-gray-800 dark:text-white">{patientInput.weight} kg</p>
+                                </div>
+                              )}
+                            </div>
+                          )}
                         </div>
 
                         <div className="border-t border-gray-200 dark:border-[#1F2A37] mx-6" />
@@ -988,6 +1051,35 @@ const NewPatient = () => {
                                 </p>
                               </div>
                             </div>
+                            {/* Vitals Row */}
+                            {(patientInput.temperature || patientInput.bloodPressure || patientInput.height || patientInput.weight) && (
+                              <div className="flex items-center gap-4 flex-wrap">
+                                {patientInput.temperature && (
+                                  <div>
+                                    <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Temp</span>
+                                    <p className="text-sm font-medium text-gray-800 dark:text-white">{patientInput.temperature}°C</p>
+                                  </div>
+                                )}
+                                {patientInput.bloodPressure && (
+                                  <div>
+                                    <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">BP</span>
+                                    <p className="text-sm font-medium text-gray-800 dark:text-white">{patientInput.bloodPressure}</p>
+                                  </div>
+                                )}
+                                {patientInput.height && (
+                                  <div>
+                                    <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Height</span>
+                                    <p className="text-sm font-medium text-gray-800 dark:text-white">{patientInput.height} cm</p>
+                                  </div>
+                                )}
+                                {patientInput.weight && (
+                                  <div>
+                                    <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Weight</span>
+                                    <p className="text-sm font-medium text-gray-800 dark:text-white">{patientInput.weight} kg</p>
+                                  </div>
+                                )}
+                              </div>
+                            )}
                           </div>
 
                           <div className="border-t border-gray-200 dark:border-[#1F2A37] mx-6" />

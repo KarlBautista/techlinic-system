@@ -29,7 +29,11 @@ const insertRecord = async (req, res) => {
         notes,
         attendingPhysician,
         attendingPhysicianId,
-        physicianSignatureUrl
+        physicianSignatureUrl,
+        temperature,
+        height,
+        weight,
+        bloodPressure
     } = req.body.formData;
 
     // Validate required patient fields
@@ -60,6 +64,10 @@ const insertRecord = async (req, res) => {
             date_of_birth: dateOfBirth,
             attending_physician: attendingPhysician ? clean(attendingPhysician) : null,
             attending_physician_id: attendingPhysicianId || null,
+            temperature: temperature ? Number(temperature) : null,
+            height: height ? Number(height) : null,
+            weight: weight ? Number(weight) : null,
+            blood_pressure: bloodPressure ? clean(bloodPressure) : null,
             status: (diagnosis === "" || !medication || quantity === "" || treatment === "" || notes === "") ? "INCOMPLETE" : "COMPLETE"
         }).select();
         
