@@ -3,7 +3,7 @@ import { LogIn, Check } from 'lucide-react';
 import RegistrationInfo from '../components/registrationInfo';
 import Dropdown from '../components/Dropdown'
 import { useNavigate } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import axios from 'axios'
 import { showToast } from '../components/Toast'
 import { showModal } from '../components/Modal'
@@ -51,6 +51,8 @@ function LandingPage() {
     const [currentStep, setCurrentStep] = useState(1);
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
     const [errors, setErrors] = useState({});
+    const reviewModalRef = useRef(null);
+    const closeReviewButtonRef = useRef(null);
 
     useEffect(() => {
         if (!isReviewModalOpen) return;
@@ -62,6 +64,40 @@ function LandingPage() {
         return () => {
             body.style.overflow = prevOverflow;
         };
+    }, [isReviewModalOpen]);
+
+    useEffect(() => {
+        if (!isReviewModalOpen || !reviewModalRef.current) return;
+
+        closeReviewButtonRef.current?.focus();
+
+        const handleKeyDown = (event) => {
+            if (!reviewModalRef.current) return;
+
+            if (event.key === 'Escape') {
+                setIsReviewModalOpen(false);
+                return;
+            }
+
+            if (event.key !== 'Tab') return;
+
+            const focusable = reviewModalRef.current.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            if (!focusable.length) return;
+
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+
+            if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault();
+                last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first.focus();
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
     }, [isReviewModalOpen]);
 
     // Format date from various formats to MM/DD/YY
@@ -550,13 +586,18 @@ function LandingPage() {
                                 transition={{ duration: 0.2 }}
                                 className="w-full max-w-3xl max-h-[92vh] sm:max-h-[85vh] overflow-hidden bg-white rounded-2xl shadow-2xl ring-1 ring-gray-200"
                                 onClick={(e) => e.stopPropagation()}
+                                ref={reviewModalRef}
+                                role="dialog"
+                                aria-modal="true"
+                                aria-labelledby="review-modal-title"
                             >
                                 <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100">
                                     <div className="flex items-center justify-between gap-3">
-                                        <h3 className="text-lg font-bold text-gray-900">Review & Submit</h3>
+                                        <h3 id="review-modal-title" className="text-lg font-bold text-gray-900">Review & Submit</h3>
                                         <button
                                             type="button"
                                             onClick={() => setIsReviewModalOpen(false)}
+                                            ref={closeReviewButtonRef}
                                             className="px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
                                         >
                                             Close
