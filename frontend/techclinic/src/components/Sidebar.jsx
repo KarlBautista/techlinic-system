@@ -17,6 +17,7 @@ import {
     Moon,
     Sun,
     Shield,
+    EllipsisVertical,
 } from 'lucide-react'
 import { showToast } from './Toast'
 import { showModal } from './Modal'
@@ -156,8 +157,10 @@ export default function Sidebar() {
     const location = useLocation()
     const navigate = useNavigate()
     const [showProfileMenu, setShowProfileMenu] = useState(false)
+    const [showMobileActions, setShowMobileActions] = useState(false)
     const [showNotifications, setShowNotifications] = useState(false)
     const profileRef = useRef(null)
+    const mobileActionsRef = useRef(null)
 
     // ── Collapse state (persisted) ──
     const [collapsed, setCollapsed] = useState(() => {
@@ -194,6 +197,9 @@ export default function Sidebar() {
         const handler = (e) => {
             if (profileRef.current && !profileRef.current.contains(e.target)) {
                 setShowProfileMenu(false)
+            }
+            if (mobileActionsRef.current && !mobileActionsRef.current.contains(e.target)) {
+                setShowMobileActions(false)
             }
         }
         document.addEventListener('mousedown', handler)
@@ -514,15 +520,55 @@ export default function Sidebar() {
                             <p className="text-gray-400 dark:text-[#94969C] text-[0.62rem] font-medium truncate">Electronic Medical Record</p>
                         </div>
                     </div>
-                    <button
-                        type="button"
-                        onClick={() => setIsDarkMode(prev => !prev)}
-                        className="inline-flex items-center justify-center rounded-lg border border-gray-200 dark:border-[#1F2A37] text-gray-500 dark:text-[#94969C] hover:bg-gray-50 dark:hover:bg-[#1F242F] transition-colors h-8 w-8"
-                        aria-label="Toggle dark mode"
-                        title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-                    >
-                        {isDarkMode ? <Sun size={14} /> : <Moon size={14} />}
-                    </button>
+                    <div className="flex items-center gap-2" ref={mobileActionsRef}>
+                        <button
+                            type="button"
+                            onClick={() => setIsDarkMode(prev => !prev)}
+                            className="inline-flex items-center justify-center rounded-lg border border-gray-200 dark:border-[#1F2A37] text-gray-500 dark:text-[#94969C] hover:bg-gray-50 dark:hover:bg-[#1F242F] transition-colors h-8 w-8"
+                            aria-label="Toggle dark mode"
+                            title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+                        >
+                            {isDarkMode ? <Sun size={14} /> : <Moon size={14} />}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setShowMobileActions(prev => !prev)}
+                            className="inline-flex items-center justify-center rounded-lg border border-gray-200 dark:border-[#1F2A37] text-gray-500 dark:text-[#94969C] hover:bg-gray-50 dark:hover:bg-[#1F242F] transition-colors h-8 w-8"
+                            aria-label="Open quick actions"
+                            title="Quick actions"
+                        >
+                            <EllipsisVertical size={14} />
+                        </button>
+
+                        <AnimatePresence>
+                            {showMobileActions && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: -6, scale: 0.98 }}
+                                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                                    exit={{ opacity: 0, y: -6, scale: 0.98 }}
+                                    transition={{ duration: 0.15 }}
+                                    className="absolute top-[3.4rem] right-4 min-w-[160px] bg-white dark:bg-[#161B26] ring-1 ring-gray-200 dark:ring-[#1F2A37] rounded-xl shadow-lg p-1.5"
+                                >
+                                    <button
+                                        type="button"
+                                        onClick={() => { setShowMobileActions(false); navigate('/settings') }}
+                                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-gray-600 dark:text-[#94969C] hover:bg-gray-50 dark:hover:bg-[#1F242F] hover:text-crimson-600 dark:hover:text-white transition-colors"
+                                    >
+                                        <Settings size={14} />
+                                        Settings
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => { setShowMobileActions(false); handleSignOut() }}
+                                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-red-500 hover:bg-red-50 dark:hover:bg-[#2C1418] transition-colors"
+                                    >
+                                        <LogOut size={14} />
+                                        Logout
+                                    </button>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
                 </div>
             </header>
 
