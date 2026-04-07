@@ -542,85 +542,91 @@ function LandingPage() {
                             className="fixed inset-0 bg-black/35 z-[9998]"
                             onClick={() => setIsReviewModalOpen(false)}
                         />
-                        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+                        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-4">
                             <motion.div
                                 initial={{ opacity: 0, y: 14, scale: 0.97 }}
                                 animate={{ opacity: 1, y: 0, scale: 1 }}
                                 exit={{ opacity: 0, y: 14, scale: 0.97 }}
                                 transition={{ duration: 0.2 }}
-                                className="scrollbar-notifications w-full max-w-3xl max-h-[85vh] overflow-hidden overflow-y-auto bg-white rounded-1xl shadow-2xl ring-1 ring-gray-200 p-6 md:p-7"
+                                className="w-full max-w-3xl max-h-[92vh] sm:max-h-[85vh] overflow-hidden bg-white rounded-2xl shadow-2xl ring-1 ring-gray-200"
                                 onClick={(e) => e.stopPropagation()}
                             >
-                                <div className="flex items-center justify-between gap-3 mb-5">
-                                    <h3 className="text-lg font-bold text-gray-900">Review & Submit</h3>
-                                    <button
-                                        type="button"
-                                        onClick={() => setIsReviewModalOpen(false)}
-                                        className="px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
-                                    >
-                                        Close
-                                    </button>
-                                </div>
-
-                                <div className="space-y-5">
-                                    <div>
-                                        <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Personal Details</h4>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                            <ReviewField label="Patient ID" value={formData.studentId} />
-                                            <ReviewField label="First Name" value={formData.firstName} />
-                                            <ReviewField label="Last Name" value={formData.lastName} />
-                                            <ReviewField label="Sex" value={formData.sex} />
-                                            <ReviewField label="Date of Birth" value={formatDateToMMDDYY(formData.dateOfBirth)} />
-                                        </div>
-                                        <div className="mt-3">
-                                            <button
-                                                type="button"
-                                                onClick={() => handleEditStep(1)}
-                                                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
-                                            >
-                                                Edit Personal
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div className="border-t border-gray-100 pt-5">
-                                        <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Contact & Academic</h4>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                            <ReviewField label="Email" value={formData.email} />
-                                            <ReviewField label="Contact Number" value={formData.contactNumber} />
-                                            <ReviewField label="Address" value={formData.address} />
-                                            <ReviewField label="Department" value={formData.department} />
-                                            <ReviewField label="Year Level" value={formData.yearLevel} />
-                                        </div>
-                                        <div className="mt-3">
-                                            <button
-                                                type="button"
-                                                onClick={() => handleEditStep(2)}
-                                                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
-                                            >
-                                                Edit Contact
-                                            </button>
-                                        </div>
+                                <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100">
+                                    <div className="flex items-center justify-between gap-3">
+                                        <h3 className="text-lg font-bold text-gray-900">Review & Submit</h3>
+                                        <button
+                                            type="button"
+                                            onClick={() => setIsReviewModalOpen(false)}
+                                            className="px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
+                                        >
+                                            Close
+                                        </button>
                                     </div>
                                 </div>
 
-                                <p className="mt-6 text-sm text-gray-500">Please confirm all details before final submission.</p>
+                                <div className="scrollbar-notifications px-4 sm:px-6 py-4 sm:py-5 overflow-y-auto max-h-[calc(92vh-152px)] sm:max-h-[calc(85vh-172px)]">
+                                    <div className="space-y-5">
+                                        <div>
+                                            <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Personal Details</h4>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                <ReviewField label="Patient ID" value={formData.studentId} />
+                                                <ReviewField label="First Name" value={formData.firstName} />
+                                                <ReviewField label="Last Name" value={formData.lastName} />
+                                                <ReviewField label="Sex" value={formData.sex} />
+                                                <ReviewField label="Date of Birth" value={formatDateToMMDDYY(formData.dateOfBirth)} />
+                                            </div>
+                                            <div className="mt-3">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleEditStep(1)}
+                                                    className="px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
+                                                >
+                                                    Edit Personal
+                                                </button>
+                                            </div>
+                                        </div>
 
-                                <div className="mt-4 flex items-center justify-end gap-3">
-                                    <button
-                                        type="button"
-                                        onClick={() => setIsReviewModalOpen(false)}
-                                        className="px-5 py-2.5 rounded-2xl text-sm font-medium text-gray-700 bg-white ring-1 ring-gray-200 hover:bg-gray-50 transition-colors"
-                                    >
-                                        Continue Editing
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={handleFormSubmit}
-                                        className="px-5 py-2.5 rounded-2xl text-sm font-medium text-white bg-crimson-600 hover:bg-crimson-700 transition-colors shadow-sm"
-                                    >
-                                        Submit Registration
-                                    </button>
+                                        <div className="border-t border-gray-100 pt-5">
+                                            <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Contact & Academic</h4>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                <ReviewField label="Email" value={formData.email} />
+                                                <ReviewField label="Contact Number" value={formData.contactNumber} />
+                                                <ReviewField label="Address" value={formData.address} />
+                                                <ReviewField label="Department" value={formData.department} />
+                                                <ReviewField label="Year Level" value={formData.yearLevel} />
+                                            </div>
+                                            <div className="mt-3">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleEditStep(2)}
+                                                    className="px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
+                                                >
+                                                    Edit Contact
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <p className="mt-6 text-sm text-gray-500">Please confirm all details before final submission.</p>
+                                </div>
+
+                                <div className="sticky bottom-0 border-t border-gray-100 bg-white/95 backdrop-blur-sm px-4 sm:px-6 py-3 sm:py-4">
+                                    <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2 sm:gap-3">
+                                        <button
+                                            type="button"
+                                            onClick={() => setIsReviewModalOpen(false)}
+                                            className="w-full sm:w-auto px-5 py-2.5 rounded-2xl text-sm font-medium text-gray-700 bg-white ring-1 ring-gray-200 hover:bg-gray-50 transition-colors"
+                                        >
+                                            Continue Editing
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={handleFormSubmit}
+                                            className="w-full sm:w-auto px-5 py-2.5 rounded-2xl text-sm font-medium text-white bg-crimson-600 hover:bg-crimson-700 transition-colors shadow-sm"
+                                        >
+                                            Submit Registration
+                                        </button>
+                                    </div>
                                 </div>
                             </motion.div>
                         </div>
