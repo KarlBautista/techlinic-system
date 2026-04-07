@@ -504,6 +504,28 @@ export default function Sidebar() {
                 </div>
             </motion.aside>
 
+            {/* ═══ Mobile Top Bar ═══ */}
+            <header className="sm:hidden fixed top-0 left-0 right-0 z-40 bg-white dark:bg-[#0C111D] border-b border-gray-100 dark:border-[#1F2A37]">
+                <div className="h-14 px-4 flex items-center justify-between">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                        <img src={TUP} className="w-8 h-8 object-contain shrink-0" alt="TUP" />
+                        <div className="min-w-0">
+                            <p className="text-[#b01c34] dark:text-white font-bold text-sm leading-tight tracking-tight truncate">TechClinic</p>
+                            <p className="text-gray-400 dark:text-[#94969C] text-[0.62rem] font-medium truncate">Electronic Medical Record</p>
+                        </div>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={() => setIsDarkMode(prev => !prev)}
+                        className="inline-flex items-center justify-center rounded-lg border border-gray-200 dark:border-[#1F2A37] text-gray-500 dark:text-[#94969C] hover:bg-gray-50 dark:hover:bg-[#1F242F] transition-colors h-8 w-8"
+                        aria-label="Toggle dark mode"
+                        title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+                    >
+                        {isDarkMode ? <Sun size={14} /> : <Moon size={14} />}
+                    </button>
+                </div>
+            </header>
+
             {/* ═══ Mobile Bottom Nav ═══ */}
             <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-[#0C111D] border-t border-gray-100 dark:border-[#1F2A37] safe-area-pb">
                 <div className="flex items-center justify-around h-16 px-1">
