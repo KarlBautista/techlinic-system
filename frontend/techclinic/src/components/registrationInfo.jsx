@@ -45,7 +45,7 @@ function RegistrationInfo({ message, type = 'text', value = '', onChange, name, 
                     onBlur={handleBlur}
                     disabled={disabled}
                     maxLength={maxLength}
-                    className={`w-full text-sm px-4 py-2.5 ring-1 ${borderColor} rounded-xl outline-none transition-all ${lightOnly ? 'text-gray-800' : 'text-gray-800 dark:text-white'} ${disabled ? (lightOnly ? 'bg-gray-100 cursor-not-allowed' : 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed') : (lightOnly ? 'bg-white' : 'bg-white dark:bg-[#161B26]')}`}
+                    className={`w-full text-sm px-4 pr-10 py-2.5 ring-1 ${borderColor} rounded-xl outline-none transition-all ${lightOnly ? 'text-gray-800' : 'text-gray-800 dark:text-white'} ${disabled ? (lightOnly ? 'bg-gray-100 cursor-not-allowed' : 'bg-gray-100 dark:bg-[#1F242F] cursor-not-allowed') : (lightOnly ? 'bg-white' : 'bg-white dark:bg-[#161B26]')}`}
                 />
                 {value && !disabled && (
                     <button
