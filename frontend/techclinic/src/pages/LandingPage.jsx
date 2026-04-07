@@ -584,7 +584,7 @@ function LandingPage() {
                                 animate={{ opacity: 1, y: 0, scale: 1 }}
                                 exit={{ opacity: 0, y: 14, scale: 0.97 }}
                                 transition={{ duration: 0.2 }}
-                                className="w-full max-w-3xl max-h-[92vh] sm:max-h-[85vh] overflow-hidden bg-white rounded-2xl shadow-2xl ring-1 ring-gray-200"
+                                className="w-full max-w-3xl max-h-[92vh] sm:max-h-[85vh] overflow-hidden bg-white rounded-3xl shadow-2xl ring-1 ring-gray-200"
                                 onClick={(e) => e.stopPropagation()}
                                 ref={reviewModalRef}
                                 role="dialog"
@@ -593,12 +593,12 @@ function LandingPage() {
                             >
                                 <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100">
                                     <div className="flex items-center justify-between gap-3">
-                                        <h3 id="review-modal-title" className="text-lg font-bold text-gray-900">Review & Submit</h3>
+                                        <h3 id="review-modal-title" className="text-base sm:text-lg font-bold text-gray-900">Review & Submit</h3>
                                         <button
                                             type="button"
                                             onClick={() => setIsReviewModalOpen(false)}
                                             ref={closeReviewButtonRef}
-                                            className="px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
+                                            className="px-3 py-1.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
                                         >
                                             Close
                                         </button>
@@ -620,7 +620,7 @@ function LandingPage() {
                                                 <button
                                                     type="button"
                                                     onClick={() => handleEditStep(1)}
-                                                    className="px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
+                                                    className="px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
                                                 >
                                                     Edit Personal
                                                 </button>
@@ -640,7 +640,7 @@ function LandingPage() {
                                                 <button
                                                     type="button"
                                                     onClick={() => handleEditStep(2)}
-                                                    className="px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
+                                                    className="px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
                                                 >
                                                     Edit Contact
                                                 </button>
@@ -656,14 +656,14 @@ function LandingPage() {
                                         <button
                                             type="button"
                                             onClick={() => setIsReviewModalOpen(false)}
-                                            className="w-full sm:w-auto px-5 py-2.5 rounded-2xl text-sm font-medium text-gray-700 bg-white ring-1 ring-gray-200 hover:bg-gray-50 transition-colors"
+                                            className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-sm font-medium text-gray-700 bg-white ring-1 ring-gray-200 hover:bg-gray-50 transition-colors"
                                         >
                                             Continue Editing
                                         </button>
                                         <button
                                             type="button"
                                             onClick={handleFormSubmit}
-                                            className="w-full sm:w-auto px-5 py-2.5 rounded-2xl text-sm font-medium text-white bg-crimson-600 hover:bg-crimson-700 transition-colors shadow-sm"
+                                            className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-sm font-medium text-white bg-crimson-600 hover:bg-crimson-700 transition-colors shadow-sm"
                                         >
                                             Submit Registration
                                         </button>
