@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="DFD-Level-1" name="Data Flow Diagram - TechClinic">
-        <mxGraphModel dx="1584" dy="831" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+        <mxGraphModel dx="1267" dy="628" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -22,7 +22,7 @@
                 <mxCell id="e-supabase" value="Supabase&#xa;(Auth &amp; DB)" style="shape=rectangle;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;fontStyle=1;verticalAlign=middle;align=center;" parent="1" vertex="1">
                     <mxGeometry x="532" y="810" width="130" height="45" as="geometry"/>
                 </mxCell>
-                <mxCell id="e-admin" value="Admin" style="shape=rectangle;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;fontStyle=1;verticalAlign=middle;align=center;" vertex="1" parent="1">
+                <mxCell id="e-admin" value="Admin" style="shape=rectangle;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=11;fontStyle=1;verticalAlign=middle;align=center;" parent="1" vertex="1">
                     <mxGeometry x="676" y="100" width="110" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="p1" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;arcSize=15;" parent="1" vertex="1">
@@ -223,15 +223,6 @@
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="f02" value="Login Credentials" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;fontSize=9;fontColor=#333333;strokeColor=#000000;" parent="1" source="e-student" target="p6" edge="1">
-                    <mxGeometry relative="1" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="75" y="160"/>
-                            <mxPoint x="550" y="160"/>
-                            <mxPoint x="550" y="205"/>
-                        </Array>
-                    </mxGeometry>
-                </mxCell>
                 <mxCell id="f03" value="Record Updates" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=9;fontColor=#333333;strokeColor=#000000;" parent="1" source="e-nurse" target="p2" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
@@ -256,16 +247,6 @@
                         <Array as="points">
                             <mxPoint x="1350" y="240"/>
                             <mxPoint x="1350" y="435"/>
-                        </Array>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="f07" value="Certificate Request" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontSize=9;fontColor=#333333;strokeColor=#000000;" parent="1" source="e-patient" target="p8" edge="1">
-                    <mxGeometry relative="1" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="1400" y="530"/>
-                            <mxPoint x="1400" y="640"/>
-                            <mxPoint x="1230" y="640"/>
-                            <mxPoint x="1230" y="670"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
@@ -434,12 +415,12 @@
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="f35" value="Login Credentials" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.537;exitY=1.016;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=9;fontColor=#333333;strokeColor=#000000;exitPerimeter=0;" edge="1" parent="1" source="e-admin" target="p6">
+                <mxCell id="f35" value="Login Credentials" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.537;exitY=1.016;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=9;fontColor=#333333;strokeColor=#000000;exitPerimeter=0;" parent="1" source="e-admin" target="p6" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="735" y="150" as="sourcePoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="f36" value="Personnel Data" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=9;fontColor=#333333;strokeColor=#000000;" edge="1" parent="1" target="p9">
+                <mxCell id="f36" value="Personnel Data" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=9;fontColor=#333333;strokeColor=#000000;" parent="1" target="p9" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="790" y="160"/>
@@ -448,7 +429,7 @@
                         <mxPoint x="790" y="150" as="sourcePoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="f37" value="User Status Update" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.041;exitY=1.009;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;fontSize=9;fontColor=#333333;strokeColor=#000000;exitPerimeter=0;" edge="1" parent="1" source="e-admin" target="d6">
+                <mxCell id="f37" value="User Status Update" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.041;exitY=1.009;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;fontSize=9;fontColor=#333333;strokeColor=#000000;exitPerimeter=0;" parent="1" source="e-admin" target="d6" edge="1">
                     <mxGeometry x="-0.2085" relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="680" y="160"/>
@@ -458,7 +439,7 @@
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="f38" value="Dashboard Overview,&#xa;Analytics, Activity Logs" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=0;exitDx=0;exitDy=0;fontSize=9;fontColor=#333333;strokeColor=#000000;entryX=0.289;entryY=1.031;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="p5" target="e-admin">
+                <mxCell id="f38" value="Dashboard Overview,&#xa;Analytics, Activity Logs" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=0;exitDx=0;exitDy=0;fontSize=9;fontColor=#333333;strokeColor=#000000;entryX=0.289;entryY=1.031;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="p5" target="e-admin" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="695" y="310"/>

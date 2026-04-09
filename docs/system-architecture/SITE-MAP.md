@@ -1,0 +1,7 @@
+# Site Map — TechClinic System
+
+The site map shows all 16 pages of the TechClinic web application organized by access level. Public pages include the Landing Page where students self-register through the registration portal, Login and Forgot/Reset Password pages for staff authentication, and a Document View page that lets students open prescriptions or medical certificates sent to their email. Since students have no login credentials, this is the only way they access their records.
+
+Once authenticated, all clinic staff (Nurse, Doctor, and Admin) can access core pages through the sidebar layout: the Dashboard for clinic analytics, Patient Records with drill-down to Individual Record, Medicine Inventory, Activity Log, Notifications for shared alerts like low-stock and outbreak warnings, and Settings. Role-restricted pages include New Patient and Add Medicine for Doctor and Nurse, Add Diagnosis for Doctor only (though nurses can create records and may defer clinical assessments to doctors), Admin Dashboard for Admin only, and Personnel List for Doctor and Admin.
+
+The navigational flow mirrors the clinical workflow: students register through the portal, staff log in to the dashboard, nurses manage records and inventory, doctors add diagnoses and generate documents that are emailed to the student, and admins oversee user accounts. React Router's ProtectedRoute components enforce role-based access at the frontend level, complementing the backend middleware and Supabase RLS policies.
