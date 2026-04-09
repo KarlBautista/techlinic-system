@@ -17,7 +17,7 @@ export default function AppLayout() {
             </div>
 
             {/* ── Main Content Area ── */}
-            <main className="flex-1 h-full overflow-auto pb-16 sm:pb-0">
+            <main className="flex-1 h-full overflow-auto scrollbar-mobile pt-14 pb-16 sm:pt-0 sm:pb-0">
                 <motion.div
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}

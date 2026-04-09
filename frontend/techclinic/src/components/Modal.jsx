@@ -108,14 +108,14 @@ function ModalContent({ modal, onClose }) {
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.9, y: 12 }}
                     transition={{ type: 'spring', duration: 0.3, bounce: 0.15 }}
-                    className="w-full max-w-sm bg-white dark:bg-[#161B26] rounded-2xl shadow-xl p-6 relative"
+                    className="w-full max-w-sm bg-white rounded-2xl shadow-xl p-6 relative"
                     onClick={(e) => e.stopPropagation()}
                 >
                     {/* Close X button */}
                     {modal.showCancel && (
                         <button
                             onClick={handleCancel}
-                            className="absolute top-3 right-3 w-7 h-7 rounded-full bg-gray-100 dark:bg-[#1F242F] flex items-center justify-center text-gray-400 dark:text-[#94969C] hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#293040] transition-colors"
+                            className="absolute top-3 right-3 w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-200 transition-colors"
                         >
                             <X className="w-4 h-4" />
                         </button>
@@ -130,9 +130,9 @@ function ModalContent({ modal, onClose }) {
 
                     {/* Text */}
                     <div className="text-center mb-6">
-                        <h3 className="text-lg font-bold text-gray-800 dark:text-white">{modal.title}</h3>
+                        <h3 className="text-lg font-bold text-gray-800">{modal.title}</h3>
                         {modal.message && (
-                            <p className="text-sm text-gray-500 dark:text-[#94969C] mt-1">{modal.message}</p>
+                            <p className="text-sm text-gray-500 mt-1">{modal.message}</p>
                         )}
                     </div>
 
@@ -141,7 +141,7 @@ function ModalContent({ modal, onClose }) {
                         {modal.showCancel && (
                             <button
                                 onClick={handleCancel}
-                                className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-[#161B26] rounded-xl ring-1 ring-gray-200 dark:ring-[#1F2A37] hover:bg-gray-50 dark:hover:bg-[#1F242F] transition-colors"
+                                className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white rounded-xl ring-1 ring-gray-200 hover:bg-gray-50 transition-colors"
                             >
                                 {modal.cancelLabel}
                             </button>

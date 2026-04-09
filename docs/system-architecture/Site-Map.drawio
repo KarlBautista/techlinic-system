@@ -1,0 +1,205 @@
+<mxfile host="65bd71144e">
+    <diagram id="Site-Map" name="Site Map">
+        <mxGraphModel dx="917" dy="546" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2200" pageHeight="1500" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="Site Map — TechClinic System" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="750" y="20" width="500" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="root" value="TechClinic System&#xa;techclinic.app" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a1a2e;strokeColor=#16213e;fontSize=15;fontStyle=1;fontColor=#FFFFFF;verticalAlign=middle;align=center;arcSize=20;" parent="1" vertex="1">
+                    <mxGeometry x="860" y="80" width="280" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="public-group" value="Public Pages" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=3;fontColor=#666666;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="180" width="160" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="landing" value="Landing Page&lt;br&gt;/ (Registration Portal)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontStyle=1;verticalAlign=middle;align=center;arcSize=15;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="220" width="200" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="login" value="Login&#xa;/login" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontStyle=1;verticalAlign=middle;align=center;arcSize=15;" parent="1" vertex="1">
+                    <mxGeometry x="260" y="220" width="200" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="forgot-pw" value="Forgot Password&#xa;/forgot-password" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontStyle=1;verticalAlign=middle;align=center;arcSize=15;" parent="1" vertex="1">
+                    <mxGeometry x="260" y="290" width="200" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="reset-pw" value="Reset Password&#xa;/reset-password" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontStyle=1;verticalAlign=middle;align=center;arcSize=15;" parent="1" vertex="1">
+                    <mxGeometry x="260" y="360" width="200" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="root-to-landing" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeWidth=2;strokeColor=#82b366;" parent="1" source="root" target="landing" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="root-to-login" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeWidth=2;strokeColor=#82b366;" parent="1" source="root" target="login" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="360" y="110"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="login-to-forgot" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeWidth=1.5;strokeColor=#82b366;dashed=1;" parent="1" source="login" target="forgot-pw" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="forgot-to-reset" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeWidth=1.5;strokeColor=#82b366;dashed=1;" parent="1" source="forgot-pw" target="reset-pw" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="auth-group" value="Authenticated Pages (All Roles)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=3;fontColor=#666666;" parent="1" vertex="1">
+                    <mxGeometry x="620" y="180" width="280" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="dashboard" value="Dashboard&#xa;/dashboard" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;verticalAlign=middle;align=center;arcSize=15;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="230" width="200" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="patient-record" value="Patient Records&#xa;/patient-record" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;verticalAlign=middle;align=center;arcSize=15;" parent="1" vertex="1">
+                    <mxGeometry x="760" y="220" width="200" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="individual-record" value="Individual Record&#xa;/individual-record/:studentId" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;verticalAlign=middle;align=center;arcSize=15;" parent="1" vertex="1">
+                    <mxGeometry x="760" y="345" width="200" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="medicine-inv" value="Medicine Inventory&#xa;/medicine-inventory" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;verticalAlign=middle;align=center;arcSize=15;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="345" width="200" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="activity-log" value="Activity Log&#xa;/activity-log" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;verticalAlign=middle;align=center;arcSize=15;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="540" width="200" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="notifications-page" value="Notifications&#xa;/notifications" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;verticalAlign=middle;align=center;arcSize=15;" parent="1" vertex="1">
+                    <mxGeometry x="760" y="540" width="200" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="settings" value="Settings&#xa;/settings" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;verticalAlign=middle;align=center;arcSize=15;" parent="1" vertex="1">
+                    <mxGeometry x="640" y="620" width="200" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="root-to-dashboard" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeWidth=2;strokeColor=#6c8ebf;" parent="1" source="root" target="dashboard" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="580" y="110"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="root-to-patient" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeWidth=2;strokeColor=#6c8ebf;" parent="1" source="root" target="patient-record" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="patient-to-individual" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeWidth=1.5;strokeColor=#6c8ebf;dashed=1;" parent="1" source="patient-record" target="individual-record" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="root-to-medicine" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeWidth=2;strokeColor=#6c8ebf;" parent="1" source="root" target="medicine-inv" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="510" y="110"/>
+                            <mxPoint x="510" y="370"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="root-to-actlog" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeWidth=2;strokeColor=#6c8ebf;" parent="1" source="root" target="activity-log" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="480" y="110"/>
+                            <mxPoint x="480" y="565"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="root-to-notif" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeWidth=2;strokeColor=#6c8ebf;" parent="1" source="root" target="notifications-page" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1000" y="430"/>
+                            <mxPoint x="860" y="430"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="root-to-settings" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeWidth=2;strokeColor=#6c8ebf;" parent="1" source="root" target="settings" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="750" y="110"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="role-group" value="Role-Restricted Pages" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=3;fontColor=#666666;" parent="1" vertex="1">
+                    <mxGeometry x="1050" y="150" width="240" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="new-patient" value="New Patient&#xa;/new-patient" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;fontStyle=1;verticalAlign=middle;align=center;arcSize=15;" parent="1" vertex="1">
+                    <mxGeometry x="1040" y="240" width="200" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="add-medicine" value="Add Medicine&#xa;/add-medicine" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;fontStyle=1;verticalAlign=middle;align=center;arcSize=15;" parent="1" vertex="1">
+                    <mxGeometry x="1330" y="240" width="200" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="doc-label" value="DOCTOR and Nurse Only" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontStyle=1;fontColor=#b85450;" parent="1" vertex="1">
+                    <mxGeometry x="1070" y="320" width="150" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="add-diagnosis" value="Add Diagnosis&#xa;/add-diagnosis/:recordId" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;fontStyle=1;verticalAlign=middle;align=center;arcSize=15;" parent="1" vertex="1">
+                    <mxGeometry x="1040" y="345" width="200" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="admin-dashboard" value="Admin Dashboard&#xa;/admin-dashboard" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;fontStyle=1;verticalAlign=middle;align=center;arcSize=15;" parent="1" vertex="1">
+                    <mxGeometry x="1260" y="345" width="200" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="root-to-newpatient" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeWidth=2;strokeColor=#d6b656;" parent="1" source="root" target="new-patient" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Doctor and Nurse" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="root-to-newpatient">
+                    <mxGeometry x="0.3768" y="3" relative="1" as="geometry">
+                        <mxPoint x="25" y="23" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="root-to-addmed" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeWidth=2;strokeColor=#d6b656;" parent="1" source="root" target="add-medicine" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1440" y="100"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="individual-to-diag" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeWidth=1.5;strokeColor=#b85450;dashed=1;" parent="1" source="individual-record" target="add-diagnosis" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="root-to-admindash" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeWidth=2;strokeColor=#9673a6;" parent="1" source="root" target="admin-dashboard" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1310" y="110"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="5" value="Admin Only" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="root-to-admindash">
+                    <mxGeometry x="0.8102" y="-3" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="legend-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="1110" width="380" height="210" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-title" value="Legend" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="165" y="1115" width="80" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg-green" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;arcSize=15;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="1150" width="30" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg-green-t" value="Public (No Authentication Required)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="90" y="1147" width="280" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg-blue" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;arcSize=15;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="1180" width="30" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg-blue-t" value="Authenticated (All Roles: Nurse, Doctor, Admin)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="90" y="1177" width="300" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg-yellow" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;arcSize=15;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="1210" width="30" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg-yellow-t" value="Doctor &amp; Nurse Only" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="90" y="1207" width="280" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg-red" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;arcSize=15;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="1240" width="30" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg-red-t" value="Doctor Only" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="90" y="1237" width="280" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg-purple" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;arcSize=15;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="1270" width="30" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg-purple-t" value="Admin Only" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="90" y="1267" width="280" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg-orange" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;arcSize=15;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="1300" width="30" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg-orange-t" value="Doctor &amp; Admin Only" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="90" y="1297" width="280" height="25" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
