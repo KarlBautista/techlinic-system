@@ -102,7 +102,7 @@ const bothRoles = authorize("DOCTOR", "NURSE");
 | `/insert-record` | POST | **NURSE** | Only nurses do patient intake |
 | `/get-record-to-diagnose/:recordId` | GET | **DOCTOR** | Only doctors diagnose |
 | `/insert-diagnosis` | PUT | **DOCTOR** | Only doctors create diagnoses |
-| `/insert-personnel` | POST | **DOCTOR** | Only doctors manage personnel |
+| `/insert-personnel` | POST | **ADMIN** | Only admins manage personnel |
 
 ### Medicine Routes (`Backend/routes/medicineRoutes.js`)
 

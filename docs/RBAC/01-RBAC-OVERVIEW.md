@@ -189,8 +189,8 @@ The `ProtectedRoute` component now accepts an optional `allowedRoles` prop:
 // NURSE only — redirects DOCTOR to /dashboard
 <ProtectedRoute allowedRoles={["NURSE"]}><NewPatient /></ProtectedRoute>
 
-// DOCTOR only — redirects NURSE to /dashboard
-<ProtectedRoute allowedRoles={["DOCTOR"]}><PersonnelList /></ProtectedRoute>
+// ADMIN only — redirects NURSE/DOCTOR to /dashboard
+<ProtectedRoute allowedRoles={["ADMIN"]}><PersonnelList /></ProtectedRoute>
 ```
 
 If the user's role doesn't match, they are redirected to `/dashboard` with an `accessDenied` state.

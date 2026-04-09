@@ -19,8 +19,8 @@ router.post("/insert-record", authenticate, authorize("NURSE"), validateInsertRe
 router.get("/get-record-to-diagnose/:recordId", authenticate, authorize("DOCTOR"), validateIdParam('recordId'), getRecordToDiagnose);
 router.put("/insert-diagnosis", authenticate, authorize("DOCTOR"), validateAddDiagnosis, addDiagnosis);
 
-// ── DOCTOR and ADMIN can manage personnel ──
-router.post("/insert-personnel", authenticate, authorize("DOCTOR", "ADMIN"), validateInsertPersonnel, insertPersonnel);
+// ── ADMIN-only: manage personnel ──
+router.post("/insert-personnel", authenticate, authorize("ADMIN"), validateInsertPersonnel, insertPersonnel);
 
 // ── ADMIN-only: soft delete (deactivate/reactivate) ──
 router.patch("/deactivate-user/:userId", authenticate, authorize("ADMIN"), deactivateUser);

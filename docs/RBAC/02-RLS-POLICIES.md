@@ -62,15 +62,15 @@ CREATE POLICY "users_update_own" ON public.users
   USING (id = auth.uid())
   WITH CHECK (id = auth.uid());
 
--- Only DOCTOR can create new user accounts
+-- Only ADMIN can create new user accounts
 -- (personnel management — adding new nurses/doctors)
-CREATE POLICY "users_insert_doctor" ON public.users
+CREATE POLICY "users_insert_admin" ON public.users
   FOR INSERT
   TO authenticated
-  WITH CHECK (public.get_user_role() = 'DOCTOR');
+  WITH CHECK (public.get_user_role() = 'ADMIN');
 ```
 
-**Why DOCTOR can insert users:** The personnel management feature (adding new nurses/doctors) is a doctor-only function. The actual auth.users entry is created via the service role key in the backend, but the public.users profile row needs this INSERT policy.
+**Why ADMIN can insert users:** The personnel management feature (adding new nurses/doctors) is an admin-only function. The actual auth.users entry is created via the service role key in the backend, but the public.users profile row needs this INSERT policy.
 
 ---
 

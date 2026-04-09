@@ -64,7 +64,6 @@ const NAV_SECTIONS = {
         {
             title: 'Management',
             items: [
-                { label: 'Personnel', path: '/personnel-list', icon: Users },
                 { label: 'Patient Record', path: '/patient-record', icon: ClipboardList, matchPrefix: ['/individual-record', '/add-diagnosis'] },
                 { label: 'Medicine', path: '/medicine-inventory', icon: Pill, matchPrefix: ['/add-medicine'] },
             ],
@@ -113,7 +112,6 @@ const MOBILE_NAV = {
     ],
     DOCTOR: [
         { label: 'Home', path: '/dashboard', icon: LayoutDashboard },
-        { label: 'Team', path: '/personnel-list', icon: Users },
         { label: 'Records', path: '/patient-record', icon: ClipboardList },
         { label: 'Meds', path: '/medicine-inventory', icon: Pill },
         { label: 'More', path: '/notifications', icon: Bell, hasBadge: true },

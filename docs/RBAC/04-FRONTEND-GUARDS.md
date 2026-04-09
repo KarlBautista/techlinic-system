@@ -62,7 +62,7 @@ Now it accepts an `allowedRoles` prop to restrict access by role:
 <ProtectedRoute><Dashboard /></ProtectedRoute>
 
 // After — role-restricted
-<ProtectedRoute allowedRoles={["DOCTOR"]}><PersonnelList /></ProtectedRoute>
+<ProtectedRoute allowedRoles={["ADMIN"]}><PersonnelList /></ProtectedRoute>
 <ProtectedRoute allowedRoles={["NURSE"]}><NewPatient /></ProtectedRoute>
 ```
 
@@ -115,7 +115,7 @@ You can use this to show a toast/alert on the dashboard if desired.
 | `/notifications` | DOCTOR, NURSE | Notifications |
 | `/settings` | DOCTOR, NURSE | Settings |
 | **`/new-patient`** | **NURSE only** | NewPatient |
-| **`/personnel-list`** | **DOCTOR only** | PersonnelList |
+| **`/personnel-list`** | **ADMIN only** | PersonnelList |
 | **`/add-diagnosis/:recordId`** | **DOCTOR only** | AddDiagnosis |
 
 ---
@@ -127,7 +127,7 @@ The sidebar still uses role-based conditional rendering to show/hide links. This
 | Role | Visible Links |
 |------|---------------|
 | **NURSE** | Dashboard, Analytics, New Patient, Patient Record, Medicine Inventory, Notifications |
-| **DOCTOR** | Dashboard, Analytics, Personnel List, Patient Record, Medicine Inventory, Notifications |
+| **DOCTOR** | Dashboard, Analytics, Patient Record, Medicine Inventory, Notifications |
 
 ---
 
