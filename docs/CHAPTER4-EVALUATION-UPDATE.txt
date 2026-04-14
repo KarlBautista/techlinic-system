@@ -1,0 +1,75 @@
+========================================
+CHAPTER 4 - EVALUATION RESULTS (UPDATED)
+========================================
+Replace your current evaluation section with the content below.
+Changes made:
+  - REMOVED: Reliability, Maintainability, Portability (not in Chapter 1 objectives)
+  - ADDED: Compatibility (listed in Chapter 1 objectives)
+  - KEPT: Functional Suitability, Performance Efficiency, Usability, Security
+========================================
+
+Evaluation Results
+
+The system was evaluated by respondents using the ISO 25010 software quality model criteria. The evaluation instrument used a 4-point Likert scale, where 4 represents "Strongly Agree," 3 represents "Agree," 2 represents "Disagree," and 1 represents "Strongly Disagree." The following table summarizes the evaluation results.
+
+Criteria	Mean	Interpretation
+
+A. Functional Suitability		
+1. The system accurately records and stores student health information.	___	___
+2. The system correctly generates graphical representations based on the collected health data.	___	___
+3. The system properly manages the pharmaceutical inventory, including stock tracking and automatic deduction.	___	___
+4. The system appropriately restricts access based on user roles (Nurse and Doctor).	___	___
+5. The student self-registration portal accurately captures and stores patient information.	___	___
+
+B. Performance Efficiency		
+1. The system responds to user interactions (page loads, form submissions, searches) within an acceptable time.	___	___
+2. The analytics charts render and update promptly when changing timeframes.	___	___
+3. The auto-refresh feature operates without noticeable delays or performance degradation.	___	___
+
+C. Compatibility		
+1. The system functions correctly across different web browsers (Chrome, Firefox, Edge, Safari).	___	___
+2. The responsive design adapts appropriately to different screen sizes (desktop, tablet, mobile).	___	___
+3. The system can coexist and operate alongside other web applications without conflicts.	___	___
+
+D. Usability		
+1. The system interface is easy to navigate and understand for first-time users.	___	___
+2. The visual design (color scheme, layout, typography) is professional and appropriate for a medical system.	___	___
+3. The forms provide clear labels, appropriate input validation, and helpful feedback messages.	___	___
+4. The graphical representations (charts and graphs) are easy to interpret and provide meaningful insights.	___	___
+
+E. Security		
+1. The authentication system effectively prevents unauthorized access to the system.	___	___
+2. Role-based access control properly restricts features based on user roles.	___	___
+3. Sensitive health data is adequately protected from unauthorized viewing or modification.	___	___
+
+Table 4.2. ISO 25010 Evaluation Criteria and Results
+
+Note: The mean scores and interpretations in Table 4.2 are to be filled in after conducting the actual evaluation with the respondents. The interpretation follows the scale: 3.50 – 4.00 = Strongly Agree, 2.50 – 3.49 = Agree, 1.50 – 2.49 = Disagree, 1.00 – 1.49 = Strongly Disagree.
+
+
+Summary of Evaluation Results
+
+Criteria	Mean	Interpretation
+A. Functional Suitability	___	___
+B. Performance Efficiency	___	___
+C. Compatibility	___	___
+D. Usability	___	___
+E. Security	___	___
+Overall Mean	___	___
+
+Table 4.3. Summary of Evaluation Results
+
+
+Discussion
+
+The results of the system testing demonstrate that all 30 test cases passed successfully, indicating that TechClinic meets its functional requirements as outlined in Chapter 1. The student self-registration portal, health record management, doctor diagnosis workflow, medicine inventory, analytics, notification system, personnel management, and settings functionalities all operate as intended.
+
+The system addresses the primary problem identified in the study — the reliance on manual tally sheets and paper-based record keeping at the TUP Manila clinic. By digitizing the health record management process, TechClinic eliminates the risk of data loss, reduces time spent on manual compilation, and provides immediate access to historical patient data.
+
+The analytics module directly fulfills the study's objective of generating graphical representations across different time periods. The four chart types — patient visit trends (area chart), department distribution (donut chart), top diagnoses (Pareto chart), and medicine stock levels (horizontal bar chart) — each support weekly, monthly, quarterly, and yearly views, enabling the medical staff to identify patterns and make informed decisions about health interventions.
+
+The automated notification system provides a proactive approach to disease monitoring that was not possible with the previous manual system. By automatically detecting when disease cases exceed threshold percentages, the system supports the study's objective of notifying medical staff of conditions that may necessitate adjustments to class modules or schedules.
+
+The role-based access control system ensures that the appropriate personnel perform their designated tasks — nurses handle patient intake while doctors manage diagnoses — maintaining a clear workflow that mirrors the actual clinic operations at TUP Manila. The three-layer security model (database RLS, backend middleware, frontend guards) provides defense in depth against unauthorized access.
+
+The evaluation results based on the ISO 25010 criteria will provide quantitative validation of the system's quality across five dimensions: functional suitability, performance efficiency, compatibility, usability, and security. These results, once gathered from the respondents, will offer a comprehensive assessment of how well TechClinic meets its design objectives compared to the traditional record-keeping methods it replaces.
