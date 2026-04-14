@@ -497,7 +497,7 @@ const NewPatient = () => {
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -20 }}
                       transition={{ duration: 0.25 }}
-                      className='flex-1 flex flex-col min-h-0'
+                      className='flex-1 flex flex-col min-h-0 overflow-y-auto'
                     >
                       <p className='text-xs text-gray-400 dark:text-[#94969C] mb-4'>
                         {studentInformation ? 'Patient information is pre-filled from existing records' : 'Enter the patient ID to auto-fill existing records'}
@@ -651,7 +651,7 @@ const NewPatient = () => {
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -20 }}
                       transition={{ duration: 0.25 }}
-                      className='flex-1 flex flex-col min-h-0'
+                      className='flex-1 flex flex-col min-h-0 overflow-y-auto'
                     >
                       <div>
                         <div className='flex items-end gap-2'>
@@ -751,7 +751,7 @@ const NewPatient = () => {
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -20 }}
                       transition={{ duration: 0.25 }}
-                      className='flex-1 flex flex-col min-h-0'
+                      className='flex-1 flex flex-col min-h-0 overflow-y-auto'
                     >
                       <div className='grid grid-cols-1 md:grid-cols-2 gap-5'>
                         <Dropdown

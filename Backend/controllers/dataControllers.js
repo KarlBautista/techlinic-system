@@ -294,7 +294,11 @@ const addDiagnosis = async (req, res) => {
         notes,
         attendingPhysician,
         attendingPhysicianId,
-        physicianSignatureUrl
+        physicianSignatureUrl,
+        temperature,
+        bloodPressure,
+        height,
+        weight
     } = req.body.patientInput;
 
     if (!id || !diagnosis) {
@@ -321,6 +325,10 @@ const addDiagnosis = async (req, res) => {
         const updateData = { status: "COMPLETE" };
         if (attendingPhysician) updateData.attending_physician = attendingPhysician;
         if (attendingPhysicianId) updateData.attending_physician_id = attendingPhysicianId;
+        if (temperature !== undefined && temperature !== null) updateData.temperature = Number(temperature);
+        if (height !== undefined && height !== null) updateData.height = Number(height);
+        if (weight !== undefined && weight !== null) updateData.weight = Number(weight);
+        if (bloodPressure !== undefined && bloodPressure !== null) updateData.blood_pressure = String(bloodPressure).trim();
         const { error: updateCompleteStatusError } = await supabase.from("records").update(updateData).eq("id", id);
         
         if (updateCompleteStatusError) {

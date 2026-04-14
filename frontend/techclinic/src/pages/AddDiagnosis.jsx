@@ -88,6 +88,10 @@ const AddDiagnosis = () => {
       email: patientData[0]?.email,
       dateOfBirth: formatDateForInput(patientData[0]?.date_of_birth),
       address: patientData[0]?.address,
+      temperature: patientData[0]?.temperature,
+      bloodPressure: patientData[0]?.blood_pressure,
+      height: patientData[0]?.height,
+      weight: patientData[0]?.weight,
     }));
   }, [patientData]);
 
@@ -319,7 +323,7 @@ const AddDiagnosis = () => {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.25 }}
-                  className='flex-1 flex flex-col'
+                  className='flex-1 flex flex-col overflow-y-auto'
                 >
                   <p className='text-xs text-gray-400 dark:text-[#94969C] mb-4'>Details from the nurse's intake record</p>
                   <div className='grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4'>
@@ -342,6 +346,32 @@ const AddDiagnosis = () => {
                         </div>
                       </div>
                     ))}
+
+                    {/* ── Vitals ── */}
+                    <div className='md:col-span-2 mt-2 mb-1'>
+                      <p className='text-xs font-semibold text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Vitals</p>
+                    </div>
+                    <div className='space-y-1.5'>
+                      <label htmlFor="temperature" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Temperature (°C)</label>
+                      <input type="number" step="0.1" name="temperature" placeholder="e.g. 36.5" id='temperature' value={patientInput.temperature || ''} onChange={handleSetPatientInput}
+                        className='w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all' />
+                    </div>
+                    <div className='space-y-1.5'>
+                      <label htmlFor="bloodPressure" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Blood Pressure</label>
+                      <input type="text" name="bloodPressure" placeholder="e.g. 120/80" id='bloodPressure' value={patientInput.bloodPressure || ''} onChange={handleSetPatientInput}
+                        maxLength={10}
+                        className='w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all' />
+                    </div>
+                    <div className='space-y-1.5'>
+                      <label htmlFor="height" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Height (cm)</label>
+                      <input type="number" step="0.1" name="height" placeholder="e.g. 170" id='height' value={patientInput.height || ''} onChange={handleSetPatientInput}
+                        className='w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all' />
+                    </div>
+                    <div className='space-y-1.5'>
+                      <label htmlFor="weight" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Weight (kg)</label>
+                      <input type="number" step="0.1" name="weight" placeholder="e.g. 65" id='weight' value={patientInput.weight || ''} onChange={handleSetPatientInput}
+                        className='w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all' />
+                    </div>
                   </div>
 
                   {/* Step 1 Navigation */}
