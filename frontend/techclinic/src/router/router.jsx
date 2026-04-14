@@ -50,9 +50,9 @@ const router = createBrowserRouter([
     ],
   },
 
-  // ── DOCTOR only (with AppLayout) ──
+  // ── DOCTOR & NURSE (with AppLayout) ──
   {
-    element: <ProtectedRoute allowedRoles={["DOCTOR"]}><AppLayout /></ProtectedRoute>,
+    element: <ProtectedRoute allowedRoles={["DOCTOR", "NURSE"]}><AppLayout /></ProtectedRoute>,
     children: [
       { path: "/add-diagnosis/:recordId", element: <AddDiagnosis /> },
     ],

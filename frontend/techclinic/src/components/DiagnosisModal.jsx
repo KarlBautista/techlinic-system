@@ -290,7 +290,7 @@ const DiagnosisModal = ({ open = false, onClose = () => { }, patient = {}, recor
               <i className="fa-solid fa-clock text-4xl text-yellow-400 mb-3"></i>
               <p className="text-gray-500 dark:text-[#94969C] font-medium">This record is still pending.</p>
               <p className="text-sm text-gray-400 mt-1">Prescription and certificate will be available once the visit is complete.</p>
-              {userProfile?.role === 'DOCTOR' && record?.id && (
+              {(userProfile?.role === 'DOCTOR' || userProfile?.role === 'NURSE') && record?.id && (
                 <button
                   onClick={() => { onClose(); navigate(`/add-diagnosis/${record.id}`); }}
                   className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-crimson-600 hover:bg-crimson-700 text-white text-sm font-medium rounded-lg transition-colors"

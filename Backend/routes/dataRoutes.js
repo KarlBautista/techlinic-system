@@ -15,9 +15,9 @@ router.get("/get-all-users", authenticate, authorize("DOCTOR", "NURSE", "ADMIN")
 // ── NURSE can insert new patient records ──
 router.post("/insert-record", authenticate, authorize("NURSE"), validateInsertRecord, insertRecord);
 
-// ── DOCTOR-only: diagnosis ──
-router.get("/get-record-to-diagnose/:recordId", authenticate, authorize("DOCTOR"), validateIdParam('recordId'), getRecordToDiagnose);
-router.put("/insert-diagnosis", authenticate, authorize("DOCTOR"), validateAddDiagnosis, addDiagnosis);
+// ── Diagnosis (DOCTOR & NURSE) ──
+router.get("/get-record-to-diagnose/:recordId", authenticate, authorize("DOCTOR", "NURSE"), validateIdParam('recordId'), getRecordToDiagnose);
+router.put("/insert-diagnosis", authenticate, authorize("DOCTOR", "NURSE"), validateAddDiagnosis, addDiagnosis);
 
 // ── ADMIN-only: manage personnel ──
 router.post("/insert-personnel", authenticate, authorize("ADMIN"), validateInsertPersonnel, insertPersonnel);

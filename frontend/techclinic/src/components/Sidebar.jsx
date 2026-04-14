@@ -42,7 +42,7 @@ const NAV_SECTIONS = {
             title: 'Management',
             items: [
                 { label: 'New Patient', path: '/new-patient', icon: UserPlus },
-                { label: 'Patient Record', path: '/patient-record', icon: ClipboardList, matchPrefix: ['/individual-record'] },
+                { label: 'Patient Record', path: '/patient-record', icon: ClipboardList, matchPrefix: ['/individual-record', '/add-diagnosis'] },
                 { label: 'Medicine', path: '/medicine-inventory', icon: Pill, matchPrefix: ['/add-medicine'] },
             ],
         },

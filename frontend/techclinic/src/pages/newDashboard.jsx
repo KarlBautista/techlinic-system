@@ -531,11 +531,9 @@ const NewDashboard = () => {
                                                     key={patient.id}
                                                     className='flex items-center justify-between py-2.5 cursor-pointer hover:bg-crimson-50/40 dark:hover:bg-[#1F242F] -mx-2 px-2 rounded-lg transition-colors group'
                                                     onClick={
-                                                        patient.status === "INCOMPLETE" && userProfile?.role === "DOCTOR"
+                                                        patient.status === "INCOMPLETE" && (userProfile?.role === "DOCTOR" || userProfile?.role === "NURSE")
                                                             ? () => handleDiagnose(patient.id)
-                                                            : patient.status === "INCOMPLETE" && userProfile?.role === "NURSE"
-                                                                ? () => handleWaitingForDiagnosis()
-                                                                : () => handleIndividualRecord(patient.student_id)
+                                                            : () => handleIndividualRecord(patient.student_id)
                                                     }
                                                 >
                                                     <div className='flex items-center gap-2.5'>
