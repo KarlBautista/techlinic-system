@@ -248,6 +248,41 @@ body.theme-transition *::after {
     background-clip: padding-box;
 }
 
+/* ════════════════════════════════════════════════════════════
+   Number Input Spinners (Vitals)
+   ════════════════════════════════════════════════════════════ */
+
+/* Remove default number input spinners */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+/* Light mode spinners */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: inner-spin-button;
+    opacity: 0.6;
+}
+
+/* Dark mode spinners - improved visibility */
+.dark input[type="number"]::-webkit-outer-spin-button,
+.dark input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: inner-spin-button;
+    opacity: 0.8;
+}
+
+/* Style for spinners to be more visible */
+input[type="number"]::-webkit-outer-spin-button:hover,
+input[type="number"]::-webkit-inner-spin-button:hover {
+    opacity: 1;
+}
+
 @media (max-width: 640px) {
     .scrollbar-mobile::-webkit-scrollbar {
         width: 5px;
