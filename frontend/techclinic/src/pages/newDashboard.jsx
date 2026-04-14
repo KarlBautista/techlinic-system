@@ -3,6 +3,7 @@ import useAuth from '../store/useAuthStore';
 import useData from '../store/useDataStore';
 import useMedicine from '../store/useMedicineStore';
 import usePresenceStore from '../store/usePresenceStore';
+import supabase from '../config/supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { showToast } from '../components/Toast';
@@ -54,7 +55,6 @@ const NewDashboard = () => {
     const records = useMemo(() => patientRecords?.data ?? [], [patientRecords?.data]);
     const { medicines, getMedicines } = useMedicine();
     const navigate = useNavigate();
-    const refreshIntervalRef = useRef(null);
     const [initialLoading, setInitialLoading] = useState(true);
 
     /* ───── Calendar state ───── */
@@ -92,6 +92,7 @@ const NewDashboard = () => {
     };
 
     // Auto-refresh data every 15 seconds
+    // Initial data fetch
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -99,7 +100,7 @@ const NewDashboard = () => {
                 await getMedicines();
                 await getAllUsers();
             } catch (err) {
-                console.error('Error auto-refreshing data:', err);
+                console.error('Error fetching data:', err);
             }
         };
 
@@ -108,17 +109,24 @@ const NewDashboard = () => {
         // Safety fallback — clear skeleton after 5s even if fetch hangs
         const safetyTimer = setTimeout(() => setInitialLoading(false), 5000);
 
-        refreshIntervalRef.current = setInterval(() => {
-            fetchData();
-        }, 15000);
-
         return () => {
             clearTimeout(safetyTimer);
-            if (refreshIntervalRef.current) {
-                clearInterval(refreshIntervalRef.current);
-            }
         };
     }, [getRecords, getMedicines, getAllUsers]);
+
+    // Supabase Realtime — refresh records on INSERT/UPDATE
+    useEffect(() => {
+        const channel = supabase
+            .channel('dashboard-records')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'records' }, () => {
+                getRecords(true);
+            })
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, [getRecords]);
 
     function formatTime(dateString) {
         if (!dateString) return "";
