@@ -140,6 +140,33 @@
             radial-gradient(820px 400px at 95% 8%, rgba(255, 255, 255, 0.02), transparent 65%);
         background-attachment: fixed;
     }
+ input[type="date"] {
+    color: #4b5563 !important; /* gray-600 light mode */
+    font-weight: 400;
+  }
+
+  .dark input[type="date"] {
+    color: #9ca3af !important; /* gray-400 dark mode */
+  }
+
+  input[type="date"]::-webkit-datetime-edit,
+  input[type="date"]::-webkit-datetime-edit-text,
+  input[type="date"]::-webkit-datetime-edit-month-field,
+  input[type="date"]::-webkit-datetime-edit-day-field,
+  input[type="date"]::-webkit-datetime-edit-year-field {
+    color: inherit;
+    font-weight: 400;
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0.6;
+    filter: invert(0.4);
+  }
+
+  .dark input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0.8;
+    filter: invert(0.8);
+  }
 }
 
 /* ════════════════════════════════════════════════════════════
