@@ -19,8 +19,8 @@ All routes are defined in `src/router/router.jsx` using `react-router-dom`'s `cr
 | `/add-medicine` | `AddMedicine` | Staff | Add new medicine form |
 | `/analytics` | `newAnalytics` | Staff | Charts and analytics |
 | `/notifications` | `Notifications` | Staff | Alert notifications |
-| `/personnel-list` | `PersonnelList` | Doctor | Staff directory |
-| `/add-personnel` | `AddPersonnel` | Doctor | Add new staff member |
+| `/personnel-list` | `PersonnelList` | Admin | Staff directory |
+| `/add-personnel` | `AddPersonnel` | Admin | Add new staff member |
 | `/settings` | `Settings` | Staff | User settings |
 
 > **Note:** `ProtectedRoute` component exists but is **not currently used** — all routes are accessible without auth verification at the router level.

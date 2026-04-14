@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="DFD-Level-0" name="DFD Level 0 - Context Diagram">
-        <mxGraphModel dx="1810" dy="847" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+        <mxGraphModel dx="1491" dy="739" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -68,7 +68,7 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="flow-doctor-to-system" value="diagnosis data,&#xa;personnel data,&#xa;login credentials" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;fontSize=11;fontStyle=0;labelBackgroundColor=#FFFFFF;" parent="1" source="entity-doctor" target="process-0" edge="1">
+                <mxCell id="flow-doctor-to-system" value="diagnosis data,&#xa;login credentials" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;fontSize=11;fontStyle=0;labelBackgroundColor=#FFFFFF;" parent="1" source="entity-doctor" target="process-0" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="1080" y="210"/>
@@ -76,13 +76,14 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="flow-system-to-doctor" value="patient records, alerts,&#xa;analytics, personnel list" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontSize=11;fontStyle=0;labelBackgroundColor=#FFFFFF;" parent="1" source="process-0" target="entity-doctor" edge="1">
-                    <mxGeometry relative="1" as="geometry">
+                <mxCell id="flow-system-to-doctor" value="patient records, alerts,&#xa;analytics" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontSize=11;fontStyle=0;labelBackgroundColor=#FFFFFF;" parent="1" source="process-0" target="entity-doctor" edge="1">
+                    <mxGeometry x="0.4372" relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="980" y="440"/>
-                            <mxPoint x="980" y="300"/>
-                            <mxPoint x="1320" y="300"/>
+                            <mxPoint x="980" y="280"/>
+                            <mxPoint x="1320" y="280"/>
                         </Array>
+                        <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="flow-system-to-patient" value="medical certificates,&#xa;prescriptions" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=11;fontStyle=0;labelBackgroundColor=#FFFFFF;" parent="1" source="process-0" target="entity-patient" edge="1">

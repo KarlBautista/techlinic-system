@@ -66,9 +66,9 @@ const router = createBrowserRouter([
     ],
   },
 
-  // ── DOCTOR and ADMIN can manage personnel ──
+  // ── ADMIN only: manage personnel ──
   {
-    element: <ProtectedRoute allowedRoles={["DOCTOR", "ADMIN"]}><AppLayout /></ProtectedRoute>,
+    element: <ProtectedRoute allowedRoles={["ADMIN"]}><AppLayout /></ProtectedRoute>,
     children: [
       { path: "/personnel-list", element: <PersonnelList /> },
     ],

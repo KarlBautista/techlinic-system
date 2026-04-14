@@ -32,7 +32,7 @@ TechClinic is a clinic management system for TUP (Technological University of th
 | Role     | Access                                                             |
 |----------|--------------------------------------------------------------------|
 | **NURSE**  | Dashboard, New Patient, Patient Records, Medicine Inventory, Analytics, Notifications, Settings |
-| **DOCTOR** | Dashboard, Patient Records (+ Add Diagnosis), Medicine Inventory, Analytics, Notifications, Personnel List, Settings |
+| **DOCTOR** | Dashboard, Patient Records (+ Add Diagnosis), Medicine Inventory, Analytics, Notifications, Settings |
 
 ---
 

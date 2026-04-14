@@ -236,6 +236,7 @@ const getInitials = () => {
                         <p>DASHBOARD</p>
                     </Link>
                     
+                    {userProfile?.role === "ADMIN" && (
                     <Link 
                         to={'/personnel-list'}
                         className={`${currentPath === '/personnel-list' ? 'inPage' : 'notPage'} mainNavigation`}
@@ -243,6 +244,7 @@ const getInitials = () => {
                         <img src={PatientImage} alt="Personnel List" />
                         <p>PERSONNEL LIST</p>
                     </Link>
+                    )}
                     
                     <Link 
                         to={'/patient-record'}

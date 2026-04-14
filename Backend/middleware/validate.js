@@ -258,7 +258,7 @@ const validateUpdateMedicine = [
 ];
 
 // ────────────────────────────────────────────
-// Insert personnel (doctor adds staff)
+// Insert personnel (admin adds staff)
 // ────────────────────────────────────────────
 const validateInsertPersonnel = [
   body('personnel.first_name')
