@@ -210,6 +210,7 @@ export default function Sidebar() {
         if (!authenticatedUser?.id) return
         requestNotificationPermission()
         fetchNotifications()
+        checkForAlerts()
 
         const channel = supabase
             .channel('sidebar-notifications')

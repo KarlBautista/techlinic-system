@@ -46,8 +46,9 @@ const NewNavigation = () => {
         // Request browser notification permission
         requestNotificationPermission();
         
-        // Initial fetch
+        // Initial fetch and check for alerts
         fetchNotifications();
+        checkForAlerts();
         
         // Subscribe to realtime notifications instead of polling
         const channel = supabase

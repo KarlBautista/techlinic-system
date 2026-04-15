@@ -199,7 +199,7 @@ const NewPatient = () => {
         setPatientInput((prev) => ({ ...prev, medication: null }));
         return;
       }
-      const medjObj = medicines.find((m) => m.id === Number(value));
+      const medjObj = medicines.find((m) => String(m.id) === String(value));
       // Check if medicine is out of stock
       if (medjObj && medjObj.stock_level === 0) {
         showToast({

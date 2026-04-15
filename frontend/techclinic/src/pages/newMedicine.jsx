@@ -18,7 +18,7 @@ const itemVariants = {
 const ROWS_OPTIONS = [5, 10, 20, 50];
 
 const NewMedicine = () => {
-  const { medicines, updateMedicine, deleteMedicine, isLoading } = useMedicine();
+  const { medicines, updateMedicine, deleteMedicine, getMedicines, isLoading } = useMedicine();
   const { userProfile } = useAuth();
   const isAdmin = userProfile?.role === 'ADMIN';
   const [showForm, setShowForm] = useState(false);
@@ -33,6 +33,10 @@ const NewMedicine = () => {
   const [stockOpen, setStockOpen] = useState(false);
   const typeRef = useRef(null);
   const stockRef = useRef(null);
+
+  useEffect(() => {
+    getMedicines(true);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (e) => {

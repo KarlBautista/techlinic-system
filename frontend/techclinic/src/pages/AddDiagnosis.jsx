@@ -3,6 +3,7 @@ import useData from '../store/useDataStore'
 import useAuth from '../store/useAuthStore'
 import { showToast } from '../components/Toast'
 import useMedicine from "../store/useMedicineStore";
+import useNotificationStore from '../store/useNotificationStore';
 import { useParams, useNavigate } from 'react-router-dom'
 import api from '../lib/api'
 import emailjs from '@emailjs/browser'
@@ -27,6 +28,7 @@ const AddDiagnosis = () => {
   const { getRecords } = useData();
   const { authenticatedUser, userProfile } = useAuth();
   const { medicines, updateMedicine, getMedicines } = useMedicine();
+  const { checkForAlerts } = useNotificationStore();
   const { recordId } = useParams();
   const navigate = useNavigate();
 
@@ -129,7 +131,7 @@ const AddDiagnosis = () => {
   const handleSetPatientInput = (e) => {
     const { name, value } = e.target;
     if (name === "medication") {
-      const medjObj = medicines.find((m) => m.id === Number(value));
+      const medjObj = medicines.find((m) => String(m.id) === String(value));
       if (medjObj && medjObj.stock_level === 0) {
         showToast({ title: "Medicine Out of Stock", message: `${medjObj.medicine_name} is currently out of stock.`, type: "warning" });
         setPatientInput((prev) => ({ ...prev, medication: null, quantity: "" }));
@@ -227,6 +229,7 @@ const AddDiagnosis = () => {
     }
 
     await getRecords(true);
+    checkForAlerts();
     return true;
   };
 
