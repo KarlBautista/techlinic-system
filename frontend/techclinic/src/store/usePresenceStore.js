@@ -27,9 +27,28 @@ const usePresenceStore = create((set, get) => ({
                 if (selfId) ids.add(selfId);
                 set({ onlineUserIds: ids });
             })
+            .on("presence", { event: "join" }, ({ key }) => {
+                set((state) => {
+                    const updated = new Set(state.onlineUserIds);
+                    updated.add(key);
+                    return { onlineUserIds: updated };
+                });
+            })
+            .on("presence", { event: "leave" }, ({ key }) => {
+                set((state) => {
+                    const updated = new Set(state.onlineUserIds);
+                    updated.delete(key);
+                    // Always keep self
+                    const selfId = get()._selfId;
+                    if (selfId) updated.add(selfId);
+                    return { onlineUserIds: updated };
+                });
+            })
             .subscribe(async (status) => {
                 if (status === "SUBSCRIBED") {
                     await channel.track({ user_id: userId, online_at: new Date().toISOString() });
+                } else {
+                    console.error("Presence channel status:", status);
                 }
             });
 

@@ -13,7 +13,7 @@ const LIMITS = {
   NAME_MIN: 1,
   NAME_MAX: 100,
   EMAIL_MAX: 254,
-  PASSWORD_MIN: 8,
+  PASSWORD_MIN: 6,
   PASSWORD_MAX: 128,
   ADDRESS_MAX: 500,
   STUDENT_ID_MAX: 20,
@@ -282,7 +282,6 @@ const validateInsertPersonnel = [
     .isLength({ max: LIMITS.PASSWORD_MAX }).withMessage(`Password must not exceed ${LIMITS.PASSWORD_MAX} characters.`)
     .matches(/[A-Z]/).withMessage('Password must contain at least one uppercase letter.')
     .matches(/[a-z]/).withMessage('Password must contain at least one lowercase letter.')
-    .matches(/[0-9]/).withMessage('Password must contain at least one number.')
     .matches(/[!@#$%^&*(),.?":{}|<>]/).withMessage('Password must contain at least one special character.'),
   body('personnel.role')
     .trim().notEmpty().withMessage('Role is required.')

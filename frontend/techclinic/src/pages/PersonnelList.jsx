@@ -79,11 +79,12 @@ const PersonnelList = () => {
     }
   };
 
-  // Auto-generate password from first name + random number
+  // Auto-generate password: nameYEAR!TUPM (current year)
   const generatePassword = (firstName) => {
     if (!firstName || firstName.trim().length < 2) return '';
-    const num = Math.floor(1000 + Math.random() * 9000); // 4-digit random
-    return `${firstName.trim().toLowerCase()}${num}`;
+    const name = firstName.trim().toLowerCase();
+    const year = new Date().getFullYear();
+    return `${name}${year}!TUPM`;
   };
 
   useEffect(() => {

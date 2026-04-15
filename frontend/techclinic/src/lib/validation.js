@@ -23,7 +23,7 @@ export const LIMITS = {
   NAME_MIN: 1,
   NAME_MAX: 100,
   EMAIL_MAX: 254,
-  PASSWORD_MIN: 8,
+  PASSWORD_MIN: 6,
   PASSWORD_MAX: 128,
   ADDRESS_MAX: 500,
   STUDENT_ID_MAX: 20,
@@ -115,7 +115,6 @@ export function validatePassword(value, { minLen = LIMITS.PASSWORD_MIN, requireS
   if (requireStrength) {
     if (!/[A-Z]/.test(value)) return 'Password must contain at least one uppercase letter.';
     if (!/[a-z]/.test(value)) return 'Password must contain at least one lowercase letter.';
-    if (!/[0-9]/.test(value)) return 'Password must contain at least one number.';
     if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) return 'Password must contain at least one special character.';
   }
   return '';
