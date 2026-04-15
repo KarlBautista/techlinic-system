@@ -3,8 +3,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { showToast } from './Toast'
 import { showModal } from './Modal'
 import { validateMedicineForm, hasErrors } from '../lib/validation'
+import useMedicine from '../store/useMedicineStore'
 
 const MedicineForm = ({ medicine, onUpdate, onDelete, onClose, open }) => {
+  const { getMedicines } = useMedicine()
   const [form, setForm] = useState({})
   const [originalForm, setOriginalForm] = useState({})
   const [errors, setErrors] = useState({})
@@ -68,7 +70,7 @@ const MedicineForm = ({ medicine, onUpdate, onDelete, onClose, open }) => {
     if (onUpdate) onUpdate(form)
     showToast({ title: "Medicine updated successfully", message: "The updated medicine version will be displayed in the table", type: "success" })
     handleClose()
-    window.location.reload()
+    getMedicines(true)
   }
 
   const handleDelete = async () => {
@@ -83,7 +85,7 @@ const MedicineForm = ({ medicine, onUpdate, onDelete, onClose, open }) => {
       if (onDelete) onDelete(form.id)
       showToast({ title: "Medicine deleted successfully", message: "The table will be updated", type: "success" })
       onClose()
-      window.location.reload()
+      getMedicines(true)
     }
   }
   

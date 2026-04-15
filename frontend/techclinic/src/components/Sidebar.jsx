@@ -25,6 +25,7 @@ import TUP from '../assets/image/TUP.png'
 import useAuth from '../store/useAuthStore'
 import useNotificationStore, { requestNotificationPermission } from '../store/useNotificationStore'
 import NotificationModal from './NotificationModal'
+import supabase from '../config/supabaseClient'
 
 // ════════════════════════════════════════════════════════
 // ── Nav Items Config ──
@@ -204,15 +205,22 @@ export default function Sidebar() {
         return () => document.removeEventListener('mousedown', handler)
     }, [])
 
-    // ── Notification polling ──
+    // ── Notification realtime ──
     useEffect(() => {
         if (!authenticatedUser?.id) return
         requestNotificationPermission()
         fetchNotifications()
-        const interval = setInterval(() => {
-            checkForAlerts()
-        }, 30000)
-        return () => clearInterval(interval)
+
+        const channel = supabase
+            .channel('sidebar-notifications')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, () => {
+                checkForAlerts()
+            })
+            .subscribe()
+
+        return () => {
+            supabase.removeChannel(channel)
+        }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [authenticatedUser?.id])
 

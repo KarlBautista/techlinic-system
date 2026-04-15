@@ -14,6 +14,7 @@ import NotificationModal from './NotificationModal'
 import { showToast } from './Toast'
 import { showModal } from './Modal'
 import { useEffect, useState, useRef } from 'react'
+import supabase from '../config/supabaseClient'
 
 import { useLocation, Link, useNavigate } from 'react-router-dom'
 
@@ -38,22 +39,27 @@ const NewNavigation = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    // Request notification permission and start polling
+    // Request notification permission and subscribe to realtime
     useEffect(() => {
         if (!authenticatedUser?.id) return;
         
         // Request browser notification permission
         requestNotificationPermission();
         
-        // Initial fetch only (no checkForAlerts on mount — interval handles it)
+        // Initial fetch
         fetchNotifications();
         
-        // Poll every 30 seconds
-        const intervalId = setInterval(() => {
-            checkForAlerts();
-        }, 30000);
+        // Subscribe to realtime notifications instead of polling
+        const channel = supabase
+            .channel('nav-notifications')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, () => {
+                checkForAlerts();
+            })
+            .subscribe();
         
-        return () => clearInterval(intervalId);
+        return () => {
+            supabase.removeChannel(channel);
+        };
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [authenticatedUser?.id]);
 

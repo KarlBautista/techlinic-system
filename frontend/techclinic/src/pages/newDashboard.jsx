@@ -114,19 +114,25 @@ const NewDashboard = () => {
         };
     }, [getRecords, getMedicines, getAllUsers]);
 
-    // Supabase Realtime — refresh records on INSERT/UPDATE
+    // Supabase Realtime — refresh data on database changes
     useEffect(() => {
         const channel = supabase
-            .channel('dashboard-records')
+            .channel('dashboard-realtime')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'records' }, () => {
                 getRecords(true);
+            })
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'medicines' }, () => {
+                getMedicines(true);
+            })
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'users' }, () => {
+                getAllUsers(true);
             })
             .subscribe();
 
         return () => {
             supabase.removeChannel(channel);
         };
-    }, [getRecords]);
+    }, [getRecords, getMedicines, getAllUsers]);
 
     function formatTime(dateString) {
         if (!dateString) return "";

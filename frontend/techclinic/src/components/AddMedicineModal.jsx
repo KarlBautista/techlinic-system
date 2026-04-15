@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { showToast } from './Toast'
 import { showModal } from './Modal'
 import useMedicine from '../store/useMedicineStore'
@@ -109,7 +109,7 @@ const AnimatedDropdown = ({ name, label, required, placeholder, value, options, 
 }
 
 const AddMedicineModal = ({ onClose }) => {
-  const { insertMedicine } = useMedicine()
+  const { insertMedicine, getMedicines } = useMedicine()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isClosing, setIsClosing] = useState(false)
   const [errors, setErrors] = useState({})
@@ -185,7 +185,7 @@ const AddMedicineModal = ({ onClose }) => {
       setErrors({})
       setTouched({})
       handleClose()
-      window.location.reload()
+      await getMedicines(true)
     } catch (err) {
       console.error(`Something went wrong adding medicine: ${err.message}`)
     } finally {

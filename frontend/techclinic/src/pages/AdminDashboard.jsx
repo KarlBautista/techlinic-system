@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import useAuth from '../store/useAuthStore'
 import useData from '../store/useDataStore'
 import useMedicine from '../store/useMedicineStore'
+import supabase from '../config/supabaseClient'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import AnimateNumber from '../components/AnimateNumber'
@@ -49,7 +50,6 @@ const AdminDashboard = () => {
     const records = useMemo(() => patientRecords?.data ?? [], [patientRecords?.data])
     const { medicines, getMedicines } = useMedicine()
     const navigate = useNavigate()
-    const refreshIntervalRef = useRef(null)
     const [initialLoading, setInitialLoading] = useState(true)
     const [searchQuery, setSearchQuery] = useState('')
     const [showChartsModal, setShowChartsModal] = useState(false)
@@ -81,14 +81,29 @@ const AdminDashboard = () => {
                 await getMedicines()
                 await getAllUsers(true)
             } catch (err) {
-                console.error('Error auto-refreshing data:', err)
+                console.error('Error fetching data:', err)
             }
         }
         fetchData().finally(() => setInitialLoading(false))
+    }, [getRecords, getMedicines, getAllUsers])
 
-        refreshIntervalRef.current = setInterval(fetchData, 30000)
+    // Supabase Realtime — refresh on database changes
+    useEffect(() => {
+        const channel = supabase
+            .channel('admin-dashboard')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'records' }, () => {
+                getRecords(true)
+            })
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'medicines' }, () => {
+                getMedicines(true)
+            })
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'users' }, () => {
+                getAllUsers(true)
+            })
+            .subscribe()
+
         return () => {
-            if (refreshIntervalRef.current) clearInterval(refreshIntervalRef.current)
+            supabase.removeChannel(channel)
         }
     }, [getRecords, getMedicines, getAllUsers])
 

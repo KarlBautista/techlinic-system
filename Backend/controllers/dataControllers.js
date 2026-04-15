@@ -236,6 +236,25 @@ const getRecordToDiagnose = async (req, res) => {
             console.error(`Error getting patient record: ${patientRecordError.message}`);
             return res.status(500).json({ success: false, error: patientRecordError.message });
         }
+
+        // Pre-fill height/weight from the patient's most recent completed record
+        const record = patientRecordData?.[0];
+        if (record?.student_id && (!record.height || !record.weight)) {
+            const { data: prevRecords } = await supabase
+                .from("records")
+                .select("height, weight")
+                .eq("student_id", record.student_id)
+                .eq("status", "COMPLETE")
+                .not("id", "eq", recordId)
+                .order("created_at", { ascending: false })
+                .limit(1);
+
+            if (prevRecords?.[0]) {
+                if (!record.height && prevRecords[0].height) record.height = prevRecords[0].height;
+                if (!record.weight && prevRecords[0].weight) record.weight = prevRecords[0].weight;
+            }
+        }
+
         return res.status(200).json({ success: true, data: patientRecordData });
     }  catch (err) {
         console.error(`Something went wrong getting patient record: ${err.message}`);
@@ -309,8 +328,9 @@ const addDiagnosis = async (req, res) => {
         const { data: addDiagnosisData, error: addDiagnosisError } = await supabase.from("diagnoses").insert({
             diagnosis,
             record_id: id,
+            student_id: studentId || null,
             medication: medication?.medicine_name ?? null,
-            disease_id: diseaseId ? Number(diseaseId) : null,
+            disease_id: diseaseId || null,
             quantity: quantity ? Number(quantity) : null,
             treatment: treatment || null,
             notes: notes || null,
