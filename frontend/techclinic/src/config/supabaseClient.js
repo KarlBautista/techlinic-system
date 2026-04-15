@@ -5,9 +5,9 @@ const supabaseKey = import.meta.env.VITE_API_KEY;
 
 const supabase = createClient(supabaseUrl, supabaseKey, {
   auth: {
-    // Use sessionStorage so the session expires when the browser/tab is closed
-    storage: sessionStorage,
-    // Still persist within the tab session
+    // Use localStorage so the session persists across tab/browser closes
+    storage: localStorage,
+    // Persist session
     persistSession: true,
     // Automatically refresh tokens
     autoRefreshToken: true,

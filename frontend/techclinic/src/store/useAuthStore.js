@@ -198,7 +198,7 @@ const useAuth = create(
                         isLoading: false,
                         isSessionVerified: true
                     });
-                    sessionStorage.removeItem("auth-storage");
+                    localStorage.removeItem("auth-storage");
                 }
             });
             
@@ -419,12 +419,7 @@ const useAuth = create(
                 isSessionVerified: false
             });
             
-            // Clear sessionStorage for auth
-            sessionStorage.removeItem('auth-storage');
-            sessionStorage.removeItem('data-storage');
-            sessionStorage.removeItem('medicine-storage');
-            
-            // Also clear localStorage in case old data lingers
+            // Clear localStorage for auth
             localStorage.removeItem('auth-storage');
             localStorage.removeItem('data-storage');
             localStorage.removeItem('medicine-storage');
@@ -442,14 +437,14 @@ const useAuth = create(
             name: 'auth-storage',
             storage: {
                 getItem: (name) => {
-                    const str = sessionStorage.getItem(name);
+                    const str = localStorage.getItem(name);
                     return str ? JSON.parse(str) : null;
                 },
                 setItem: (name, value) => {
-                    sessionStorage.setItem(name, JSON.stringify(value));
+                    localStorage.setItem(name, JSON.stringify(value));
                 },
                 removeItem: (name) => {
-                    sessionStorage.removeItem(name);
+                    localStorage.removeItem(name);
                 },
             },
             partialize: (state) => ({ 
