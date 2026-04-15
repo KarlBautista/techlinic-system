@@ -432,7 +432,10 @@ const AddDiagnosis = () => {
                         <input
                           type="text"
                           value={newDiseaseName}
-                          onChange={(e) => setNewDiseaseName(e.target.value)}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setNewDiseaseName(val.charAt(0).toUpperCase() + val.slice(1));
+                          }}
                           onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddDisease(); } }}
                           placeholder="Enter disease name..."
                           maxLength={LIMITS.DISEASE_NAME_MAX}

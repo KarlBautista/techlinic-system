@@ -25,12 +25,13 @@ const addDisease = async (req, res) => {
         }
 
         const trimmedName = name.trim();
+        const capitalizedName = trimmedName.charAt(0).toUpperCase() + trimmedName.slice(1);
 
         // Check if already exists (case-insensitive)
         const { data: existing, error: checkError } = await supabase
             .from("diseases")
             .select("id, name")
-            .ilike("name", trimmedName)
+            .ilike("name", capitalizedName)
             .maybeSingle();
 
         if (checkError) {
@@ -43,7 +44,7 @@ const addDisease = async (req, res) => {
 
         const { data: newDisease, error: insertError } = await supabase
             .from("diseases")
-            .insert({ name: trimmedName })
+            .insert({ name: capitalizedName })
             .select()
             .single();
 
