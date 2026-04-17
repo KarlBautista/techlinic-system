@@ -124,7 +124,7 @@ const NewMedicine = () => {
         <AddMedicineModal onClose={() => setShowAddForm(false)} />
       )}
 
-      <div className='flex flex-col gap-4 h-full'>
+      <div className='flex flex-col gap-4 h-full print:h-auto print:overflow-visible'>
         {isLoading && !medicines ? (
           <div className='w-full h-full flex flex-col gap-5 animate-pulse print:hidden'>
             {/* Skeleton Header */}

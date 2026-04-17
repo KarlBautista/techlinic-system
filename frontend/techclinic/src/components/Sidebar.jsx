@@ -152,7 +152,7 @@ function NavTooltip({ children, label, show }) {
 
 export default function Sidebar() {
     const { authenticatedUser, userProfile, signOut } = useAuth()
-    const { unreadCount, fetchNotifications, checkForAlerts } = useNotificationStore()
+    const { unreadCount, fetchNotifications } = useNotificationStore()
     const location = useLocation()
     const navigate = useNavigate()
     const [showProfileMenu, setShowProfileMenu] = useState(false)
@@ -210,12 +210,11 @@ export default function Sidebar() {
         if (!authenticatedUser?.id) return
         requestNotificationPermission()
         fetchNotifications()
-        checkForAlerts()
 
         const channel = supabase
             .channel('sidebar-notifications')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, () => {
-                checkForAlerts()
+                fetchNotifications()
             })
             .subscribe()
 

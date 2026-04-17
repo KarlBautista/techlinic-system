@@ -22,22 +22,9 @@ const ENTITY_ICONS = {
   personnel: Users,
 }
 
-const ACTION_COLORS = {
-  medicine_added: 'bg-emerald-50 text-emerald-700 ring-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-300 dark:ring-emerald-900/60',
-  medicine_updated: 'bg-amber-50 text-amber-700 ring-amber-100 dark:bg-amber-950/40 dark:text-amber-300 dark:ring-amber-900/60',
-  medicine_deleted: 'bg-red-50 text-red-700 ring-red-100 dark:bg-red-950/40 dark:text-red-300 dark:ring-red-900/60',
-  patient_record_created: 'bg-blue-50 text-blue-700 ring-blue-100 dark:bg-blue-950/40 dark:text-blue-300 dark:ring-blue-900/60',
-  diagnosis_added: 'bg-violet-50 text-violet-700 ring-violet-100 dark:bg-violet-950/40 dark:text-violet-300 dark:ring-violet-900/60',
-  personnel_added: 'bg-teal-50 text-teal-700 ring-teal-100 dark:bg-teal-950/40 dark:text-teal-300 dark:ring-teal-900/60',
-  personnel_deactivated: 'bg-red-50 text-red-700 ring-red-100 dark:bg-red-950/40 dark:text-red-300 dark:ring-red-900/60',
-  personnel_reactivated: 'bg-emerald-50 text-emerald-700 ring-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-300 dark:ring-emerald-900/60',
-}
+const ACTION_COLOR = 'text-gray-700 dark:text-[#CECFD2]'
 
-const ROLE_COLORS = {
-  DOCTOR: 'bg-blue-50 text-blue-700 ring-blue-100 dark:bg-blue-950/40 dark:text-blue-300 dark:ring-blue-900/60',
-  NURSE: 'bg-emerald-50 text-emerald-700 ring-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-300 dark:ring-emerald-900/60',
-  ADMIN: 'bg-crimson-50 text-crimson-700 ring-crimson-100 dark:bg-crimson-950/40 dark:text-crimson-300 dark:ring-crimson-900/60',
-}
+const ROLE_COLOR = 'text-gray-700 dark:text-[#CECFD2]'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -317,7 +304,6 @@ const ActivityLog = () => {
                 <tbody className="divide-y divide-gray-50 dark:divide-[#1F2A37]">
                   {paginatedLogs.length > 0 ? (
                     paginatedLogs.map((log) => {
-                      const Icon = ENTITY_ICONS[log.entity_type] || ScrollText
                       return (
                         <tr
                           key={log.id}
@@ -330,29 +316,21 @@ const ActivityLog = () => {
                             </span>
                           </td>
                           <td className="px-5 py-3.5">
-                            <div className="flex items-center gap-2">
-                              <div className="w-7 h-7 rounded-full bg-[#b01c34]/10 flex items-center justify-center">
-                                <User className="w-3.5 h-3.5 text-[#b01c34]" />
-                              </div>
-                              <span className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-crimson-600 dark:group-hover:text-crimson-300 transition-colors">
-                                {log.actor_name}
-                              </span>
-                            </div>
+                            <span className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-crimson-600 dark:group-hover:text-crimson-300 transition-colors">
+                              {log.actor_name}
+                            </span>
                           </td>
                           <td className="px-5 py-3.5">
                             <span
-                              className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ring-1 ${ROLE_COLORS[log.actor_role] || 'bg-gray-50 text-gray-600 ring-gray-100'
-                                }`}
+                              className={`text-sm font-medium ${ROLE_COLOR}`}
                             >
                               {log.actor_role}
                             </span>
                           </td>
                           <td className="px-5 py-3.5">
                             <span
-                              className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium ring-1 ${ACTION_COLORS[log.action] || 'bg-gray-50 text-gray-600 ring-gray-100'
-                                }`}
+                              className={`text-sm font-medium ${ACTION_COLOR}`}
                             >
-                              <Icon className="w-3 h-3" />
                               {ACTION_LABELS[log.action] || log.action}
                             </span>
                           </td>
@@ -488,14 +466,12 @@ const ActivityLog = () => {
                     {/* Action badge */}
                     <div className="flex items-center gap-2">
                       <span
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium ring-1 ${ACTION_COLORS[selectedLog.action] || 'bg-gray-50 text-gray-600 ring-gray-100'
-                          }`}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1 text-sm font-medium ${ACTION_COLOR}`}
                       >
                         {ACTION_LABELS[selectedLog.action] || selectedLog.action}
                       </span>
                       <span
-                        className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ring-1 ${ROLE_COLORS[selectedLog.actor_role] || 'bg-gray-50 text-gray-600 ring-gray-100'
-                          }`}
+                        className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ring-1 ${ROLE_COLOR}`}
                       >
                         {selectedLog.actor_role}
                       </span>

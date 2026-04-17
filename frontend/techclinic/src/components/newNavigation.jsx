@@ -54,7 +54,7 @@ const NewNavigation = () => {
         const channel = supabase
             .channel('nav-notifications')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, () => {
-                checkForAlerts();
+                fetchNotifications();
             })
             .subscribe();
         
