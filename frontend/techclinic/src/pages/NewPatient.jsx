@@ -85,6 +85,8 @@ const NewPatient = () => {
         sex: passedData.sex || '',
         dateOfBirth: passedData.dateOfBirth ? formatDateForInput(passedData.dateOfBirth) : '',
         address: passedData.address || '',
+        height: passedData.height || '',
+        weight: passedData.weight || '',
       }));
       setStudentInformation(passedData); // Mark as existing student
     }
@@ -143,7 +145,9 @@ const NewPatient = () => {
           department: existing.department || prev.department,
           sex: existing.sex || prev.sex,
           dateOfBirth: existing.date_of_birth ? formatDateForInput(existing.date_of_birth) : (existing.dob ? formatDateForInput(existing.dob) : prev.dateOfBirth),
-          address: existing.address ?? prev.address
+          address: existing.address ?? prev.address,
+          height: existing.height || prev.height,
+          weight: existing.weight || prev.weight,
         }));
       }
     } catch (err) {

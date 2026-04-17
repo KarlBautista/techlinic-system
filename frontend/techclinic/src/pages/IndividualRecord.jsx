@@ -173,6 +173,8 @@ const IndividualRecord = () => {
                     sex: patientRecord?.sex || '',
                     dateOfBirth: patientRecord?.date_of_birth || patientRecord?.dob || '',
                     address: patientRecord?.address || '',
+                    height: patientRecord?.height || '',
+                    weight: patientRecord?.weight || '',
                   }
                 }
               })}
