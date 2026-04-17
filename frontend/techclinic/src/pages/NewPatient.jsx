@@ -615,12 +615,12 @@ const NewPatient = () => {
                         </div>
                         <div className='space-y-1.5'>
                           <label htmlFor="height" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Height (cm)</label>
-                          <input type="number" step="0.1" name="height" placeholder="e.g. 170" id='height' value={patientInput.height} onChange={handleSetPatientInput}
+                          <input type="number" step="0.1" min="50" max="300" name="height" placeholder="e.g. 170" id='height' value={patientInput.height} onChange={handleSetPatientInput}
                             className='w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all' />
                         </div>
                         <div className='space-y-1.5'>
                           <label htmlFor="weight" className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Weight (kg)</label>
-                          <input type="number" step="0.1" name="weight" placeholder="e.g. 65" id='weight' value={patientInput.weight} onChange={handleSetPatientInput}
+                          <input type="number" step="0.1" min="1" max="500" name="weight" placeholder="e.g. 65" id='weight' value={patientInput.weight} onChange={handleSetPatientInput}
                             className='w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-[#1F2A37] text-sm text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#94969C] outline-none focus:border-crimson-400 focus:ring-2 focus:ring-crimson-100 dark:ring-[#333741] transition-all' />
                         </div>
                       </div>

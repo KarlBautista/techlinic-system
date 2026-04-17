@@ -33,6 +33,10 @@ const LIMITS = {
   DISEASE_NAME_MAX: 200,
   SEARCH_MAX: 200,
   EXCUSED_DAYS_MAX: 365,
+  HEIGHT_MIN: 50,
+  HEIGHT_MAX: 300,
+  WEIGHT_MIN: 1,
+  WEIGHT_MAX: 500,
 };
 
 const ENUMS = {
@@ -135,6 +139,12 @@ const validateInsertRecord = [
   body('formData.quantity')
     .optional({ values: 'falsy' })
     .isInt({ min: 1, max: LIMITS.STOCK_MAX }).withMessage('Quantity must be a positive integer.'),
+  body('formData.height')
+    .optional({ values: 'falsy' })
+    .isFloat({ min: LIMITS.HEIGHT_MIN, max: LIMITS.HEIGHT_MAX }).withMessage(`Height must be between ${LIMITS.HEIGHT_MIN} and ${LIMITS.HEIGHT_MAX} cm.`),
+  body('formData.weight')
+    .optional({ values: 'falsy' })
+    .isFloat({ min: LIMITS.WEIGHT_MIN, max: LIMITS.WEIGHT_MAX }).withMessage(`Weight must be between ${LIMITS.WEIGHT_MIN} and ${LIMITS.WEIGHT_MAX} kg.`),
   handleValidationErrors,
 ];
 
@@ -161,6 +171,12 @@ const validateAddDiagnosis = [
   body('patientInput.quantity')
     .optional({ values: 'falsy' })
     .isInt({ min: 1, max: LIMITS.STOCK_MAX }).withMessage('Quantity must be a positive integer.'),
+  body('patientInput.height')
+    .optional({ values: 'falsy' })
+    .isFloat({ min: LIMITS.HEIGHT_MIN, max: LIMITS.HEIGHT_MAX }).withMessage(`Height must be between ${LIMITS.HEIGHT_MIN} and ${LIMITS.HEIGHT_MAX} cm.`),
+  body('patientInput.weight')
+    .optional({ values: 'falsy' })
+    .isFloat({ min: LIMITS.WEIGHT_MIN, max: LIMITS.WEIGHT_MAX }).withMessage(`Weight must be between ${LIMITS.WEIGHT_MIN} and ${LIMITS.WEIGHT_MAX} kg.`),
   handleValidationErrors,
 ];
 

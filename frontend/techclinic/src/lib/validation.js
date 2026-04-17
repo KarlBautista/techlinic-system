@@ -44,6 +44,10 @@ export const LIMITS = {
   SEARCH_MAX: 200,
   EXCUSED_DAYS_MAX: 365,
   FILE_MAX_SIZE_MB: 5,
+  HEIGHT_MIN: 50,
+  HEIGHT_MAX: 300,
+  WEIGHT_MIN: 1,
+  WEIGHT_MAX: 500,
 };
 
 // ────────────────────────────────────────────
@@ -299,6 +303,22 @@ export function validateDiseaseName(value) {
   return '';
 }
 
+export function validateHeight(value) {
+  if (value === '' || value === null || value === undefined) return '';
+  const num = Number(value);
+  if (isNaN(num)) return 'Height must be a number.';
+  if (num < LIMITS.HEIGHT_MIN || num > LIMITS.HEIGHT_MAX) return `Height must be between ${LIMITS.HEIGHT_MIN} and ${LIMITS.HEIGHT_MAX} cm.`;
+  return '';
+}
+
+export function validateWeight(value) {
+  if (value === '' || value === null || value === undefined) return '';
+  const num = Number(value);
+  if (isNaN(num)) return 'Weight must be a number.';
+  if (num < LIMITS.WEIGHT_MIN || num > LIMITS.WEIGHT_MAX) return `Weight must be between ${LIMITS.WEIGHT_MIN} and ${LIMITS.WEIGHT_MAX} kg.`;
+  return '';
+}
+
 // ────────────────────────────────────────────
 // Form-level validators — validate full forms
 // ────────────────────────────────────────────
@@ -345,6 +365,8 @@ export function validatePatientForm(data) {
     sex: validateEnum(data.sex, ENUMS.SEX, 'Sex'),
     department: validateEnum(data.department, ENUMS.DEPARTMENT, 'Department'),
     yearLevel: data.yearLevel ? validateEnum(data.yearLevel, ENUMS.YEAR_LEVEL, 'Year level') : '',
+    height: validateHeight(data.height),
+    weight: validateWeight(data.weight),
   };
 }
 
