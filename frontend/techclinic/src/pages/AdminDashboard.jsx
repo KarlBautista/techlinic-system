@@ -46,7 +46,7 @@ const cardHover = {
 
 const AdminDashboard = () => {
     const { authenticatedUser, userProfile, allUsers, getAllUsers } = useAuth()
-    const { patientRecords, patientsData, getRecords } = useData()
+    const { patientRecords, patientsData, getRecords, getPatients } = useData()
     const records = useMemo(() => patientRecords?.data ?? [], [patientRecords?.data])
     const { medicines, getMedicines } = useMedicine()
     const navigate = useNavigate()
@@ -78,6 +78,7 @@ const AdminDashboard = () => {
         const fetchData = async () => {
             try {
                 await getRecords()
+                await getPatients()
                 await getMedicines()
                 await getAllUsers(true)
             } catch (err) {
@@ -85,7 +86,7 @@ const AdminDashboard = () => {
             }
         }
         fetchData().finally(() => setInitialLoading(false))
-    }, [getRecords, getMedicines, getAllUsers])
+    }, [getRecords, getPatients, getMedicines, getAllUsers])
 
     // Supabase Realtime — refresh on database changes
     useEffect(() => {
@@ -93,6 +94,10 @@ const AdminDashboard = () => {
             .channel('admin-dashboard')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'records' }, () => {
                 getRecords(true)
+                getPatients(true)
+            })
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'patients' }, () => {
+                getPatients(true)
             })
             .on('postgres_changes', { event: '*', schema: 'public', table: 'medicines' }, () => {
                 getMedicines(true)
@@ -105,7 +110,7 @@ const AdminDashboard = () => {
         return () => {
             supabase.removeChannel(channel)
         }
-    }, [getRecords, getMedicines, getAllUsers])
+    }, [getRecords, getPatients, getMedicines, getAllUsers])
 
     function formatDate(dateString) {
         if (!dateString) return ""

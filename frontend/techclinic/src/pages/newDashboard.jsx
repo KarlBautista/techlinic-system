@@ -51,7 +51,7 @@ const CHART_SLIDES = [
 const NewDashboard = () => {
     const { authenticatedUser, userProfile, allUsers, getAllUsers } = useAuth();
     const { onlineUserIds } = usePresenceStore();
-    const { patientRecords, patientsData, getRecords } = useData();
+    const { patientRecords, patientsData, getRecords, getPatients } = useData();
     const records = useMemo(() => patientRecords?.data ?? [], [patientRecords?.data]);
     const { medicines, getMedicines } = useMedicine();
     const navigate = useNavigate();
@@ -97,6 +97,7 @@ const NewDashboard = () => {
         const fetchData = async () => {
             try {
                 await getRecords();
+                await getPatients();
                 await getMedicines();
                 await getAllUsers();
             } catch (err) {
@@ -112,7 +113,7 @@ const NewDashboard = () => {
         return () => {
             clearTimeout(safetyTimer);
         };
-    }, [getRecords, getMedicines, getAllUsers]);
+    }, [getRecords, getPatients, getMedicines, getAllUsers]);
 
     // Supabase Realtime — refresh data on database changes
     useEffect(() => {
@@ -120,6 +121,10 @@ const NewDashboard = () => {
             .channel('dashboard-realtime')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'records' }, () => {
                 getRecords(true);
+                getPatients(true);
+            })
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'patients' }, () => {
+                getPatients(true);
             })
             .on('postgres_changes', { event: '*', schema: 'public', table: 'medicines' }, () => {
                 getMedicines(true);
@@ -132,7 +137,7 @@ const NewDashboard = () => {
         return () => {
             supabase.removeChannel(channel);
         };
-    }, [getRecords, getMedicines, getAllUsers]);
+    }, [getRecords, getPatients, getMedicines, getAllUsers]);
 
     function formatTime(dateString) {
         if (!dateString) return "";
