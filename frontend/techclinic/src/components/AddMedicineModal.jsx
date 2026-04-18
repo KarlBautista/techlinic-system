@@ -87,7 +87,6 @@ const AnimatedDropdown = ({ name, label, required, placeholder, value, options, 
                     onClick={() => {
                       onChange({ target: { name, value: optValue } })
                       setOpen(false)
-                      if (onBlur) onBlur()
                     }}
                     className={`w-full text-left px-3 py-2 text-sm transition-colors cursor-pointer ${
                       value === optValue
