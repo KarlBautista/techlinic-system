@@ -18,7 +18,7 @@ const ROWS_OPTIONS = [5, 10, 20, 50];
 const PatientRecord = () => {
   const { patientRecords, getRecords, isLoadingRecords } = useData();
   const [search, setSearch] = useState("");
-  const [selectedDepartment, setSelectedDepartment] = useState("All Department");
+  const [selectedDepartment, setSelectedDepartment] = useState("All College");
   const [selectedStatus, setSelectedStatus] = useState("All Status");
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -55,7 +55,7 @@ const PatientRecord = () => {
       const fullname = `${patient.first_name} ${patient.last_name}`.toLowerCase();
       const matchesSearch = fullname.includes(search.toLowerCase()) || patient.student_id.toLowerCase()
         .includes(search.toLowerCase());
-      const matchesDepartment = selectedDepartment === "All Department" || patient.department === selectedDepartment;
+      const matchesDepartment = selectedDepartment === "All College" || patient.department === selectedDepartment;
       const matchesStatus = selectedStatus === "All Status" || patient.status === selectedStatus;
       return matchesSearch && matchesDepartment && matchesStatus;
     });
@@ -194,7 +194,7 @@ const PatientRecord = () => {
                 {deptOpen && (
                   <div className='absolute top-full left-0 mt-2 w-72 bg-white dark:bg-[#161B26] rounded-2xl shadow-xl ring-1 ring-gray-100 dark:ring-[#1F2A37] py-2 z-20'>
                     {[
-                      "All Department",
+                      "All College",
                       "College of Science",
                       "College of Engineering",
                       "College of Industrial Technology",
@@ -285,7 +285,7 @@ const PatientRecord = () => {
                     <tr>
                       <th className='text-left text-xs font-semibold text-gray-500 dark:text-[#94969C] uppercase tracking-wider px-5 py-3'>Patient ID</th>
                       <th className='text-left text-xs font-semibold text-gray-500 dark:text-[#94969C] uppercase tracking-wider px-5 py-3'>Name</th>
-                      <th className='text-left text-xs font-semibold text-gray-500 dark:text-[#94969C] uppercase tracking-wider px-5 py-3 hidden lg:table-cell'>Department</th>
+                      <th className='text-left text-xs font-semibold text-gray-500 dark:text-[#94969C] uppercase tracking-wider px-5 py-3 hidden lg:table-cell'>College</th>
                       <th className='text-left text-xs font-semibold text-gray-500 dark:text-[#94969C] uppercase tracking-wider px-5 py-3 hidden md:table-cell'>Date</th>
                       <th className='text-left text-xs font-semibold text-gray-500 dark:text-[#94969C] uppercase tracking-wider px-5 py-3 hidden sm:table-cell'>Diagnosis</th>
                       <th className='text-left text-xs font-semibold text-gray-500 dark:text-[#94969C] uppercase tracking-wider px-5 py-3'>Status</th>
@@ -419,7 +419,7 @@ const PatientRecord = () => {
             <tr className='border-b-2 border-gray-800'>
               <th className='text-left py-2 px-3 font-semibold'>Patient ID</th>
               <th className='text-left py-2 px-3 font-semibold'>Name</th>
-              <th className='text-left py-2 px-3 font-semibold'>Department</th>
+              <th className='text-left py-2 px-3 font-semibold'>College</th>
               <th className='text-left py-2 px-3 font-semibold'>Date</th>
               <th className='text-left py-2 px-3 font-semibold'>Diagnosis</th>
             </tr>

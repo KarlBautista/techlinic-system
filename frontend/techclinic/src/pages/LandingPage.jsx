@@ -502,7 +502,7 @@ function LandingPage() {
                                         <RegistrationInfo message="Address*" name="address" value={formData.address} onChange={handleInputChange} showValidation={!!errors.address} error={errors.address} maxLength={LIMITS.ADDRESS_MAX} disabled={isStudentConfirmed} lightOnly />
                                     </div>
                                     <div>
-                                        <Dropdown name="department" options={DEPARTMENT_OPTIONS} placeholder="Department*" value={formData.department} onChange={handleInputChange} showValidation={!!errors.department} error={errors.department} disabled={isStudentConfirmed} lightOnly />
+                                        <Dropdown name="department" options={DEPARTMENT_OPTIONS} placeholder="College*" value={formData.department} onChange={handleInputChange} showValidation={!!errors.department} error={errors.department} disabled={isStudentConfirmed} lightOnly />
                                     </div>
                                     <div>
                                         <Dropdown name="yearLevel" options={YEAR_OPTIONS} placeholder="Year Level*" value={formData.yearLevel} onChange={handleInputChange} showValidation={!!errors.yearLevel} error={errors.yearLevel} disabled={isStudentConfirmed} lightOnly />
@@ -633,7 +633,7 @@ function LandingPage() {
                                                 <ReviewField label="Email" value={formData.email} />
                                                 <ReviewField label="Contact Number" value={formData.contactNumber} />
                                                 <ReviewField label="Address" value={formData.address} />
-                                                <ReviewField label="Department" value={formData.department} />
+                                                <ReviewField label="College" value={formData.department} />
                                                 <ReviewField label="Year Level" value={formData.yearLevel} />
                                             </div>
                                             <div className="mt-3">

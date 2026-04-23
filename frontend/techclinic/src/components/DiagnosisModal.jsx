@@ -423,7 +423,7 @@ const RecordTab = ({ patient, record, diagnoses, visitDate }) => {
           <div className="h-px bg-gray-100 dark:bg-[#1F242F] my-3" />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
             <div>
-              <span className="text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Department</span>
+              <span className="text-xs font-medium text-gray-400 dark:text-[#94969C] uppercase tracking-wider">College</span>
               <p className="font-medium text-gray-800 dark:text-white mt-0.5">{patient?.department ?? record?.department ?? '—'}</p>
             </div>
             <div>

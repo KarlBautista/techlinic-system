@@ -43,7 +43,7 @@ const cardHover = {
 /* ───── Chart carousel config ───── */
 const CHART_SLIDES = [
     { key: 'patient-counts', label: 'Patient Visits', component: PatientCountsChart },
-    { key: 'per-department', label: 'By Department', component: PatientsPerDepartmentChart },
+    { key: 'per-department', label: 'By College', component: PatientsPerDepartmentChart },
     { key: 'top-diagnosis', label: 'Top Diagnoses', component: TopDiagnosisChart },
     { key: 'medicine-stock', label: 'Medicine Stock', component: MedicinesChart },
 ];

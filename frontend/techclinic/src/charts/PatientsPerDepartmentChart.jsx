@@ -202,7 +202,7 @@ const PatientsPerDepartmentChart = () => {
       <div className='w-full h-full flex flex-col min-h-0'>
         {/* Header */}
         <div className='shrink-0 flex items-start justify-between gap-2 pb-2'>
-          <div className='text-sm font-semibold tracking-tight text-gray-800 dark:text-slate-100'>Patient Records Per Department</div>
+          <div className='text-sm font-semibold tracking-tight text-gray-800 dark:text-slate-100'>Patient Records Per College</div>
           <ChartPeriodSelector
             selectedCategory={selectedCategory}
             onCategoryChange={handleCategoryChange}

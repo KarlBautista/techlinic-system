@@ -550,8 +550,8 @@ const NewPatient = () => {
                         <div className='space-y-1.5'>
                           <Dropdown
                             name="department"
-                            label="Department"
-                            placeholder="Select Department"
+                            label="College"
+                            placeholder="Select College"
                             options={[
                               { label: 'College of Science', value: 'College of Science' },
                               { label: 'College of Engineering', value: 'College of Engineering' },
@@ -1035,7 +1035,7 @@ const NewPatient = () => {
                                 </p>
                               </div>
                               <div className="w-28">
-                                <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">Department</span>
+                                <span className="text-xs text-gray-400 dark:text-[#94969C] uppercase tracking-wider">College</span>
                                 <p className="text-sm font-medium text-gray-800 dark:text-white border-b border-dotted border-gray-300 dark:border-[#333741] pb-1 truncate" title={patientInput.department}>
                                   {patientInput.department || 'N/A'}
                                 </p>
