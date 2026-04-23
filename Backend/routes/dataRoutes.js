@@ -3,7 +3,7 @@ const router = express.Router();
 const { authenticate, authorize } = require("../middleware/auth");
 const { validateInsertRecord, validateAddDiagnosis, validateInsertPersonnel, validateStudentIdParam, validateIdParam } = require("../middleware/validate");
 
-const { insertRecord, getRecords, getRecord, getRecordsFromExisitingPatients, getPatients, getRecordToDiagnose, addDiagnosis, getAllUsers, insertPersonnel, deactivateUser, reactivateUser } = require("../controllers/dataControllers");
+const { insertRecord, getRecords, getRecord, getRecordsFromExisitingPatients, getPatients, getRecordToDiagnose, addDiagnosis, getAllUsers, insertPersonnel, resendInvite, activateAccount, deactivateUser, reactivateUser } = require("../controllers/dataControllers");
 
 // ── Both DOCTOR and NURSE can read records/patients ──
 router.get("/get-records", authenticate, authorize("DOCTOR", "NURSE", "ADMIN"), getRecords);
@@ -21,6 +21,10 @@ router.put("/insert-diagnosis", authenticate, authorize("DOCTOR", "NURSE"), vali
 
 // ── ADMIN-only: manage personnel ──
 router.post("/insert-personnel", authenticate, authorize("ADMIN"), validateInsertPersonnel, insertPersonnel);
+router.post("/resend-invite/:userId", authenticate, authorize("ADMIN"), resendInvite);
+
+// ── Account activation (any authenticated user, called after clicking invite link) ──
+router.patch("/activate-account", authenticate, activateAccount);
 
 // ── ADMIN-only: soft delete (deactivate/reactivate) ──
 router.patch("/deactivate-user/:userId", authenticate, authorize("ADMIN"), deactivateUser);

@@ -18,9 +18,11 @@ const useData = create(
 
             insertPersonnel: async (personnelData) => {
         try {
+            // Send only the fields needed — no password
+            const { password, confirm_password, ...payload } = personnelData;
             const response = await api.post(
                 "/insert-personnel", 
-                { personnel: personnelData }
+                { personnel: payload }
             );
             
             if(response.status === 201 || response.status === 200) {
@@ -40,6 +42,21 @@ const useData = create(
             return { 
                 success: false, 
                 error: err.response?.data?.error || err.message || "Failed to add personnel"
+            };
+        }
+    },
+
+            resendInvite: async (userId) => {
+        try {
+            const response = await api.post(`/resend-invite/${userId}`);
+            if (response.status === 200) {
+                return { success: true, message: response.data.message };
+            }
+            return { success: false, error: response.data.error || "Unknown error occurred" };
+        } catch (err) {
+            return { 
+                success: false, 
+                error: err.response?.data?.error || err.message || "Failed to resend invite"
             };
         }
     },

@@ -292,13 +292,6 @@ const validateInsertPersonnel = [
     .isLength({ max: LIMITS.EMAIL_MAX }).withMessage(`Email must not exceed ${LIMITS.EMAIL_MAX} characters.`)
     .isEmail().withMessage('Please enter a valid email address.')
     .normalizeEmail(),
-  body('personnel.password')
-    .notEmpty().withMessage('Password is required.')
-    .isLength({ min: LIMITS.PASSWORD_MIN }).withMessage(`Password must be at least ${LIMITS.PASSWORD_MIN} characters.`)
-    .isLength({ max: LIMITS.PASSWORD_MAX }).withMessage(`Password must not exceed ${LIMITS.PASSWORD_MAX} characters.`)
-    .matches(/[A-Z]/).withMessage('Password must contain at least one uppercase letter.')
-    .matches(/[a-z]/).withMessage('Password must contain at least one lowercase letter.')
-    .matches(/[!@#$%^&*(),.?":{}|<>]/).withMessage('Password must contain at least one special character.'),
   body('personnel.role')
     .trim().notEmpty().withMessage('Role is required.')
     .isIn(ENUMS.ROLE).withMessage(`Role must be one of: ${ENUMS.ROLE.join(', ')}.`),

@@ -438,9 +438,9 @@ const insertPersonnel = async (req, res) => {
         return res.status(400).json({ success: false, error: "Invalid request body." });
     }
 
-    const { first_name, last_name, email, password, address, date_of_birth, role, sex } = req.body.personnel;
+    const { first_name, last_name, email, address, date_of_birth, role, sex } = req.body.personnel;
 
-    if (!first_name || !last_name || !email || !password || !role || !sex) {
+    if (!first_name || !last_name || !email || !role || !sex) {
         return res.status(400).json({ success: false, error: "All required personnel fields must be provided." });
     }
 
@@ -453,84 +453,137 @@ const insertPersonnel = async (req, res) => {
         return res.status(400).json({ success: false, error: "Invalid email address." });
     }
 
-    if (password.length < 6) {
-        return res.status(400).json({ success: false, error: "Password must be at least 6 characters." });
-    }
+    const redirectTo = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/activate-account`;
 
     try {
-       
-        const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
-            email,
-            password,
-            email_confirm: true, 
+        // Send an invitation email — user will set their own password via the link
+        const { data: authData, error: authError } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
+            redirectTo,
+            data: { first_name, last_name, role, sex },
         });
 
         if (authError) {
-            console.error(`Error creating auth user: ${authError.message}`);
+            console.error(`Error inviting user: ${authError.message}`);
             return res.status(500).json({ 
                 success: false, 
                 error: authError.message 
             });
         }
 
-        
+        // Pre-insert the user profile — invitation_status is 'PENDING' until they activate
         const { data: userData, error: insertUserError } = await supabase
             .from("users")
             .insert({
                 id: authData.user.id, 
-                first_name: first_name,
-                last_name: last_name,
-                email: email,
-                address: address,
-                date_of_birth: date_of_birth,
-                role: role,
-                sex: sex
+                first_name,
+                last_name,
+                email,
+                address: address || null,
+                date_of_birth: date_of_birth || null,
+                role,
+                sex,
+                invitation_status: 'PENDING',
             })
             .select()
             .single();
 
         if (insertUserError) {
             console.error(`Error inserting user data: ${insertUserError.message}`);
-            
-            await supabase.auth.admin.deleteUser(authData.user.id);
-            
+            await supabaseAdmin.auth.admin.deleteUser(authData.user.id);
             return res.status(500).json({ 
                 success: false, 
                 error: insertUserError.message 
             });
         }
 
-       
         // Audit trail (fire-and-forget)
         const profile = req.userProfile;
         logActivity({
             actor_id: profile.id,
             actor_name: `${profile.first_name} ${profile.last_name}`,
             actor_role: profile.role,
-            action: "personnel_added",
+            action: "personnel_invited",
             entity_type: "personnel",
             entity_id: String(userData.id),
-            description: `Added personnel: ${first_name} ${last_name} (${role})`,
+            description: `Invited personnel: ${first_name} ${last_name} (${role}) — activation email sent to ${email}`,
             metadata: { email, role, full_name: `${first_name} ${last_name}` },
         });
 
         return res.status(201).json({ 
             success: true, 
-            message: "Personnel added successfully",
+            message: `Invitation sent to ${email}. Personnel must activate their account via the email link.`,
             data: {
                 user_id: userData.id,
                 email: userData.email,
                 full_name: `${userData.first_name} ${userData.last_name}`,
-                role: userData.role
+                role: userData.role,
+                invitation_status: userData.invitation_status,
             }
         });
 
     } catch (err) {
-        console.error(`Something went wrong adding personnel: ${err.message}`);
+        console.error(`Something went wrong inviting personnel: ${err.message}`);
         return res.status(500).json({ 
             success: false, 
             error: err.message 
         });
+    }
+};
+
+const resendInvite = async (req, res) => {
+    const { userId } = req.params;
+
+    if (!userId) {
+        return res.status(400).json({ success: false, error: "User ID is required." });
+    }
+
+    try {
+        const { data: targetUser, error: fetchError } = await supabaseAdmin
+            .from("users")
+            .select("id, first_name, last_name, email, role, invitation_status")
+            .eq("id", userId)
+            .single();
+
+        if (fetchError || !targetUser) {
+            return res.status(404).json({ success: false, error: "User not found." });
+        }
+
+        if (targetUser.invitation_status !== 'PENDING') {
+            return res.status(400).json({ success: false, error: "This user has already activated their account." });
+        }
+
+        const redirectTo = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/activate-account`;
+
+        const { error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(targetUser.email, {
+            redirectTo,
+            data: { first_name: targetUser.first_name, last_name: targetUser.last_name, role: targetUser.role },
+        });
+
+        if (inviteError) {
+            console.error(`Error resending invite: ${inviteError.message}`);
+            return res.status(500).json({ success: false, error: inviteError.message });
+        }
+
+        const profile = req.userProfile;
+        logActivity({
+            actor_id: profile.id,
+            actor_name: `${profile.first_name} ${profile.last_name}`,
+            actor_role: profile.role,
+            action: "invite_resent",
+            entity_type: "personnel",
+            entity_id: String(targetUser.id),
+            description: `Resent invitation to: ${targetUser.first_name} ${targetUser.last_name} (${targetUser.email})`,
+            metadata: { email: targetUser.email, role: targetUser.role },
+        });
+
+        return res.status(200).json({ 
+            success: true, 
+            message: `Invitation resent to ${targetUser.email}.` 
+        });
+
+    } catch (err) {
+        console.error(`Something went wrong resending invite: ${err.message}`);
+        return res.status(500).json({ success: false, error: err.message });
     }
 };
 
@@ -683,4 +736,27 @@ const reactivateUser = async (req, res) => {
 };
 
 
-module.exports = { insertRecord, getRecords, getRecord, getRecordsFromExisitingPatients, getPatients, getRecordToDiagnose, addDiagnosis, getAllUsers, insertPersonnel, deactivateUser, reactivateUser }
+const activateAccount = async (req, res) => {
+    // The authenticated user (who just set their password via the invite link) marks themselves ACTIVE
+    const userId = req.user.id;
+
+    try {
+        const { error } = await supabaseAdmin
+            .from("users")
+            .update({ invitation_status: 'ACTIVE' })
+            .eq("id", userId)
+            .eq("invitation_status", "PENDING"); // only update if still pending
+
+        if (error) {
+            console.error(`Error activating account: ${error.message}`);
+            return res.status(500).json({ success: false, error: error.message });
+        }
+
+        return res.status(200).json({ success: true, message: "Account activated successfully." });
+    } catch (err) {
+        console.error(`Something went wrong activating account: ${err.message}`);
+        return res.status(500).json({ success: false, error: err.message });
+    }
+};
+
+module.exports = { insertRecord, getRecords, getRecord, getRecordsFromExisitingPatients, getPatients, getRecordToDiagnose, addDiagnosis, getAllUsers, insertPersonnel, resendInvite, activateAccount, deactivateUser, reactivateUser }

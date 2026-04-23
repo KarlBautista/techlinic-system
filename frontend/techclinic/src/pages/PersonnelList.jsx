@@ -4,7 +4,7 @@ import useData from '../store/useDataStore'
 import { ButtonLoader } from '../components/PageLoader'
 import { showToast } from '../components/Toast'
 import { motion } from 'framer-motion'
-import { Search, Plus, Users, X, Eye, EyeOff, ChevronRight, ChevronLeft, ChevronDown, UserX, UserCheck, AlertTriangle } from 'lucide-react'
+import { Search, Plus, Users, X, Mail, ChevronRight, ChevronLeft, ChevronDown, UserX, UserCheck, AlertTriangle } from 'lucide-react'
 import { validatePersonnelForm, hasErrors, validateSearch, LIMITS } from '../lib/validation'
 
 const containerVariants = {
@@ -21,7 +21,7 @@ const ROWS_OPTIONS = [5, 10, 20, 50];
 const PersonnelList = () => {
   const [search, setSearch] = useState("");
   const { allUsers, getAllUsers, isLoadingUsers, userProfile } = useAuth();
-  const { insertPersonnel, deactivateUser, reactivateUser } = useData();
+  const { insertPersonnel, resendInvite, deactivateUser, reactivateUser } = useData();
   const [initialLoading, setInitialLoading] = useState(true);
   // eslint-disable-next-line no-unused-vars
   const [showModal, setShowModal] = useState(false);
@@ -29,9 +29,7 @@ const PersonnelList = () => {
   const [isModalClosing, setIsModalClosing] = useState(false);
   const [selectedRole, setSelectedRole] = useState("All Roles");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  // eslint-disable-next-line no-unused-vars
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [resendingInviteId, setResendingInviteId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [roleOpen, setRoleOpen] = useState(false);
@@ -41,8 +39,6 @@ const PersonnelList = () => {
     first_name: '',
     last_name: '',
     email: '',
-    password: '',
-    confirm_password: '',
     address: '',
     date_of_birth: '',
     role: '',
@@ -79,12 +75,20 @@ const PersonnelList = () => {
     }
   };
 
-  // Auto-generate password: nameYEAR!TUPM (current year)
-  const generatePassword = (firstName) => {
-    if (!firstName || firstName.trim().length < 2) return '';
-    const name = firstName.trim().toLowerCase();
-    const year = new Date().getFullYear();
-    return `${name}${year}!TUPM`;
+  const handleResendInvite = async (userId) => {
+    setResendingInviteId(userId);
+    try {
+      const result = await resendInvite(userId);
+      if (result.success) {
+        showToast({ title: "Invite Resent", message: result.message, type: "success" });
+      } else {
+        showToast({ title: "Error", message: result.error, type: "error" });
+      }
+    } catch (_err) {
+      showToast({ title: "Error", message: "An unexpected error occurred", type: "error" });
+    } finally {
+      setResendingInviteId(null);
+    }
   };
 
   useEffect(() => {
@@ -145,12 +149,7 @@ const PersonnelList = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    let updated = { ...personnel, [name]: value };
-    // Auto-generate password when first name changes
-    if (name === 'first_name') {
-      const pwd = generatePassword(value);
-      updated = { ...updated, password: pwd, confirm_password: pwd };
-    }
+    const updated = { ...personnel, [name]: value };
     setPersonnel(updated);
     if (touched[name]) {
       const formErrors = validatePersonnelForm(updated);
@@ -172,11 +171,9 @@ const PersonnelList = () => {
 
   const resetForm = () => {
     setPersonnel({
-      first_name: '', last_name: '', email: '', password: '',
-      confirm_password: '', address: '', date_of_birth: '', role: '', sex: ''
+      first_name: '', last_name: '', email: '',
+      address: '', date_of_birth: '', role: '', sex: ''
     });
-    setShowPassword(false);
-    setShowConfirmPassword(false);
     setErrors({});
     setTouched({});
   };
@@ -221,7 +218,7 @@ const PersonnelList = () => {
         showToast({ title: "Something went wrong", message: "Could not add personnel, please retry", type: "error" });
         return;
       }
-      showToast({ title: "Personnel Successfully Added", message: "The personnel record has been created", type: "success" });
+      showToast({ title: "Invitation Sent", message: "An activation email has been sent to the personnel's email address", type: "success" });
       closeModal();
       await getAllUsers();
     } catch (err) {
@@ -437,34 +434,49 @@ const PersonnelList = () => {
                           </td>
                           <td className='px-5 py-3.5 hidden sm:table-cell'>
                             <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ring-1 ${
-                              user.is_active === false
+                              user.invitation_status === 'PENDING'
+                                ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 ring-amber-100 dark:ring-amber-900/60'
+                                : user.is_active === false
                                 ? 'bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 ring-red-100 dark:ring-red-900/60'
                                 : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 ring-emerald-100 dark:ring-emerald-900/60'
                             }`}>
-                              <span className={`w-1.5 h-1.5 rounded-full ${user.is_active === false ? 'bg-red-500' : 'bg-emerald-500'}`} />
-                              {user.is_active === false ? 'Inactive' : 'Active'}
+                              <span className={`w-1.5 h-1.5 rounded-full ${
+                                user.invitation_status === 'PENDING' ? 'bg-amber-500' : user.is_active === false ? 'bg-red-500' : 'bg-emerald-500'
+                              }`} />
+                              {user.invitation_status === 'PENDING' ? 'Pending Activation' : user.is_active === false ? 'Inactive' : 'Active'}
                             </span>
                           </td>
                           {isAdmin && (
                             <td className='px-5 py-3.5'>
                               {user.role !== 'ADMIN' && (
-                                user.is_active === false ? (
-                                  <button
-                                    onClick={() => setConfirmAction({ type: 'reactivate', user })}
-                                    className='inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 transition-colors cursor-pointer'
-                                  >
-                                    <UserCheck className="w-3.5 h-3.5" />
-                                    Reactivate
-                                  </button>
-                                ) : (
-                                  <button
-                                    onClick={() => setConfirmAction({ type: 'deactivate', user })}
-                                    className='inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors cursor-pointer'
-                                  >
-                                    <UserX className="w-3.5 h-3.5" />
-                                    Deactivate
-                                  </button>
-                                )
+                                <div className='flex items-center gap-1'>
+                                  {user.invitation_status === 'PENDING' ? (
+                                    <button
+                                      onClick={() => handleResendInvite(user.id)}
+                                      disabled={resendingInviteId === user.id}
+                                      className='inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-colors cursor-pointer disabled:opacity-50'
+                                    >
+                                      <Mail className="w-3.5 h-3.5" />
+                                      {resendingInviteId === user.id ? 'Sending...' : 'Resend Invite'}
+                                    </button>
+                                  ) : user.is_active === false ? (
+                                    <button
+                                      onClick={() => setConfirmAction({ type: 'reactivate', user })}
+                                      className='inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 transition-colors cursor-pointer'
+                                    >
+                                      <UserCheck className="w-3.5 h-3.5" />
+                                      Reactivate
+                                    </button>
+                                  ) : (
+                                    <button
+                                      onClick={() => setConfirmAction({ type: 'deactivate', user })}
+                                      className='inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors cursor-pointer'
+                                    >
+                                      <UserX className="w-3.5 h-3.5" />
+                                      Deactivate
+                                    </button>
+                                  )}
+                                </div>
                               )}
                             </td>
                           )}
@@ -548,7 +560,7 @@ const PersonnelList = () => {
             <div className='sticky top-0 bg-white dark:bg-[#161B26] px-6 py-4 border-b border-gray-100 dark:border-[#1F2A37] flex items-center justify-between rounded-t-xl z-10'>
               <div>
                 <h2 className='text-lg font-bold text-gray-800 dark:text-white'>Add Personnel</h2>
-                <p className='text-xs text-gray-400 dark:text-[#94969C] mt-0.5'>Fill in the details to add a new staff member</p>
+                <p className='text-xs text-gray-400 dark:text-[#94969C] mt-0.5'>An activation email will be sent to the new staff member</p>
               </div>
               <button
                 onClick={closeModal}
@@ -597,35 +609,12 @@ const PersonnelList = () => {
                   {touched.email && errors.email && <p className='text-xs text-red-500'>{errors.email}</p>}
                 </div>
 
-                {/* Auto-Generated Password */}
-                <div className='flex flex-col gap-1.5 md:col-span-2'>
-                  <label className='text-xs font-medium text-gray-500 dark:text-[#94969C] uppercase tracking-wider'>Auto-Generated Password</label>
-                  <div className='relative'>
-                    <input
-                      type={showPassword ? "text" : "password"} name="password" value={personnel.password} readOnly
-                      className='w-full px-3 py-2.5 pr-20 rounded-xl border border-gray-200 dark:border-[#1F2A37] outline-none text-sm bg-gray-50 dark:bg-[#1F242F] text-gray-600 dark:text-gray-300 cursor-default'
-                      placeholder="Enter first name to generate"
-                    />
-                    <div className='absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1'>
-                      <button type="button" onClick={() => setShowPassword(!showPassword)}
-                        className='p-1 text-gray-400 dark:text-[#94969C] hover:text-gray-600 dark:hover:text-gray-300 cursor-pointer'>
-                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </button>
-                      <button type="button" onClick={() => {
-                        const pwd = generatePassword(personnel.first_name);
-                        setPersonnel(prev => ({ ...prev, password: pwd, confirm_password: pwd }));
-                      }}
-                        className='px-2 py-0.5 text-[10px] font-medium text-crimson-600 dark:text-crimson-300 hover:bg-crimson-50 dark:hover:bg-crimson-950/30 rounded-md transition-colors cursor-pointer'
-                      >
-                        Regenerate
-                      </button>
-                    </div>
-                  </div>
-                  {personnel.password && (
-                    <p className='text-[10px] text-gray-400 dark:text-gray-500'>
-                      Password: <span className='font-mono text-gray-600 dark:text-gray-300'>{showPassword ? personnel.password : '••••••••'}</span> — Personnel can change this in Settings after logging in.
-                    </p>
-                  )}
+                {/* Email Activation Notice */}
+                <div className='md:col-span-2 flex items-start gap-3 p-3 rounded-xl bg-amber-50 dark:bg-amber-950/20 ring-1 ring-amber-200 dark:ring-amber-900/40'>
+                  <Mail className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
+                  <p className='text-xs text-amber-700 dark:text-amber-300 leading-relaxed'>
+                    An <strong>account activation email</strong> will be sent to the provided email address. The personnel must click the link to set their own password before they can log in.
+                  </p>
                 </div>
 
                 {/* Address */}

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>You've Been Invited to TechClinic</title>
+</head>
+<body style="margin:0;padding:0;background-color:#fff7f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#fff7f7;padding:40px 0;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:16px;box-shadow:0 4px 24px rgba(176,28,52,0.08);overflow:hidden;">
+          <!-- Header -->
+          <tr>
+            <td style="background:linear-gradient(135deg,#b01c34 0%,#d4304a 100%);padding:32px 40px;text-align:center;">
+              <img src="https://hvnfijudokbvnydzpvko.supabase.co/storage/v1/object/public/public-assets/tup-logo.png" alt="TUP" width="48" height="48" style="display:block;margin:0 auto 12px;" />
+              <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:700;letter-spacing:0.5px;">TechClinic</h1>
+              <p style="margin:8px 0 0;color:rgba(255,255,255,0.85);font-size:13px;">TUP Health Services</p>
+            </td>
+          </tr>
+
+          <!-- Welcome Badge -->
+          <tr>
+            <td style="padding:32px 40px 0;">
+              <table role="presentation" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="background-color:#fff3f5;border-left:4px solid #b01c34;padding:12px 16px;border-radius:0 8px 8px 0;">
+                    <p style="margin:0;color:#b01c34;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">New Account Invitation</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:24px 40px 40px;">
+              <h2 style="margin:0 0 12px;color:#1a1a1a;font-size:20px;font-weight:700;">You've Been Invited!</h2>
+              <p style="margin:0 0 16px;color:#6b7280;font-size:14px;line-height:1.6;">
+                A TechClinic admin has created an account for you at <strong style="color:#1a1a1a;">{{ .Email }}</strong>.
+              </p>
+              <p style="margin:0 0 28px;color:#6b7280;font-size:14px;line-height:1.6;">
+                Click the button below to activate your account and set your password. This link will expire in <strong style="color:#1a1a1a;">24 hours</strong>.
+              </p>
+
+              <!-- CTA Button -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center" style="padding:0 0 32px;">
+                    <a href="{{ .ConfirmationURL }}"
+                       style="display:inline-block;padding:14px 40px;background-color:#b01c34;color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;border-radius:12px;letter-spacing:0.5px;">
+                      ACTIVATE MY ACCOUNT
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- What to expect -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f9fafb;border-radius:12px;margin-bottom:24px;">
+                <tr>
+                  <td style="padding:20px 24px;">
+                    <p style="margin:0 0 12px;color:#374151;font-size:13px;font-weight:600;">What happens next?</p>
+                    <table role="presentation" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="padding:4px 0;vertical-align:top;">
+                          <span style="display:inline-block;width:20px;height:20px;background-color:#b01c34;border-radius:50%;color:#fff;font-size:11px;font-weight:700;text-align:center;line-height:20px;margin-right:10px;">1</span>
+                        </td>
+                        <td style="padding:4px 0;">
+                          <p style="margin:0;color:#6b7280;font-size:13px;line-height:1.5;">Click the <strong style="color:#374151;">Activate My Account</strong> button above</p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:4px 0;vertical-align:top;">
+                          <span style="display:inline-block;width:20px;height:20px;background-color:#b01c34;border-radius:50%;color:#fff;font-size:11px;font-weight:700;text-align:center;line-height:20px;margin-right:10px;">2</span>
+                        </td>
+                        <td style="padding:4px 0;">
+                          <p style="margin:0;color:#6b7280;font-size:13px;line-height:1.5;">Set your own secure password</p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:4px 0;vertical-align:top;">
+                          <span style="display:inline-block;width:20px;height:20px;background-color:#b01c34;border-radius:50%;color:#fff;font-size:11px;font-weight:700;text-align:center;line-height:20px;margin-right:10px;">3</span>
+                        </td>
+                        <td style="padding:4px 0;">
+                          <p style="margin:0;color:#6b7280;font-size:13px;line-height:1.5;">Log in and start using TechClinic</p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin:0 0 16px;color:#6b7280;font-size:13px;line-height:1.6;">
+                If you did not expect this invitation, you can safely ignore this email.
+              </p>
+
+              <!-- Divider -->
+              <hr style="border:none;border-top:1px solid #f3f4f6;margin:24px 0;" />
+
+              <p style="margin:0;color:#9ca3af;font-size:12px;line-height:1.5;">
+                If the button above doesn't work, copy and paste this URL into your browser:
+              </p>
+              <p style="margin:8px 0 0;word-break:break-all;">
+                <a href="{{ .ConfirmationURL }}" style="color:#b01c34;font-size:12px;text-decoration:underline;">{{ .ConfirmationURL }}</a>
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background-color:#fafafa;padding:24px 40px;text-align:center;border-top:1px solid #f3f4f6;">
+              <p style="margin:0;color:#9ca3af;font-size:12px;">
+                &copy; TechClinic — Technological University of the Philippines
+              </p>
+              <p style="margin:6px 0 0;color:#d1d5db;font-size:11px;">
+                This is an automated message. Please do not reply directly.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

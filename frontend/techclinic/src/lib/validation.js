@@ -342,10 +342,6 @@ export function validatePersonnelForm(data) {
     first_name: validateName(data.first_name, 'First name'),
     last_name: validateName(data.last_name, 'Last name'),
     email: validateEmail(data.email),
-    password: validatePassword(data.password, { requireStrength: true }),
-    confirmPassword: data.confirmPassword !== undefined
-      ? (data.password !== data.confirmPassword ? 'Passwords do not match.' : '')
-      : '',
     address: validateAddress(data.address),
     date_of_birth: validateDateOfBirth(data.date_of_birth),
     role: validateEnum(data.role, ENUMS.ROLE, 'Role'),
