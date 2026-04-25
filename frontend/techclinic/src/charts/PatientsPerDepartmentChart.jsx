@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import Chart from "react-apexcharts"
 import useChart from '../store/useChartStore';
+import useData from '../store/useDataStore';
 import ChartPeriodSelector from '../components/ChartPeriodSelector';
 
-const PatientsPerDepartmentChart = () => {
+const PatientsPerDepartmentChart = ({ onInsightChange }) => {
+  const { patientRecords } = useData();
+  const records = useMemo(() => patientRecords?.data || [], [patientRecords]);
+
   const { 
     getWeeklyPatientPerDepartmentCount, 
     getMonthlyPatientPerDepartmentCount, 
@@ -22,12 +26,19 @@ const PatientsPerDepartmentChart = () => {
   const [periodInfo, setPeriodInfo] = useState(null);
   const [customStart, setCustomStart] = useState("");
   const [customEnd, setCustomEnd] = useState("");
+  const [selectedDepartment, setSelectedDepartment] = useState("");
   const [patientOptions, setPatientOptions] = useState({
     chart: {
       type: "donut",
       size: "100%",
       id: "patient-per-department",
       toolbar: { show: true, tools: { download: true, selection: false, zoom: false, zoomin: false, zoomout: false, pan: false, reset: false } },
+      events: {
+        dataPointSelection: (_event, _chartContext, config) => {
+          const label = config?.w?.config?.labels?.[config?.dataPointIndex];
+          if (label) setSelectedDepartment(label);
+        }
+      },
       dropShadow: { enabled: true, top: 2, left: 0, blur: 6, opacity: 0.12 }
     },
     labels: [],
@@ -178,6 +189,105 @@ const PatientsPerDepartmentChart = () => {
 
   const totalPatients = patientData.reduce((acc, val) => acc + val, 0);
 
+  const isInSelectedPeriod = (dateValue) => {
+    if (!dateValue) return false;
+
+    const date = new Date(dateValue);
+    const now = new Date();
+    const start = new Date(now);
+    const end = new Date(now);
+
+    if (selectedCategory === "custom") {
+      if (!customStart || !customEnd) return false;
+      const customStartDate = new Date(customStart);
+      const customEndDate = new Date(customEnd);
+      customStartDate.setHours(0, 0, 0, 0);
+      customEndDate.setHours(23, 59, 59, 999);
+      return date >= customStartDate && date <= customEndDate;
+    }
+
+    if (selectedCategory === "week") {
+      const day = now.getDay();
+      const diffToMonday = day === 0 ? -6 : 1 - day;
+      start.setDate(now.getDate() + diffToMonday);
+      start.setHours(0, 0, 0, 0);
+      end.setDate(start.getDate() + 6);
+      end.setHours(23, 59, 59, 999);
+    }
+
+    if (selectedCategory === "month") {
+      start.setDate(1);
+      start.setHours(0, 0, 0, 0);
+      end.setMonth(now.getMonth() + 1, 0);
+      end.setHours(23, 59, 59, 999);
+    }
+
+    if (selectedCategory === "quarter") {
+      const quarterStartMonth = Math.floor(now.getMonth() / 3) * 3;
+      start.setMonth(quarterStartMonth, 1);
+      start.setHours(0, 0, 0, 0);
+      end.setMonth(quarterStartMonth + 3, 0);
+      end.setHours(23, 59, 59, 999);
+    }
+
+    if (selectedCategory === "year") {
+      start.setMonth(0, 1);
+      start.setHours(0, 0, 0, 0);
+      end.setMonth(11, 31);
+      end.setHours(23, 59, 59, 999);
+    }
+
+    return date >= start && date <= end;
+  };
+
+  const departmentDiseaseReports = useMemo(() => {
+    const departments = patientOptions?.labels || [];
+
+    return departments.map((department) => {
+      const scopedRecords = records.filter((record) => (
+        record.department === department && isInSelectedPeriod(record.created_at)
+      ));
+
+      const diagnosisCount = {};
+      let totalDiagnosedCases = 0;
+
+      scopedRecords.forEach((record) => {
+        const diagnoses = Array.isArray(record.diagnoses) ? record.diagnoses : [];
+        diagnoses.forEach((item) => {
+          const diagnosisName = (item?.diagnosis || "Unknown").trim() || "Unknown";
+          diagnosisCount[diagnosisName] = (diagnosisCount[diagnosisName] || 0) + 1;
+          totalDiagnosedCases += 1;
+        });
+      });
+
+      const topDiseases = Object.entries(diagnosisCount)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3)
+        .map(([name, count]) => ({ name, count }));
+
+      return {
+        department,
+        totalVisits: scopedRecords.length,
+        totalDiagnosedCases,
+        topDiseases,
+      };
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [patientOptions?.labels, records, selectedCategory, customStart, customEnd, periodInfo]);
+
+  const selectedDepartmentReport = useMemo(() => {
+    if (!selectedDepartment) return null;
+    return departmentDiseaseReports.find((item) => item.department === selectedDepartment) || null;
+  }, [departmentDiseaseReports, selectedDepartment]);
+
+  useEffect(() => {
+    const labels = patientOptions?.labels || [];
+    const hasDepartment = labels.includes(selectedDepartment);
+    if (selectedDepartment && labels.length > 0 && !hasDepartment) {
+      setSelectedDepartment("");
+    }
+  }, [patientOptions, selectedDepartment]);
+
   const getPeriodDisplay = () => {
     if (!periodInfo) return '';
     
@@ -196,6 +306,19 @@ const PatientsPerDepartmentChart = () => {
         return '';
     }
   };
+
+  useEffect(() => {
+    if (typeof onInsightChange !== "function") return;
+
+    onInsightChange({
+      title: "Patient Records Per College",
+      periodText: getPeriodDisplay(),
+      labels: patientOptions?.labels || [],
+      values: patientData,
+      selectedDepartmentReport,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onInsightChange, patientData, patientOptions, periodInfo, selectedDepartmentReport]);
 
   return (
     <div className='w-full h-full flex flex-col min-h-0'>
@@ -218,6 +341,7 @@ const PatientsPerDepartmentChart = () => {
         {periodInfo && (
           <div className='shrink-0 text-xs font-semibold tracking-wide text-gray-400 dark:text-[#94969C] pb-2'>
             <p>{getPeriodDisplay()}</p>
+            <p className='mt-1 text-[10px] text-gray-400 dark:text-gray-500'>Click a college slice to show disease report in the Data panel.</p>
           </div>
         )}
 
@@ -243,6 +367,7 @@ const PatientsPerDepartmentChart = () => {
             />
           )}
         </div>
+
       </div>
     </div>
   )

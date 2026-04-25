@@ -3,7 +3,7 @@ import Chart from "react-apexcharts";
 import useChart from '../store/useChartStore';
 import ChartPeriodSelector from '../components/ChartPeriodSelector';
 
-const TopDiagnosisChart = () => {
+const TopDiagnosisChart = ({ onInsightChange }) => {
   const {
     getWeeklyTopDiagnoses,
     getMonthlyTopDiagnoses,
@@ -185,6 +185,18 @@ const TopDiagnosisChart = () => {
   ] : [];
 
   const hasData = chartData && chartData.topDiagnosesCount && chartData.topDiagnosesCount.length > 0;
+
+  useEffect(() => {
+    if (typeof onInsightChange !== "function") return;
+
+    onInsightChange({
+      title: "Top Diagnoses",
+      periodText: getPeriodDisplay(),
+      labels: chartData?.topDiagnosesNames || [],
+      values: chartData?.topDiagnosesCount || [],
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onInsightChange, chartData, periodInfo]);
 
   return (
     <div className='w-full h-full flex flex-col min-h-0'>

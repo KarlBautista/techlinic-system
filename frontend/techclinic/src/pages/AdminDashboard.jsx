@@ -6,10 +6,8 @@ import supabase from '../config/supabaseClient'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import AnimateNumber from '../components/AnimateNumber'
-import PatientCountsChart from '../charts/PatientCountsChart'
-import PatientsPerDepartmentChart from '../charts/PatientsPerDepartmentChart'
-import TopDiagnosisChart from '../charts/TopDiagnosisChart'
-import MedicinesChart from '../charts/MedicinesChart'
+import AnalyticsCarouselModal from '../components/AnalyticsCarouselModal'
+import { CHART_SLIDES } from '../config/chartSlides'
 import {
     Users, CalendarDays, ClipboardCheck, Pill,
     Activity, TrendingUp, Shield, Search,
@@ -17,14 +15,6 @@ import {
     UserCheck, Stethoscope, HeartPulse, Circle,
     FileText, AlertTriangle
 } from 'lucide-react'
-
-/* ───── Chart carousel config ───── */
-const CHART_SLIDES = [
-    { key: 'patient-counts', label: 'Patient Visits', component: PatientCountsChart },
-    { key: 'per-department', label: 'By College', component: PatientsPerDepartmentChart },
-    { key: 'top-diagnosis', label: 'Top Diagnoses', component: TopDiagnosisChart },
-    { key: 'medicine-stock', label: 'Medicine Stock', component: MedicinesChart },
-]
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -66,9 +56,14 @@ const AdminDashboard = () => {
     }, [])
 
     useEffect(() => {
+        if (showChartsModal) {
+            if (chartTimerRef.current) clearInterval(chartTimerRef.current)
+            return undefined
+        }
+
         startChartTimer()
         return () => { if (chartTimerRef.current) clearInterval(chartTimerRef.current) }
-    }, [startChartTimer])
+    }, [showChartsModal, startChartTimer])
 
     const goToChart = (idx) => { setActiveChart(idx); startChartTimer() }
     const prevChart = () => { setActiveChart(prev => (prev - 1 + CHART_SLIDES.length) % CHART_SLIDES.length); startChartTimer() }
@@ -668,54 +663,12 @@ const AdminDashboard = () => {
                 </motion.div>
             )}
 
-            {/* ═══════════════════════════════════════════════
-                 Charts Modal Overlay
-            ═══════════════════════════════════════════════ */}
-            <AnimatePresence>
-                {showChartsModal && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className='fixed inset-0 z-100 flex items-center justify-center'
-                        onClick={() => setShowChartsModal(false)}
-                    >
-                        <div className='absolute inset-0 bg-black/60' />
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                            transition={{ duration: 0.25, ease: 'easeOut' }}
-                            className='relative bg-white dark:bg-[#161B26] rounded-2xl shadow-2xl w-full max-w-5xl max-h-[85vh] overflow-auto mx-4'
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <div className='flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-[#1F2A37] sticky top-0 bg-white dark:bg-[#161B26] z-10'>
-                                <div className='flex items-center gap-2'>
-                                    <Activity className='w-5 h-5 text-crimson-500' />
-                                    <h2 className='text-lg font-bold text-gray-900 dark:text-slate-100'>All Analytics</h2>
-                                </div>
-                                <button
-                                    onClick={() => setShowChartsModal(false)}
-                                    className='w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#1F242F] transition-colors cursor-pointer'
-                                >
-                                    <X className='w-5 h-5' />
-                                </button>
-                            </div>
-                            <div className='p-6 grid grid-cols-1 lg:grid-cols-2 gap-6'>
-                                {CHART_SLIDES.map((slide) => (
-                                    <div key={slide.key} className='bg-gray-50 dark:bg-[#1F242F] rounded-xl ring-1 ring-gray-100 dark:ring-[#333741] p-4'>
-                                        <h3 className='text-sm font-semibold text-gray-700 dark:text-slate-200 mb-3'>{slide.label}</h3>
-                                        <div className='h-[280px]'>
-                                            {React.createElement(slide.component)}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            <AnalyticsCarouselModal
+                open={showChartsModal}
+                onClose={() => setShowChartsModal(false)}
+                slides={CHART_SLIDES}
+                initialIndex={activeChart}
+            />
         </div>
     )
 }

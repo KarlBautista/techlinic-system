@@ -3,7 +3,7 @@ import Chart from "react-apexcharts";
 import useChart from '../store/useChartStore';
 import ChartPeriodSelector from '../components/ChartPeriodSelector';
 
-const PatientCountsChart = () => {
+const PatientCountsChart = ({ onInsightChange }) => {
   const [selectedCategory, setSelectedCategory] = useState("week");
   const [customStart, setCustomStart] = useState("");
   const [customEnd, setCustomEnd] = useState("");
@@ -191,6 +191,18 @@ const PatientCountsChart = () => {
       }));
     }
   }, [customPatientCount, selectedCategory]);
+
+  useEffect(() => {
+    if (typeof onInsightChange !== "function") return;
+
+    onInsightChange({
+      title: "Patient record count",
+      periodText: patientOptions?.title?.text || "",
+      labels: patientOptions?.xaxis?.categories || [],
+      values: patientData,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onInsightChange, patientData, patientOptions]);
 
   return (
     <div className='w-full h-full flex flex-col min-h-0'>

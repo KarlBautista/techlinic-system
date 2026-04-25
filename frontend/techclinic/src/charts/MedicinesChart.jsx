@@ -1,11 +1,55 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import Chart from "react-apexcharts";
-import useMedicine from '../store/useMedicineStore';
+import useData from '../store/useDataStore';
 
-const MedicinesChart = () => {
-  const { medicines } = useMedicine();
+const MedicinesChart = ({ onInsightChange }) => {
+  const { patientRecords } = useData();
 
-  if (!medicines || medicines.length === 0) {
+  const records = useMemo(() => patientRecords?.data || [], [patientRecords]);
+
+  const mostUsedMedicines = useMemo(() => {
+    const usageMap = {};
+
+    records.forEach((record) => {
+      const diagnoses = Array.isArray(record?.diagnoses) ? record.diagnoses : [];
+      diagnoses.forEach((diagnosis) => {
+        const medicineName = String(diagnosis?.medication || "").trim();
+        if (!medicineName) return;
+
+        const quantity = Number(diagnosis?.quantity || 0);
+        if (!usageMap[medicineName]) {
+          usageMap[medicineName] = { totalDispensed: 0, timesPrescribed: 0, departments: {} };
+        }
+
+        const departmentName = String(record?.department || "Unknown Department").trim() || "Unknown Department";
+        usageMap[medicineName].departments[departmentName] = (usageMap[medicineName].departments[departmentName] || 0) + (Number.isFinite(quantity) ? quantity : 0);
+        usageMap[medicineName].totalDispensed += Number.isFinite(quantity) ? quantity : 0;
+        usageMap[medicineName].timesPrescribed += 1;
+      });
+    });
+
+    return Object.entries(usageMap)
+      .map(([name, stats]) => ({ name, ...stats }))
+      .sort((a, b) => b.totalDispensed - a.totalDispensed)
+      .slice(0, 5);
+  }, [records]);
+
+  useEffect(() => {
+    if (typeof onInsightChange !== "function") return;
+
+    onInsightChange({
+      title: "Most Used Medicines",
+      periodText: `Based on diagnosed prescriptions: ${mostUsedMedicines.length} medicine(s)`,
+      labels: mostUsedMedicines.map((medicine) => medicine.name),
+      values: mostUsedMedicines.map((medicine) => medicine.totalDispensed),
+      usageLocations: mostUsedMedicines.map((medicine) => ({
+        name: medicine.name,
+        departments: medicine.departments,
+      })),
+    });
+  }, [onInsightChange, mostUsedMedicines]);
+
+  if (!records || records.length === 0) {
     return (
       <div className='w-full h-full flex flex-col min-h-0 animate-pulse'>
         <div className='shrink-0'>
@@ -21,8 +65,19 @@ const MedicinesChart = () => {
     );
   }
 
-  const sortedMedicines = [...medicines].sort((a, b) => a.stock_level - b.stock_level);
-  const lowStockMedicines = sortedMedicines.slice(0, 5);
+  if (mostUsedMedicines.length === 0) {
+    return (
+      <div className='w-full h-full flex flex-col min-h-0'>
+        <div className='shrink-0'>
+          <div className='text-sm font-semibold tracking-tight text-gray-800 dark:text-slate-100'>Most Used Medicines</div>
+          <p className='text-xs font-medium text-gray-400 dark:text-[#94969C] mt-0.5'>No medicine usage found in diagnosis records</p>
+        </div>
+        <div className='flex-1 min-h-0 mt-3 flex items-center justify-center'>
+          <p className='text-sm text-gray-400 dark:text-gray-500'>No usage data available</p>
+        </div>
+      </div>
+    );
+  }
 
   const medicineChartOptions = {
     chart: {
@@ -31,7 +86,7 @@ const MedicinesChart = () => {
       parentHeightOffset: 0,
     },
     xaxis: {
-      categories: lowStockMedicines.map(med => med.medicine_name),
+      categories: mostUsedMedicines.map((med) => med.name),
       labels: {
         rotate: -16,
         offsetY: 4,
@@ -78,15 +133,15 @@ const MedicinesChart = () => {
   };
 
   const medicineData = [{
-    name: "Stock",
-    data: lowStockMedicines.map(med => med.stock_level)
+    name: "Total Dispensed",
+    data: mostUsedMedicines.map((med) => med.totalDispensed)
   }];
 
   return (
     <div className='w-full h-full flex flex-col min-h-0'>
       <div className='shrink-0'>
-        <div className='text-sm font-semibold tracking-tight text-gray-800 dark:text-slate-100'>Lowest Stock</div>
-        <p className='text-xs font-medium text-gray-400 dark:text-[#94969C] mt-0.5'>Total medicines tracked: {medicines.length}</p>
+        <div className='text-sm font-semibold tracking-tight text-gray-800 dark:text-slate-100'>Most Used Medicines</div>
+        <p className='text-xs font-medium text-gray-400 dark:text-[#94969C] mt-0.5'>Top 5 by total dispensed quantity</p>
       </div>  
       <div className='flex-1 min-h-0 mt-3 pb-1'>
        <Chart
