@@ -58,8 +58,17 @@ const PatientCountsChart = ({ onInsightChange }) => {
 
   useEffect(() => {
     if (selectedCategory === "week" && weeklyPatientCount?.data) {
-      const categories = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-      const data = categories.map(day => weeklyPatientCount.data[day] || 0);
+      const dayMap = [
+        { key: "Mon", label: "Monday" },
+        { key: "Tue", label: "Tuesday" },
+        { key: "Wed", label: "Wednesday" },
+        { key: "Thu", label: "Thursday" },
+        { key: "Fri", label: "Friday" },
+        { key: "Sat", label: "Saturday" },
+        { key: "Sun", label: "Sunday" },
+      ];
+      const categories = dayMap.map((item) => item.label);
+      const data = dayMap.map((item) => weeklyPatientCount.data[item.key] || 0);
 
       setPatientData(data);
       setPatientOptions(prev => ({

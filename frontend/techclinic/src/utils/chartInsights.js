@@ -35,15 +35,21 @@ const buildPatientCountReport = (summary, periodText) => {
   }
 
   return [
-    `${summary.total} total visits were recorded${periodText ? ` for ${periodText}` : ""}.`,
-    `${summary.peak.label} is the busiest bucket with ${summary.peak.value} visits.`,
-    `${summary.nonZeroCount} of ${summary.sortedDesc.length} buckets have activity.`,
+    `There were ${summary.total} total visits${periodText ? ` during ${periodText}` : ""}.`,
+    `The busiest time was ${summary.peak.label}, with ${summary.peak.value} visit(s).`,
+    `${summary.nonZeroCount} out of ${summary.sortedDesc.length} time buckets had at least one visit.`,
   ];
 };
 
 const buildDepartmentReport = (summary, periodText, selectedDepartmentReport) => {
   if (!summary.sortedDesc.length) {
     return ["No department-level patient data is available for this period."];
+  }
+
+  if (summary.total === 0) {
+    return [
+      `No patient records were logged across departments${periodText ? ` for ${periodText}` : ""}.`,
+    ];
   }
 
   if (selectedDepartmentReport?.department) {
@@ -67,10 +73,16 @@ const buildDepartmentReport = (summary, periodText, selectedDepartmentReport) =>
     ? Math.round((summary.peak.value / summary.total) * 100)
     : 0;
 
+  const activeDepartments = summary.sortedDesc.filter((item) => item.value > 0);
+  const topThreeText = summary.sortedDesc
+    .slice(0, 3)
+    .map((item) => `${item.label} (${item.value})`)
+    .join(", ");
+
   return [
-    `${summary.total} total patient records are distributed across colleges${periodText ? ` for ${periodText}` : ""}.`,
-    `${summary.peak.label} leads with ${summary.peak.value} records (${leadShare}%).`,
-    `Lowest represented bucket is ${summary.lowest.label} with ${summary.lowest.value} records.`,
+    `A total of ${summary.total} patient records were logged across ${summary.sortedDesc.length} colleges${periodText ? ` for ${periodText}` : ""}.`,
+    `${summary.peak.label} recorded the highest volume with ${summary.peak.value} records (${leadShare}% of all records).`,
+    `${activeDepartments.length} colleges had activity. Top contributors: ${topThreeText}.`,
   ];
 };
 

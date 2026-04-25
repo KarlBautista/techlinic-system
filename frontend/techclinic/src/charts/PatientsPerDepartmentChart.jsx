@@ -36,7 +36,9 @@ const PatientsPerDepartmentChart = ({ onInsightChange }) => {
       events: {
         dataPointSelection: (_event, _chartContext, config) => {
           const label = config?.w?.config?.labels?.[config?.dataPointIndex];
-          if (label) setSelectedDepartment(label);
+          if (label) {
+            setSelectedDepartment((current) => (current === label ? "" : label));
+          }
         }
       },
       dropShadow: { enabled: true, top: 2, left: 0, blur: 6, opacity: 0.12 }
@@ -341,7 +343,7 @@ const PatientsPerDepartmentChart = ({ onInsightChange }) => {
         {periodInfo && (
           <div className='shrink-0 text-xs font-semibold tracking-wide text-gray-400 dark:text-[#94969C] pb-2'>
             <p>{getPeriodDisplay()}</p>
-            <p className='mt-1 text-[10px] text-gray-400 dark:text-gray-500'>Click a college slice to show disease report in the Data panel.</p>
+            <p className='mt-1 text-[10px] text-gray-400 dark:text-gray-500'>Click a college slice to show disease report in the Data panel. Click the same slice again to return to the overall report.</p>
           </div>
         )}
 
